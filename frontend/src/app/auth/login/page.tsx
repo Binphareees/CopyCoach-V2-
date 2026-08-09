@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured, supabaseUrl } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -33,32 +33,49 @@ export default function LoginPage() {
       return;
     }
 
+    if (!isSupabaseConfigured) {
+      setMessage("Supabase is not configured yet. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
+      return;
+    }
 
     setLoading(true);
     setMessage("Logging in...");
 
+    try {
+      const timeoutPromise = new Promise<{ data: { user: null; session: null }; error: { message: string } }>((_, reject) =>
+        setTimeout(() => reject(new Error("Connection timed out. Please check your Supabase URL and network connection.")), 10000)
+      );
 
-    const { error } = await supabase.auth.signInWithPassword({
+      const authPromise = supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      email,
-      password,
+      const res = await Promise.race([authPromise, timeoutPromise]);
+      const { error } = res;
 
-    });
-
-
-    setLoading(false);
-
-
-    if (error) {
       setLoading(false);
-      setMessage(error.message);
+
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      setMessage("Login successful! Redirecting to dashboard...");
+      window.location.href = "/dashboard";
+    } catch (err: unknown) {
+      setLoading(false);
+      const errorMsg = err instanceof Error ? err.message : "An unexpected error occurred during login.";
+      setMessage(errorMsg);
+    }
+  }
+
+  async function signInWithGoogle() {
+    if (!isSupabaseConfigured) {
+      setMessage("Supabase is not configured yet. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
       return;
     }
 
-    setMessage("Login successful! Redirecting to dashboard...");
-    window.location.href = "/dashboard";
-  }
-  async function signInWithGoogle() {
     try {
       setLoading(true);
       setMessage("Connecting to Google...");
@@ -90,7 +107,7 @@ export default function LoginPage() {
       if (data?.url) {
         if (data.url.includes("placeholder.supabase.co")) {
           setMessage(
-            "Supabase URL is using placeholder values. Please configure NEXT_PUBLIC_SUPABASE_URL and Google OAuth."
+            "Supabase URL is using placeholder values. Please configure NEXT_PUBLIC_SUPABASE_URL in Settings."
           );
           setLoading(false);
           return;
@@ -127,16 +144,20 @@ export default function LoginPage() {
 
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur">
 
-
         <h1 className="text-3xl font-bold text-white">
           Welcome back
         </h1>
-
 
         <p className="mt-2 text-gray-400">
           Continue improving your copywriting skills.
         </p>
 
+        {!isSupabaseConfigured && (
+          <div className="mt-4 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
+            <strong>Notice:</strong> Supabase environment variables are currently missing or set to placeholder (`{supabaseUrl}`).
+            Please add <code className="bg-black/30 px-1 py-0.5 rounded">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="bg-black/30 px-1 py-0.5 rounded">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in project Settings.
+          </div>
+        )}
 
         <input
           className="mt-6 w-full rounded-lg border border-white/10 bg-white/10 p-3 text-white outline-none placeholder:text-gray-500 focus:border-[#5B5CEB]"
@@ -189,9 +210,11 @@ export default function LoginPage() {
         </button>
 
 
-        <p className="mt-4 text-sm text-gray-400">
-          {message}
-        </p>
+        {message && (
+          <p className="mt-4 text-sm text-gray-300 bg-white/5 border border-white/10 rounded-lg p-3">
+            {message}
+          </p>
+        )}
 
 
         <p className="mt-6 text-center text-sm text-gray-400">

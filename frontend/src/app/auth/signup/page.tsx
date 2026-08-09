@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured, supabaseUrl } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
@@ -34,40 +34,56 @@ export default function SignupPage() {
       return;
     }
 
+    if (!isSupabaseConfigured) {
+      setMessage("Supabase is not configured yet. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
+      return;
+    }
+
 
     setLoading(true);
     setMessage("Creating account...");
 
+    try {
+      const timeoutPromise = new Promise<{ data: { user: null; session: null }; error: { message: string } }>((_, reject) =>
+        setTimeout(() => reject(new Error("Connection timed out. Please check your Supabase URL and network connection.")), 10000)
+      );
 
-    const { error } = await supabase.auth.signUp({
-
-      email,
-      password,
-
-      options: {
-        data: {
-          full_name: name,
+      const authPromise = supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
         },
-      },
+      });
 
-    });
+      const res = await Promise.race([authPromise, timeoutPromise]);
+      const { error } = res;
 
-
-    setLoading(false);
-
-
-    if (error) {
       setLoading(false);
-      setMessage(error.message);
-      return;
-    }
 
-    setMessage("Account created successfully! Redirecting...");
-    window.location.href = "/dashboard";
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      setMessage("Account created successfully! Redirecting...");
+      window.location.href = "/dashboard";
+    } catch (err: unknown) {
+      setLoading(false);
+      const errorMsg = err instanceof Error ? err.message : "An unexpected error occurred during sign up.";
+      setMessage(errorMsg);
+    }
   }
 
 
   async function signInWithGoogle() {
+    if (!isSupabaseConfigured) {
+      setMessage("Supabase is not configured yet. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
+      return;
+    }
+
     try {
       setLoading(true);
       setMessage("Connecting to Google...");
@@ -99,7 +115,7 @@ export default function SignupPage() {
       if (data?.url) {
         if (data.url.includes("placeholder.supabase.co")) {
           setMessage(
-            "Supabase URL is using placeholder values. Please configure NEXT_PUBLIC_SUPABASE_URL and Google OAuth."
+            "Supabase URL is using placeholder values. Please configure NEXT_PUBLIC_SUPABASE_URL in Settings."
           );
           setLoading(false);
           return;
@@ -146,6 +162,12 @@ export default function SignupPage() {
           Start improving your copywriting skills with AI.
         </p>
 
+        {!isSupabaseConfigured && (
+          <div className="mt-4 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
+            <strong>Notice:</strong> Supabase environment variables are currently missing or set to placeholder (`{supabaseUrl}`).
+            Please add <code className="bg-black/30 px-1 py-0.5 rounded">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="bg-black/30 px-1 py-0.5 rounded">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in project Settings.
+          </div>
+        )}
 
         <input
           className="mt-6 w-full rounded-lg border border-white/10 bg-white/10 p-3 text-white outline-none placeholder:text-gray-500 focus:border-[#5B5CEB]"
@@ -213,9 +235,11 @@ export default function SignupPage() {
         </button>
 
 
-        <p className="mt-4 text-sm text-gray-400">
-          {message}
-        </p>
+        {message && (
+          <p className="mt-4 text-sm text-gray-300 bg-white/5 border border-white/10 rounded-lg p-3">
+            {message}
+          </p>
+        )}
 
 
         <p className="mt-6 text-center text-sm text-gray-400">
