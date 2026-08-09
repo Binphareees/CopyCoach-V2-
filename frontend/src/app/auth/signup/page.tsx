@@ -1,16 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+
+  const router = useRouter();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "OAUTH_AUTH_SUCCESS") {
+        setMessage("Google sign-up successful! Redirecting...");
+        router.push("/dashboard");
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [router]);
 
 
   async function handleSignup() {
@@ -43,15 +57,13 @@ export default function SignupPage() {
 
 
     if (error) {
+      setLoading(false);
       setMessage(error.message);
       return;
     }
 
-
-    setMessage(
-      "Account created successfully! You can now log in."
-    );
-
+    setMessage("Account created successfully! Redirecting...");
+    window.location.href = "/dashboard";
   }
 
 
@@ -93,7 +105,19 @@ export default function SignupPage() {
           return;
         }
 
-        window.location.href = data.url;
+        const authWindow = window.open(
+          data.url,
+          "google_oauth_popup",
+          "width=600,height=700"
+        );
+
+        if (!authWindow) {
+          setMessage("Popup blocked by browser. Please allow popups for this site to sign in with Google.");
+          setLoading(false);
+          return;
+        }
+
+        setMessage("Opening Google Sign-In popup...");
       } else {
         setMessage("Could not generate Google sign-up link.");
         setLoading(false);

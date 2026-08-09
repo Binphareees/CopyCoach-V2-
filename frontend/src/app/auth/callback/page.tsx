@@ -69,7 +69,12 @@ console.log(user.user_metadata);
 }
 
 
-      router.push("/dashboard");
+      if (window.opener) {
+        window.opener.postMessage({ type: "OAUTH_AUTH_SUCCESS" }, "*");
+        window.close();
+      } else {
+        router.push("/dashboard");
+      }
 
     };
 
