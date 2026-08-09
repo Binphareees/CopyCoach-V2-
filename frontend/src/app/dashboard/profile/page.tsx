@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
@@ -15,62 +15,56 @@ const [loading,setLoading] = useState(false);
 const [uploading,setUploading] = useState(false);
 const [message,setMessage] = useState("");
 const [createdAt,setCreatedAt] = useState("");
-  async function loadProfile(){
 
+  const loadProfile = useCallback(async () => {
     const {
       data:{user}
     } = await supabase.auth.getUser();
 
-
     if(!user){
-
       router.push("/auth/login");
       return;
-
     }
-
 
     setEmail(user.email || "");
 
-
     const { data, error } = await supabase
-  .from("profiles")
-  .select("full_name, avatar_url, created_at")
-  .eq("id", user.id)
-  .maybeSingle();
+      .from("profiles")
+      .select("full_name, avatar_url, created_at")
+      .eq("id", user.id)
+      .maybeSingle();
 
-if (error) {
-  console.error(error);
-  return;
-}
+    if (error) {
+      console.error(error);
+      return;
+    }
 
-if (data) {
+    if (data) {
+      setName(data.full_name || "");
+      setAvatar(
+        data.avatar_url 
+          ? data.avatar_url + "?t=" + Date.now()
+          : ""
+      );
 
-  setName(data.full_name || "");
+      if(data.created_at){
+        setCreatedAt(
+          new Date(data.created_at)
+            .toLocaleDateString()
+        );
+      }
+    }
+  }, [router]);
 
-  setAvatar(
-    data.avatar_url 
-      ? data.avatar_url + "?t=" + Date.now()
-      : ""
-  );
-
-
-  if(data.created_at){
-
-    setCreatedAt(
-      new Date(data.created_at)
-        .toLocaleDateString()
-    );
-
-  }
-
-}
-  
-  }
-
-  useEffect(()=>{
-    loadProfile();
-  },[]);
+  useEffect(() => {
+    let isMounted = true;
+    Promise.resolve().then(() => {
+      if (isMounted) {
+        loadProfile();
+      }
+    });
+    return () => { isMounted = false; };
+  }, [loadProfile]);
 
 
 async function uploadAvatar(

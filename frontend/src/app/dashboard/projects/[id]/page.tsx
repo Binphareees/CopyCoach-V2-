@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useParams, useRouter } from "next/navigation";
 
@@ -14,13 +14,13 @@ export default function ProjectPage(){
   const projectId = params.id as string;
 
 
-  const [project,setProject] = useState<any>(null);
-  const [history,setHistory] = useState<any[]>([]);
+  const [project,setProject] = useState<Record<string, unknown> | null>(null);
+  const [history,setHistory] = useState<Record<string, unknown>[]>([]);
 const [search,setSearch] = useState("");
 const [editName,setEditName] = useState("");
 const [editing,setEditing] = useState(false);
 
-  async function loadProject(){
+  const loadProject = useCallback(async () => {
 
     const {
       data:{user}
@@ -91,13 +91,17 @@ const [editing,setEditing] = useState(false);
       historyData || []
     );
 
-  }
+  }, [projectId, router]);
 
-  useEffect(()=>{
-
-    loadProject();
-
-  },[]);
+  useEffect(() => {
+    let isMounted = true;
+    Promise.resolve().then(() => {
+      if (isMounted) {
+        loadProject();
+      }
+    });
+    return () => { isMounted = false; };
+  }, [loadProject]);
 
 async function renameProject(){
 

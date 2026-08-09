@@ -3,15 +3,19 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 export async function activateSubscription(userId: string) {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 30);
+  const now = new Date().toISOString();
 
   return await supabaseAdmin
     .from("user_usage")
-    .update({
+    .upsert({
+      user_id: userId,
       plan: "pro",
       subscription_status: "active",
       subscription_expires_at: expiresAt.toISOString(),
-    })
-    .eq("user_id", userId)
+      last_payment_date: now,
+      monthly_generations_used: 0,
+      monthly_reset_date: now,
+    }, { onConflict: "user_id" })
     .select()
     .single();
 }

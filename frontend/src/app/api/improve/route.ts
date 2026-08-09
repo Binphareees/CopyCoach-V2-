@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { GoogleGenAI } from "@google/genai";
-import { useCredit } from "@/lib/credits";
+import { canGenerate, consumeCredit } from "@/lib/credits";
 
 const systemPrompt = `
 You are CopyCoach AI, an expert senior copywriter and marketing coach.
@@ -27,6 +27,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "User not authenticated" },
         { status: 401 }
+      );
+    }
+
+    const check = await canGenerate(userId);
+    if (!check.allowed) {
+      return NextResponse.json(
+        { error: check.reason || "Generation limit reached." },
+        { status: 403 }
       );
     }
 
@@ -96,13 +104,14 @@ Original Copy: ${text || ""}
     }
 
     try {
-      await useCredit(userId);
+      await consumeCredit(userId);
     } catch (e) {
       console.warn("Credit update warning:", e);
     }
 
     return NextResponse.json({
       result: parsed,
+      creditsRemaining: Math.max(0, check.remaining - 1),
     });
   } catch (error) {
     console.error("IMPROVE API ERROR:", error);

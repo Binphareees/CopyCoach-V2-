@@ -51,13 +51,18 @@ console.log(user.user_metadata);
   }
   else {
 
+    const now = new Date().toISOString();
     await supabase
-  .from("user_usage")
-  .upsert({
-    user_id: user.id,
-    generations_used: 0,
-    plan: "free"
-  });
+      .from("user_usage")
+      .upsert({
+        user_id: user.id,
+        plan: "free",
+        daily_generations_used: 0,
+        monthly_generations_used: 0,
+        daily_reset_date: now,
+        monthly_reset_date: now,
+        subscription_status: "active"
+      }, { onConflict: "user_id" });
 
   }
 

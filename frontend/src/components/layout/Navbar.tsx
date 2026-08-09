@@ -8,13 +8,11 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#5B5CEB] font-bold text-white">
-            C
-          </div>
-
-          <span className="text-xl font-bold text-white">
-            CopyCoach AI
-          </span>
+          <img
+            src="/logo-primary-dark.svg"
+            alt="CopyCoach AI Logo"
+            className="h-9 w-auto object-contain"
+          />
         </Link>
 
 

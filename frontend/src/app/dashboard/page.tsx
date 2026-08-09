@@ -4,30 +4,56 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
+interface CopyResult {
+  score?: number;
+  strengths?: string[];
+  weaknesses?: string[];
+  framework?: string;
+  improvedCopy?: string;
+  coachAdvice?: string;
+}
+
+interface HistoryItem {
+  id: string;
+  project_id?: string;
+  original_text: string;
+  improved_text: string;
+  copy_type: string;
+  tone: string;
+  favorite: boolean;
+  created_at?: string;
+}
+
+interface ProjectItem {
+  id: string;
+  name: string;
+  created_at?: string;
+}
+
 export default function DashboardPage() {
 
   const router = useRouter();
 
-const [userEmail, setUserEmail] = useState("");
-const [userId, setUserId] = useState("");
+const [, setUserEmail] = useState("");
+const [, setUserId] = useState("");
 const [fullName, setFullName] = useState("");
 const [showMenu, setShowMenu] = useState(false);
 const [avatar, setAvatar] = useState("");
 
 const [text, setText] = useState("");
-const [result, setResult] = useState<any>(null);
+const [result, setResult] = useState<CopyResult | string | null>(null);
 
 const [loading, setLoading] = useState(false);
 const [message, setMessage] = useState("");
 const [copyType, setCopyType] = useState("Advertisement");
 const [tone, setTone] = useState("Professional");
 
-const [history, setHistory] = useState<any[]>([]);
+const [history, setHistory] = useState<HistoryItem[]>([]);
 
 const [search, setSearch] = useState("");
 const [showFavorites, setShowFavorites] = useState(false);
 
-const [projects, setProjects] = useState<any[]>([]);
+const [projects, setProjects] = useState<ProjectItem[]>([]);
 const [selectedProject, setSelectedProject] = useState("");
 
 const [showProjectForm, setShowProjectForm] = useState(false);
@@ -35,9 +61,9 @@ const [projectName, setProjectName] = useState("");
 
 const [credits, setCredits] = useState(5);
 const [plan, setPlan] = useState("free");
-const [todayUsed, setTodayUsed] = useState(0);
-const [totalCopies, setTotalCopies] = useState(0);
-const [favoriteCount, setFavoriteCount] = useState(0);
+const [, setTodayUsed] = useState(0);
+const [, setTotalCopies] = useState(0);
+const [, setFavoriteCount] = useState(0);
 
 async function loadUsage(){
 
@@ -69,33 +95,27 @@ async function loadUsage(){
   }
 
 
-if(data){
+  if (data) {
+    if (data.plan === "pro") {
+      setCredits(Math.max(0, 100 - (data.monthly_generations_used || 0)));
+    } else {
+      setCredits(Math.max(0, 5 - (data.daily_generations_used || 0)));
+    }
+    setPlan(data.plan || "free");
+  } else {
+    await supabase.from("user_usage").upsert({
+      user_id: user.id,
+      plan: "free",
+      daily_generations_used: 0,
+      monthly_generations_used: 0,
+      daily_reset_date: new Date().toISOString(),
+      monthly_reset_date: new Date().toISOString(),
+      subscription_status: "active"
+    }, { onConflict: "user_id" });
 
-  const limit =
-    data.plan === "pro"
-      ? 100
-      : 5;
-
-  if(data.plan === "pro"){
-
-  setCredits(
-    100 - data.monthly_generations_used
-  );
-
-} else {
-
-  setCredits(
-  Math.max(
-    0,
-    5 - data.daily_generations_used
-  )
-);
-
-}
-
-  setPlan(data.plan);
-
-}
+    setCredits(5);
+    setPlan("free");
+  }
 
 }
 
@@ -159,51 +179,30 @@ async function loadAnalytics(){
 }
 
 useEffect(() => {
-
-  checkUser();
-
-}, []);
-
-
-
-async function checkUser(){
-
-  const {
-    data:{user}
-  } = await supabase.auth.getUser();
-
-
-  if(!user){
-    router.push("/auth/login");
-    return;
+  let isMounted = true;
+  async function init() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
+    if (isMounted) {
+      setUserId(user.id);
+      await loadProfile(user.id, user);
+      await loadUsage();
+      await loadAnalytics();
+      await loadProjects();
+      loadHistory();
+    }
   }
-
-
-  setUserEmail(user.email || "");
-  setUserId(user.id);
-
-
-await loadProfile(
-  user.id,
-  user
-);
-
-await loadUsage();
-
-await loadAnalytics();
-
-await loadProjects();
-
-loadHistory();
-
-}
-
-
+  init();
+  return () => { isMounted = false; };
+}, [router]);
 
 async function loadProfile(
-  id:string,
-  user:any
-){
+  id: string,
+  user: { id: string; email?: string; user_metadata?: { full_name?: string; avatar_url?: string; picture?: string } }
+) {
 
   const {data,error}=await supabase
     .from("profiles")
@@ -262,221 +261,66 @@ async function loadProfile(
 
 
 async function improveCopy(){
-
   console.log("🔥 IMPROVE COPY STARTED");
- const {
-  data:{user}
-}=await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
+  if(!user) return;
+  if(!text.trim()) return;
 
-if(!user) return;
+  setLoading(true);
 
-
-const {data:usage,error:usageError}=await supabase
-  .from("user_usage")
-.select(`
-  daily_generations_used,
-  monthly_generations_used,
-  plan,
-  subscription_status,
-  payment_reference,
-  last_payment_date,
-  updated_at
-`)
-.eq("user_id", user.id)
-.maybeSingle();
-
-
-if(usageError){
-
-  console.error(
-    "Usage check error:",
-    usageError
-  );
-
-  return;
-
-}
-
-
-if(!usage){
-
-  console.error(
-    "No usage record found"
-  );
-
-  return;
-
-}
-
-
-const limit =
-  usage.plan === "pro"
-  ? 100
-  : 5;
-
-
-const currentUsage =
-  usage.plan === "pro"
-    ? usage.monthly_generations_used
-    : usage.daily_generations_used;
-
-
-if(currentUsage >= limit){
-
- setMessage(
-  "You've used all your free generations for today. Upgrade to Pro for more generations, or come back tomorrow."
-);
-
- setLoading(false);
-
-  return;
-
-}
-
-    if(!text.trim()) return;
-
-
-    setLoading(true);
-
-
-   try{
-
-
-  const response = await fetch(
-    "/api/improve",
-    {
-
-      method:"POST",
-
-      headers:{
-        "Content-Type":"application/json",
+  try {
+    const response = await fetch("/api/improve", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
         "x-user-id": user.id
       },
+      body: JSON.stringify({
+        text,
+        copyType,
+        tone
+      })
+    });
 
+    const data = await response.json();
 
-          body:JSON.stringify({
-
-            text,
-            copyType,
-            tone
-
-          })
-
-        }
-      );
-console.log("🔥 FETCH FINISHED", response.status);
-
-
-      const data =
-        await response.json();
-
-if (!response.ok) {
-
-  setMessage(
-    data.error || "Something went wrong."
-  );
-
-  setLoading(false);
-
-  return;
-
-}
-
-console.log("STEP 1 - API DATA:", data);
-console.log("AI RESPONSE:", data);
-
-const improvedResult =
-  data.result ||
-  data.error ||
-  "No response received";
-
-console.log("IMPROVED RESULT:", improvedResult);
-setResult(improvedResult);
-
-
-
-if(data.result){
-
-  console.log("✅ DATA.RESULT EXISTS");
-
-  
-}
-       console.log("HISTORY DATA:", {
-  user_id: userId,
-  original_text: text,
-  copy_type: copyType,
-  tone: tone,
-  favorite: false
-});
-
-
-const historyData = {
-
-  user_id:userId,
-
-  project_id:
-    selectedProject || null,
-
-  original_text:text,
-
-  improved_text:
-    typeof improvedResult === "object"
-      ? improvedResult.improvedCopy
-      : improvedResult,
-
-  copy_type:copyType,
-
-  tone:tone,
-
-  favorite:false
-
-};
-
-console.log(
-  "HISTORY DATA:",
-  historyData
-);
-
-
-const {
-  error
-} = await supabase
-  .from("history")
-  .insert(historyData);
-
-
-
-if(error){
-
-  console.error(
-    "Save error:",
-    error
-  );
-
-}
-else{
-
-  loadHistory();
-
-}
-
-
+    if (!response.ok) {
+      setMessage(data.error || "Something went wrong.");
+      setLoading(false);
+      return;
     }
-    catch(error){
 
-  console.error("IMPROVE COPY ERROR:", error);
+    const improvedResult = data.result || data.error || "No response received";
+    setResult(improvedResult);
 
-  setResult(
-    String(error)
-  );
+    await loadUsage();
+    await loadAnalytics();
 
-}
+    const historyData = {
+      user_id: user.id,
+      project_id: selectedProject || null,
+      original_text: text,
+      improved_text:
+        typeof improvedResult === "object"
+          ? improvedResult.improvedCopy
+          : improvedResult,
+      copy_type: copyType,
+      tone: tone,
+      favorite: false
+    };
 
-
+    const { error } = await supabase.from("history").insert(historyData);
+    if (!error) {
+      loadHistory();
+    }
+  } catch(error) {
+    console.error("IMPROVE COPY ERROR:", error);
+    setResult(String(error));
+  } finally {
     setLoading(false);
-
   }
+}
 
 
 
@@ -718,9 +562,8 @@ async function upgradeToPro(){
       },
 
       body:JSON.stringify({
-
-        email:user.email
-
+        email: user.email,
+        userId: user.id
       })
 
     }
@@ -815,16 +658,19 @@ return (
 
 <div className="flex items-center justify-between">
 
+<div className="flex items-center gap-3">
+<img src="/logo-symbol.svg" alt="CopyCoach AI" className="h-12 w-12 object-contain" />
 <div>
 
-<h1 className="text-4xl font-bold">
+<h1 className="text-4xl font-bold bg-gradient-to-r from-white via-slate-100 to-[#00F0FF] bg-clip-text text-transparent">
 CopyCoach AI
 </h1>
 
-<p className="text-gray-400 mt-2">
+<p className="text-gray-400 mt-1">
 Welcome back, {fullName || "User"} 👋
 </p>
 
+</div>
 </div>
 
 

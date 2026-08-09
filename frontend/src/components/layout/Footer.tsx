@@ -7,9 +7,13 @@ export default function Footer() {
         {/* Brand */}
         <div>
 
-          <h2 className="text-xl font-bold text-white">
-            CopyCoach AI
-          </h2>
+          <div className="flex items-center gap-2">
+            <img
+              src="/logo-primary-dark.svg"
+              alt="CopyCoach AI Logo"
+              className="h-8 w-auto object-contain"
+            />
+          </div>
 
           <p className="mt-2 max-w-sm text-sm text-gray-400">
             Your AI-powered coach for mastering copywriting through practice,
