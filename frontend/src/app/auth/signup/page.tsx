@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { supabase, isSupabaseConfigured, supabaseUrl } from "@/lib/supabase";
+import { isSupabaseConfigured, supabaseUrl, ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
@@ -14,8 +14,13 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [configured, setConfigured] = useState(isSupabaseConfigured);
 
   useEffect(() => {
+    ensureSupabaseConfig().then(() => {
+      setConfigured(isSupabaseConfigured);
+    });
+
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "OAUTH_AUTH_SUCCESS") {
         setMessage("Google sign-up successful! Redirecting...");
@@ -34,21 +39,25 @@ export default function SignupPage() {
       return;
     }
 
-    if (!isSupabaseConfigured) {
-      setMessage("Supabase is not configured yet. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
-      return;
-    }
-
-
     setLoading(true);
-    setMessage("Creating account...");
+    setMessage("Connecting...");
 
     try {
+      const activeClient = await ensureSupabaseConfig();
+
+      if (!isSupabaseConfigured) {
+        setLoading(false);
+        setMessage("Supabase credentials are missing or set to placeholder. Please check your NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
+        return;
+      }
+
+      setMessage("Creating account...");
+
       const timeoutPromise = new Promise<{ data: { user: null; session: null }; error: { message: string } }>((_, reject) =>
         setTimeout(() => reject(new Error("Connection timed out. Please check your Supabase URL and network connection.")), 10000)
       );
 
-      const authPromise = supabase.auth.signUp({
+      const authPromise = activeClient.auth.signUp({
         email,
         password,
         options: {
@@ -79,21 +88,24 @@ export default function SignupPage() {
 
 
   async function signInWithGoogle() {
-    if (!isSupabaseConfigured) {
-      setMessage("Supabase is not configured yet. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
-      return;
-    }
+    setLoading(true);
+    setMessage("Connecting to Google...");
 
     try {
-      setLoading(true);
-      setMessage("Connecting to Google...");
+      const activeClient = await ensureSupabaseConfig();
+
+      if (!isSupabaseConfigured) {
+        setLoading(false);
+        setMessage("Supabase credentials are missing or set to placeholder. Please check your NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
+        return;
+      }
 
       const redirectUrl =
         typeof window !== "undefined"
           ? `${window.location.origin}/auth/callback`
           : "http://localhost:3000/auth/callback";
 
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await activeClient.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: redirectUrl,
@@ -162,7 +174,7 @@ export default function SignupPage() {
           Start improving your copywriting skills with AI.
         </p>
 
-        {!isSupabaseConfigured && (
+        {!configured && (
           <div className="mt-4 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
             <strong>Notice:</strong> Supabase environment variables are currently missing or set to placeholder (`{supabaseUrl}`).
             Please add <code className="bg-black/30 px-1 py-0.5 rounded">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="bg-black/30 px-1 py-0.5 rounded">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in project Settings.

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function CallbackPage() {
@@ -12,7 +12,8 @@ export default function CallbackPage() {
 
     const createProfile = async () => {
 
-      const { data: { session } } = await supabase.auth.getSession();
+      const activeClient = await ensureSupabaseConfig();
+      const { data: { session } } = await activeClient.auth.getSession();
 
       if (!session) {
         router.push("/auth/login");

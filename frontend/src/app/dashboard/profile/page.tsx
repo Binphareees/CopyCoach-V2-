@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -113,6 +113,7 @@ export default function ProfilePage() {
 
   // Load User Data from Supabase
   const loadProfile = useCallback(async () => {
+    await ensureSupabaseConfig();
     const {
       data: { user },
     } = await supabase.auth.getUser();

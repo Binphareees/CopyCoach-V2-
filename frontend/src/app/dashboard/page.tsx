@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -216,6 +216,7 @@ export default function DashboardPage() {
   useEffect(() => {
     let isMounted = true;
     async function init() {
+      await ensureSupabaseConfig();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         router.push("/auth/login");

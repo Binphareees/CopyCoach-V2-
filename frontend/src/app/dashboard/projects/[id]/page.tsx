@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
 import { useParams, useRouter } from "next/navigation";
 
 
@@ -22,6 +22,7 @@ const [editing,setEditing] = useState(false);
 
   const loadProject = useCallback(async () => {
 
+    await ensureSupabaseConfig();
     const {
       data:{user}
     } = await supabase.auth.getUser();
