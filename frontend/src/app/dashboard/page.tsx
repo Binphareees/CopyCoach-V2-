@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
+import {
+  supabase,
+  ensureSupabaseConfig,
+  isPlaceholderUrl,
+  getActiveSupabaseUrl,
+  getIsSupabaseConfigured,
+} from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -106,6 +112,10 @@ export default function DashboardPage() {
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [supportSubject, setSupportSubject] = useState("");
   const [supportMessage, setSupportMessage] = useState("");
+
+  // Configuration Check
+  const [showConfigBanner, setShowConfigBanner] = useState(false);
+  const [activeSupabaseUrl, setActiveSupabaseUrl] = useState("");
 
   // Quick Notification
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -217,6 +227,15 @@ export default function DashboardPage() {
     let isMounted = true;
     async function init() {
       await ensureSupabaseConfig();
+      const currentUrl = getActiveSupabaseUrl();
+      setActiveSupabaseUrl(currentUrl);
+
+      if (isPlaceholderUrl(currentUrl) || !getIsSupabaseConfigured()) {
+        setShowConfigBanner(true);
+      } else {
+        setShowConfigBanner(false);
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         router.push("/auth/login");
@@ -644,6 +663,32 @@ export default function DashboardPage() {
           </div>
         </div>
       </header>
+
+      {/* Prominent Persistent Banner Warning for Placeholder Supabase Config */}
+      {showConfigBanner && (
+        <div className="bg-amber-500/10 border-b border-amber-500/30 text-amber-200 px-4 py-3.5 sm:px-6 relative z-30">
+          <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-amber-500/20 rounded-lg text-amber-400 shrink-0">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-amber-300">
+                  Supabase Configuration Warning
+                </p>
+                <p className="text-xs text-amber-200/80 mt-0.5">
+                  The application is using a placeholder Supabase URL (<code className="bg-black/40 px-1.5 py-0.5 rounded text-amber-300">{activeSupabaseUrl || "placeholder.supabase.co"}</code>). Please set <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in project Settings to enable database features.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-xs bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1.5 rounded-lg font-medium">
+                Invalid Configuration Detected
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content Area */}
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">

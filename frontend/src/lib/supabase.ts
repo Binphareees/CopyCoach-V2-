@@ -1,21 +1,34 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 let currentUrl =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  process.env.SUPABASE_URL ||
+  "https://placeholder.supabase.co";
 
 let currentKey =
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-anon-key";
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  "placeholder-anon-key";
 
-export function checkIsConfigured(url: string, key: string) {
+export function isPlaceholderUrl(url: string = currentUrl): boolean {
+  return !url || url.includes("placeholder.supabase.co");
+}
+
+export function checkIsConfigured(
+  url: string = currentUrl,
+  key: string = currentKey
+) {
   return (
     Boolean(url) &&
-    !url.includes("placeholder.supabase.co") &&
+    !isPlaceholderUrl(url) &&
     Boolean(key) &&
     !key.includes("placeholder-anon-key")
   );
 }
 
-export let isSupabaseConfigured = checkIsConfigured(currentUrl, currentKey);
+export function getIsSupabaseConfigured() {
+  return checkIsConfigured(currentUrl, currentKey);
+}
 
 let clientInstance: SupabaseClient = createClient(currentUrl, currentKey);
 let configFetched = false;
@@ -23,18 +36,22 @@ let configFetchPromise: Promise<SupabaseClient> | null = null;
 
 export async function ensureSupabaseConfig(): Promise<SupabaseClient> {
   if (checkIsConfigured(currentUrl, currentKey)) {
-    isSupabaseConfigured = true;
     return clientInstance;
   }
 
   if (typeof window === "undefined") {
     // Server side environment
-    const serverUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
-    const serverKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "";
+    const serverUrl =
+      process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      process.env.SUPABASE_URL ||
+      "";
+    const serverKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      process.env.SUPABASE_ANON_KEY ||
+      "";
     if (checkIsConfigured(serverUrl, serverKey)) {
       currentUrl = serverUrl;
       currentKey = serverKey;
-      isSupabaseConfigured = true;
       clientInstance = createClient(currentUrl, currentKey);
     }
     return clientInstance;
@@ -53,7 +70,6 @@ export async function ensureSupabaseConfig(): Promise<SupabaseClient> {
           if (data.isConfigured && data.url && data.key) {
             currentUrl = data.url;
             currentKey = data.key;
-            isSupabaseConfigured = true;
             clientInstance = createClient(currentUrl, currentKey);
           }
         }
@@ -69,6 +85,11 @@ export async function ensureSupabaseConfig(): Promise<SupabaseClient> {
   return configFetchPromise;
 }
 
+// Auto-trigger config fetch immediately on client side import
+if (typeof window !== "undefined") {
+  ensureSupabaseConfig();
+}
+
 export function getActiveSupabaseUrl() {
   return currentUrl;
 }
@@ -79,17 +100,52 @@ export function getActiveSupabaseKey() {
 
 export { currentUrl as supabaseUrl, currentKey as supabaseAnonKey };
 
+type UnknownFn = (...args: unknown[]) => unknown;
+type UnknownRecord = Record<string, unknown>;
+
 export const supabase = new Proxy({} as SupabaseClient, {
-  get(_target, prop, receiver) {
-    if (typeof window !== "undefined" && !checkIsConfigured(currentUrl, currentKey) && !configFetched) {
-      ensureSupabaseConfig();
-    }
-    const instance = clientInstance;
-    const value = Reflect.get(instance, prop, receiver);
+  get(_target, prop: string | symbol) {
+    const propName = String(prop);
+    const freshClient = clientInstance as unknown as UnknownRecord;
+    const value = freshClient[propName];
+
     if (typeof value === "function") {
-      return value.bind(instance);
+      return (...args: unknown[]) => {
+        if (!checkIsConfigured(currentUrl, currentKey) && configFetchPromise) {
+          return configFetchPromise.then((client: SupabaseClient) => {
+            const clientRec = client as unknown as Record<string, UnknownFn>;
+            return clientRec[propName](...args);
+          });
+        }
+        return (value as UnknownFn).apply(freshClient, args);
+      };
     }
+
+    if (value && typeof value === "object") {
+      return new Proxy(value as UnknownRecord, {
+        get(subTarget, subProp: string | symbol) {
+          const subPropName = String(subProp);
+          const subVal = (subTarget as UnknownRecord)[subPropName];
+          if (typeof subVal === "function") {
+            return (...args: unknown[]) => {
+              if (!checkIsConfigured(currentUrl, currentKey) && configFetchPromise) {
+                return configFetchPromise.then((client: SupabaseClient) => {
+                  const clientRec = client as unknown as Record<string, Record<string, UnknownFn>>;
+                  const targetObj = clientRec[propName];
+                  return targetObj ? targetObj[subPropName](...args) : undefined;
+                });
+              }
+              return (subVal as UnknownFn).apply(subTarget, args);
+            };
+          }
+          return subVal;
+        },
+      });
+    }
+
     return value;
   },
 });
+
+
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { isSupabaseConfigured, supabaseUrl, ensureSupabaseConfig } from "@/lib/supabase";
+import { getIsSupabaseConfigured, getActiveSupabaseUrl, ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -13,11 +13,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [configured, setConfigured] = useState(isSupabaseConfigured);
+  const [checkingConfig, setCheckingConfig] = useState(true);
+  const [configured, setConfigured] = useState(true);
+  const [activeUrl, setActiveUrl] = useState("");
 
   useEffect(() => {
     ensureSupabaseConfig().then(() => {
-      setConfigured(isSupabaseConfigured);
+      setConfigured(getIsSupabaseConfigured());
+      setActiveUrl(getActiveSupabaseUrl());
+      setCheckingConfig(false);
     });
 
     const handleMessage = (event: MessageEvent) => {
@@ -44,7 +48,7 @@ export default function LoginPage() {
     try {
       const activeClient = await ensureSupabaseConfig();
 
-      if (!isSupabaseConfigured) {
+      if (!getIsSupabaseConfigured()) {
         setLoading(false);
         setMessage("Supabase credentials are missing or set to placeholder. Please check your NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
         return;
@@ -87,7 +91,7 @@ export default function LoginPage() {
     try {
       const activeClient = await ensureSupabaseConfig();
 
-      if (!isSupabaseConfigured) {
+      if (!getIsSupabaseConfigured()) {
         setLoading(false);
         setMessage("Supabase credentials are missing or set to placeholder. Please check your NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
         return;
@@ -165,9 +169,9 @@ export default function LoginPage() {
           Continue improving your copywriting skills.
         </p>
 
-        {!configured && (
+        {!checkingConfig && !configured && (
           <div className="mt-4 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
-            <strong>Notice:</strong> Supabase environment variables are currently missing or set to placeholder (`{supabaseUrl}`).
+            <strong>Notice:</strong> Supabase environment variables are currently missing or set to placeholder (`{activeUrl || "placeholder.supabase.co"}`).
             Please add <code className="bg-black/30 px-1 py-0.5 rounded">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="bg-black/30 px-1 py-0.5 rounded">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in project Settings.
           </div>
         )}
