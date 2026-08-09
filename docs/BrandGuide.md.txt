@@ -1,0 +1,386 @@
+# CopyCoach AI Brand Guide
+
+Version:
+1.0 MVP
+
+
+# 1. Brand Identity
+
+
+## Brand Name
+
+CopyCoach AI
+
+
+## Tagline
+
+Practice. Improve. Master Copywriting.
+
+
+## Brand Purpose
+
+Help people master copywriting through practice, feedback, and continuous improvement.
+
+
+---
+
+# 2. Brand Personality
+
+
+CopyCoach AI should feel:
+
+
+## Intelligent
+
+The product should feel powered by advanced AI technology.
+
+
+## Friendly
+
+The user should feel supported, not judged.
+
+
+## Professional
+
+The platform should feel like a premium learning product.
+
+
+## Motivating
+
+Users should feel excited to improve.
+
+
+## Modern
+
+The design should feel like a future-focused SaaS product.
+
+
+---
+
+# 3. Brand Voice
+
+
+Communication style:
+
+
+Use:
+
+- Clear language
+- Encouragement
+- Simple explanations
+- Professional advice
+
+
+Avoid:
+
+- Complicated terminology
+- Negative criticism
+- Robotic responses
+
+
+Example:
+
+
+Instead of:
+
+"Your copy failed."
+
+
+Use:
+
+"Your copy has a strong foundation. Let's improve the emotional impact."
+
+
+---
+
+# 4. Visual Identity
+
+
+## Design Direction
+
+
+Style:
+
+Modern SaaS
+
+Inspired by:
+
+- Notion
+- Linear
+- Duolingo
+- ChatGPT
+
+
+Characteristics:
+
+- Clean
+- Minimal
+- Fast
+- Premium
+- Friendly
+
+
+---
+
+# 5. Color System
+
+
+## Primary Color
+
+Name:
+
+Coach Purple
+
+
+Hex:
+
+#5B5CEB
+
+
+Usage:
+
+- Buttons
+- Main actions
+- Branding
+
+
+---
+
+## Accent Color
+
+Name:
+
+Growth Green
+
+
+Hex:
+
+#7CFFB2
+
+
+Usage:
+
+- Success states
+- Progress
+- Achievements
+
+
+---
+
+## Background
+
+Name:
+
+Deep Space
+
+
+Hex:
+
+#0B1020
+
+
+Usage:
+
+- Dark mode background
+
+
+---
+
+## Surface
+
+Hex:
+
+#151A2D
+
+
+Usage:
+
+- Cards
+- Panels
+
+
+---
+
+## Text
+
+Primary:
+
+#FFFFFF
+
+
+Secondary:
+
+#AAB0C5
+
+
+---
+
+## Warning
+
+#FFC857
+
+
+Usage:
+
+- Improvement areas
+
+
+---
+
+## Error
+
+#FF5D73
+
+
+Usage:
+
+- Errors
+
+
+---
+
+# 6. Typography
+
+
+## Primary Font
+
+Inter
+
+
+Usage:
+
+- Body text
+- UI elements
+
+
+---
+
+## Secondary Font
+
+Poppins
+
+
+Usage:
+
+- Headings
+- Marketing sections
+
+
+---
+
+# 7. Logo Direction
+
+
+The logo should communicate:
+
+
+- Learning
+- Growth
+- Writing
+- Intelligence
+- Coaching
+
+
+Possible concepts:
+
+
+## Concept 1
+
+A speech bubble combined with a pencil.
+
+
+Meaning:
+
+Communication + writing.
+
+
+---
+
+## Concept 2
+
+A brain combined with a pen.
+
+
+Meaning:
+
+AI + creativity.
+
+
+---
+
+## Concept 3
+
+A coach whistle combined with a document.
+
+
+Meaning:
+
+Training + improvement.
+
+
+---
+
+# 8. UI Style
+
+
+## Cards
+
+Use:
+
+- Rounded corners
+- Soft shadows
+- Clear spacing
+
+
+## Buttons
+
+Should feel:
+
+- Interactive
+- Friendly
+- Modern
+
+
+## Animations
+
+Use:
+
+- Smooth transitions
+- Progress animations
+- Achievement celebrations
+
+
+---
+
+# 9. App Experience
+
+
+The user should feel:
+
+
+"I have a personal copywriting mentor."
+
+
+Every interaction should encourage:
+
+- Practice
+- Improvement
+- Learning
+
+
+---
+
+# 10. Future Brand Expansion
+
+
+Possible:
+
+- CopyCoach mascot
+- Learning certificates
+- Community identity
+- Professional writer profiles
+
+
+---
+
+# End Brand Guide

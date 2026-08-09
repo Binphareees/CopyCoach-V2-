@@ -1,0 +1,470 @@
+# CopyCoach AI Feature Specification
+
+Version:
+1.0 MVP
+
+
+# 1. Authentication System
+
+## Purpose
+
+Allow users to create an account and securely access their personal learning dashboard.
+
+
+## Features
+
+### Sign Up
+
+Users can:
+
+- Enter name
+- Enter email
+- Create password
+- Create account
+
+
+After registration:
+
+- Create user profile
+- Give starting XP
+- Assign beginner level
+
+
+---
+
+### Login
+
+Users can:
+
+- Enter email
+- Enter password
+- Access dashboard
+
+
+---
+
+### Password Recovery
+
+Users can:
+
+- Request password reset
+- Receive reset instructions
+- Create a new password
+
+
+---
+
+# 2. User Profile
+
+## User Information
+
+Profile contains:
+
+- Profile picture
+- Name
+- Email
+- Level
+- XP
+- Writing streak
+- Total exercises completed
+- Average score
+
+
+---
+
+# 3. Main Dashboard
+
+
+## Purpose
+
+The dashboard is the user's command center.
+
+
+## Components
+
+
+### Welcome Section
+
+Displays:
+
+"Welcome back, [Name]"
+
+
+Shows:
+
+- Current level
+- XP progress
+- Daily goal
+
+
+---
+
+### Progress Card
+
+Displays:
+
+- Average copy score
+- Improvement percentage
+- Total words written
+- Total exercises completed
+
+
+---
+
+### Recent Practice
+
+Shows:
+
+Each copy attempt:
+
+- Title
+- Copy type
+- Framework used
+- Score
+- Date
+
+
+Clicking opens the review page.
+
+
+---
+
+### Continue Learning
+
+Shows:
+
+- Current challenge
+- Recommended exercise
+- Weak skill area
+
+
+---
+
+# 4. Copy Practice System
+
+
+## Purpose
+
+Allow users to practice different types of copywriting.
+
+
+## New Practice Flow
+
+
+User selects:
+
+
+## Copy Type
+
+Options:
+
+- Email
+- Advertisement
+- Landing Page
+- Product Description
+- Sales Letter
+- Headline
+- CTA
+
+
+---
+
+## Framework Selection
+
+
+Options:
+
+- AIDA
+- PAS
+- BAB
+- FAB
+
+
+---
+
+## Challenge Prompt
+
+
+The system provides:
+
+Example:
+
+"Write a Facebook advertisement selling a productivity app to university students."
+
+
+---
+
+## Writing Editor
+
+
+Features:
+
+- Large text area
+- Word counter
+- Character counter
+- Save draft button
+- Submit button
+
+
+---
+
+# 5. AI Review System
+
+
+## Purpose
+
+Analyze copy like a professional copywriting coach.
+
+
+## Review Categories
+
+
+### Headline
+
+Checks:
+
+- Attention
+- Curiosity
+- Clarity
+
+
+---
+
+### Hook
+
+Checks:
+
+- First impression
+- Interest creation
+- Emotional connection
+
+
+---
+
+### Benefits
+
+Checks:
+
+- Customer-focused language
+- Clear outcomes
+- Value explanation
+
+
+---
+
+### Persuasion
+
+Checks:
+
+- Emotion
+- Urgency
+- Trust
+- Desire
+
+
+---
+
+### CTA
+
+Checks:
+
+- Action clarity
+- Strength
+- Motivation
+
+
+---
+
+## Score System
+
+
+Each category:
+
+0-10 points
+
+
+Example:
+
+Headline:
+8/10
+
+Hook:
+7/10
+
+Benefits:
+9/10
+
+CTA:
+6/10
+
+
+Final score:
+
+75/100
+
+
+---
+
+# 6. Feedback System
+
+
+The AI provides:
+
+
+## Strengths
+
+Example:
+
+"Your headline creates curiosity."
+
+
+---
+
+## Weaknesses
+
+Example:
+
+"Your CTA is too general."
+
+
+---
+
+## Improvement Suggestions
+
+Example:
+
+"Add a specific benefit before asking users to buy."
+
+
+---
+
+## Rewrite Challenge
+
+The AI gives:
+
+- A hint
+- A specific improvement task
+
+
+The user rewrites before seeing a full example.
+
+
+---
+
+# 7. Draft History
+
+
+Users can:
+
+- Save drafts
+- View previous attempts
+- Compare versions
+- See score improvement
+
+
+---
+
+# 8. Progress Tracking
+
+
+Track:
+
+
+Writing Activity:
+
+- Total exercises
+- Total words
+- Practice frequency
+
+
+Skill Growth:
+
+- Average score
+- Framework performance
+- Weakest category
+- Strongest category
+
+
+---
+
+# 9. Gamification System
+
+
+## XP System
+
+
+Users earn XP for:
+
+- Completing exercises
+- Improving scores
+- Daily practice
+- Completing challenges
+
+
+---
+
+## Levels
+
+
+Example:
+
+
+Level 1:
+Beginner Copywriter
+
+
+Level 5:
+Intermediate Copywriter
+
+
+Level 10:
+Professional Copywriter
+
+
+---
+
+## Achievements
+
+
+Examples:
+
+First Draft
+
+Complete first exercise.
+
+
+Rewrite Master
+
+Improve a score by 20 points.
+
+
+Consistency Champion
+
+Practice 30 days.
+
+
+---
+
+# 10. AI Coach Personality
+
+
+The AI should be:
+
+- Encouraging
+- Professional
+- Educational
+- Patient
+
+
+The AI should:
+
+Teach users how to improve.
+
+The AI should not:
+
+Simply write everything for them.
+
+
+---
+
+# End of Feature Specification
