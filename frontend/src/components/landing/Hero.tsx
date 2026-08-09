@@ -21,7 +21,7 @@ export default function Hero() {
 
           Master Copywriting Skills
 
-          <span className="block bg-gradient-to-r from-[#5B5CEB] to-[#7CFFB2] bg-clip-text text-transparent">
+          <span className="block bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-300 bg-clip-text text-transparent">
             With Your Personal AI Coach
           </span>
 

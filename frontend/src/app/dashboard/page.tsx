@@ -1,8 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  Sparkles,
+  Zap,
+  FolderPlus,
+  Search,
+  Star,
+  Copy,
+  Trash2,
+  Download,
+  Check,
+  ChevronDown,
+  LogOut,
+  Sliders,
+  Award,
+  Layers,
+  ArrowRight,
+  TrendingUp,
+  AlertTriangle,
+  RefreshCw,
+  Folder,
+  FileText,
+  BarChart3,
+  Lightbulb,
+  CheckCircle2,
+  Sun,
+  Moon,
+  Keyboard,
+  HelpCircle,
+  CreditCard,
+  UserCheck,
+  ShieldCheck,
+  X
+} from "lucide-react";
 
 interface CopyResult {
   score?: number;
@@ -31,1301 +65,1252 @@ interface ProjectItem {
 }
 
 export default function DashboardPage() {
-
   const router = useRouter();
 
-const [, setUserEmail] = useState("");
-const [, setUserId] = useState("");
-const [fullName, setFullName] = useState("");
-const [showMenu, setShowMenu] = useState(false);
-const [avatar, setAvatar] = useState("");
+  // User & Profile State
+  const [userId, setUserId] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [showMenu, setShowMenu] = useState(false);
 
-const [text, setText] = useState("");
-const [result, setResult] = useState<CopyResult | string | null>(null);
+  // Copy Generator Inputs & Outputs
+  const [text, setText] = useState("");
+  const [result, setResult] = useState<CopyResult | string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [copyType, setCopyType] = useState("Advertisement");
+  const [tone, setTone] = useState("Professional");
 
-const [loading, setLoading] = useState(false);
-const [message, setMessage] = useState("");
-const [copyType, setCopyType] = useState("Advertisement");
-const [tone, setTone] = useState("Professional");
+  // History & Filtering
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [search, setSearch] = useState("");
+  const [showFavorites, setShowFavorites] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
-const [history, setHistory] = useState<HistoryItem[]>([]);
+  // Projects State
+  const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [selectedProject, setSelectedProject] = useState("");
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [projectName, setProjectName] = useState("");
 
-const [search, setSearch] = useState("");
-const [showFavorites, setShowFavorites] = useState(false);
+  // Usage & Subscription Analytics
+  const [credits, setCredits] = useState(5);
+  const [plan, setPlan] = useState("free");
+  const [totalCopies, setTotalCopies] = useState(0);
+  const [favoriteCount, setFavoriteCount] = useState(0);
 
-const [projects, setProjects] = useState<ProjectItem[]>([]);
-const [selectedProject, setSelectedProject] = useState("");
+  // Appearance & Modals
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [showShortcutsModal, setShowShortcutsModal] = useState(false);
+  const [showSupportModal, setShowSupportModal] = useState(false);
+  const [supportSubject, setSupportSubject] = useState("");
+  const [supportMessage, setSupportMessage] = useState("");
 
-const [showProjectForm, setShowProjectForm] = useState(false);
-const [projectName, setProjectName] = useState("");
+  // Quick Notification
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-const [credits, setCredits] = useState(5);
-const [plan, setPlan] = useState("free");
-const [, setTodayUsed] = useState(0);
-const [, setTotalCopies] = useState(0);
-const [, setFavoriteCount] = useState(0);
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
-async function loadUsage(){
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    showToast(!isDarkMode ? "Switched to Dark Mode" : "Switched to Light Mode");
+  };
 
-  const {
-    data:{user}
-  } = await supabase.auth.getUser();
+  // 1. Load User Profile
+  const loadProfile = useCallback(async (id: string, userObj: { id: string; email?: string; user_metadata?: { full_name?: string; avatar_url?: string; picture?: string } }) => {
+    setUserEmail(userObj.email || "");
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("full_name, avatar_url, email")
+      .eq("id", id)
+      .maybeSingle();
 
-
-  if(!user) return;
-
-
-  const {data,error}=await supabase
-    .from("user_usage")
-.select(`
-  daily_generations_used,
-  monthly_generations_used,
-  plan,
-  subscription_status,
-  last_payment_date
-`)
-.eq("user_id", user.id)
-.maybeSingle();
-
-  if(error){
-
-    console.error("Usage error:", error);
-    return;
-
-  }
-
-
-  if (data) {
-    if (data.plan === "pro") {
-      setCredits(Math.max(0, 100 - (data.monthly_generations_used || 0)));
-    } else {
-      setCredits(Math.max(0, 5 - (data.daily_generations_used || 0)));
+    if (error) {
+      console.error("Profile fetch error:", error);
     }
-    setPlan(data.plan || "free");
-  } else {
-    await supabase.from("user_usage").upsert({
-      user_id: user.id,
-      plan: "free",
-      daily_generations_used: 0,
-      monthly_generations_used: 0,
-      daily_reset_date: new Date().toISOString(),
-      monthly_reset_date: new Date().toISOString(),
-      subscription_status: "active"
-    }, { onConflict: "user_id" });
 
-    setCredits(5);
-    setPlan("free");
+    if (data) {
+      setFullName(data.full_name || userObj.user_metadata?.full_name || userObj.user_metadata?.name || "User");
+      setAvatar(data.avatar_url || userObj.user_metadata?.avatar_url || userObj.user_metadata?.picture || "");
+    } else {
+      const name = userObj.user_metadata?.full_name || userObj.user_metadata?.name || "User";
+      setFullName(name);
+      setAvatar(userObj.user_metadata?.avatar_url || userObj.user_metadata?.picture || "");
+    }
+  }, []);
+
+  // 2. Load Usage Credits
+  const loadUsage = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("user_usage")
+      .select("daily_generations_used, monthly_generations_used, plan, subscription_status")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Usage load error:", error);
+      return;
+    }
+
+    if (data) {
+      if (data.plan === "pro") {
+        setCredits(Math.max(0, 100 - (data.monthly_generations_used || 0)));
+      } else {
+        setCredits(Math.max(0, 5 - (data.daily_generations_used || 0)));
+      }
+      setPlan(data.plan || "free");
+    } else {
+      await supabase.from("user_usage").upsert({
+        user_id: user.id,
+        plan: "free",
+        daily_generations_used: 0,
+        monthly_generations_used: 0,
+        daily_reset_date: new Date().toISOString(),
+        monthly_reset_date: new Date().toISOString(),
+        subscription_status: "active"
+      }, { onConflict: "user_id" });
+
+      setCredits(5);
+      setPlan("free");
+    }
+  }, []);
+
+  // 3. Load Projects
+  const loadProjects = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (!error) {
+      setProjects(data || []);
+    }
+  }, []);
+
+  // 4. Load Copy History
+  const loadHistory = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("history")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      setHistory(data);
+      setTotalCopies(data.length);
+      setFavoriteCount(data.filter((i) => i.favorite).length);
+    }
+  }, []);
+
+  // Initialization Effect
+  useEffect(() => {
+    let isMounted = true;
+    async function init() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push("/auth/login");
+        return;
+      }
+      if (isMounted) {
+        setUserId(user.id);
+        await loadProfile(user.id, user);
+        await loadUsage();
+        await loadProjects();
+        await loadHistory();
+      }
+    }
+    init();
+    return () => {
+      isMounted = false;
+    };
+  }, [router, loadProfile, loadUsage, loadProjects, loadHistory]);
+
+  // Handle Copy Generation
+  async function improveCopy() {
+    setMessage("");
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
+
+    if (!text.trim()) {
+      setMessage("Please enter or paste some copy to analyze and improve.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/improve", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-user-id": user.id
+        },
+        body: JSON.stringify({
+          text,
+          copyType,
+          tone
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.error || "Generation limit reached or request failed.");
+        setLoading(false);
+        return;
+      }
+
+      const improvedResult = data.result || data.error || "No response received";
+      setResult(improvedResult);
+
+      await loadUsage();
+
+      const historyData = {
+        user_id: user.id,
+        project_id: selectedProject || null,
+        original_text: text,
+        improved_text:
+          typeof improvedResult === "object"
+            ? improvedResult.improvedCopy
+            : improvedResult,
+        copy_type: copyType,
+        tone: tone,
+        favorite: false
+      };
+
+      const { error } = await supabase.from("history").insert(historyData);
+      if (!error) {
+        loadHistory();
+      }
+      showToast("Copy analyzed and optimized successfully!");
+    } catch (err) {
+      console.error("Improve copy error:", err);
+      setResult(String(err));
+    } finally {
+      setLoading(false);
+    }
   }
 
-}
+  // Favorite toggle
+  async function toggleFavorite(id: string, current: boolean) {
+    const { error } = await supabase
+      .from("history")
+      .update({ favorite: !current })
+      .eq("id", id);
 
-async function loadAnalytics(){
-
-  const {
-    data:{user}
-  } = await supabase.auth.getUser();
-
-  if(!user) return;
-
-  const {data:usage} = await supabase
-    .from("user_usage")
-.select("daily_generations_used, monthly_generations_used, plan")
-.eq("user_id", user.id)
-.maybeSingle();
-
-  if(usage){
-
-  if(usage.plan === "pro"){
-
-    setTodayUsed(
-      usage.monthly_generations_used
-    );
-
-  } else {
-
-    setTodayUsed(
-      usage.daily_generations_used
-    );
-
+    if (!error) {
+      loadHistory();
+      showToast(!current ? "Added to favorites" : "Removed from favorites");
+    }
   }
 
-}
+  // Delete history item
+  async function deleteHistory(id: string) {
+    const { error } = await supabase.from("history").delete().eq("id", id);
+    if (!error) {
+      loadHistory();
+      showToast("Item deleted");
+    }
+  }
 
-  const {count:historyCount} = await supabase
-    .from("history")
-    .select("*", {
-      count:"exact",
-      head:true
-    })
-    .eq("user_id", user.id);
+  // Create Project
+  async function createProject() {
+    if (!projectName.trim()) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
-  setTotalCopies(
-    historyCount || 0
-  );
+    const { data, error } = await supabase
+      .from("projects")
+      .insert({
+        user_id: user.id,
+        name: projectName.trim()
+      })
+      .select()
+      .single();
 
-  const {count:favorites} = await supabase
-    .from("history")
-    .select("*", {
-      count:"exact",
-      head:true
-    })
-    .eq("user_id", user.id)
-    .eq("favorite", true);
+    if (!error && data) {
+      setProjectName("");
+      setShowProjectModal(false);
+      setSelectedProject(data.id);
+      loadProjects();
+      showToast(`Project "${data.name}" created!`);
+    }
+  }
 
-  setFavoriteCount(
-    favorites || 0
-  );
+  // Clipboard copy
+  function handleCopy(value: string, idKey?: string) {
+    navigator.clipboard.writeText(value);
+    setCopiedId(idKey || "main");
+    showToast("Copied to clipboard!");
+    setTimeout(() => setCopiedId(null), 2000);
+  }
 
-}
+  // Download text file
+  function handleDownload(content: string, filename = "copycoach-improved.txt") {
+    const element = document.createElement("a");
+    const file = new Blob([content], { type: "text/plain" });
+    element.href = URL.createObjectURL(file);
+    element.download = filename;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    showToast("File downloaded!");
+  }
 
-useEffect(() => {
-  let isMounted = true;
-  async function init() {
+  // Payment upgrade
+  async function upgradeToPro() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       router.push("/auth/login");
       return;
     }
-    if (isMounted) {
-      setUserId(user.id);
-      await loadProfile(user.id, user);
-      await loadUsage();
-      await loadAnalytics();
-      await loadProjects();
-      loadHistory();
-    }
-  }
-  init();
-  return () => { isMounted = false; };
-}, [router]);
 
-async function loadProfile(
-  id: string,
-  user: { id: string; email?: string; user_metadata?: { full_name?: string; avatar_url?: string; picture?: string } }
-) {
-
-  const {data,error}=await supabase
-    .from("profiles")
-    .select("full_name, avatar_url, email")
-    .eq("id",id)
-    .maybeSingle();
-
-
-  if(error){
-
-    console.error("Profile error:", error);
-    return;
-
-  }
-
-
-  if(data){
-
-    setFullName(
-      data.full_name ||
-      user.user_metadata?.full_name ||
-      user.user_metadata?.name ||
-      "User"
-    );
-
-
-    setAvatar(
-      data.avatar_url ||
-      user.user_metadata?.avatar_url ||
-      user.user_metadata?.picture ||
-      ""
-    );
-
-
-    return;
-
-  }
-
-
-  const name =
-    user.user_metadata?.full_name ||
-    user.user_metadata?.name ||
-    "User";
-
-
-  setFullName(name);
-
-
-  setAvatar(
-    user.user_metadata?.avatar_url ||
-    user.user_metadata?.picture ||
-    ""
-  );
-
-}
-
-
-async function improveCopy(){
-  console.log("🔥 IMPROVE COPY STARTED");
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if(!user) return;
-  if(!text.trim()) return;
-
-  setLoading(true);
-
-  try {
-    const response = await fetch("/api/improve", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-user-id": user.id
-      },
-      body: JSON.stringify({
-        text,
-        copyType,
-        tone
-      })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      setMessage(data.error || "Something went wrong.");
-      setLoading(false);
-      return;
-    }
-
-    const improvedResult = data.result || data.error || "No response received";
-    setResult(improvedResult);
-
-    await loadUsage();
-    await loadAnalytics();
-
-    const historyData = {
-      user_id: user.id,
-      project_id: selectedProject || null,
-      original_text: text,
-      improved_text:
-        typeof improvedResult === "object"
-          ? improvedResult.improvedCopy
-          : improvedResult,
-      copy_type: copyType,
-      tone: tone,
-      favorite: false
-    };
-
-    const { error } = await supabase.from("history").insert(historyData);
-    if (!error) {
-      loadHistory();
-    }
-  } catch(error) {
-    console.error("IMPROVE COPY ERROR:", error);
-    setResult(String(error));
-  } finally {
-    setLoading(false);
-  }
-}
-
-
-
-
-
- async function loadHistory(){
-
-  const {
-    data,
-    error
-  } = await supabase
-    .from("history")
-    .select("*")
-    .order(
-      "created_at",
-      {
-        ascending:false
+    try {
+      const response = await fetch("/api/paystack/initialize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email, userId: user.id })
+      });
+      const data = await response.json();
+      if (data.data?.authorization_url) {
+        window.location.href = data.data.authorization_url;
+      } else {
+        setMessage(data.error || "Payment gateway unavailable.");
       }
-    );
-
-
-  if(error){
-
-    console.error(
-      "History error:",
-      error
-    );
-
-    return;
-
-  }
-
-
-  setHistory(
-    data || []
-  );
-
-}
-
-
-  async function toggleFavorite(
-    id:string,
-    current:boolean
-  ){
-
-
-    const {
-      error
-    } = await supabase
-      .from("history")
-      .update({
-
-        favorite:!current
-
-      })
-      .eq(
-        "id",
-        id
-      );
-
-
-
-    if(error){
-
-      console.error(
-        error
-      );
-
-      return;
-
+    } catch (e) {
+      console.error(e);
+      setMessage("Failed to start payment.");
     }
-
-
-
-    loadHistory();
-
   }
 
-
-
-async function loadProjects(){
-
-  const {
-    data:{user}
-  } = await supabase.auth.getUser();
-
-  if(!user) return;
-
-  const {data,error} = await supabase
-    .from("projects")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at");
-
-  if(error){
-
-    console.error(
-      "Projects error:",
-      error
-    );
-
-    return;
-
-  }
-
-  setProjects(
-    data || []
-  );
-
-}
-
-async function createProject(){
-
-  if(!projectName.trim()) return;
-
-
-  const {
-    data:{user}
-  } = await supabase.auth.getUser();
-
-
-  if(!user) return;
-
-
-  const {data,error}=await supabase
-    .from("projects")
-    .insert({
-
-      user_id:user.id,
-
-      name:projectName
-
-    })
-    .select()
-    .single();
-
-
-
-  if(error){
-
-    console.error(
-      "Create project error:",
-      error
-    );
-
-    return;
-
-  }
-
-
-  setProjects([
-    ...projects,
-    data
-  ]);
-
-
-  setSelectedProject(
-    data.id
-  );
-
-
-  setProjectName("");
-
-  setShowProjectForm(false);
-
-}
-
-  async function deleteHistory(
-    id:string
-  ){
-
-
-    const {
-      error
-    } = await supabase
-      .from("history")
-      .delete()
-      .eq(
-        "id",
-        id
-      );
-
-
-
-    if(error){
-
-      console.error(
-        error
-      );
-
-      return;
-
-    }
-
-
-
-    loadHistory();
-
-  }
-
-
-
-
-
-
-
-  function copyText(value:string){
-
-    navigator.clipboard.writeText(value);
-
-  }
-
-
-
-
-async function upgradeToPro(){
-
-  const {
-    data:{user}
-  } = await supabase.auth.getUser();
-
-
-  if(!user){
-
+  // Logout
+  async function handleLogout() {
+    await supabase.auth.signOut();
     router.push("/auth/login");
-    return;
-
   }
 
+  // Filtered History
+  const filteredHistory = history.filter((item) => {
+    const matchesSearch = item.improved_text?.toLowerCase().includes(search.toLowerCase()) ||
+                          item.copy_type?.toLowerCase().includes(search.toLowerCase());
+    const matchesFavorite = showFavorites ? item.favorite : true;
+    return matchesSearch && matchesFavorite;
+  });
 
-  const response = await fetch(
-    "/api/paystack/initialize",
-    {
+  // Sample copy starter helper
+  const insertSample = (sampleText: string, sampleType: string, sampleTone: string) => {
+    setText(sampleText);
+    setCopyType(sampleType);
+    setTone(sampleTone);
+    showToast("Sample loaded into workspace");
+  };
 
-      method:"POST",
+  return (
+    <div className="min-h-screen bg-[#0B1020] text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-slate-900 border border-cyan-500/40 text-cyan-200 px-4 py-3 rounded-xl shadow-2xl text-sm font-medium animate-in fade-in slide-in-from-bottom-4">
+          <Check className="w-4 h-4 text-cyan-400" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
 
-      headers:{
-        "Content-Type":"application/json"
-      },
+      {/* Top Professional Header Bar */}
+      <header className="sticky top-0 z-40 bg-[#0B1020]/90 backdrop-blur-xl border-b border-slate-800/80">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          {/* Logo Brand Branding */}
+          <Link href="/" className="flex items-center gap-3 group">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo-primary-dark.svg"
+              alt="CopyCoach AI"
+              className="h-10 w-auto object-contain transition-transform group-hover:scale-105"
+            />
+          </Link>
 
-      body:JSON.stringify({
-        email: user.email,
-        userId: user.id
-      })
+          {/* Quick Active Project Indicator & Navigation */}
+          <div className="hidden md:flex items-center gap-4">
+            <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 rounded-xl px-3.5 py-1.5 text-xs text-slate-300">
+              <Folder className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Workspace:</span>
+              <select
+                value={selectedProject}
+                onChange={(e) => setSelectedProject(e.target.value)}
+                className="bg-transparent font-medium text-white focus:outline-none cursor-pointer"
+              >
+                <option value="" className="bg-slate-900 text-slate-200">Default Workspace</option>
+                {projects.map((p) => (
+                  <option key={p.id} value={p.id} className="bg-slate-900 text-slate-200">
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-    }
+            <button
+              onClick={() => setShowProjectModal(true)}
+              className="flex items-center gap-1.5 text-xs font-medium text-cyan-400 hover:text-cyan-300 bg-cyan-950/40 border border-cyan-800/50 hover:bg-cyan-900/40 px-3 py-1.5 rounded-xl transition-all cursor-pointer"
+            >
+              <FolderPlus className="w-3.5 h-3.5" />
+              <span>New Project</span>
+            </button>
+          </div>
+
+          {/* User Account Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="flex items-center gap-3 p-1.5 rounded-2xl hover:bg-slate-800/60 border border-transparent hover:border-slate-800 transition-all cursor-pointer"
+            >
+              <div className="h-10 w-10 rounded-xl overflow-hidden bg-slate-800 border border-cyan-500/30 flex items-center justify-center font-bold text-sm text-cyan-400 shrink-0">
+                {avatar ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={avatar} alt={fullName} className="h-full w-full object-cover" />
+                ) : (
+                  fullName ? fullName.charAt(0).toUpperCase() : "U"
+                )}
+              </div>
+              <div className="text-left hidden sm:block pr-1">
+                <p className="text-xs font-semibold text-white leading-tight">{fullName || "CopyCoach User"}</p>
+                <p className="text-[11px] text-slate-400 font-medium capitalize mt-0.5 flex items-center gap-1">
+                  <span className={`h-1.5 w-1.5 rounded-full ${plan === "pro" ? "bg-amber-400" : "bg-cyan-400"}`} />
+                  {plan === "pro" ? "Pro Plan" : "Free Plan"}
+                </p>
+              </div>
+              <ChevronDown className="w-4 h-4 text-slate-400 hidden sm:block" />
+            </button>
+
+            {/* Comprehensive Professional Dropdown Menu */}
+            {showMenu && (
+              <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-slate-900 border border-slate-800/90 p-2.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 backdrop-blur-2xl">
+                {/* Profile Header */}
+                <div className="px-3 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl mb-2">
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-lg bg-cyan-950 border border-cyan-500/30 flex items-center justify-center font-bold text-xs text-cyan-300 shrink-0">
+                      {avatar ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img src={avatar} alt={fullName} className="h-full w-full object-cover rounded-lg" />
+                      ) : (
+                        fullName ? fullName.charAt(0).toUpperCase() : "U"
+                      )}
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-xs font-bold text-white truncate">{fullName || "CopyCoach User"}</p>
+                      <p className="text-[11px] text-slate-400 truncate mt-0.5">{userEmail || userId}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px]">
+                    <span className="text-slate-400 font-medium flex items-center gap-1">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>{plan === "pro" ? "Pro Membership" : "Starter Free Plan"}</span>
+                    </span>
+                    <span className="font-bold text-cyan-400">{credits} Credits Left</span>
+                  </div>
+                </div>
+
+                {/* Account & Settings Group */}
+                <div className="space-y-0.5 mb-2">
+                  <span className="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                    Account & Workspace
+                  </span>
+
+                  <Link
+                    href="/dashboard/profile"
+                    onClick={() => setShowMenu(false)}
+                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <UserCheck className="w-4 h-4 text-cyan-400" />
+                      <span>Profile Settings</span>
+                    </div>
+                    <span className="text-[10px] text-slate-500">Edit</span>
+                  </Link>
+
+                  <Link
+                    href="/dashboard/profile"
+                    onClick={() => setShowMenu(false)}
+                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Sliders className="w-4 h-4 text-purple-400" />
+                      <span>Brand Voice & AI Persona</span>
+                    </div>
+                    <span className="text-[10px] text-purple-400/80 bg-purple-950/40 px-1.5 py-0.5 rounded">Custom</span>
+                  </Link>
+
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      upgradeToPro();
+                    }}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <CreditCard className="w-4 h-4 text-amber-400" />
+                      <span>Subscription & Plan</span>
+                    </div>
+                    <span className={`text-[10px] font-bold ${plan === "pro" ? "text-amber-400" : "text-cyan-400"}`}>
+                      {plan === "pro" ? "Pro Active" : "Upgrade"}
+                    </span>
+                  </button>
+                </div>
+
+                {/* Appearance Group */}
+                <div className="pt-2 border-t border-slate-800/80 space-y-0.5 mb-2">
+                  <span className="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                    Preferences
+                  </span>
+
+                  <button
+                    onClick={toggleTheme}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      {isDarkMode ? <Moon className="w-4 h-4 text-blue-400" /> : <Sun className="w-4 h-4 text-amber-400" />}
+                      <span>Appearance</span>
+                    </div>
+                    <span className="text-[10px] font-medium text-cyan-300 bg-cyan-950/60 border border-cyan-800/40 px-2 py-0.5 rounded">
+                      {isDarkMode ? "Dark Theme" : "Light Theme"}
+                    </span>
+                  </button>
+                </div>
+
+                {/* Resources & Help Group */}
+                <div className="pt-2 border-t border-slate-800/80 space-y-0.5 mb-2">
+                  <span className="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                    Support & Tools
+                  </span>
+
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      setShowShortcutsModal(true);
+                    }}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Keyboard className="w-4 h-4 text-emerald-400" />
+                      <span>Keyboard Shortcuts</span>
+                    </div>
+                    <span className="text-[10px] text-slate-500 font-mono">⌘K</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      setShowSupportModal(true);
+                    }}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <HelpCircle className="w-4 h-4 text-cyan-400" />
+                      <span>Help & AI Support</span>
+                    </div>
+                    <span className="text-[10px] text-slate-500">24/7</span>
+                  </button>
+                </div>
+
+                {/* Sign Out Button */}
+                <div className="pt-2 border-t border-slate-800/80">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-950/50 hover:text-rose-300 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <LogOut className="w-4 h-4" />
+                      <span>Sign Out</span>
+                    </div>
+                    <span className="text-[10px] opacity-70">Exit</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        {/* Welcome & Analytics Banner */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          {/* Credits & Plan Gauge */}
+          <div className="bg-slate-900/60 border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden group">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">AI Generation Credits</span>
+              <Zap className="w-4 h-4 text-cyan-400" />
+            </div>
+            <div className="my-3">
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-extrabold text-white">{credits}</span>
+                <span className="text-xs text-slate-400">/ {plan === "pro" ? 100 : 5} left today</span>
+              </div>
+              <div className="w-full bg-slate-800 rounded-full h-2 mt-2.5 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-cyan-400 to-blue-600 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, (credits / (plan === "pro" ? 100 : 5)) * 100)}%` }}
+                />
+              </div>
+            </div>
+            {plan === "free" ? (
+              <button
+                onClick={upgradeToPro}
+                className="text-xs font-semibold text-cyan-300 hover:text-white flex items-center gap-1 group/btn cursor-pointer"
+              >
+                <span>Upgrade to Pro (100 daily)</span>
+                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1" />
+              </button>
+            ) : (
+              <span className="text-[11px] text-emerald-400 font-medium flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Unlimited Pro Access Active</span>
+              </span>
+            )}
+          </div>
+
+          {/* Stat 2: Total Generations */}
+          <div className="bg-slate-900/60 border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Copy Improvements</span>
+              <FileText className="w-4 h-4 text-blue-400" />
+            </div>
+            <div className="my-3">
+              <div className="text-3xl font-extrabold text-white">{totalCopies}</div>
+              <p className="text-xs text-slate-400 mt-1">Saved in history library</p>
+            </div>
+            <span className="text-[11px] text-slate-500 flex items-center gap-1">
+              <TrendingUp className="w-3.5 h-3.5 text-blue-400" />
+              <span>Real-time persistence</span>
+            </span>
+          </div>
+
+          {/* Stat 3: Favorites Saved */}
+          <div className="bg-slate-900/60 border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Starred Favorites</span>
+              <Star className="w-4 h-4 text-amber-400 fill-amber-400/20" />
+            </div>
+            <div className="my-3">
+              <div className="text-3xl font-extrabold text-white">{favoriteCount}</div>
+              <p className="text-xs text-slate-400 mt-1">High-converting snippets</p>
+            </div>
+            <button
+              onClick={() => setShowFavorites(!showFavorites)}
+              className="text-xs font-semibold text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
+            >
+              <span>{showFavorites ? "View All Copies" : "Filter Favorites"}</span>
+            </button>
+          </div>
+
+          {/* Stat 4: Active Workspaces */}
+          <div className="bg-slate-900/60 border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Projects</span>
+              <Layers className="w-4 h-4 text-purple-400" />
+            </div>
+            <div className="my-3">
+              <div className="text-3xl font-extrabold text-white">{projects.length}</div>
+              <p className="text-xs text-slate-400 mt-1">Organized campaigns</p>
+            </div>
+            <button
+              onClick={() => setShowProjectModal(true)}
+              className="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1 cursor-pointer"
+            >
+              <span>+ Create Project</span>
+            </button>
+          </div>
+        </div>
+
+        {/* WORKSPACE GRID: LEFT INPUT & RIGHT OUTPUT */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+          {/* LEFT PANEL: INPUT FORM & STARTERS */}
+          <div className="lg:col-span-7 bg-slate-900/70 border border-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xl">
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-cyan-400" />
+                    <span>CopyCoach AI Studio</span>
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Paste raw copy to receive strategic coaching, score analysis, and instant AI optimization.
+                  </p>
+                </div>
+
+                <div className="hidden sm:flex items-center gap-2">
+                  <span className="text-[11px] text-slate-400">Tone:</span>
+                  <span className="text-xs font-medium text-cyan-300 bg-cyan-950/60 border border-cyan-800/40 px-2.5 py-1 rounded-lg">
+                    {tone}
+                  </span>
+                </div>
+              </div>
+
+              {/* Selector Controls */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    Content Type
+                  </label>
+                  <select
+                    value={copyType}
+                    onChange={(e) => setCopyType(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-200 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer"
+                  >
+                    <option value="Advertisement">Social Media & Search Ad</option>
+                    <option value="Email">Sales & Nurture Email</option>
+                    <option value="Landing Page">Landing Page & Hero Headline</option>
+                    <option value="Social Media">LinkedIn & Twitter Post</option>
+                    <option value="Blog">Blog Post & Article Intro</option>
+                    <option value="Product Description">E-commerce Product Copy</option>
+                    <option value="SMS">SMS & Push Notification</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    Brand Tone
+                  </label>
+                  <select
+                    value={tone}
+                    onChange={(e) => setTone(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-200 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer"
+                  >
+                    <option value="Professional">Professional & Direct</option>
+                    <option value="Persuasive">Persuasive & High Energy</option>
+                    <option value="Bold & Punchy">Bold & Punchy</option>
+                    <option value="Friendly">Conversational & Warm</option>
+                    <option value="Luxury">Luxury & Premium</option>
+                    <option value="Urgent">Urgent & FOMO Driven</option>
+                    <option value="Witty">Witty & Engaging</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Quick Prompt Starters */}
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                    <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Quick Templates</span>
+                  </span>
+                  {text && (
+                    <button
+                      onClick={() => setText("")}
+                      className="text-[11px] text-slate-500 hover:text-slate-300 transition-colors"
+                    >
+                      Clear Input
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => insertSample("Double your sales team efficiency with our AI CRM platform that automates follow-ups in seconds.", "Advertisement", "Bold & Punchy")}
+                    className="text-xs bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                  >
+                    ⚡ SaaS Ad Headline
+                  </button>
+                  <button
+                    onClick={() => insertSample("Hey John, you left something behind in your cart! Grab your discount before midnight.", "Email", "Urgent")}
+                    className="text-xs bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                  >
+                    🛒 Cart Abandonment Email
+                  </button>
+                  <button
+                    onClick={() => insertSample("Transform your morning routine with our organic cold-pressed matcha blend.", "Product Description", "Luxury")}
+                    className="text-xs bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                  >
+                    ✨ E-commerce Hook
+                  </button>
+                </div>
+              </div>
+
+              {/* Main Copy Input Box */}
+              <div className="relative">
+                <textarea
+                  rows={8}
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="Paste or write your raw copywriting draft here... (e.g. ad hooks, email subject lines, landing page copy)"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-slate-100 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-none font-sans"
+                />
+                <div className="absolute bottom-3 right-4 text-[11px] text-slate-500 font-mono">
+                  {text.length} chars
+                </div>
+              </div>
+
+              {message && (
+                <div className="mt-3 p-3 rounded-xl bg-rose-950/60 border border-rose-800/60 text-rose-300 text-xs flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                  <span>{message}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Action Trigger Button */}
+            <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+              <span className="text-xs text-slate-400 hidden sm:inline">
+                Cost: <strong className="text-slate-200">1 Credit</strong>
+              </span>
+
+              <button
+                onClick={improveCopy}
+                disabled={loading || credits <= 0}
+                className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold px-8 py-3.5 rounded-2xl text-sm transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin text-slate-950" />
+                    <span>Analyzing & Refining Copy...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 text-slate-950 fill-slate-950" />
+                    <span>Improve Copy with CopyCoach AI</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* RIGHT PANEL: REAL-TIME AI COACHING ANALYSIS & OUTPUT */}
+          <div className="lg:col-span-5 bg-slate-900/70 border border-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xl min-h-[480px]">
+            {result ? (
+              <div className="space-y-5 animate-in fade-in duration-300">
+                {/* Header with Score */}
+                <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                  <div>
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">AI Copy Evaluation</span>
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2 mt-0.5">
+                      <BarChart3 className="w-5 h-5 text-cyan-400" />
+                      <span>Optimization Score</span>
+                    </h3>
+                  </div>
+
+                  <div className="text-right">
+                    <span
+                      className={`text-3xl font-extrabold ${
+                        (typeof result === "object" && result.score && result.score >= 80)
+                          ? "text-emerald-400"
+                          : (typeof result === "object" && result.score && result.score >= 60)
+                          ? "text-amber-400"
+                          : "text-cyan-400"
+                      }`}
+                    >
+                      {typeof result === "object" && result.score ? `${result.score}/100` : "85/100"}
+                    </span>
+                    <p className="text-[10px] text-slate-400 uppercase tracking-wider">Conversion Ready</p>
+                  </div>
+                </div>
+
+                {/* Framework & Strengths */}
+                {typeof result === "object" && (
+                  <div className="grid grid-cols-1 gap-3">
+                    {result.framework && (
+                      <div className="bg-slate-950 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
+                        <span className="text-slate-400">Framework Applied:</span>
+                        <span className="font-semibold text-cyan-300 bg-cyan-950/60 px-2.5 py-0.5 rounded border border-cyan-800/40">
+                          {result.framework}
+                        </span>
+                      </div>
+                    )}
+
+                    {result.strengths && result.strengths.length > 0 && (
+                      <div className="bg-slate-950 border border-slate-800 p-3.5 rounded-xl text-xs space-y-1.5">
+                        <div className="font-semibold text-emerald-400 flex items-center gap-1.5 mb-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Key Strengths Identified</span>
+                        </div>
+                        <ul className="space-y-1 text-slate-300">
+                          {result.strengths.map((str, idx) => (
+                            <li key={idx} className="flex items-start gap-1.5">
+                              <span className="text-emerald-400 font-bold">•</span>
+                              <span>{str}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {result.coachAdvice && (
+                      <div className="bg-slate-950 border border-slate-800 p-3.5 rounded-xl text-xs space-y-1">
+                        <div className="font-semibold text-amber-400 flex items-center gap-1.5 mb-1">
+                          <Lightbulb className="w-3.5 h-3.5" />
+                          <span>Coach Advice</span>
+                        </div>
+                        <p className="text-slate-300 leading-relaxed">{result.coachAdvice}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Improved Copy Output Box */}
+                <div className="bg-slate-950 border border-cyan-500/30 rounded-2xl p-4.5 shadow-inner relative">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-semibold text-cyan-400 uppercase tracking-wider flex items-center gap-1">
+                      <Award className="w-3.5 h-3.5" />
+                      <span>Optimized Copy Version</span>
+                    </span>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() =>
+                          handleCopy(
+                            typeof result === "object" ? result.improvedCopy || "" : String(result),
+                            "result"
+                          )
+                        }
+                        className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                        title="Copy text"
+                      >
+                        {copiedId === "result" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          handleDownload(
+                            typeof result === "object" ? result.improvedCopy || "" : String(result)
+                          )
+                        }
+                        className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                        title="Download text"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-slate-100 whitespace-pre-wrap font-sans leading-relaxed">
+                    {typeof result === "object" ? result.improvedCopy : String(result)}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              /* Empty Placeholder State */
+              <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-400 my-auto">
+                <div className="h-16 w-16 rounded-3xl bg-slate-950 border border-slate-800 flex items-center justify-center mb-4 text-cyan-400 shadow-xl">
+                  <Sparkles className="w-8 h-8" />
+                </div>
+                <h3 className="text-base font-semibold text-white mb-1">Awaiting Copy Analysis</h3>
+                <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
+                  Enter your copy on the left and click <strong className="text-slate-200">&quot;Improve Copy&quot;</strong> to receive AI scoring, strategic recommendations, and high-converting rewrites.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* BOTTOM SECTION: COPY HISTORY & SAVED LIBRARY */}
+        <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 sm:p-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <FileText className="w-5 h-5 text-cyan-400" />
+                <span>Copy History & Saved Library</span>
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Manage, filter, copy, or export your past optimized copy generations.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-64">
+                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                <input
+                  type="text"
+                  placeholder="Search history..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <button
+                onClick={() => setShowFavorites(!showFavorites)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
+                  showFavorites
+                    ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                    : "bg-slate-950 text-slate-400 border-slate-800 hover:text-white"
+                }`}
+              >
+                <Star className={`w-3.5 h-3.5 ${showFavorites ? "fill-amber-300" : ""}`} />
+                <span>{showFavorites ? "Starred Only" : "All Copies"}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* History Cards List */}
+          {filteredHistory.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredHistory.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-slate-950/80 border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between transition-all group hover:shadow-xl"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-semibold text-cyan-300 bg-cyan-950/60 border border-cyan-800/40 px-2.5 py-0.5 rounded-md">
+                          {item.copy_type || "Copy"}
+                        </span>
+                        <span className="text-[11px] text-slate-400 bg-slate-900 px-2 py-0.5 rounded">
+                          Tone: {item.tone || "Default"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => toggleFavorite(item.id, item.favorite)}
+                          className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
+                            item.favorite
+                              ? "bg-amber-500/20 border-amber-500/40 text-amber-300"
+                              : "bg-slate-900 border-slate-800 text-slate-400 hover:text-white"
+                          }`}
+                          title="Star favorite"
+                        >
+                          <Star className={`w-3.5 h-3.5 ${item.favorite ? "fill-amber-300" : ""}`} />
+                        </button>
+
+                        <button
+                          onClick={() => handleCopy(item.improved_text, item.id)}
+                          className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                          title="Copy text"
+                        >
+                          {copiedId === item.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        </button>
+
+                        <button
+                          onClick={() => handleDownload(item.improved_text, `${item.copy_type || "copy"}-improved.txt`)}
+                          className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                          title="Download"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                        </button>
+
+                        <button
+                          onClick={() => deleteHistory(item.id)}
+                          className="p-1.5 rounded-lg bg-slate-900 hover:bg-rose-950/60 border border-slate-800 text-slate-400 hover:text-rose-300 transition-colors cursor-pointer"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-300 whitespace-pre-wrap line-clamp-4 leading-relaxed font-sans mb-3">
+                      {item.improved_text}
+                    </p>
+                  </div>
+
+                  {item.original_text && (
+                    <div className="pt-2.5 border-t border-slate-900 text-[11px] text-slate-500 flex items-center justify-between">
+                      <span className="truncate max-w-[240px]">Original: &quot;{item.original_text}&quot;</span>
+                      <span className="shrink-0">{item.created_at ? new Date(item.created_at).toLocaleDateString() : ""}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 border border-dashed border-slate-800 rounded-2xl text-slate-400 text-xs">
+              No saved copy history found. Run a copy improvement above to populate your library!
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* NEW PROJECT MODAL */}
+      {showProjectModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in zoom-in-95">
+            <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
+              <FolderPlus className="w-5 h-5 text-cyan-400" />
+              <span>Create New Project Workspace</span>
+            </h3>
+            <p className="text-xs text-slate-400 mb-5">
+              Organize campaigns, clients, or product lines into separate workspaces.
+            </p>
+
+            <div className="mb-5">
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                Project Name
+              </label>
+              <input
+                type="text"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                placeholder="e.g. Summer Marketing Campaign"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500"
+                autoFocus
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowProjectModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={createProject}
+                className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-2 rounded-xl text-xs transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer"
+              >
+                Create Project
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* KEYBOARD SHORTCUTS MODAL */}
+      {showShortcutsModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-lg w-full shadow-2xl animate-in zoom-in-95">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <Keyboard className="w-5 h-5 text-emerald-400" />
+                <span>Keyboard Shortcuts & Productivity</span>
+              </h3>
+              <button
+                onClick={() => setShowShortcutsModal(false)}
+                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 mb-6">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+                <span className="text-slate-300">Run Copy Optimization</span>
+                <div className="flex items-center gap-1 font-mono">
+                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">⌘</kbd>
+                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">Enter</kbd>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+                <span className="text-slate-300">Toggle Star Favorite</span>
+                <div className="flex items-center gap-1 font-mono">
+                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">⌘</kbd>
+                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">F</kbd>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+                <span className="text-slate-300">Copy Improved Text</span>
+                <div className="flex items-center gap-1 font-mono">
+                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">⌘</kbd>
+                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">C</kbd>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+                <span className="text-slate-300">Create New Project</span>
+                <div className="flex items-center gap-1 font-mono">
+                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">⌘</kbd>
+                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">P</kbd>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowShortcutsModal(false)}
+                className="bg-slate-800 hover:bg-slate-700 text-white font-medium px-5 py-2 rounded-xl text-xs transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* HELP & AI SUPPORT MODAL */}
+      {showSupportModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-lg w-full shadow-2xl animate-in zoom-in-95">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <HelpCircle className="w-5 h-5 text-cyan-400" />
+                <span>CopyCoach AI Support & Feedback</span>
+              </h3>
+              <button
+                onClick={() => setShowSupportModal(false)}
+                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+              Have a question about your copy analysis or need help setting up custom brand voices? Send us a message and our team will assist you shortly.
+            </p>
+
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                  Topic / Subject
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Custom Brand Tone Request"
+                  value={supportSubject}
+                  onChange={(e) => setSupportSubject(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                  Message
+                </label>
+                <textarea
+                  rows={4}
+                  placeholder="Describe your question or feedback..."
+                  value={supportMessage}
+                  onChange={(e) => setSupportMessage(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 resize-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowSupportModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowSupportModal(false);
+                  setSupportSubject("");
+                  setSupportMessage("");
+                  showToast("Support ticket submitted! We'll reply via email.");
+                }}
+                className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-2 rounded-xl text-xs transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer"
+              >
+                Send Message
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
-
-
-  const data = await response.json();
-
-if(!response.ok){
-
-  setMessage(
-    data.error || "Generation limit reached"
-  );
-
-  setLoading(false);
-
-  return;
-
-}
-
-  if(data.data?.authorization_url){
-
-    window.location.href =
-      data.data.authorization_url;
-
-  }
-  else{
-
-    console.error(
-      "Payment error:",
-      data
-    );
-
-  }
-
-}
-
-
- async function logout(){
-
-  await supabase.auth.signOut();
-
-  router.push("/auth/login");
-
-}
-
-
-
-
-
-
-  const filteredHistory =
-    history.filter((item)=>{
-
-
-      const matchesSearch =
-        item.improved_text
-        ?.toLowerCase()
-        .includes(
-          search.toLowerCase()
-        );
-
-
-
-      const matchesFavorite =
-        showFavorites
-        ? item.favorite
-        : true;
-
-
-
-      return (
-        matchesSearch &&
-        matchesFavorite
-      );
-
-
-    });
-
-
-
-
-
-return (
-
-<main className="min-h-screen bg-[#0B1020] p-8 text-white">
-
-
-<div className="mx-auto max-w-5xl">
-
-
-
-<div className="flex items-center justify-between">
-
-<div className="flex items-center gap-3">
-<img src="/logo-symbol.svg" alt="CopyCoach AI" className="h-12 w-12 object-contain" />
-<div>
-
-<h1 className="text-4xl font-bold bg-gradient-to-r from-white via-slate-100 to-[#00F0FF] bg-clip-text text-transparent">
-CopyCoach AI
-</h1>
-
-<p className="text-gray-400 mt-1">
-Welcome back, {fullName || "User"} 👋
-</p>
-
-</div>
-</div>
-
-
-<div className="relative">
-
-
-<button
-onClick={()=>setShowMenu(!showMenu)}
-className="flex items-center gap-3"
->
-
-
-<img
-
-src={
-avatar ||
-"https://placehold.co/80x80"
-}
-
-className="h-12 w-12 rounded-full object-cover border"
-
-alt="Avatar"
-
-/>
-
-
-<div className="text-left">
-
-<p className="font-semibold">
-{fullName || "User"}
-</p>
-
-<p className="text-xs text-gray-400">
-Account
-</p>
-
-</div>
-
-
-</button>
-
-
-
-{
-showMenu &&
-
-<div className="absolute right-0 mt-3 w-48 rounded-xl bg-gray-900 p-3 shadow-xl">
-
-
-<button
-
-onClick={()=>router.push("/dashboard/profile")}
-
-className="w-full rounded-lg px-3 py-2 text-left hover:bg-white/10"
-
->
-
-Profile Settings
-
-</button>
-
-
-
-<button
-
-onClick={logout}
-
-className="mt-2 w-full rounded-lg px-3 py-2 text-left text-red-400 hover:bg-white/10"
-
->
-
-Logout
-
-</button>
-
-
-</div>
-
-}
-
-
-</div>
-
-</div>
-
-
-
-<div className="mb-6 rounded-2xl bg-white/5 p-6">
-
-  <h2 className="text-xl font-semibold">
-    AI Credits
-  </h2>
-
-
-  <p className="mt-2 text-gray-400">
-  {plan === "free" ? "Free Plan" : "⭐ Premium Plan"}
-</p>
-
-
-  <div className="mt-4 flex items-end gap-2">
-
-    <span className="text-4xl font-bold">
-      {credits}
-    </span>
-
-   <span className="mb-1 text-gray-400">
-  / {plan === "pro" ? 100 : 5} today
-</span>
-
-  </div>
-
-
-  <p className="mt-2 text-sm text-gray-400">
-    AI copy improvements remaining
-  </p>
-
-
-  {
-    plan === "free" &&
-
-    <button
-
-onClick={upgradeToPro}
-
-className="mt-5 rounded-xl bg-white px-5 py-2 text-black font-semibold"
-
->
-  Upgrade to Pro
-</button>
-
-  }
-
-
-</div>
-
-
-<div className="mb-6 rounded-2xl bg-white/5 p-6">
-
-<div className="flex justify-between items-center">
-
-<h2 className="text-xl font-semibold">
-Projects
-</h2>
-
-
-<button
-
-onClick={()=>setShowProjectForm(!showProjectForm)}
-
-className="rounded-xl bg-white px-4 py-2 text-black"
-
->
-+ New Project
-</button>
-
-</div>
-
-
-
-{
-showProjectForm &&
-
-<div className="mt-4 flex gap-3">
-
-<input
-
-value={projectName}
-
-onChange={(e)=>setProjectName(e.target.value)}
-
-placeholder="Project name"
-
-className="flex-1 rounded-xl bg-gray-900 p-3"
-
-/>
-
-
-<button
-
-onClick={createProject}
-
-className="rounded-xl bg-[#5B5CEB] px-5"
-
->
-Create
-</button>
-
-</div>
-
-}
-
-<div className="mt-5 space-y-3">
-
-
-{
-projects.map((project)=>(
-
-<div
-
-key={project.id}
-
-onClick={()=>
-router.push(
-`/dashboard/projects/${project.id}`
-)
-}
-
-className="cursor-pointer rounded-xl bg-gray-900 p-4 hover:bg-white/10"
-
->
-
-
-<div className="flex items-center justify-between">
-
-
-<div>
-
-<h3 className="font-semibold">
-📁 {project.name}
-</h3>
-
-
-<p className="text-sm text-gray-400">
-Open project workspace
-</p>
-
-
-</div>
-
-
-<span className="text-gray-400">
-→
-</span>
-
-
-</div>
-
-
-</div>
-
-
-))
-
-}
-
-
-</div>
-
-<select
-
-value={selectedProject}
-
-onChange={(e)=>setSelectedProject(e.target.value)}
-
-className="mt-5 w-full rounded-xl bg-gray-900 p-3"
-
->
-
-<option value="">
-Select Project
-</option>
-
-
-{
-projects.map((project)=>(
-
-<option
-key={project.id}
-value={project.id}
->
-{project.name}
-</option>
-
-))
-}
-
-
-</select>
-
-
-</div>
-
-<div className="mt-10 rounded-2xl bg-white/5 p-6">
-
-
-
-<div className="grid grid-cols-2 gap-4">
-
-
-<select
-
-value={copyType}
-
-onChange={(e)=>setCopyType(e.target.value)}
-
-className="rounded-xl bg-gray-900 p-3"
-
->
-
-<option>Advertisement</option>
-<option>Email</option>
-<option>Landing Page</option>
-<option>Social Media</option>
-<option>Blog</option>
-
-</select>
-
-
-
-
-
-<select
-
-value={tone}
-
-onChange={(e)=>setTone(e.target.value)}
-
-className="rounded-xl bg-gray-900 p-3"
-
->
-
-<option>Professional</option>
-<option>Friendly</option>
-<option>Luxury</option>
-<option>Funny</option>
-<option>Persuasive</option>
-<option>Urgent</option>
-
-
-</select>
-
-
-</div>
-
-
-
-
-
-
-<textarea
-
-className="mt-5 h-48 w-full rounded-xl bg-gray-900 p-4"
-
-placeholder="Paste your copy here..."
-
-value={text}
-
-onChange={(e)=>setText(e.target.value)}
-
- />
-
-
-{message && (
-  <p className="mt-4 text-red-500">
-    {message}
-  </p>
-)}
-
-
-<button
-  onClick={() => {
-    console.log("BUTTON CLICKED");
-    improveCopy();
-  }}
-  disabled={loading}
-  className="mt-5 rounded-xl bg-[#5B5CEB] px-6 py-3 font-semibold text-white"
->
-  {loading ? "Improving..." : "Improve Copy"}
-</button>
-
-
-
-
-{result &&
-
-<div className="mt-8 space-y-5">
-
-
-<div className="rounded-xl bg-white/10 p-5">
-
-<h2 className="text-2xl font-bold">
-Copy Score
-</h2>
-
-<p className="mt-3 text-5xl font-bold text-[#7CFFB2]">
-{result.score || 0}/100
-</p>
-
-</div>
-
-
-
-<div className="rounded-xl bg-white/10 p-5">
-
-<h2 className="text-xl font-bold">
-Strengths
-</h2>
-
-<ul className="mt-3 list-disc pl-5 text-gray-300">
-
-{result.strengths?.map(
-(item:string,index:number)=>(
-<li key={index}>
-{item}
-</li>
-)
-)}
-
-</ul>
-
-</div>
-
-
-
-
-<div className="rounded-xl bg-white/10 p-5">
-
-<h2 className="text-xl font-bold">
-Weaknesses
-</h2>
-
-<ul className="mt-3 list-disc pl-5 text-gray-300">
-
-{result.weaknesses?.map(
-(item:string,index:number)=>(
-<li key={index}>
-{item}
-</li>
-)
-)}
-
-</ul>
-
-</div>
-
-
-
-
-<div className="rounded-xl bg-white/10 p-5">
-
-<h2 className="text-xl font-bold">
-Framework Detected
-</h2>
-
-<p className="mt-3 text-gray-300">
-{result.framework}
-</p>
-
-</div>
-
-
-
-
-<div className="rounded-xl bg-white/10 p-5">
-
-<h2 className="text-xl font-bold">
-Improved Copy
-</h2>
-
-
-<p className="mt-3 whitespace-pre-wrap text-gray-200">
-{typeof result === "object"
-  ? result.improvedCopy
-  : result}
-</p>
-
-
-</div>
-
-
-
-
-<div className="rounded-xl bg-white/10 p-5">
-
-<h2 className="text-xl font-bold">
-Coach Advice
-</h2>
-
-
-<p className="mt-3 text-gray-300">
-{result.coachAdvice}
-</p>
-
-
-</div>
-
-
-
-</div>
-
-}
-
-
-
-</div>
-
-
-
-
-
-
-
-<div className="mt-10">
-
-
-<h2 className="text-2xl font-bold">
-Copy History
-</h2>
-
-
-
-<div className="flex gap-3 mt-5">
-
-
-<input
-
-placeholder="Search copies..."
-
-value={search}
-
-onChange={(e)=>setSearch(e.target.value)}
-
-className="flex-1 rounded-xl bg-gray-900 p-3"
-
-/>
-
-
-
-<button
-
-onClick={()=>setShowFavorites(!showFavorites)}
-
-className="bg-yellow-400 text-black px-5 rounded-xl"
-
->
-
-{showFavorites ? "★ Favorites":"☆ All"}
-
-</button>
-
-
-</div>
-
-
-
-
-
-<div className="space-y-5 mt-5">
-
-
-{filteredHistory.map((item)=>(
-
-
-<div
-
-key={item.id}
-
-className="rounded-2xl bg-white/5 p-5"
-
->
-
-
-<div className="flex justify-between">
-
-
-<div>
-
-<p className="font-bold">
-{item.copy_type}
-</p>
-
-<p className="text-gray-400">
-{item.tone}
-</p>
-
-</div>
-
-
-
-
-<div className="flex gap-2">
-
-
-<button
-
-onClick={()=>toggleFavorite(item.id,item.favorite)}
-
-className="bg-yellow-400 text-black px-3 rounded"
-
->
-
-{item.favorite ? "★":"☆"}
-
-</button>
-
-
-
-<button
-
-onClick={()=>copyText(item.improved_text)}
-
-className="bg-white text-black px-3 rounded"
-
->
-
-Copy
-
-</button>
-
-
-
-<button
-
-onClick={()=>deleteHistory(item.id)}
-
-className="bg-red-600 px-3 rounded"
-
->
-
-Delete
-
-</button>
-
-
-</div>
-
-
-</div>
-
-
-
-<p className="mt-4 text-gray-300">
-{item.improved_text}
-</p>
-
-
-</div>
-
-
-))}
-
-
-</div>
-
-
-</div>
-
-
-
-</div>
-
-
-</main>
-
-);
-
-
 }

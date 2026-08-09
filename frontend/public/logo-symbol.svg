@@ -1,23 +1,38 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250" width="250" height="250">
   <defs>
-    <linearGradient id="sym-electric" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#2563EB" />
-      <stop offset="100%" stop-color="#00F0FF" />
+    <linearGradient id="sym-cyan-bolt" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F0FF" />
+      <stop offset="100%" stop-color="#00C8FF" />
     </linearGradient>
-    <filter id="sym-glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0066FF" flood-opacity="0.35"/>
+
+    <linearGradient id="sym-nib-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00D2FF" />
+      <stop offset="100%" stop-color="#0099FF" />
+    </linearGradient>
+
+    <filter id="sym-shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#00E0FF" flood-opacity="0.3"/>
     </filter>
   </defs>
 
-  <g transform="translate(35, 25)" filter="url(#sym-glow)">
-    <path d="M 90 20 C 135 20 170 55 170 100 C 170 126 158 149 139 164 L 148 185 C 149 188 146 191 143 189 L 115 173 C 107 177 99 180 90 180 C 45 180 10 145 10 100 C 10 55 45 20 90 20 Z" 
-          fill="none" stroke="url(#sym-electric)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M 125 72 C 115 62 102 56 86 56 C 60 56 40 76 40 101 C 40 126 60 146 86 146 C 103 146 117 138 127 126 L 102 101 L 136 101 L 136 66 Z" 
-          fill="url(#sym-electric)" />
-    <path d="M 68 101 L 102 101 L 126 77" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
-    <g transform="translate(152, 54)">
-      <path d="M 0 -12 C 0 -5 5 0 12 0 C 5 0 0 5 0 12 C 0 5 -5 0 -12 0 C -5 0 0 -5 0 -12 Z" fill="#00F0FF" />
-      <circle cx="0" cy="0" r="3" fill="#FFFFFF" />
-    </g>
+  <g transform="translate(15, 15)" filter="url(#sym-shadow)">
+    <!-- Dark Navy Squircle Background Badge -->
+    <rect x="0" y="0" width="220" height="220" rx="52" fill="#0D1938" stroke="#1E2F5D" stroke-width="3"/>
+
+    <!-- Speech Bubble Outline (White) -->
+    <path d="M 110 42 C 148 42 180 74 180 112 C 180 136 168 156 150 170 L 156 190 C 157 193 154 196 150 194 L 128 180 C 122 182 116 184 110 184 C 72 184 40 152 40 112 C 40 74 72 42 110 42 Z" 
+          fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- Pen Nib inside speech bubble -->
+    <!-- Left Half (White) -->
+    <path d="M 110 75 L 75 130 C 75 142 88 150 100 147 L 110 145 Z" fill="#FFFFFF" />
+    <!-- Right Half (Cyan/Blue) -->
+    <path d="M 110 75 L 145 130 C 145 142 132 150 120 147 L 110 145 Z" fill="url(#sym-nib-blue)" />
+    <!-- Nib Center Breather Hole & Split Line -->
+    <circle cx="110" cy="120" r="5" fill="#0D1938" />
+    <line x1="110" y1="78" x2="110" y2="120" stroke="#0D1938" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Lightning Bolt Breaking Out Top-Right -->
+    <polygon points="165,38 202,38 178,82 210,82 152,140 168,92 144,92" fill="url(#sym-cyan-bolt)" />
   </g>
 </svg>

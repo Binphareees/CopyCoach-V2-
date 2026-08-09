@@ -1,32 +1,43 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 220" width="800" height="220">
   <defs>
-    <linearGradient id="light-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1D4ED8" />
-      <stop offset="100%" stop-color="#0284C7" />
-    </linearGradient>
-    <linearGradient id="light-spark" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0284C7" />
-      <stop offset="100%" stop-color="#2563EB" />
+    <!-- Light Blue Sparkle / Nib Gradient -->
+    <linearGradient id="light-blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
     </linearGradient>
   </defs>
 
+  <!-- Logo Icon Container (Matches Light Image) -->
   <g transform="translate(20, 20)">
-    <path d="M 90 20 C 135 20 170 55 170 100 C 170 126 158 149 139 164 L 148 185 C 149 188 146 191 143 189 L 115 173 C 107 177 99 180 90 180 C 45 180 10 145 10 100 C 10 55 45 20 90 20 Z" 
-          fill="none" stroke="url(#light-grad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M 125 72 C 115 62 102 56 86 56 C 60 56 40 76 40 101 C 40 126 60 146 86 146 C 103 146 117 138 127 126 L 102 101 L 136 101 L 136 66 Z" 
-          fill="url(#light-grad)" />
-    <path d="M 68 101 L 102 101 L 126 77" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M 152 42 C 152 49 157 54 164 54 C 157 54 152 59 152 66 C 152 59 147 54 140 54 C 147 54 152 49 152 42 Z" fill="url(#light-spark)" />
-    <circle cx="152" cy="54" r="3" fill="#0B132B" />
+    <!-- Speech Bubble Outline (Dark Navy) -->
+    <path d="M 90 35 C 122 35 148 61 148 93 C 148 112 138 129 123 140 L 128 156 C 129 159 126 161 123 160 L 105 148 C 100 150 95 151 90 151 C 58 151 32 125 32 93 C 32 61 58 35 90 35 Z" 
+          fill="none" stroke="#0B132B" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- Pen Nib inside speech bubble -->
+    <path d="M 90 62 L 62 108 C 62 118 72 124 82 122 L 90 120 Z" fill="#2563EB" />
+    <path d="M 90 62 L 118 108 C 118 118 108 124 98 122 L 90 120 Z" fill="#1D4ED8" />
+    <circle cx="90" cy="100" r="4" fill="#FFFFFF" />
+    <line x1="90" y1="64" x2="90" y2="100" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- 3 Blue Sparkle Stars at Top Right -->
+    <!-- Large Sparkle -->
+    <path d="M 148 20 C 148 30 154 36 164 36 C 154 36 148 42 148 52 C 148 42 142 36 132 36 C 142 36 148 30 148 20 Z" fill="#2563EB" />
+    <!-- Small Sparkle 1 -->
+    <path d="M 125 15 C 125 20 128 23 133 23 C 128 23 125 26 125 31 C 125 26 122 23 117 23 C 122 23 125 20 125 15 Z" fill="#3B82F6" />
+    <!-- Small Sparkle 2 -->
+    <path d="M 160 52 C 160 56 162 58 166 58 C 162 58 160 60 160 64 C 160 60 158 58 154 58 C 158 58 160 56 160 52 Z" fill="#60A5FA" />
   </g>
 
+  <!-- Brand Typography -->
   <g transform="translate(230, 138)">
-    <text font-family="Inter, system-ui, Arial, sans-serif" font-size="64" font-weight="800" letter-spacing="-1.5" fill="#0B132B">
-      Copy<tspan font-weight="400" fill="#334155">Coach</tspan>
+    <text font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="68" font-weight="800" letter-spacing="-1" fill="#0B132B">
+      CopyCoach
     </text>
-    <g transform="translate(375, -52)">
-      <rect x="0" y="0" width="86" height="56" rx="14" fill="url(#light-grad)" />
-      <text x="43" y="38" font-family="Inter, system-ui, Arial, sans-serif" font-size="30" font-weight="900" letter-spacing="1" fill="#FFFFFF" text-anchor="middle">
+    
+    <!-- AI Pill Badge -->
+    <g transform="translate(372, -56)">
+      <rect x="0" y="0" width="102" height="60" rx="16" fill="#2563EB" />
+      <text x="51" y="42" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="34" font-weight="900" letter-spacing="0.5" fill="#FFFFFF" text-anchor="middle">
         AI
       </text>
     </g>
