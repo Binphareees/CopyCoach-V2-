@@ -106,10 +106,11 @@ type UnknownRecord = Record<string, unknown>;
 export const supabase = new Proxy({} as SupabaseClient, {
   get(_target, prop: string | symbol) {
     const propName = String(prop);
-    const freshClient = clientInstance as unknown as UnknownRecord;
-    const value = freshClient[propName];
 
-    if (typeof value === "function") {
+    const getFreshClient = () => clientInstance as unknown as UnknownRecord;
+    const initialVal = getFreshClient()[propName];
+
+    if (typeof initialVal === "function") {
       return (...args: unknown[]) => {
         if (!checkIsConfigured(currentUrl, currentKey) && configFetchPromise) {
           return configFetchPromise.then((client: SupabaseClient) => {
@@ -117,15 +118,19 @@ export const supabase = new Proxy({} as SupabaseClient, {
             return clientRec[propName](...args);
           });
         }
-        return (value as UnknownFn).apply(freshClient, args);
+        const currentClient = getFreshClient();
+        const fn = currentClient[propName] as UnknownFn;
+        return fn.apply(currentClient, args);
       };
     }
 
-    if (value && typeof value === "object") {
-      return new Proxy(value as UnknownRecord, {
-        get(subTarget, subProp: string | symbol) {
+    if (initialVal && typeof initialVal === "object") {
+      return new Proxy({} as UnknownRecord, {
+        get(_subTarget, subProp: string | symbol) {
           const subPropName = String(subProp);
-          const subVal = (subTarget as UnknownRecord)[subPropName];
+          const currentParentObj = getFreshClient()[propName] as UnknownRecord;
+          const subVal = currentParentObj ? currentParentObj[subPropName] : undefined;
+
           if (typeof subVal === "function") {
             return (...args: unknown[]) => {
               if (!checkIsConfigured(currentUrl, currentKey) && configFetchPromise) {
@@ -135,7 +140,12 @@ export const supabase = new Proxy({} as SupabaseClient, {
                   return targetObj ? targetObj[subPropName](...args) : undefined;
                 });
               }
-              return (subVal as UnknownFn).apply(subTarget, args);
+              const latestParentObj = getFreshClient()[propName] as UnknownRecord;
+              const latestFn = latestParentObj ? (latestParentObj[subPropName] as UnknownFn) : undefined;
+              if (typeof latestFn === "function") {
+                return latestFn.apply(latestParentObj, args);
+              }
+              return undefined;
             };
           }
           return subVal;
@@ -143,7 +153,7 @@ export const supabase = new Proxy({} as SupabaseClient, {
       });
     }
 
-    return value;
+    return getFreshClient()[propName];
   },
 });
 

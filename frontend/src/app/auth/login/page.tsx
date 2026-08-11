@@ -26,8 +26,8 @@ export default function LoginPage() {
 
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "OAUTH_AUTH_SUCCESS") {
-        setMessage("Google login successful! Redirecting...");
-        router.push("/dashboard");
+        setMessage("Google login successful! Redirecting to dashboard...");
+        window.location.href = "/dashboard";
       }
     };
     window.addEventListener("message", handleMessage);
@@ -36,7 +36,6 @@ export default function LoginPage() {
 
 
   async function handleLogin() {
-
     if (!email || !password) {
       setMessage("Please enter your email and password.");
       return;
@@ -56,6 +55,17 @@ export default function LoginPage() {
 
       setMessage("Logging in...");
 
+      // Call login helper to ensure email confirmation state if unconfirmed
+      try {
+        await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+      } catch (e) {
+        console.warn("Login helper route check failed:", e);
+      }
+
       const timeoutPromise = new Promise<{ data: { user: null; session: null }; error: { message: string } }>((_, reject) =>
         setTimeout(() => reject(new Error("Connection timed out. Please check your Supabase URL and network connection.")), 10000)
       );
@@ -71,7 +81,23 @@ export default function LoginPage() {
       setLoading(false);
 
       if (error) {
-        setMessage(error.message);
+        if (error.message.includes("Invalid login credentials")) {
+          setMessage("Invalid email or password. If you haven't created an account yet, please click 'Sign Up' below.");
+        } else if (error.message.includes("Email rate limit exceeded")) {
+          setMessage("Supabase email rate limit reached. Your account is already registered; please try logging in again in a moment.");
+        } else if (error.message.includes("Email not confirmed")) {
+          setMessage("Email confirmation pending. Retrying sign in...");
+          // Try sign in again after helper route confirmed it
+          const retry = await activeClient.auth.signInWithPassword({ email, password });
+          if (retry.data?.session) {
+            setMessage("Login successful! Redirecting to dashboard...");
+            window.location.href = "/dashboard";
+            return;
+          }
+          setMessage("Email unconfirmed. Please check your inbox or log in again.");
+        } else {
+          setMessage(error.message);
+        }
         return;
       }
 

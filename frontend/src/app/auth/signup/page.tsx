@@ -27,8 +27,8 @@ export default function SignupPage() {
 
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "OAUTH_AUTH_SUCCESS") {
-        setMessage("Google sign-up successful! Redirecting...");
-        router.push("/dashboard");
+        setMessage("Google sign-up successful! Redirecting to dashboard...");
+        window.location.href = "/dashboard";
       }
     };
     window.addEventListener("message", handleMessage);
@@ -37,7 +37,6 @@ export default function SignupPage() {
 
 
   async function handleSignup() {
-
     if (!name || !email || !password) {
       setMessage("Please fill in all fields.");
       return;
@@ -57,32 +56,77 @@ export default function SignupPage() {
 
       setMessage("Creating account...");
 
-      const timeoutPromise = new Promise<{ data: { user: null; session: null }; error: { message: string } }>((_, reject) =>
-        setTimeout(() => reject(new Error("Connection timed out. Please check your Supabase URL and network connection.")), 10000)
-      );
+      let apiSuccess = false;
+      try {
+        const apiRes = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, name }),
+        });
 
-      const authPromise = activeClient.auth.signUp({
+        const apiData = await apiRes.json();
+        if (apiRes.ok && apiData.success) {
+          apiSuccess = true;
+        } else if (apiRes.status === 409) {
+          setMessage(apiData.error || "User already exists. Attempting to log in...");
+          apiSuccess = true;
+        } else if (!apiRes.ok && apiData.error) {
+          setMessage(apiData.error);
+          setLoading(false);
+          return;
+        }
+      } catch (e) {
+        console.warn("Server signup route unreachable, falling back to direct auth:", e);
+      }
+
+      if (!apiSuccess) {
+        const timeoutPromise = new Promise<{ data: { user: null; session: null }; error: { message: string } }>((_, reject) =>
+          setTimeout(() => reject(new Error("Connection timed out. Please check your Supabase URL and network connection.")), 10000)
+        );
+
+        const authPromise = activeClient.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: name,
+            },
+          },
+        });
+
+        const res = await Promise.race([authPromise, timeoutPromise]);
+        if (res.error) {
+          setMessage(res.error.message);
+          setLoading(false);
+          return;
+        }
+      }
+
+      setMessage("Signing in...");
+      const { data: signInData, error: signInError } = await activeClient.auth.signInWithPassword({
         email,
         password,
-        options: {
-          data: {
-            full_name: name,
-          },
-        },
       });
-
-      const res = await Promise.race([authPromise, timeoutPromise]);
-      const { error } = res;
 
       setLoading(false);
 
-      if (error) {
-        setMessage(error.message);
+      if (signInError) {
+        setMessage(`Account created successfully! ${signInError.message}. Please try logging in on the Login page.`);
+        setTimeout(() => {
+          router.push("/auth/login");
+        }, 2000);
         return;
       }
 
-      setMessage("Account created successfully! Redirecting...");
-      window.location.href = "/dashboard";
+      if (signInData?.session) {
+        setMessage("Account created and signed in! Redirecting to dashboard...");
+        window.location.href = "/dashboard";
+      } else {
+        setMessage("Account created! Please log in on the Login page.");
+        setTimeout(() => {
+          router.push("/auth/login");
+        }, 2000);
+      }
     } catch (err: unknown) {
       setLoading(false);
       const errorMsg = err instanceof Error ? err.message : "An unexpected error occurred during sign up.";
