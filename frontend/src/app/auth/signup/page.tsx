@@ -26,6 +26,7 @@ export default function SignupPage() {
     });
 
     const handleMessage = (event: MessageEvent) => {
+      // Handle post-OAuth registration success
       if (event.data?.type === "OAUTH_AUTH_SUCCESS") {
         setMessage("Google sign-up successful! Redirecting to dashboard...");
         window.location.href = "/dashboard";

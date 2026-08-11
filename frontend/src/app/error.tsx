@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 
+// Route Segment Error Boundary for Next.js App Router
 export default function ErrorBoundary({
   error,
   reset,

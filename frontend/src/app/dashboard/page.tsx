@@ -107,7 +107,18 @@ export default function DashboardPage() {
   const [favoriteCount, setFavoriteCount] = useState(0);
 
   // Appearance & Modals
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const savedTheme = localStorage.getItem("copycoach_theme");
+        if (savedTheme === "light") return false;
+        if (savedTheme === "dark") return true;
+      } catch {
+        // fallback
+      }
+    }
+    return true;
+  });
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [supportSubject, setSupportSubject] = useState("");

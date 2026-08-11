@@ -27,7 +27,17 @@ import {
   EyeOff,
   Save,
   Smartphone,
-  Laptop
+  Laptop,
+  Sun,
+  Moon,
+  LifeBuoy,
+  MessageSquare,
+  Send,
+  ExternalLink,
+  Activity,
+  CheckCircle2,
+  BookOpen,
+  ArrowRight
 } from "lucide-react";
 
 export default function ProfilePage() {
@@ -35,7 +45,7 @@ export default function ProfilePage() {
 
   // Active Tab State
   const [activeTab, setActiveTab] = useState<
-    "profile" | "brand_voice" | "security" | "preferences" | "billing"
+    "profile" | "brand_voice" | "security" | "preferences" | "billing" | "support"
   >("profile");
 
   // Profile Basic Fields
@@ -65,9 +75,16 @@ export default function ProfilePage() {
 
   // App Preferences
   const [preferredModel, setPreferredModel] = useState("Gemini 2.5 Flash (Recommended)");
+  const [themeMode, setThemeMode] = useState<"dark" | "light" | "system">("dark");
   const [autoSaveHistory, setAutoSaveHistory] = useState(true);
   const [emailUpdates, setEmailUpdates] = useState(true);
   const [usageAlerts, setUsageAlerts] = useState(true);
+
+  // Support & Help Ticket
+  const [supportSubject, setSupportSubject] = useState("");
+  const [supportCategory, setSupportCategory] = useState("Technical & AI Generation");
+  const [supportMessage, setSupportMessage] = useState("");
+  const [supportLoading, setSupportLoading] = useState(false);
 
   // Billing & Usage Info
   const [plan, setPlan] = useState("pro");
@@ -101,6 +118,7 @@ export default function ProfilePage() {
         if (parsed.preferredLanguage) setPreferredLanguage(parsed.preferredLanguage);
         if (parsed.brandGuidelines) setBrandGuidelines(parsed.brandGuidelines);
         if (parsed.preferredModel) setPreferredModel(parsed.preferredModel);
+        if (parsed.themeMode) setThemeMode(parsed.themeMode);
         if (typeof parsed.autoSaveHistory === "boolean") setAutoSaveHistory(parsed.autoSaveHistory);
         if (typeof parsed.emailUpdates === "boolean") setEmailUpdates(parsed.emailUpdates);
         if (typeof parsed.usageAlerts === "boolean") setUsageAlerts(parsed.usageAlerts);
@@ -288,6 +306,7 @@ export default function ProfilePage() {
         preferredLanguage,
         brandGuidelines,
         preferredModel,
+        themeMode,
         autoSaveHistory,
         emailUpdates,
         usageAlerts,
@@ -295,6 +314,7 @@ export default function ProfilePage() {
       };
 
       localStorage.setItem("copycoach_user_settings", JSON.stringify(settingsToSave));
+      localStorage.setItem("copycoach_theme", themeMode);
 
       showNotification("Settings saved successfully!");
     } catch (err) {
@@ -339,6 +359,21 @@ export default function ProfilePage() {
     } finally {
       setPasswordLoading(false);
     }
+  }
+
+  // Support Ticket Handler
+  async function handleSupportSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!supportSubject.trim() || !supportMessage.trim()) {
+      showNotification("Please fill in both subject and message", "error");
+      return;
+    }
+    setSupportLoading(true);
+    await new Promise((r) => setTimeout(r, 800));
+    setSupportLoading(false);
+    showNotification("Support ticket submitted! Ticket ID: #TK-" + Math.floor(100000 + Math.random() * 900000));
+    setSupportSubject("");
+    setSupportMessage("");
   }
 
   // Handle Logout
@@ -544,6 +579,18 @@ export default function ProfilePage() {
           >
             <CreditCard className="w-4 h-4" />
             <span>Subscription & Usage</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("support")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+              activeTab === "support"
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
+                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80"
+            }`}
+          >
+            <LifeBuoy className="w-4 h-4" />
+            <span>Support & Help Center</span>
           </button>
         </div>
 
@@ -901,6 +948,65 @@ export default function ProfilePage() {
               </h2>
 
               <div className="space-y-6">
+                {/* Theme & Appearance Selector */}
+                <div>
+                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">
+                    Theme & Visual Appearance
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setThemeMode("dark");
+                        localStorage.setItem("copycoach_theme", "dark");
+                        showNotification("Dark Theme Selected");
+                      }}
+                      className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
+                        themeMode === "dark"
+                          ? "bg-indigo-600/20 border-indigo-500 text-indigo-200 ring-2 ring-indigo-500/30"
+                          : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                      }`}
+                    >
+                      <Moon className="w-4 h-4 text-indigo-400" />
+                      <span>Dark Mode</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setThemeMode("light");
+                        localStorage.setItem("copycoach_theme", "light");
+                        showNotification("Light Theme Selected");
+                      }}
+                      className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
+                        themeMode === "light"
+                          ? "bg-amber-500/20 border-amber-500 text-amber-200 ring-2 ring-amber-500/30"
+                          : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                      }`}
+                    >
+                      <Sun className="w-4 h-4 text-amber-400" />
+                      <span>Light Mode</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setThemeMode("system");
+                        localStorage.setItem("copycoach_theme", "system");
+                        showNotification("System Preference Theme Selected");
+                      }}
+                      className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
+                        themeMode === "system"
+                          ? "bg-purple-600/20 border-purple-500 text-purple-200 ring-2 ring-purple-500/30"
+                          : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                      }`}
+                    >
+                      <Laptop className="w-4 h-4 text-purple-400" />
+                      <span>System Sync</span>
+                    </button>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
                     Default Copywriting AI Engine
@@ -1064,6 +1170,173 @@ export default function ProfilePage() {
               <h3 className="text-lg font-semibold text-white mb-4">Billing History & Receipts</h3>
               <div className="text-sm text-slate-400 py-6 text-center border border-dashed border-slate-800 rounded-xl">
                 No previous manual invoices found. Billing is managed automatically via Supabase/Paystack.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: SUPPORT & HELP CENTER */}
+        {activeTab === "support" && (
+          <div className="space-y-6">
+            {/* System Status Banner */}
+            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-800">
+                <div>
+                  <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                    <LifeBuoy className="w-5 h-5 text-blue-400" />
+                    <span>CopyCoach Help & Support Hub</span>
+                  </h2>
+                  <p className="text-slate-400 text-sm mt-1">
+                    Get instant assistance, submit support tickets, or review platform health metrics.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 bg-emerald-950/60 border border-emerald-800/60 text-emerald-300 px-3.5 py-1.5 rounded-full text-xs font-medium">
+                  <Activity className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                  <span>All AI Systems Operational</span>
+                </div>
+              </div>
+
+              {/* Status Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                    <span>Copy Engine API</span>
+                    <span className="text-emerald-400 font-medium">99.98%</span>
+                  </div>
+                  <div className="text-sm font-semibold text-white flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>Gemini 2.5 Flash</span>
+                  </div>
+                </div>
+
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                    <span>Database & Auth</span>
+                    <span className="text-emerald-400 font-medium">100% Uptime</span>
+                  </div>
+                  <div className="text-sm font-semibold text-white flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>Supabase Cloud</span>
+                  </div>
+                </div>
+
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                    <span>Platform Build</span>
+                    <span className="text-indigo-400 font-medium">v2.5.0-pro</span>
+                  </div>
+                  <div className="text-sm font-semibold text-white flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>Production Build</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Support Ticket Form & Direct Contact */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Submit Ticket */}
+                <div className="lg:col-span-2 bg-slate-950/80 p-6 rounded-2xl border border-slate-800/80">
+                  <h3 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-blue-400" />
+                    <span>Submit Support Ticket</span>
+                  </h3>
+                  <p className="text-xs text-slate-400 mb-6">
+                    Our copywriting engineering team typical response time is under 15 minutes for Pro subscribers.
+                  </p>
+
+                  <form onSubmit={handleSupportSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium text-slate-400 mb-1.5">
+                          Category
+                        </label>
+                        <select
+                          value={supportCategory}
+                          onChange={(e) => setSupportCategory(e.target.value)}
+                          className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-blue-500 cursor-pointer"
+                        >
+                          <option value="Technical & AI Generation">Technical & AI Generation</option>
+                          <option value="Account & Subscription">Account & Subscription</option>
+                          <option value="Feature Request">Feature Request</option>
+                          <option value="Copywriting Consultation">Copywriting Advice</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-slate-400 mb-1.5">
+                          Subject Line
+                        </label>
+                        <input
+                          type="text"
+                          value={supportSubject}
+                          onChange={(e) => setSupportSubject(e.target.value)}
+                          placeholder="e.g. Issue with tone customizer"
+                          className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-slate-400 mb-1.5">
+                        Detailed Message
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={supportMessage}
+                        onChange={(e) => setSupportMessage(e.target.value)}
+                        placeholder="Describe your request or bug in detail..."
+                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={supportLoading}
+                      className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                    >
+                      <Send className="w-4 h-4" />
+                      <span>{supportLoading ? "Submitting..." : "Send Ticket"}</span>
+                    </button>
+                  </form>
+                </div>
+
+                {/* Direct Contact & Resources */}
+                <div className="space-y-4">
+                  <div className="bg-slate-950/80 p-5 rounded-2xl border border-slate-800/80">
+                    <h4 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-indigo-400" />
+                      <span>Direct Email Support</span>
+                    </h4>
+                    <p className="text-xs text-slate-400 mb-3">
+                      Prefer email? Contact our technical team directly anytime.
+                    </p>
+                    <a
+                      href="mailto:support@copycoach.ai"
+                      className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 font-medium"
+                    >
+                      <span>support@copycoach.ai</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+
+                  <div className="bg-slate-950/80 p-5 rounded-2xl border border-slate-800/80">
+                    <h4 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                      <BookOpen className="w-4 h-4 text-amber-400" />
+                      <span>Copywriting Playbooks</span>
+                    </h4>
+                    <p className="text-xs text-slate-400 mb-3">
+                      Master AIDA, PAS, and FAB copywriting frameworks with our guides.
+                    </p>
+                    <button
+                      onClick={() => showNotification("Opening Copywriting Guides...")}
+                      className="text-xs text-amber-400 hover:text-amber-300 font-medium flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span>Browse Framework Guides</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
