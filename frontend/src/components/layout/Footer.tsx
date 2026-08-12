@@ -10,7 +10,7 @@ export default function Footer() {
         <div>
 
           <div className="flex items-center gap-2">
-            <Logo theme="dark" size="sm" />
+            <Logo theme="dark" size="md" showTagline={true} />
           </div>
 
           <p className="mt-2 max-w-sm text-sm text-gray-400">

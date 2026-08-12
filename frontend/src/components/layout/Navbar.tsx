@@ -9,7 +9,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group transition-transform hover:scale-105">
-          <Logo theme="dark" size="md" />
+          <Logo theme="dark" size="md" showTagline={true} />
         </Link>
 
 

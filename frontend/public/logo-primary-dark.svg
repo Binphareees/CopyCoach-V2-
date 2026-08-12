@@ -1,33 +1,54 @@
-<svg viewBox="0 0 280 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 380 90" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="logoDarkGrad" x1="0" y1="0" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+    <linearGradient id="brainGradDark" x1="10" y1="10" x2="80" y2="80" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#06B6D4" />
       <stop offset="50%" stop-color="#3B82F6" />
-      <stop offset="100%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#8B5CF6" />
     </linearGradient>
-    <linearGradient id="logoDarkSpark" x1="10" y1="10" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+
+    <linearGradient id="pencilGradDark" x1="10" y1="70" x2="70" y2="10" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0284C7" />
+      <stop offset="50%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#818CF8" />
+    </linearGradient>
+
+    <linearGradient id="textGradAiDark" x1="250" y1="0" x2="310" y2="0" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#38BDF8" />
-      <stop offset="100%" stop-color="#A855F7" />
-    </linearGradient>
-    <linearGradient id="textGrad" x1="120" y1="0" x2="220" y2="0" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#06B6D4" />
       <stop offset="50%" stop-color="#3B82F6" />
       <stop offset="100%" stop-color="#6366F1" />
     </linearGradient>
   </defs>
 
-  <!-- Symbol Icon -->
-  <g transform="translate(4, 4)">
-    <rect x="2" y="2" width="48" height="48" rx="14" fill="url(#logoDarkGrad)" />
-    <path d="M 38 18 C 33 12 21 12 16 19 C 10 26 10 35 16 41 C 21 47 33 47 38 40" stroke="white" stroke-width="5.5" stroke-linecap="round" />
-    <path d="M 29 18 L 38 27 L 29 36 L 31 27 Z" fill="url(#logoDarkSpark)" />
-    <circle cx="40" cy="15" r="2.5" fill="#38BDF8" />
+  <!-- ICON MARK -->
+  <g transform="translate(10, 5) scale(0.65)">
+    <!-- Brain Network -->
+    <path d="M 50 30 C 35 25 20 35 20 50 C 18 62 25 72 32 78 C 28 85 35 95 48 92 C 55 90 58 82 58 75 Z" fill="url(#brainGradDark)" fill-opacity="0.25" stroke="#06B6D4" stroke-width="2" />
+    <path d="M 58 30 C 73 25 88 35 88 50 C 90 62 83 72 76 78 C 80 85 73 95 60 92 C 53 90 50 82 50 75 Z" fill="url(#brainGradDark)" fill-opacity="0.2" stroke="#8B5CF6" stroke-width="2" />
+
+    <!-- Neural Nodes -->
+    <circle cx="28" cy="45" r="3" fill="#38BDF8" />
+    <circle cx="38" cy="40" r="2.5" fill="#06B6D4" />
+    <circle cx="48" cy="48" r="3" fill="#60A5FA" />
+    <circle cx="70" cy="42" r="3" fill="#C084FC" />
+    <circle cx="80" cy="48" r="2.5" fill="#A855F7" />
+
+    <!-- Pencil Coach -->
+    <g transform="rotate(-38 58 60)">
+      <rect x="46" y="22" width="24" height="68" rx="8" fill="url(#pencilGradDark)" stroke="#0F172A" stroke-width="3" />
+      <circle cx="58" cy="44" r="3" fill="#FFFFFF" />
+      <path d="M 58 48 L 52 64 L 56 64 L 58 54 L 60 64 L 64 64 Z" fill="#FFFFFF" />
+      <path d="M 50 52 C 50 50 54 50 54 52 C 54 57 50 59 50 59 C 50 59 46 57 46 52 Z" fill="#38BDF8" stroke="#FFFFFF" stroke-width="1" />
+      <path d="M 58 52 L 66 48 L 65 51 Z" fill="#FFFFFF" />
+      <path d="M 46 88 L 58 104 L 70 88 Z" fill="#0F172A" />
+      <path d="M 50 88 L 58 100 L 66 88 Z" fill="#F8FAFC" />
+    </g>
+
+    <!-- Target Dot -->
+    <circle cx="21" cy="98" r="7" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="3 2" fill="none" />
+    <circle cx="21" cy="98" r="3" fill="#06B6D4" />
   </g>
 
-  <!-- Brand Typography for Dark Mode -->
-  <text x="68" y="38" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="24" fill="#FFFFFF" letter-spacing="-0.5">Copy<tspan fill="url(#textGrad)">Coach</tspan></text>
-
-  <!-- AI Badge -->
-  <rect x="232" y="22" width="28" height="18" rx="5" fill="#06B6D4" fill-opacity="0.18" stroke="#06B6D4" stroke-opacity="0.4" />
-  <text x="246" y="34" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="10" fill="#38BDF8" text-anchor="middle">AI</text>
+  <!-- BRAND NAME & TAGLINE -->
+  <text x="95" y="44" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="32" fill="#FFFFFF" letter-spacing="-0.5">CopyCoach <tspan fill="url(#textGradAiDark)">AI</tspan></text>
+  <text x="96" y="66" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="15" fill="#94A3B8" letter-spacing="0.2">Elevate Your Copywriting with AI</text>
 </svg>

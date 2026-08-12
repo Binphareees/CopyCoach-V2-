@@ -180,8 +180,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur">
 
         <div className="mb-6 flex justify-center">
-          <Link href="/">
-            <Logo theme="dark" size="lg" />
+          <Link href="/" className="hover:opacity-90 transition-opacity">
+            <Logo theme="dark" size="lg" showTagline={true} />
           </Link>
         </div>
 

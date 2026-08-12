@@ -543,7 +543,7 @@ export default function DashboardPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Logo Brand Branding */}
           <Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-105">
-            <Logo theme={isDarkMode ? "dark" : "light"} size="md" />
+            <Logo theme={isDarkMode ? "dark" : "light"} size="md" showTagline={true} />
           </Link>
 
           {/* Quick Active Project Indicator & Navigation */}
