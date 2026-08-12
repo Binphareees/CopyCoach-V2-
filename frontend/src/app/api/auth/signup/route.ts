@@ -12,6 +12,21 @@ export async function POST(request: Request) {
       );
     }
 
+    // Password Complexity Validation: At least 6 chars, 1 uppercase, 1 special character
+    const hasMinLength = password.length >= 6;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+    if (!hasMinLength || !hasUppercase || !hasSpecialChar) {
+      return NextResponse.json(
+        {
+          error:
+            "Password must be at least 6 characters long, contain at least 1 uppercase letter (A-Z), and at least 1 special character (e.g. !@#$).",
+        },
+        { status: 400 }
+      );
+    }
+
     // 1. Create user with admin privileges and auto-confirm email
     const { data: userData, error: createError } =
       await supabaseAdmin.auth.admin.createUser({

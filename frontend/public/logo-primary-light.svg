@@ -1,45 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 220" width="800" height="220">
+<svg viewBox="0 0 280 60" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Light Blue Sparkle / Nib Gradient -->
-    <linearGradient id="light-blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#2563EB" />
-      <stop offset="100%" stop-color="#1D4ED8" />
+    <linearGradient id="logoLightGrad" x1="0" y1="0" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0284C7" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#4F46E5" />
+    </linearGradient>
+    <linearGradient id="logoLightSpark" x1="10" y1="10" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#9333EA" />
+    </linearGradient>
+    <linearGradient id="textGradLight" x1="120" y1="0" x2="220" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0284C7" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#4F46E5" />
     </linearGradient>
   </defs>
 
-  <!-- Logo Icon Container (Matches Light Image) -->
-  <g transform="translate(20, 20)">
-    <!-- Speech Bubble Outline (Dark Navy) -->
-    <path d="M 90 35 C 122 35 148 61 148 93 C 148 112 138 129 123 140 L 128 156 C 129 159 126 161 123 160 L 105 148 C 100 150 95 151 90 151 C 58 151 32 125 32 93 C 32 61 58 35 90 35 Z" 
-          fill="none" stroke="#0B132B" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
-
-    <!-- Pen Nib inside speech bubble -->
-    <path d="M 90 62 L 62 108 C 62 118 72 124 82 122 L 90 120 Z" fill="#2563EB" />
-    <path d="M 90 62 L 118 108 C 118 118 108 124 98 122 L 90 120 Z" fill="#1D4ED8" />
-    <circle cx="90" cy="100" r="4" fill="#FFFFFF" />
-    <line x1="90" y1="64" x2="90" y2="100" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
-
-    <!-- 3 Blue Sparkle Stars at Top Right -->
-    <!-- Large Sparkle -->
-    <path d="M 148 20 C 148 30 154 36 164 36 C 154 36 148 42 148 52 C 148 42 142 36 132 36 C 142 36 148 30 148 20 Z" fill="#2563EB" />
-    <!-- Small Sparkle 1 -->
-    <path d="M 125 15 C 125 20 128 23 133 23 C 128 23 125 26 125 31 C 125 26 122 23 117 23 C 122 23 125 20 125 15 Z" fill="#3B82F6" />
-    <!-- Small Sparkle 2 -->
-    <path d="M 160 52 C 160 56 162 58 166 58 C 162 58 160 60 160 64 C 160 60 158 58 154 58 C 158 58 160 56 160 52 Z" fill="#60A5FA" />
+  <!-- Symbol Icon -->
+  <g transform="translate(4, 4)">
+    <rect x="2" y="2" width="48" height="48" rx="14" fill="url(#logoLightGrad)" />
+    <path d="M 38 18 C 33 12 21 12 16 19 C 10 26 10 35 16 41 C 21 47 33 47 38 40" stroke="white" stroke-width="5.5" stroke-linecap="round" />
+    <path d="M 29 18 L 38 27 L 29 36 L 31 27 Z" fill="url(#logoLightSpark)" />
+    <circle cx="40" cy="15" r="2.5" fill="#38BDF8" />
   </g>
 
-  <!-- Brand Typography -->
-  <g transform="translate(230, 138)">
-    <text font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="68" font-weight="800" letter-spacing="-1" fill="#0B132B">
-      CopyCoach
-    </text>
-    
-    <!-- AI Pill Badge -->
-    <g transform="translate(372, -56)">
-      <rect x="0" y="0" width="102" height="60" rx="16" fill="#2563EB" />
-      <text x="51" y="42" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="34" font-weight="900" letter-spacing="0.5" fill="#FFFFFF" text-anchor="middle">
-        AI
-      </text>
-    </g>
-  </g>
+  <!-- Brand Typography for Light Mode -->
+  <text x="68" y="38" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="24" fill="#0F172A" letter-spacing="-0.5">Copy<tspan fill="url(#textGradLight)">Coach</tspan></text>
+
+  <!-- AI Badge -->
+  <rect x="232" y="22" width="28" height="18" rx="5" fill="#0284C7" fill-opacity="0.12" stroke="#0284C7" stroke-opacity="0.3" />
+  <text x="246" y="34" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="10" fill="#0284C7" text-anchor="middle">AI</text>
 </svg>

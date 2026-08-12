@@ -1,3 +1,5 @@
+import Logo from "../ui/Logo";
+
 export default function Footer() {
   return (
     <footer className="border-t border-white/10 py-12">
@@ -8,11 +10,7 @@ export default function Footer() {
         <div>
 
           <div className="flex items-center gap-2">
-            <img
-              src="/logo-primary-dark.svg"
-              alt="CopyCoach AI Logo"
-              className="h-8 w-auto object-contain"
-            />
+            <Logo theme="dark" size="sm" />
           </div>
 
           <p className="mt-2 max-w-sm text-sm text-gray-400">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Logo from "@/components/ui/Logo";
 import { getIsSupabaseConfigured, getActiveSupabaseUrl, ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
@@ -12,11 +13,19 @@ export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [checkingConfig, setCheckingConfig] = useState(true);
   const [configured, setConfigured] = useState(true);
   const [activeUrl, setActiveUrl] = useState("");
+
+  // Real-time Password Rules Validation
+  const hasMinLength = password.length >= 6;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+  const isPasswordValid = hasMinLength && hasUppercase && hasSpecialChar;
 
   useEffect(() => {
     ensureSupabaseConfig().then(() => {
@@ -38,9 +47,18 @@ export default function SignupPage() {
 
 
   async function handleSignup() {
+    setPasswordTouched(true);
+
     if (!name || !email || !password) {
       setMessage("Please fill in all fields.");
       return;
+    }
+
+    if (!isPasswordValid) {
+      setPasswordError("Password requirement not met! Must be at least 6 characters, contain an uppercase letter (A-Z), and a special character (e.g. !@#$).");
+      return;
+    } else {
+      setPasswordError("");
     }
 
     setLoading(true);
@@ -203,6 +221,11 @@ export default function SignupPage() {
 
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur">
 
+        <div className="mb-6 flex justify-center">
+          <Link href="/">
+            <Logo theme="dark" size="lg" />
+          </Link>
+        </div>
 
         <h1 className="text-3xl font-bold text-white">
           Create your account
@@ -238,17 +261,49 @@ export default function SignupPage() {
 
 
         <input
-          className="mt-4 w-full rounded-lg border border-white/10 bg-white/10 p-3 text-white outline-none placeholder:text-gray-500 focus:border-[#5B5CEB]"
+          className={`mt-4 w-full rounded-lg border p-3 text-white outline-none placeholder:text-gray-500 transition-colors ${
+            passwordTouched && !isPasswordValid
+              ? "border-rose-500 bg-rose-500/10 focus:border-rose-400"
+              : "border-white/10 bg-white/10 focus:border-[#5B5CEB]"
+          }`}
           placeholder="Password"
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setPasswordTouched(true);
+            if (passwordError) setPasswordError("");
+          }}
         />
 
+        {/* Real-time Password Requirements Checklist & Error Box directly below password box */}
+        <div className="mt-2.5 rounded-xl border border-white/10 bg-black/40 p-3 text-xs space-y-2">
+          <p className="font-semibold text-gray-300">Password Requirements:</p>
+          <div className="grid grid-cols-1 gap-1 text-[11px]">
+            <div className={`flex items-center gap-1.5 ${hasMinLength ? "text-emerald-400 font-medium" : passwordTouched ? "text-rose-400" : "text-gray-400"}`}>
+              <span>{hasMinLength ? "✓" : "•"}</span>
+              <span>At least 6 characters long</span>
+            </div>
+            <div className={`flex items-center gap-1.5 ${hasUppercase ? "text-emerald-400 font-medium" : passwordTouched ? "text-rose-400" : "text-gray-400"}`}>
+              <span>{hasUppercase ? "✓" : "•"}</span>
+              <span>At least 1 UPPERCASE letter (A-Z)</span>
+            </div>
+            <div className={`flex items-center gap-1.5 ${hasSpecialChar ? "text-emerald-400 font-medium" : passwordTouched ? "text-rose-400" : "text-gray-400"}`}>
+              <span>{hasSpecialChar ? "✓" : "•"}</span>
+              <span>At least 1 special character (e.g. !@#$)</span>
+            </div>
+          </div>
 
-        <p className="mt-2 text-xs text-gray-500">
-          Use at least 6 characters.
-        </p>
+          {/* Explicit Error Alert Box below password */}
+          {((passwordTouched && !isPasswordValid && password.length > 0) || passwordError) && (
+            <div className="mt-2 rounded-lg border border-rose-500/40 bg-rose-500/15 p-2.5 text-rose-200 text-xs font-medium flex items-start gap-2 animate-in fade-in">
+              <span className="text-rose-400 font-bold shrink-0">⚠️</span>
+              <span>
+                {passwordError || "Password does not meet required security criteria. Please include 6+ characters, 1 uppercase letter, and 1 special character."}
+              </span>
+            </div>
+          )}
+        </div>
 
 
         <button

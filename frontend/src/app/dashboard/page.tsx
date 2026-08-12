@@ -10,6 +10,7 @@ import {
 } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Logo from "@/components/ui/Logo";
 import {
   Sparkles,
   Zap,
@@ -43,21 +44,11 @@ import {
   ShieldCheck,
   X,
   User,
-  Lock,
-  Eye,
-  EyeOff,
   Save,
   LifeBuoy,
-  MessageSquare,
-  Send,
   ExternalLink,
   Activity,
-  BookOpen,
-  Laptop,
-  Globe,
-  Building,
-  Briefcase,
-  Camera
+  Laptop
 } from "lucide-react";
 
 interface CopyResult {
@@ -132,16 +123,15 @@ export default function DashboardPage() {
   const [bio, setBio] = useState("");
   const [targetAudience, setTargetAudience] = useState("B2B Decision Makers & Founders");
   const [brandNiche, setBrandNiche] = useState("SaaS & Digital Marketing");
-  const [preferredLanguage, setPreferredLanguage] = useState("English (US)");
+  const [preferredLanguage] = useState("English (US)");
   const [brandGuidelines, setBrandGuidelines] = useState(
     "Maintain a clear, punchy, value-focused tone. Avoid fluff and overly complex jargon."
   );
   const [preferredModel, setPreferredModel] = useState("Gemini 2.5 Flash (Recommended)");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-  const [profileSaving, setProfileSaving] = useState(false);
 
   // Appearance & Theme State
   const [themeMode, setThemeMode] = useState<"dark" | "light" | "system">(() => {
@@ -212,10 +202,6 @@ export default function DashboardPage() {
     else showToast("System Theme Synchronized");
   };
 
-  const toggleTheme = () => {
-    const next = isDarkMode ? "light" : "dark";
-    applyTheme(next);
-  };
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [supportSubject, setSupportSubject] = useState("");
@@ -556,13 +542,8 @@ export default function DashboardPage() {
       <header className={`sticky top-0 z-40 backdrop-blur-xl border-b transition-colors duration-200 ${isDarkMode ? "bg-[#0B1020]/90 border-slate-800/80" : "bg-white/95 border-slate-200/80 shadow-xs"}`}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Logo Brand Branding */}
-          <Link href="/" className="flex items-center gap-3 group">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/logo-primary-dark.svg"
-              alt="CopyCoach AI"
-              className="h-10 w-auto object-contain transition-transform group-hover:scale-105"
-            />
+          <Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-105">
+            <Logo theme={isDarkMode ? "dark" : "light"} size="md" />
           </Link>
 
           {/* Quick Active Project Indicator & Navigation */}

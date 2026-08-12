@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Button from "../ui/Button";
+import Logo from "../ui/Logo";
 
 export default function Navbar() {
   return (
@@ -7,12 +8,8 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <img
-            src="/logo-primary-dark.svg"
-            alt="CopyCoach AI Logo"
-            className="h-9 w-auto object-contain"
-          />
+        <Link href="/" className="flex items-center gap-2 group transition-transform hover:scale-105">
+          <Logo theme="dark" size="md" />
         </Link>
 
 

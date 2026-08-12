@@ -1,31 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250" width="250" height="250">
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="fav-cyan-bolt" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00F0FF" />
-      <stop offset="100%" stop-color="#00C8FF" />
+    <linearGradient id="favGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="50%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#6366F1" />
     </linearGradient>
-
-    <linearGradient id="fav-nib-blue" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00D2FF" />
-      <stop offset="100%" stop-color="#0099FF" />
+    <linearGradient id="favSpark" x1="20" y1="20" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#A855F7" />
     </linearGradient>
   </defs>
-
-  <g transform="translate(15, 15)">
-    <!-- Dark Navy Squircle Background Badge -->
-    <rect x="0" y="0" width="220" height="220" rx="52" fill="#0D1938" stroke="#1E2F5D" stroke-width="3"/>
-
-    <!-- Speech Bubble Outline (White) -->
-    <path d="M 110 42 C 148 42 180 74 180 112 C 180 136 168 156 150 170 L 156 190 C 157 193 154 196 150 194 L 128 180 C 122 182 116 184 110 184 C 72 184 40 152 40 112 C 40 74 72 42 110 42 Z" 
-          fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
-
-    <!-- Pen Nib inside speech bubble -->
-    <path d="M 110 75 L 75 130 C 75 142 88 150 100 147 L 110 145 Z" fill="#FFFFFF" />
-    <path d="M 110 75 L 145 130 C 145 142 132 150 120 147 L 110 145 Z" fill="url(#fav-nib-blue)" />
-    <circle cx="110" cy="120" r="5" fill="#0D1938" />
-    <line x1="110" y1="78" x2="110" y2="120" stroke="#0D1938" stroke-width="4" stroke-linecap="round"/>
-
-    <!-- Lightning Bolt Breaking Out Top-Right -->
-    <polygon points="165,38 202,38 178,82 210,82 152,140 168,92 144,92" fill="url(#fav-cyan-bolt)" />
-  </g>
+  <rect x="4" y="4" width="92" height="92" rx="26" fill="url(#favGrad)" />
+  <path d="M 68 32 C 60 22 40 22 30 34 C 20 46 20 62 30 72 C 40 82 60 82 68 70" stroke="white" stroke-width="10" stroke-linecap="round" />
+  <path d="M 52 32 L 68 48 L 52 64 L 56 48 Z" fill="url(#favSpark)" />
+  <circle cx="72" cy="26" r="4.5" fill="#38BDF8" />
 </svg>

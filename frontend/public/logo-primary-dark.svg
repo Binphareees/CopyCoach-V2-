@@ -1,55 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 220" width="800" height="220">
+<svg viewBox="0 0 280 60" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Gradients & Glows -->
-    <linearGradient id="cyan-bolt-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00F0FF" />
-      <stop offset="100%" stop-color="#00C8FF" />
+    <linearGradient id="logoDarkGrad" x1="0" y1="0" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="50%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#6366F1" />
     </linearGradient>
-
-    <linearGradient id="nib-blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00D2FF" />
-      <stop offset="100%" stop-color="#0099FF" />
+    <linearGradient id="logoDarkSpark" x1="10" y1="10" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#A855F7" />
     </linearGradient>
-
-    <filter id="icon-shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#00E0FF" flood-opacity="0.25"/>
-    </filter>
+    <linearGradient id="textGrad" x1="120" y1="0" x2="220" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="50%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#6366F1" />
+    </linearGradient>
   </defs>
 
-  <!-- Logo Icon Container (Matches Dark Image) -->
-  <g transform="translate(20, 20)" filter="url(#icon-shadow)">
-    <!-- Dark Navy Squircle Background Badge -->
-    <rect x="0" y="0" width="180" height="180" rx="42" fill="#0D1938" stroke="#1E2F5D" stroke-width="2"/>
-
-    <!-- Speech Bubble Outline (White) -->
-    <path d="M 90 35 C 122 35 148 61 148 93 C 148 112 138 129 123 140 L 128 156 C 129 159 126 161 123 160 L 105 148 C 100 150 95 151 90 151 C 58 151 32 125 32 93 C 32 61 58 35 90 35 Z" 
-          fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
-
-    <!-- Pen Nib inside speech bubble -->
-    <!-- Left Half (White) -->
-    <path d="M 90 62 L 62 108 C 62 118 72 124 82 122 L 90 120 Z" fill="#FFFFFF" />
-    <!-- Right Half (Cyan/Blue) -->
-    <path d="M 90 62 L 118 108 C 118 118 108 124 98 122 L 90 120 Z" fill="url(#nib-blue-grad)" />
-    <!-- Nib Center Breather Hole & Split Line -->
-    <circle cx="90" cy="100" r="4" fill="#0D1938" />
-    <line x1="90" y1="64" x2="90" y2="100" stroke="#0D1938" stroke-width="3" stroke-linecap="round"/>
-
-    <!-- Lightning Bolt Breaking Out Top-Right -->
-    <polygon points="135,32 165,32 145,68 172,68 125,115 138,76 118,76" fill="url(#cyan-bolt-grad)" />
+  <!-- Symbol Icon -->
+  <g transform="translate(4, 4)">
+    <rect x="2" y="2" width="48" height="48" rx="14" fill="url(#logoDarkGrad)" />
+    <path d="M 38 18 C 33 12 21 12 16 19 C 10 26 10 35 16 41 C 21 47 33 47 38 40" stroke="white" stroke-width="5.5" stroke-linecap="round" />
+    <path d="M 29 18 L 38 27 L 29 36 L 31 27 Z" fill="url(#logoDarkSpark)" />
+    <circle cx="40" cy="15" r="2.5" fill="#38BDF8" />
   </g>
 
-  <!-- Brand Typography -->
-  <g transform="translate(230, 138)">
-    <text font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="68" font-weight="800" letter-spacing="-1" fill="#FFFFFF">
-      CopyCoach
-    </text>
-    
-    <!-- AI Pill Badge -->
-    <g transform="translate(372, -56)">
-      <rect x="0" y="0" width="102" height="60" rx="16" fill="#00E0FF" />
-      <text x="51" y="42" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="34" font-weight="900" letter-spacing="0.5" fill="#0B132B" text-anchor="middle">
-        AI
-      </text>
-    </g>
-  </g>
+  <!-- Brand Typography for Dark Mode -->
+  <text x="68" y="38" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="24" fill="#FFFFFF" letter-spacing="-0.5">Copy<tspan fill="url(#textGrad)">Coach</tspan></text>
+
+  <!-- AI Badge -->
+  <rect x="232" y="22" width="28" height="18" rx="5" fill="#06B6D4" fill-opacity="0.18" stroke="#06B6D4" stroke-opacity="0.4" />
+  <text x="246" y="34" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="10" fill="#38BDF8" text-anchor="middle">AI</text>
 </svg>

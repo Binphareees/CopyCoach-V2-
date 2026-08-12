@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Logo from "@/components/ui/Logo";
 import { getIsSupabaseConfigured, getActiveSupabaseUrl, ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
@@ -177,6 +178,12 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-[#0B1020] px-6">
 
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur">
+
+        <div className="mb-6 flex justify-center">
+          <Link href="/">
+            <Logo theme="dark" size="lg" />
+          </Link>
+        </div>
 
         <h1 className="text-3xl font-bold text-white">
           Welcome back
