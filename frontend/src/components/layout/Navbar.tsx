@@ -2,6 +2,7 @@ import Link from "next/link";
 import Button from "../ui/Button";
 import Logo from "../ui/Logo";
 import FeedbackModal from "../ui/FeedbackModal";
+import DownloadAppModal from "../ui/DownloadAppModal";
 
 export default function Navbar() {
   return (
@@ -39,10 +40,10 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="#faq"
-            className="transition hover:text-white"
+            href="/download"
+            className="transition hover:text-cyan-400 text-cyan-300 font-medium flex items-center gap-1"
           >
-            FAQ
+            <span>Download App</span>
           </Link>
 
         </div>
@@ -50,6 +51,7 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
+          <DownloadAppModal triggerClassName="hidden sm:inline-flex" triggerText="Get App (APK/iOS)" />
           <FeedbackModal triggerClassName="hidden sm:inline-flex" />
 
           <Link
@@ -58,6 +60,7 @@ export default function Navbar() {
           >
             Login
           </Link>
+
 
 
           <Button

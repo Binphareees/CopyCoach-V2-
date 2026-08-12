@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MessageSquarePlus, X, Send, CheckCircle2, AlertCircle, Bot, LifeBuoy, ArrowRight } from "lucide-react";
+import { MessageSquarePlus, X, Send, CheckCircle2, AlertCircle, Bot, LifeBuoy, ArrowRight, Mail } from "lucide-react";
 
 interface FeedbackModalProps {
   userId?: string;
@@ -136,51 +136,52 @@ export default function FeedbackModal({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400 transition-all cursor-pointer ${triggerClassName}`}
+        className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl border border-cyan-500/30 bg-cyan-950/40 text-cyan-300 hover:bg-cyan-900/50 hover:border-cyan-400 transition-all cursor-pointer shadow-sm ${triggerClassName}`}
       >
         <LifeBuoy className="w-3.5 h-3.5 text-cyan-400" />
         <span>Help & Support</span>
       </button>
 
-      {/* MODAL BACKDROP */}
+      {/* MODAL OVERLAY BACKDROP */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn cursor-pointer"
+          className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 cursor-pointer"
           onClick={() => setIsOpen(false)}
         >
           <div
-            className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-slate-100 flex flex-col max-h-[90vh] cursor-default"
+            className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl text-slate-100 flex flex-col max-h-[90vh] cursor-default"
             onClick={(e) => e.stopPropagation()}
           >
             {/* CLOSE BUTTON */}
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
+              className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
               title="Close (Esc)"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* MODAL HEADER */}
-            <div className="flex items-center gap-3 mb-4 pr-8">
-              <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 text-cyan-400 shrink-0">
+            <div className="flex items-center gap-3.5 mb-5 pr-8">
+              <div className="p-2.5 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 text-cyan-400 shrink-0">
                 <Bot className="w-6 h-6" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white">CopyCoach AI Support & Feedback</h3>
-                <p className="text-xs text-slate-400">
-                  Instant AI answers + Developer Email Dispatch (slastbornn@gmail.com)
+                <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
+                  <Mail className="w-3 h-3 text-cyan-400" />
+                  <span>Target Developer: <strong className="text-cyan-300">slastbornn@gmail.com</strong></span>
                 </p>
               </div>
             </div>
 
             {/* TAB SELECTOR */}
-            <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 mb-4">
+            <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-2xl border border-slate-800 mb-4">
               <button
                 type="button"
                 onClick={() => setActiveTab("ai-support")}
-                className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-3 rounded-lg font-semibold transition-all cursor-pointer ${
+                className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-3 rounded-xl font-semibold transition-all cursor-pointer ${
                   activeTab === "ai-support"
                     ? "bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 shadow-sm"
                     : "text-slate-400 hover:text-white"
@@ -192,7 +193,7 @@ export default function FeedbackModal({
               <button
                 type="button"
                 onClick={() => setActiveTab("ticket")}
-                className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-3 rounded-lg font-semibold transition-all cursor-pointer ${
+                className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-3 rounded-xl font-semibold transition-all cursor-pointer ${
                   activeTab === "ticket"
                     ? "bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 shadow-sm"
                     : "text-slate-400 hover:text-white"
@@ -212,21 +213,21 @@ export default function FeedbackModal({
                     value={supportQuestion}
                     onChange={(e) => setSupportQuestion(e.target.value)}
                     placeholder="Ask anything about copywriting, drills, or pricing..."
-                    className="flex-1 text-xs bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                    className="flex-1 text-xs bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
                   />
                   <button
                     type="submit"
                     disabled={aiLoading || !supportQuestion.trim()}
-                    className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl transition-all disabled:opacity-40 flex items-center gap-1 cursor-pointer"
+                    className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition-all disabled:opacity-40 flex items-center gap-1 cursor-pointer shrink-0"
                   >
                     {aiLoading ? "Thinking..." : "Ask AI"}
                   </button>
                 </form>
 
                 {/* AI Q&A HISTORY STREAM */}
-                <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[280px]">
+                <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[260px]">
                   {aiAnswers.map((item, idx) => (
-                    <div key={idx} className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 space-y-2 text-xs">
+                    <div key={idx} className="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 space-y-2 text-xs">
                       <div className="flex items-center justify-between text-cyan-400 font-semibold">
                         <span className="flex items-center gap-1.5">
                           <Bot className="w-3.5 h-3.5 text-cyan-400" />
@@ -241,8 +242,11 @@ export default function FeedbackModal({
                   ))}
                 </div>
 
-                <div className="pt-2 flex items-center justify-between text-[11px] text-slate-500 border-t border-slate-800/80">
-                  <span>Questions are dispatched to developer email</span>
+                <div className="pt-2.5 flex items-center justify-between text-[11px] text-slate-500 border-t border-slate-800/80">
+                  <span className="flex items-center gap-1">
+                    <Mail className="w-3 h-3 text-cyan-400" />
+                    <span>Dispatched to slastbornn@gmail.com</span>
+                  </span>
                   <button
                     type="button"
                     onClick={() => setActiveTab("ticket")}
@@ -261,9 +265,9 @@ export default function FeedbackModal({
                 {success ? (
                   <div className="py-8 text-center space-y-3">
                     <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto animate-bounce" />
-                    <h4 className="text-base font-bold text-white">Ticket Submitted!</h4>
+                    <h4 className="text-base font-bold text-white">Ticket & Bug Report Submitted!</h4>
                     <p className="text-xs text-slate-300">
-                      Your bug report has been logged and sent to <strong>slastbornn@gmail.com</strong>.
+                      Your report has been logged and queued for developer dispatch to <strong>slastbornn@gmail.com</strong>.
                     </p>
                   </div>
                 ) : (
@@ -279,9 +283,9 @@ export default function FeedbackModal({
                             key={cat}
                             type="button"
                             onClick={() => setCategory(cat)}
-                            className={`text-xs py-1.5 px-2 rounded-lg border font-medium transition-all cursor-pointer ${
+                            className={`text-xs py-2 px-2 rounded-xl border font-medium transition-all cursor-pointer ${
                               category === cat
-                                ? "bg-cyan-500/20 border-cyan-400 text-cyan-300"
+                                ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold"
                                 : "bg-slate-800/50 border-slate-700/60 text-slate-400 hover:text-slate-200"
                             }`}
                           >
@@ -294,7 +298,7 @@ export default function FeedbackModal({
                     {/* DESCRIPTION */}
                     <div>
                       <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                        Issue / Feedback Description
+                        Issue / Bug / Feedback Description
                       </label>
                       <textarea
                         rows={4}
@@ -307,26 +311,29 @@ export default function FeedbackModal({
 
                     {/* ERROR ALERT */}
                     {error && (
-                      <div className="flex items-center gap-2 p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs">
+                      <div className="flex items-center gap-2 p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs">
                         <AlertCircle className="w-4 h-4 shrink-0" />
                         <span>{error}</span>
                       </div>
                     )}
 
-                    {/* USER TIER NOTICE */}
-                    <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
-                      <span>Account Tier: <strong className="text-cyan-400 uppercase">{userTier}</strong></span>
-                      <span className="text-cyan-400 font-semibold">📬 Sent to slastbornn@gmail.com</span>
+                    {/* USER TIER & EMAIL DISPATCH INFO */}
+                    <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+                      <span>Tier: <strong className="text-cyan-400 uppercase">{userTier}</strong></span>
+                      <span className="text-cyan-300 font-semibold flex items-center gap-1">
+                        <Mail className="w-3 h-3 text-cyan-400" />
+                        <span>Target: slastbornn@gmail.com</span>
+                      </span>
                     </div>
 
                     {/* SUBMIT BUTTON */}
                     <button
                       type="submit"
                       disabled={ticketLoading}
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs py-2.5 rounded-xl transition-all shadow-lg disabled:opacity-50 cursor-pointer"
+                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs py-3 rounded-xl transition-all shadow-lg disabled:opacity-50 cursor-pointer"
                     >
                       <Send className="w-4 h-4" />
-                      <span>{ticketLoading ? "Sending to Developer..." : "Submit Bug / Support Ticket"}</span>
+                      <span>{ticketLoading ? "Dispatching Ticket..." : "Submit Bug / Support Ticket"}</span>
                     </button>
                   </form>
                 )}
