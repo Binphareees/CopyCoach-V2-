@@ -41,7 +41,23 @@ import {
   CreditCard,
   UserCheck,
   ShieldCheck,
-  X
+  X,
+  User,
+  Lock,
+  Eye,
+  EyeOff,
+  Save,
+  LifeBuoy,
+  MessageSquare,
+  Send,
+  ExternalLink,
+  Activity,
+  BookOpen,
+  Laptop,
+  Globe,
+  Building,
+  Briefcase,
+  Camera
 } from "lucide-react";
 
 interface CopyResult {
@@ -105,6 +121,27 @@ export default function DashboardPage() {
   const [plan, setPlan] = useState("free");
   const [totalCopies, setTotalCopies] = useState(0);
   const [favoriteCount, setFavoriteCount] = useState(0);
+
+  // Profile Modal State & Fields
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileTab, setProfileTab] = useState<
+    "profile" | "brand_voice" | "security" | "preferences" | "billing" | "support"
+  >("profile");
+  const [role, setRole] = useState("Marketing Copywriter");
+  const [company, setCompany] = useState("");
+  const [bio, setBio] = useState("");
+  const [targetAudience, setTargetAudience] = useState("B2B Decision Makers & Founders");
+  const [brandNiche, setBrandNiche] = useState("SaaS & Digital Marketing");
+  const [preferredLanguage, setPreferredLanguage] = useState("English (US)");
+  const [brandGuidelines, setBrandGuidelines] = useState(
+    "Maintain a clear, punchy, value-focused tone. Avoid fluff and overly complex jargon."
+  );
+  const [preferredModel, setPreferredModel] = useState("Gemini 2.5 Flash (Recommended)");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [profileSaving, setProfileSaving] = useState(false);
 
   // Appearance & Modals
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -560,34 +597,41 @@ export default function DashboardPage() {
                     Account & Workspace
                   </span>
 
-                  <Link
-                    href="/dashboard/profile"
-                    onClick={() => setShowMenu(false)}
-                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors"
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      setProfileTab("profile");
+                      setShowProfileModal(true);
+                    }}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5">
                       <UserCheck className="w-4 h-4 text-cyan-400" />
                       <span>Profile Settings</span>
                     </div>
                     <span className="text-[10px] text-slate-500">Edit</span>
-                  </Link>
+                  </button>
 
-                  <Link
-                    href="/dashboard/profile"
-                    onClick={() => setShowMenu(false)}
-                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors"
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      setProfileTab("brand_voice");
+                      setShowProfileModal(true);
+                    }}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5">
                       <Sliders className="w-4 h-4 text-purple-400" />
                       <span>Brand Voice & AI Persona</span>
                     </div>
                     <span className="text-[10px] text-purple-400/80 bg-purple-950/40 px-1.5 py-0.5 rounded">Custom</span>
-                  </Link>
+                  </button>
 
                   <button
                     onClick={() => {
                       setShowMenu(false);
-                      upgradeToPro();
+                      setProfileTab("billing");
+                      setShowProfileModal(true);
                     }}
                     className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
                   >
@@ -601,19 +645,23 @@ export default function DashboardPage() {
                   </button>
                 </div>
 
-                {/* Appearance Group */}
+                {/* Preferences Group */}
                 <div className="pt-2 border-t border-slate-800/80 space-y-0.5 mb-2">
                   <span className="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                     Preferences
                   </span>
 
                   <button
-                    onClick={toggleTheme}
+                    onClick={() => {
+                      setShowMenu(false);
+                      setProfileTab("preferences");
+                      setShowProfileModal(true);
+                    }}
                     className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5">
                       {isDarkMode ? <Moon className="w-4 h-4 text-blue-400" /> : <Sun className="w-4 h-4 text-amber-400" />}
-                      <span>Appearance</span>
+                      <span>Appearance & Theme</span>
                     </div>
                     <span className="text-[10px] font-medium text-cyan-300 bg-cyan-950/60 border border-cyan-800/40 px-2 py-0.5 rounded">
                       {isDarkMode ? "Dark Theme" : "Light Theme"}
@@ -1229,6 +1277,437 @@ export default function DashboardPage() {
               >
                 Create Project
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* COMPREHENSIVE PROFILE & SETTINGS MODAL */}
+      {showProfileModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-4xl shadow-2xl animate-in zoom-in-95 my-auto max-h-[90vh] flex flex-col overflow-hidden">
+            {/* Modal Top Header */}
+            <div className="p-5 sm:p-6 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-cyan-950 border border-cyan-500/30 text-cyan-400 rounded-xl">
+                  <UserCheck className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Profile & Account Settings</h3>
+                  <p className="text-xs text-slate-400">Manage your persona, brand voices, security, and preferences</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowProfileModal(false)}
+                className="p-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Content Body */}
+            <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1">
+              {/* Tab Navigation Pill Bar */}
+              <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-4">
+                <button
+                  onClick={() => setProfileTab("profile")}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    profileTab === "profile"
+                      ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20"
+                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                  }`}
+                >
+                  <User className="w-4 h-4" />
+                  <span>Personal Profile</span>
+                </button>
+
+                <button
+                  onClick={() => setProfileTab("brand_voice")}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    profileTab === "brand_voice"
+                      ? "bg-purple-600 text-white shadow-md shadow-purple-600/20"
+                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                  }`}
+                >
+                  <Sliders className="w-4 h-4" />
+                  <span>Brand Voice</span>
+                </button>
+
+                <button
+                  onClick={() => setProfileTab("preferences")}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    profileTab === "preferences"
+                      ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
+                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                  }`}
+                >
+                  <Sun className="w-4 h-4" />
+                  <span>Theme & AI Engine</span>
+                </button>
+
+                <button
+                  onClick={() => setProfileTab("security")}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    profileTab === "security"
+                      ? "bg-rose-600 text-white shadow-md shadow-rose-600/20"
+                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                  }`}
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Security</span>
+                </button>
+
+                <button
+                  onClick={() => setProfileTab("billing")}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    profileTab === "billing"
+                      ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
+                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                  }`}
+                >
+                  <CreditCard className="w-4 h-4" />
+                  <span>Subscription</span>
+                </button>
+
+                <button
+                  onClick={() => setProfileTab("support")}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    profileTab === "support"
+                      ? "bg-blue-600 text-white shadow-md shadow-blue-600/20"
+                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                  }`}
+                >
+                  <LifeBuoy className="w-4 h-4" />
+                  <span>Support Hub</span>
+                </button>
+              </div>
+
+              {/* TAB 1: PERSONAL PROFILE */}
+              {profileTab === "profile" && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="e.g. S_last_born"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        value={userEmail || "user@example.com"}
+                        disabled
+                        className="w-full bg-slate-950/60 border border-slate-800/80 rounded-xl px-4 py-2.5 text-xs text-slate-400 opacity-80 cursor-not-allowed"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                        Role / Title
+                      </label>
+                      <input
+                        type="text"
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                        placeholder="e.g. Senior Copywriter"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                        Company / Brand Name
+                      </label>
+                      <input
+                        type="text"
+                        value={company}
+                        onChange={(e) => setCompany(e.target.value)}
+                        placeholder="e.g. CopyCoach Labs"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      Bio & Strategic Copy Goals
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                      placeholder="Briefly describe your copywriting goals..."
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 resize-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: BRAND VOICE */}
+              {profileTab === "brand_voice" && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                        Target Audience
+                      </label>
+                      <input
+                        type="text"
+                        value={targetAudience}
+                        onChange={(e) => setTargetAudience(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-purple-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                        Brand Niche
+                      </label>
+                      <input
+                        type="text"
+                        value={brandNiche}
+                        onChange={(e) => setBrandNiche(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-purple-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      Custom Brand Guidelines
+                    </label>
+                    <textarea
+                      rows={4}
+                      value={brandGuidelines}
+                      onChange={(e) => setBrandGuidelines(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-purple-500 resize-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: THEME & AI PREFERENCES */}
+              {profileTab === "preferences" && (
+                <div className="space-y-5">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                      Theme Mode
+                    </label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsDarkMode(true);
+                          localStorage.setItem("copycoach_theme", "dark");
+                          showToast("Dark Theme Activated");
+                        }}
+                        className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer ${
+                          isDarkMode
+                            ? "bg-indigo-600/20 border-indigo-500 text-indigo-300"
+                            : "bg-slate-950 border-slate-800 text-slate-400"
+                        }`}
+                      >
+                        <Moon className="w-4 h-4 text-indigo-400" />
+                        <span>Dark Mode</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsDarkMode(false);
+                          localStorage.setItem("copycoach_theme", "light");
+                          showToast("Light Theme Activated");
+                        }}
+                        className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer ${
+                          !isDarkMode
+                            ? "bg-amber-500/20 border-amber-500 text-amber-300"
+                            : "bg-slate-950 border-slate-800 text-slate-400"
+                        }`}
+                      >
+                        <Sun className="w-4 h-4 text-amber-400" />
+                        <span>Light Mode</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsDarkMode(true);
+                          localStorage.setItem("copycoach_theme", "system");
+                          showToast("System Theme Selected");
+                        }}
+                        className="p-3 rounded-xl border border-slate-800 bg-slate-950 text-slate-400 hover:text-white text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <Laptop className="w-4 h-4 text-purple-400" />
+                        <span>System Sync</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      Default AI Engine
+                    </label>
+                    <select
+                      value={preferredModel}
+                      onChange={(e) => setPreferredModel(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500 cursor-pointer"
+                    >
+                      <option value="Gemini 2.5 Flash (Recommended)">Gemini 2.5 Flash (Recommended - Super Fast)</option>
+                      <option value="Gemini 2.5 Pro (Deep Copywriting Reasoning)">Gemini 2.5 Pro (Deep Strategy)</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: SECURITY */}
+              {profileTab === "security" && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                        New Password
+                      </label>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-rose-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                        Confirm Password
+                      </label>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-rose-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800">
+                    <div>
+                      <p className="text-xs font-semibold text-white">Two-Factor Authentication (2FA)</p>
+                      <p className="text-[11px] text-slate-400">Add an extra layer of security to your CopyCoach account</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTwoFactorEnabled(!twoFactorEnabled);
+                        showToast(!twoFactorEnabled ? "2FA Enabled" : "2FA Disabled");
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer ${
+                        twoFactorEnabled ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-300"
+                      }`}
+                    >
+                      {twoFactorEnabled ? "Enabled" : "Enable"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 5: BILLING & SUBSCRIPTION */}
+              {profileTab === "billing" && (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-purple-500/10 to-cyan-500/10 border border-amber-500/30 flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400">Current Plan</span>
+                      <h4 className="text-lg font-bold text-white capitalize">{plan} Plan</h4>
+                      <p className="text-xs text-slate-300 mt-0.5">
+                        {plan === "pro" ? "100 AI Generations Daily" : "5 Free Generations Daily"}
+                      </p>
+                    </div>
+
+                    {plan !== "pro" && (
+                      <button
+                        type="button"
+                        onClick={upgradeToPro}
+                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs shadow-lg shadow-amber-500/20 cursor-pointer"
+                      >
+                        Upgrade to Pro
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 6: SUPPORT HUB */}
+              {profileTab === "support" && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 text-xs font-medium">
+                    <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
+                    <span>CopyCoach AI Status: All Systems Operational (100% Uptime)</span>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      Submit Support Ticket
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Subject line..."
+                      value={supportSubject}
+                      onChange={(e) => setSupportSubject(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-blue-500 mb-3"
+                    />
+                    <textarea
+                      rows={3}
+                      placeholder="Describe your issue or question..."
+                      value={supportMessage}
+                      onChange={(e) => setSupportMessage(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-blue-500 resize-none"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Bottom Actions */}
+            <div className="p-4 sm:p-6 bg-slate-950/80 border-t border-slate-800 flex items-center justify-between shrink-0">
+              <Link
+                href="/dashboard/profile"
+                className="text-xs text-cyan-400 hover:underline font-medium flex items-center gap-1"
+              >
+                <span>Open Dedicated Profile Page</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowProfileModal(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    localStorage.setItem("copycoach_user_settings", JSON.stringify({
+                      role, company, bio, targetAudience, brandNiche, preferredLanguage, brandGuidelines, preferredModel
+                    }));
+                    showToast("Profile Settings Saved Successfully!");
+                    setShowProfileModal(false);
+                  }}
+                  className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-6 py-2 rounded-xl text-xs transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer flex items-center gap-1.5"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>Save Changes</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
