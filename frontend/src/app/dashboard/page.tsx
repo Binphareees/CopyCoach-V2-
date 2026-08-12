@@ -13,7 +13,6 @@ import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 import DrillCritiqueFeedback from "@/components/ui/DrillCritiqueFeedback";
 import FeedbackModal from "@/components/ui/FeedbackModal";
-import DownloadAppModal from "@/components/ui/DownloadAppModal";
 import {
   Sparkles,
   Zap,
@@ -643,7 +642,6 @@ export default function DashboardPage() {
               <span>New Project</span>
             </button>
 
-            <DownloadAppModal triggerText="Get App" />
             <FeedbackModal userId={userId} userTier={plan === "pro" ? "Pro" : "Spark"} />
           </div>
 
@@ -721,18 +719,6 @@ export default function DashboardPage() {
                       <span>Admin Feedback Triage</span>
                     </div>
                     <span className="text-[10px] font-bold text-amber-400 bg-amber-950/40 px-1.5 py-0.5 rounded border border-amber-800/50">Admin</span>
-                  </Link>
-
-                  <Link
-                    href="/download"
-                    onClick={() => setShowMenu(false)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${isDarkMode ? "text-slate-200 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"}`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Download className="w-4 h-4 text-cyan-400" />
-                      <span>Download Mobile App</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded border border-cyan-800/50">APK & iOS</span>
                   </Link>
 
                   <button
