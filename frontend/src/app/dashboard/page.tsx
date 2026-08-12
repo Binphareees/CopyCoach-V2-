@@ -143,19 +143,79 @@ export default function DashboardPage() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
 
-  // Appearance & Modals
-  const [isDarkMode, setIsDarkMode] = useState(() => {
+  // Appearance & Theme State
+  const [themeMode, setThemeMode] = useState<"dark" | "light" | "system">(() => {
     if (typeof window !== "undefined") {
       try {
         const savedTheme = localStorage.getItem("copycoach_theme");
-        if (savedTheme === "light") return false;
-        if (savedTheme === "dark") return true;
+        if (savedTheme === "light" || savedTheme === "dark" || savedTheme === "system") {
+          return savedTheme;
+        }
       } catch {
         // fallback
       }
     }
-    return true;
+    return "dark";
   });
+
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
+
+  // Sync isDarkMode and document HTML class with themeMode
+  useEffect(() => {
+    const updateTheme = () => {
+      let isDark = true;
+      if (themeMode === "light") {
+        isDark = false;
+      } else if (themeMode === "dark") {
+        isDark = true;
+      } else if (themeMode === "system") {
+        isDark = typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      }
+
+      setIsDarkMode(isDark);
+
+      if (typeof document !== "undefined") {
+        if (isDark) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("light");
+        } else {
+          document.documentElement.classList.add("light");
+          document.documentElement.classList.remove("dark");
+        }
+      }
+    };
+
+    updateTheme();
+
+    if (themeMode === "system") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const listener = (e: MediaQueryListEvent) => {
+        setIsDarkMode(e.matches);
+        if (e.matches) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("light");
+        } else {
+          document.documentElement.classList.add("light");
+          document.documentElement.classList.remove("dark");
+        }
+      };
+      mediaQuery.addEventListener("change", listener);
+      return () => mediaQuery.removeEventListener("change", listener);
+    }
+  }, [themeMode]);
+
+  const applyTheme = (mode: "dark" | "light" | "system") => {
+    setThemeMode(mode);
+    localStorage.setItem("copycoach_theme", mode);
+    if (mode === "dark") showToast("Dark Theme Activated");
+    else if (mode === "light") showToast("Light Theme Activated");
+    else showToast("System Theme Synchronized");
+  };
+
+  const toggleTheme = () => {
+    const next = isDarkMode ? "light" : "dark";
+    applyTheme(next);
+  };
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [supportSubject, setSupportSubject] = useState("");
@@ -171,11 +231,6 @@ export default function DashboardPage() {
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
-  };
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    showToast(!isDarkMode ? "Switched to Dark Mode" : "Switched to Light Mode");
   };
 
   // 1. Load User Profile
@@ -488,17 +543,17 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1020] text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950">
+    <div className={`min-h-screen font-sans transition-colors duration-200 selection:bg-cyan-500 selection:text-slate-950 ${isDarkMode ? "bg-[#0B1020] text-slate-100" : "bg-slate-100 text-slate-900"}`}>
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-slate-900 border border-cyan-500/40 text-cyan-200 px-4 py-3 rounded-xl shadow-2xl text-sm font-medium animate-in fade-in slide-in-from-bottom-4">
+        <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-2xl text-sm font-medium animate-in fade-in slide-in-from-bottom-4 border ${isDarkMode ? "bg-slate-900 border-cyan-500/40 text-cyan-200" : "bg-white border-cyan-500 text-slate-800"}`}>
           <Check className="w-4 h-4 text-cyan-400" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Top Professional Header Bar */}
-      <header className="sticky top-0 z-40 bg-[#0B1020]/90 backdrop-blur-xl border-b border-slate-800/80">
+      <header className={`sticky top-0 z-40 backdrop-blur-xl border-b transition-colors duration-200 ${isDarkMode ? "bg-[#0B1020]/90 border-slate-800/80" : "bg-white/95 border-slate-200/80 shadow-xs"}`}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Logo Brand Branding */}
           <Link href="/" className="flex items-center gap-3 group">
@@ -512,17 +567,17 @@ export default function DashboardPage() {
 
           {/* Quick Active Project Indicator & Navigation */}
           <div className="hidden md:flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 rounded-xl px-3.5 py-1.5 text-xs text-slate-300">
+            <div className={`flex items-center gap-2 border rounded-xl px-3.5 py-1.5 text-xs transition-colors ${isDarkMode ? "bg-slate-900/80 border-slate-800 text-slate-300" : "bg-slate-50 border-slate-200 text-slate-700"}`}>
               <Folder className="w-3.5 h-3.5 text-cyan-400" />
               <span>Workspace:</span>
               <select
                 value={selectedProject}
                 onChange={(e) => setSelectedProject(e.target.value)}
-                className="bg-transparent font-medium text-white focus:outline-none cursor-pointer"
+                className={`bg-transparent font-medium focus:outline-none cursor-pointer ${isDarkMode ? "text-white" : "text-slate-900"}`}
               >
-                <option value="" className="bg-slate-900 text-slate-200">Default Workspace</option>
+                <option value="" className={isDarkMode ? "bg-slate-900 text-slate-200" : "bg-white text-slate-800"}>Default Workspace</option>
                 {projects.map((p) => (
-                  <option key={p.id} value={p.id} className="bg-slate-900 text-slate-200">
+                  <option key={p.id} value={p.id} className={isDarkMode ? "bg-slate-900 text-slate-200" : "bg-white text-slate-800"}>
                     {p.name}
                   </option>
                 ))}
@@ -542,7 +597,7 @@ export default function DashboardPage() {
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="flex items-center gap-3 p-1.5 rounded-2xl hover:bg-slate-800/60 border border-transparent hover:border-slate-800 transition-all cursor-pointer"
+              className={`flex items-center gap-3 p-1.5 rounded-2xl border transition-all cursor-pointer ${isDarkMode ? "hover:bg-slate-800/60 border-transparent hover:border-slate-800 text-slate-200" : "hover:bg-slate-200/60 border-transparent hover:border-slate-300 text-slate-800"}`}
             >
               <div className="h-10 w-10 rounded-xl overflow-hidden bg-slate-800 border border-cyan-500/30 flex items-center justify-center font-bold text-sm text-cyan-400 shrink-0">
                 {avatar ? (
@@ -553,8 +608,8 @@ export default function DashboardPage() {
                 )}
               </div>
               <div className="text-left hidden sm:block pr-1">
-                <p className="text-xs font-semibold text-white leading-tight">{fullName || "CopyCoach User"}</p>
-                <p className="text-[11px] text-slate-400 font-medium capitalize mt-0.5 flex items-center gap-1">
+                <p className={`text-xs font-semibold leading-tight ${isDarkMode ? "text-white" : "text-slate-900"}`}>{fullName || "CopyCoach User"}</p>
+                <p className={`text-[11px] font-medium capitalize mt-0.5 flex items-center gap-1 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
                   <span className={`h-1.5 w-1.5 rounded-full ${plan === "pro" ? "bg-amber-400" : "bg-cyan-400"}`} />
                   {plan === "pro" ? "Pro Plan" : "Free Plan"}
                 </p>
@@ -564,9 +619,9 @@ export default function DashboardPage() {
 
             {/* Comprehensive Professional Dropdown Menu */}
             {showMenu && (
-              <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-slate-900 border border-slate-800/90 p-2.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 backdrop-blur-2xl">
+              <div className={`absolute right-0 mt-2 w-72 rounded-2xl border p-2.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 backdrop-blur-2xl ${isDarkMode ? "bg-slate-900 border-slate-800/90 text-slate-100" : "bg-white border-slate-200 text-slate-900 shadow-xl"}`}>
                 {/* Profile Header */}
-                <div className="px-3 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl mb-2">
+                <div className={`px-3 py-2.5 border rounded-xl mb-2 ${isDarkMode ? "bg-slate-950/80 border-slate-800/80" : "bg-slate-50 border-slate-200"}`}>
                   <div className="flex items-center gap-3">
                     <div className="h-9 w-9 rounded-lg bg-cyan-950 border border-cyan-500/30 flex items-center justify-center font-bold text-xs text-cyan-300 shrink-0">
                       {avatar ? (
@@ -577,13 +632,13 @@ export default function DashboardPage() {
                       )}
                     </div>
                     <div className="overflow-hidden">
-                      <p className="text-xs font-bold text-white truncate">{fullName || "CopyCoach User"}</p>
-                      <p className="text-[11px] text-slate-400 truncate mt-0.5">{userEmail || userId}</p>
+                      <p className={`text-xs font-bold truncate ${isDarkMode ? "text-white" : "text-slate-900"}`}>{fullName || "CopyCoach User"}</p>
+                      <p className={`text-[11px] truncate mt-0.5 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>{userEmail || userId}</p>
                     </div>
                   </div>
 
-                  <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px]">
-                    <span className="text-slate-400 font-medium flex items-center gap-1">
+                  <div className={`mt-2.5 pt-2 border-t flex items-center justify-between text-[11px] ${isDarkMode ? "border-slate-800/60 text-slate-400" : "border-slate-200 text-slate-600"}`}>
+                    <span className="font-medium flex items-center gap-1">
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                       <span>{plan === "pro" ? "Pro Membership" : "Starter Free Plan"}</span>
                     </span>
@@ -603,7 +658,7 @@ export default function DashboardPage() {
                       setProfileTab("profile");
                       setShowProfileModal(true);
                     }}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${isDarkMode ? "text-slate-200 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"}`}
                   >
                     <div className="flex items-center gap-2.5">
                       <UserCheck className="w-4 h-4 text-cyan-400" />
@@ -618,7 +673,7 @@ export default function DashboardPage() {
                       setProfileTab("brand_voice");
                       setShowProfileModal(true);
                     }}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${isDarkMode ? "text-slate-200 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"}`}
                   >
                     <div className="flex items-center gap-2.5">
                       <Sliders className="w-4 h-4 text-purple-400" />
@@ -633,7 +688,7 @@ export default function DashboardPage() {
                       setProfileTab("billing");
                       setShowProfileModal(true);
                     }}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${isDarkMode ? "text-slate-200 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"}`}
                   >
                     <div className="flex items-center gap-2.5">
                       <CreditCard className="w-4 h-4 text-amber-400" />
@@ -646,7 +701,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Preferences Group */}
-                <div className="pt-2 border-t border-slate-800/80 space-y-0.5 mb-2">
+                <div className={`pt-2 border-t space-y-0.5 mb-2 ${isDarkMode ? "border-slate-800/80" : "border-slate-200"}`}>
                   <span className="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                     Preferences
                   </span>
@@ -657,14 +712,14 @@ export default function DashboardPage() {
                       setProfileTab("preferences");
                       setShowProfileModal(true);
                     }}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${isDarkMode ? "text-slate-200 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"}`}
                   >
                     <div className="flex items-center gap-2.5">
                       {isDarkMode ? <Moon className="w-4 h-4 text-blue-400" /> : <Sun className="w-4 h-4 text-amber-400" />}
                       <span>Appearance & Theme</span>
                     </div>
                     <span className="text-[10px] font-medium text-cyan-300 bg-cyan-950/60 border border-cyan-800/40 px-2 py-0.5 rounded">
-                      {isDarkMode ? "Dark Theme" : "Light Theme"}
+                      {themeMode === "system" ? "System Sync" : isDarkMode ? "Dark Theme" : "Light Theme"}
                     </span>
                   </button>
                 </div>
@@ -754,17 +809,17 @@ export default function DashboardPage() {
         {/* Welcome & Analytics Banner */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           {/* Credits & Plan Gauge */}
-          <div className="bg-slate-900/60 border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden group">
+          <div className={`border rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden group transition-colors ${isDarkMode ? "bg-slate-900/60 border-slate-800/90 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-xs"}`}>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">AI Generation Credits</span>
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>AI Generation Credits</span>
               <Zap className="w-4 h-4 text-cyan-400" />
             </div>
             <div className="my-3">
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-extrabold text-white">{credits}</span>
-                <span className="text-xs text-slate-400">/ {plan === "pro" ? 100 : 5} left today</span>
+                <span className={`text-3xl font-extrabold ${isDarkMode ? "text-white" : "text-slate-900"}`}>{credits}</span>
+                <span className={`text-xs ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>/ {plan === "pro" ? 100 : 5} left today</span>
               </div>
-              <div className="w-full bg-slate-800 rounded-full h-2 mt-2.5 overflow-hidden">
+              <div className={`w-full rounded-full h-2 mt-2.5 overflow-hidden ${isDarkMode ? "bg-slate-800" : "bg-slate-200"}`}>
                 <div
                   className="bg-gradient-to-r from-cyan-400 to-blue-600 h-full rounded-full transition-all duration-500"
                   style={{ width: `${Math.min(100, (credits / (plan === "pro" ? 100 : 5)) * 100)}%` }}
@@ -774,13 +829,13 @@ export default function DashboardPage() {
             {plan === "free" ? (
               <button
                 onClick={upgradeToPro}
-                className="text-xs font-semibold text-cyan-300 hover:text-white flex items-center gap-1 group/btn cursor-pointer"
+                className="text-xs font-semibold text-cyan-500 hover:text-cyan-600 flex items-center gap-1 group/btn cursor-pointer"
               >
                 <span>Upgrade to Pro (100 daily)</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1" />
               </button>
             ) : (
-              <span className="text-[11px] text-emerald-400 font-medium flex items-center gap-1">
+              <span className="text-[11px] text-emerald-500 font-medium flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>Unlimited Pro Access Active</span>
               </span>
@@ -788,52 +843,52 @@ export default function DashboardPage() {
           </div>
 
           {/* Stat 2: Total Generations */}
-          <div className="bg-slate-900/60 border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between">
+          <div className={`border rounded-2xl p-5 flex flex-col justify-between transition-colors ${isDarkMode ? "bg-slate-900/60 border-slate-800/90 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-xs"}`}>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Copy Improvements</span>
-              <FileText className="w-4 h-4 text-blue-400" />
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Total Copy Improvements</span>
+              <FileText className="w-4 h-4 text-blue-500" />
             </div>
             <div className="my-3">
-              <div className="text-3xl font-extrabold text-white">{totalCopies}</div>
-              <p className="text-xs text-slate-400 mt-1">Saved in history library</p>
+              <div className={`text-3xl font-extrabold ${isDarkMode ? "text-white" : "text-slate-900"}`}>{totalCopies}</div>
+              <p className={`text-xs mt-1 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Saved in history library</p>
             </div>
             <span className="text-[11px] text-slate-500 flex items-center gap-1">
-              <TrendingUp className="w-3.5 h-3.5 text-blue-400" />
+              <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
               <span>Real-time persistence</span>
             </span>
           </div>
 
           {/* Stat 3: Favorites Saved */}
-          <div className="bg-slate-900/60 border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between">
+          <div className={`border rounded-2xl p-5 flex flex-col justify-between transition-colors ${isDarkMode ? "bg-slate-900/60 border-slate-800/90 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-xs"}`}>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Starred Favorites</span>
-              <Star className="w-4 h-4 text-amber-400 fill-amber-400/20" />
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Starred Favorites</span>
+              <Star className="w-4 h-4 text-amber-500 fill-amber-500/20" />
             </div>
             <div className="my-3">
-              <div className="text-3xl font-extrabold text-white">{favoriteCount}</div>
-              <p className="text-xs text-slate-400 mt-1">High-converting snippets</p>
+              <div className={`text-3xl font-extrabold ${isDarkMode ? "text-white" : "text-slate-900"}`}>{favoriteCount}</div>
+              <p className={`text-xs mt-1 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>High-converting snippets</p>
             </div>
             <button
               onClick={() => setShowFavorites(!showFavorites)}
-              className="text-xs font-semibold text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
+              className="text-xs font-semibold text-amber-500 hover:text-amber-600 flex items-center gap-1 cursor-pointer"
             >
               <span>{showFavorites ? "View All Copies" : "Filter Favorites"}</span>
             </button>
           </div>
 
           {/* Stat 4: Active Workspaces */}
-          <div className="bg-slate-900/60 border border-slate-800/90 rounded-2xl p-5 flex flex-col justify-between">
+          <div className={`border rounded-2xl p-5 flex flex-col justify-between transition-colors ${isDarkMode ? "bg-slate-900/60 border-slate-800/90 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-xs"}`}>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Projects</span>
-              <Layers className="w-4 h-4 text-purple-400" />
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Active Projects</span>
+              <Layers className="w-4 h-4 text-purple-500" />
             </div>
             <div className="my-3">
-              <div className="text-3xl font-extrabold text-white">{projects.length}</div>
-              <p className="text-xs text-slate-400 mt-1">Organized campaigns</p>
+              <div className={`text-3xl font-extrabold ${isDarkMode ? "text-white" : "text-slate-900"}`}>{projects.length}</div>
+              <p className={`text-xs mt-1 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Organized campaigns</p>
             </div>
             <button
               onClick={() => setShowProjectModal(true)}
-              className="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1 cursor-pointer"
+              className="text-xs font-semibold text-purple-500 hover:text-purple-600 flex items-center gap-1 cursor-pointer"
             >
               <span>+ Create Project</span>
             </button>
@@ -843,22 +898,22 @@ export default function DashboardPage() {
         {/* WORKSPACE GRID: LEFT INPUT & RIGHT OUTPUT */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
           {/* LEFT PANEL: INPUT FORM & STARTERS */}
-          <div className="lg:col-span-7 bg-slate-900/70 border border-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xl">
+          <div className={`lg:col-span-7 border rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xl transition-colors ${isDarkMode ? "bg-slate-900/70 border-slate-800 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-md"}`}>
             <div>
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-cyan-400" />
+                  <h2 className={`text-xl font-bold flex items-center gap-2 ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+                    <Sparkles className="w-5 h-5 text-cyan-500" />
                     <span>CopyCoach AI Studio</span>
                   </h2>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className={`text-xs mt-1 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
                     Paste raw copy to receive strategic coaching, score analysis, and instant AI optimization.
                   </p>
                 </div>
 
                 <div className="hidden sm:flex items-center gap-2">
-                  <span className="text-[11px] text-slate-400">Tone:</span>
-                  <span className="text-xs font-medium text-cyan-300 bg-cyan-950/60 border border-cyan-800/40 px-2.5 py-1 rounded-lg">
+                  <span className={`text-[11px] ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Tone:</span>
+                  <span className="text-xs font-medium text-cyan-500 bg-cyan-50 border border-cyan-200 dark:bg-cyan-950/60 dark:border-cyan-800/40 dark:text-cyan-300 px-2.5 py-1 rounded-lg">
                     {tone}
                   </span>
                 </div>
@@ -867,13 +922,13 @@ export default function DashboardPage() {
               {/* Selector Controls */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                  <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
                     Content Type
                   </label>
                   <select
                     value={copyType}
                     onChange={(e) => setCopyType(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-200 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer"
+                    className={`w-full border rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer ${isDarkMode ? "bg-slate-950 border-slate-800 text-slate-200" : "bg-slate-50 border-slate-300 text-slate-800"}`}
                   >
                     <option value="Advertisement">Social Media & Search Ad</option>
                     <option value="Email">Sales & Nurture Email</option>
@@ -886,13 +941,13 @@ export default function DashboardPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                  <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
                     Brand Tone
                   </label>
                   <select
                     value={tone}
                     onChange={(e) => setTone(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-200 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer"
+                    className={`w-full border rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer ${isDarkMode ? "bg-slate-950 border-slate-800 text-slate-200" : "bg-slate-50 border-slate-300 text-slate-800"}`}
                   >
                     <option value="Professional">Professional & Direct</option>
                     <option value="Persuasive">Persuasive & High Energy</option>
@@ -908,14 +963,14 @@ export default function DashboardPage() {
               {/* Quick Prompt Starters */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                    <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+                  <span className={`text-[11px] font-semibold uppercase tracking-wider flex items-center gap-1 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
+                    <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
                     <span>Quick Templates</span>
                   </span>
                   {text && (
                     <button
                       onClick={() => setText("")}
-                      className="text-[11px] text-slate-500 hover:text-slate-300 transition-colors"
+                      className="text-[11px] text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
                     >
                       Clear Input
                     </button>
@@ -925,19 +980,19 @@ export default function DashboardPage() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => insertSample("Double your sales team efficiency with our AI CRM platform that automates follow-ups in seconds.", "Advertisement", "Bold & Punchy")}
-                    className="text-xs bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                    className={`text-xs border px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${isDarkMode ? "bg-slate-950 hover:bg-slate-800 border-slate-800 text-slate-300" : "bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700"}`}
                   >
                     ⚡ SaaS Ad Headline
                   </button>
                   <button
                     onClick={() => insertSample("Hey John, you left something behind in your cart! Grab your discount before midnight.", "Email", "Urgent")}
-                    className="text-xs bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                    className={`text-xs border px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${isDarkMode ? "bg-slate-950 hover:bg-slate-800 border-slate-800 text-slate-300" : "bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700"}`}
                   >
                     🛒 Cart Abandonment Email
                   </button>
                   <button
                     onClick={() => insertSample("Transform your morning routine with our organic cold-pressed matcha blend.", "Product Description", "Luxury")}
-                    className="text-xs bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                    className={`text-xs border px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${isDarkMode ? "bg-slate-950 hover:bg-slate-800 border-slate-800 text-slate-300" : "bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700"}`}
                   >
                     ✨ E-commerce Hook
                   </button>
@@ -951,9 +1006,9 @@ export default function DashboardPage() {
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   placeholder="Paste or write your raw copywriting draft here... (e.g. ad hooks, email subject lines, landing page copy)"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-slate-100 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-none font-sans"
+                  className={`w-full border rounded-2xl p-4 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-none font-sans ${isDarkMode ? "bg-slate-950 border-slate-800 text-slate-100 placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400"}`}
                 />
-                <div className="absolute bottom-3 right-4 text-[11px] text-slate-500 font-mono">
+                <div className={`absolute bottom-3 right-4 text-[11px] font-mono ${isDarkMode ? "text-slate-500" : "text-slate-400"}`}>
                   {text.length} chars
                 </div>
               </div>
@@ -967,9 +1022,9 @@ export default function DashboardPage() {
             </div>
 
             {/* Action Trigger Button */}
-            <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
-              <span className="text-xs text-slate-400 hidden sm:inline">
-                Cost: <strong className="text-slate-200">1 Credit</strong>
+            <div className={`mt-6 pt-4 border-t flex items-center justify-between ${isDarkMode ? "border-slate-800/80" : "border-slate-200"}`}>
+              <span className={`text-xs hidden sm:inline ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
+                Cost: <strong className={isDarkMode ? "text-slate-200" : "text-slate-800"}>1 Credit</strong>
               </span>
 
               <button
@@ -993,15 +1048,15 @@ export default function DashboardPage() {
           </div>
 
           {/* RIGHT PANEL: REAL-TIME AI COACHING ANALYSIS & OUTPUT */}
-          <div className="lg:col-span-5 bg-slate-900/70 border border-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xl min-h-[480px]">
+          <div className={`lg:col-span-5 border rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xl min-h-[480px] transition-colors ${isDarkMode ? "bg-slate-900/70 border-slate-800 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-md"}`}>
             {result ? (
               <div className="space-y-5 animate-in fade-in duration-300">
                 {/* Header with Score */}
-                <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div className={`flex items-center justify-between border-b pb-4 ${isDarkMode ? "border-slate-800" : "border-slate-200"}`}>
                   <div>
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">AI Copy Evaluation</span>
-                    <h3 className="text-lg font-bold text-white flex items-center gap-2 mt-0.5">
-                      <BarChart3 className="w-5 h-5 text-cyan-400" />
+                    <span className={`text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>AI Copy Evaluation</span>
+                    <h3 className={`text-lg font-bold flex items-center gap-2 mt-0.5 ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+                      <BarChart3 className="w-5 h-5 text-cyan-500" />
                       <span>Optimization Score</span>
                     </h3>
                   </div>
@@ -1010,15 +1065,15 @@ export default function DashboardPage() {
                     <span
                       className={`text-3xl font-extrabold ${
                         (typeof result === "object" && result.score && result.score >= 80)
-                          ? "text-emerald-400"
+                          ? "text-emerald-500"
                           : (typeof result === "object" && result.score && result.score >= 60)
-                          ? "text-amber-400"
-                          : "text-cyan-400"
+                          ? "text-amber-500"
+                          : "text-cyan-500"
                       }`}
                     >
                       {typeof result === "object" && result.score ? `${result.score}/100` : "85/100"}
                     </span>
-                    <p className="text-[10px] text-slate-400 uppercase tracking-wider">Conversion Ready</p>
+                    <p className={`text-[10px] uppercase tracking-wider ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Conversion Ready</p>
                   </div>
                 </div>
 
@@ -1026,24 +1081,24 @@ export default function DashboardPage() {
                 {typeof result === "object" && (
                   <div className="grid grid-cols-1 gap-3">
                     {result.framework && (
-                      <div className="bg-slate-950 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
-                        <span className="text-slate-400">Framework Applied:</span>
-                        <span className="font-semibold text-cyan-300 bg-cyan-950/60 px-2.5 py-0.5 rounded border border-cyan-800/40">
+                      <div className={`border p-3 rounded-xl flex items-center justify-between text-xs ${isDarkMode ? "bg-slate-950 border-slate-800 text-slate-300" : "bg-slate-50 border-slate-200 text-slate-700"}`}>
+                        <span className={isDarkMode ? "text-slate-400" : "text-slate-500"}>Framework Applied:</span>
+                        <span className="font-semibold text-cyan-500 bg-cyan-50 dark:bg-cyan-950/60 px-2.5 py-0.5 rounded border border-cyan-200 dark:border-cyan-800/40">
                           {result.framework}
                         </span>
                       </div>
                     )}
 
                     {result.strengths && result.strengths.length > 0 && (
-                      <div className="bg-slate-950 border border-slate-800 p-3.5 rounded-xl text-xs space-y-1.5">
-                        <div className="font-semibold text-emerald-400 flex items-center gap-1.5 mb-1">
+                      <div className={`border p-3.5 rounded-xl text-xs space-y-1.5 ${isDarkMode ? "bg-slate-950 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
+                        <div className="font-semibold text-emerald-500 flex items-center gap-1.5 mb-1">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>Key Strengths Identified</span>
                         </div>
-                        <ul className="space-y-1 text-slate-300">
+                        <ul className={`space-y-1 ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>
                           {result.strengths.map((str, idx) => (
                             <li key={idx} className="flex items-start gap-1.5">
-                              <span className="text-emerald-400 font-bold">•</span>
+                              <span className="text-emerald-500 font-bold">•</span>
                               <span>{str}</span>
                             </li>
                           ))}
@@ -1052,21 +1107,21 @@ export default function DashboardPage() {
                     )}
 
                     {result.coachAdvice && (
-                      <div className="bg-slate-950 border border-slate-800 p-3.5 rounded-xl text-xs space-y-1">
-                        <div className="font-semibold text-amber-400 flex items-center gap-1.5 mb-1">
+                      <div className={`border p-3.5 rounded-xl text-xs space-y-1 ${isDarkMode ? "bg-slate-950 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
+                        <div className="font-semibold text-amber-500 flex items-center gap-1.5 mb-1">
                           <Lightbulb className="w-3.5 h-3.5" />
                           <span>Coach Advice</span>
                         </div>
-                        <p className="text-slate-300 leading-relaxed">{result.coachAdvice}</p>
+                        <p className={`leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>{result.coachAdvice}</p>
                       </div>
                     )}
                   </div>
                 )}
 
                 {/* Improved Copy Output Box */}
-                <div className="bg-slate-950 border border-cyan-500/30 rounded-2xl p-4.5 shadow-inner relative">
+                <div className={`border rounded-2xl p-4.5 shadow-xs relative ${isDarkMode ? "bg-slate-950 border-cyan-500/30 text-slate-100" : "bg-slate-50 border-cyan-400 text-slate-900"}`}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-cyan-400 uppercase tracking-wider flex items-center gap-1">
+                    <span className="text-xs font-semibold text-cyan-500 uppercase tracking-wider flex items-center gap-1">
                       <Award className="w-3.5 h-3.5" />
                       <span>Optimized Copy Version</span>
                     </span>
@@ -1079,10 +1134,10 @@ export default function DashboardPage() {
                             "result"
                           )
                         }
-                        className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                        className={`p-1.5 rounded-lg transition-colors cursor-pointer ${isDarkMode ? "bg-slate-900 hover:bg-slate-800 text-slate-300" : "bg-white hover:bg-slate-200 text-slate-700"}`}
                         title="Copy text"
                       >
-                        {copiedId === "result" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copiedId === "result" ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                       </button>
 
                       <button
@@ -1091,7 +1146,7 @@ export default function DashboardPage() {
                             typeof result === "object" ? result.improvedCopy || "" : String(result)
                           )
                         }
-                        className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                        className={`p-1.5 rounded-lg transition-colors cursor-pointer ${isDarkMode ? "bg-slate-900 hover:bg-slate-800 text-slate-300" : "bg-white hover:bg-slate-200 text-slate-700"}`}
                         title="Download text"
                       >
                         <Download className="w-3.5 h-3.5" />
@@ -1099,20 +1154,20 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <p className="text-sm text-slate-100 whitespace-pre-wrap font-sans leading-relaxed">
+                  <p className={`text-sm whitespace-pre-wrap font-sans leading-relaxed ${isDarkMode ? "text-slate-100" : "text-slate-800"}`}>
                     {typeof result === "object" ? result.improvedCopy : String(result)}
                   </p>
                 </div>
               </div>
             ) : (
               /* Empty Placeholder State */
-              <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-400 my-auto">
-                <div className="h-16 w-16 rounded-3xl bg-slate-950 border border-slate-800 flex items-center justify-center mb-4 text-cyan-400 shadow-xl">
+              <div className="h-full flex flex-col items-center justify-center text-center p-6 my-auto">
+                <div className={`h-16 w-16 rounded-3xl border flex items-center justify-center mb-4 text-cyan-500 shadow-xl ${isDarkMode ? "bg-slate-950 border-slate-800" : "bg-slate-100 border-slate-200"}`}>
                   <Sparkles className="w-8 h-8" />
                 </div>
-                <h3 className="text-base font-semibold text-white mb-1">Awaiting Copy Analysis</h3>
-                <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
-                  Enter your copy on the left and click <strong className="text-slate-200">&quot;Improve Copy&quot;</strong> to receive AI scoring, strategic recommendations, and high-converting rewrites.
+                <h3 className={`text-base font-semibold mb-1 ${isDarkMode ? "text-white" : "text-slate-900"}`}>Awaiting Copy Analysis</h3>
+                <p className={`text-xs max-w-xs leading-relaxed ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
+                  Enter your copy on the left and click <strong className={isDarkMode ? "text-slate-200" : "text-slate-800"}>&quot;Improve Copy&quot;</strong> to receive AI scoring, strategic recommendations, and high-converting rewrites.
                 </p>
               </div>
             )}
@@ -1120,27 +1175,27 @@ export default function DashboardPage() {
         </div>
 
         {/* BOTTOM SECTION: COPY HISTORY & SAVED LIBRARY */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 sm:p-8">
+        <div className={`border rounded-3xl p-6 sm:p-8 transition-colors ${isDarkMode ? "bg-slate-900/60 border-slate-800 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-md"}`}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <FileText className="w-5 h-5 text-cyan-400" />
+              <h2 className={`text-xl font-bold flex items-center gap-2 ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+                <FileText className="w-5 h-5 text-cyan-500" />
                 <span>Copy History & Saved Library</span>
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className={`text-xs mt-0.5 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
                 Manage, filter, copy, or export your past optimized copy generations.
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               <div className="relative flex-1 sm:w-64">
-                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                 <input
                   type="text"
                   placeholder="Search history..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  className={`w-full border rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-cyan-500 ${isDarkMode ? "bg-slate-950 border-slate-800 text-slate-200" : "bg-slate-50 border-slate-300 text-slate-800"}`}
                 />
               </div>
 
@@ -1148,11 +1203,13 @@ export default function DashboardPage() {
                 onClick={() => setShowFavorites(!showFavorites)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
                   showFavorites
-                    ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
-                    : "bg-slate-950 text-slate-400 border-slate-800 hover:text-white"
+                    ? "bg-amber-500/20 text-amber-500 border-amber-500/40"
+                    : isDarkMode
+                    ? "bg-slate-950 text-slate-400 border-slate-800 hover:text-white"
+                    : "bg-slate-100 text-slate-600 border-slate-300 hover:text-slate-900"
                 }`}
               >
-                <Star className={`w-3.5 h-3.5 ${showFavorites ? "fill-amber-300" : ""}`} />
+                <Star className={`w-3.5 h-3.5 ${showFavorites ? "fill-amber-500" : ""}`} />
                 <span>{showFavorites ? "Starred Only" : "All Copies"}</span>
               </button>
             </div>
@@ -1164,7 +1221,7 @@ export default function DashboardPage() {
               {filteredHistory.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-slate-950/80 border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between transition-all group hover:shadow-xl"
+                  className={`border rounded-2xl p-5 flex flex-col justify-between transition-all group hover:shadow-xl ${isDarkMode ? "bg-slate-950/80 border-slate-800/80 hover:border-slate-700/80 text-slate-100" : "bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-900"}`}
                 >
                   <div>
                     <div className="flex items-center justify-between mb-3">
@@ -1285,21 +1342,21 @@ export default function DashboardPage() {
       {/* COMPREHENSIVE PROFILE & SETTINGS MODAL */}
       {showProfileModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-4xl shadow-2xl animate-in zoom-in-95 my-auto max-h-[90vh] flex flex-col overflow-hidden">
+          <div className={`border rounded-3xl w-full max-w-4xl shadow-2xl animate-in zoom-in-95 my-auto max-h-[90vh] flex flex-col overflow-hidden transition-colors ${isDarkMode ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-900"}`}>
             {/* Modal Top Header */}
-            <div className="p-5 sm:p-6 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between shrink-0">
+            <div className={`p-5 sm:p-6 border-b flex items-center justify-between shrink-0 ${isDarkMode ? "bg-slate-950/80 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-cyan-950 border border-cyan-500/30 text-cyan-400 rounded-xl">
                   <UserCheck className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">Profile & Account Settings</h3>
-                  <p className="text-xs text-slate-400">Manage your persona, brand voices, security, and preferences</p>
+                  <h3 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-slate-900"}`}>Profile & Account Settings</h3>
+                  <p className={`text-xs ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Manage your persona, brand voices, security, and preferences</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowProfileModal(false)}
-                className="p-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                className={`p-2 rounded-xl transition-colors cursor-pointer ${isDarkMode ? "hover:bg-slate-800 text-slate-400 hover:text-white" : "hover:bg-slate-200 text-slate-500 hover:text-slate-900"}`}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1308,13 +1365,15 @@ export default function DashboardPage() {
             {/* Modal Content Body */}
             <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1">
               {/* Tab Navigation Pill Bar */}
-              <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-4">
+              <div className={`flex flex-wrap items-center gap-2 border-b pb-4 ${isDarkMode ? "border-slate-800" : "border-slate-200"}`}>
                 <button
                   onClick={() => setProfileTab("profile")}
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     profileTab === "profile"
                       ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20"
-                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                      : isDarkMode
+                      ? "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                      : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
                   }`}
                 >
                   <User className="w-4 h-4" />
@@ -1326,7 +1385,9 @@ export default function DashboardPage() {
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     profileTab === "brand_voice"
                       ? "bg-purple-600 text-white shadow-md shadow-purple-600/20"
-                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                      : isDarkMode
+                      ? "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                      : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
                   }`}
                 >
                   <Sliders className="w-4 h-4" />
@@ -1338,7 +1399,9 @@ export default function DashboardPage() {
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     profileTab === "preferences"
                       ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
-                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                      : isDarkMode
+                      ? "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                      : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
                   }`}
                 >
                   <Sun className="w-4 h-4" />
@@ -1350,7 +1413,9 @@ export default function DashboardPage() {
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     profileTab === "security"
                       ? "bg-rose-600 text-white shadow-md shadow-rose-600/20"
-                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                      : isDarkMode
+                      ? "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                      : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
                   }`}
                 >
                   <ShieldCheck className="w-4 h-4" />
@@ -1362,7 +1427,9 @@ export default function DashboardPage() {
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     profileTab === "billing"
                       ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
-                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                      : isDarkMode
+                      ? "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                      : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
                   }`}
                 >
                   <CreditCard className="w-4 h-4" />
@@ -1374,7 +1441,9 @@ export default function DashboardPage() {
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     profileTab === "support"
                       ? "bg-blue-600 text-white shadow-md shadow-blue-600/20"
-                      : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                      : isDarkMode
+                      ? "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                      : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
                   }`}
                 >
                   <LifeBuoy className="w-4 h-4" />
@@ -1506,46 +1575,44 @@ export default function DashboardPage() {
                     <div className="grid grid-cols-3 gap-3">
                       <button
                         type="button"
-                        onClick={() => {
-                          setIsDarkMode(true);
-                          localStorage.setItem("copycoach_theme", "dark");
-                          showToast("Dark Theme Activated");
-                        }}
-                        className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer ${
-                          isDarkMode
-                            ? "bg-indigo-600/20 border-indigo-500 text-indigo-300"
-                            : "bg-slate-950 border-slate-800 text-slate-400"
+                        onClick={() => applyTheme("dark")}
+                        className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                          themeMode === "dark"
+                            ? "bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/20"
+                            : isDarkMode
+                            ? "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                            : "bg-slate-100 border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-200"
                         }`}
                       >
-                        <Moon className="w-4 h-4 text-indigo-400" />
+                        <Moon className="w-4 h-4 text-indigo-300" />
                         <span>Dark Mode</span>
                       </button>
 
                       <button
                         type="button"
-                        onClick={() => {
-                          setIsDarkMode(false);
-                          localStorage.setItem("copycoach_theme", "light");
-                          showToast("Light Theme Activated");
-                        }}
-                        className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer ${
-                          !isDarkMode
-                            ? "bg-amber-500/20 border-amber-500 text-amber-300"
-                            : "bg-slate-950 border-slate-800 text-slate-400"
+                        onClick={() => applyTheme("light")}
+                        className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                          themeMode === "light"
+                            ? "bg-amber-500 text-slate-950 border-amber-400 font-bold shadow-md shadow-amber-500/20"
+                            : isDarkMode
+                            ? "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                            : "bg-slate-100 border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-200"
                         }`}
                       >
-                        <Sun className="w-4 h-4 text-amber-400" />
+                        <Sun className="w-4 h-4 text-amber-500" />
                         <span>Light Mode</span>
                       </button>
 
                       <button
                         type="button"
-                        onClick={() => {
-                          setIsDarkMode(true);
-                          localStorage.setItem("copycoach_theme", "system");
-                          showToast("System Theme Selected");
-                        }}
-                        className="p-3 rounded-xl border border-slate-800 bg-slate-950 text-slate-400 hover:text-white text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
+                        onClick={() => applyTheme("system")}
+                        className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                          themeMode === "system"
+                            ? "bg-purple-600 text-white border-purple-500 shadow-md shadow-purple-600/20"
+                            : isDarkMode
+                            ? "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                            : "bg-slate-100 border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-200"
+                        }`}
                       >
                         <Laptop className="w-4 h-4 text-purple-400" />
                         <span>System Sync</span>
