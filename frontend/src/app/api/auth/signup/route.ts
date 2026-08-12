@@ -68,9 +68,15 @@ export async function POST(request: Request) {
       }
 
       // 3. Ensure user usage entry exists
-      const now = new Date().toISOString();
-      await supabaseAdmin.from("user_usage").upsert(
-        {
+      const { data: existingUsage } = await supabaseAdmin
+        .from("user_usage")
+        .select("plan")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!existingUsage) {
+        const now = new Date().toISOString();
+        await supabaseAdmin.from("user_usage").insert({
           user_id: user.id,
           plan: "free",
           daily_generations_used: 0,
@@ -78,9 +84,8 @@ export async function POST(request: Request) {
           daily_reset_date: now,
           monthly_reset_date: now,
           subscription_status: "active",
-        },
-        { onConflict: "user_id" }
-      );
+        });
+      }
     }
 
     return NextResponse.json({

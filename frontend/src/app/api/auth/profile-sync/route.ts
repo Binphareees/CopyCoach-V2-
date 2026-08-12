@@ -28,10 +28,16 @@ export async function POST(request: Request) {
       console.error("Profile sync error:", profileError.message);
     }
 
-    // 2. Ensure user_usage
-    const now = new Date().toISOString();
-    const { error: usageError } = await supabaseAdmin.from("user_usage").upsert(
-      {
+    // 2. Ensure user_usage ONLY if record does NOT exist yet!
+    const { data: existingUsage } = await supabaseAdmin
+      .from("user_usage")
+      .select("plan")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (!existingUsage) {
+      const now = new Date().toISOString();
+      const { error: usageError } = await supabaseAdmin.from("user_usage").insert({
         user_id: userId,
         plan: "free",
         daily_generations_used: 0,
@@ -39,12 +45,11 @@ export async function POST(request: Request) {
         daily_reset_date: now,
         monthly_reset_date: now,
         subscription_status: "active",
-      },
-      { onConflict: "user_id" }
-    );
+      });
 
-    if (usageError) {
-      console.error("User usage sync error:", usageError.message);
+      if (usageError) {
+        console.error("User usage sync error:", usageError.message);
+      }
     }
 
     return NextResponse.json({ success: true });

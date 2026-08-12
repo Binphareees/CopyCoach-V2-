@@ -266,7 +266,7 @@ export default function DashboardPage() {
       }
       setPlan(data.plan || "free");
     } else {
-      await supabase.from("user_usage").upsert({
+      await supabase.from("user_usage").insert({
         user_id: user.id,
         plan: "free",
         daily_generations_used: 0,
@@ -274,7 +274,7 @@ export default function DashboardPage() {
         daily_reset_date: new Date().toISOString(),
         monthly_reset_date: new Date().toISOString(),
         subscription_status: "active"
-      }, { onConflict: "user_id" });
+      });
 
       setCredits(5);
       setPlan("free");
