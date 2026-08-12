@@ -11,6 +11,8 @@ import {
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
+import DrillCritiqueFeedback from "@/components/ui/DrillCritiqueFeedback";
+import FeedbackModal from "@/components/ui/FeedbackModal";
 import {
   Sparkles,
   Zap,
@@ -572,6 +574,8 @@ export default function DashboardPage() {
               <FolderPlus className="w-3.5 h-3.5" />
               <span>New Project</span>
             </button>
+
+            <FeedbackModal userId={userId} userTier={plan === "pro" ? "Pro" : "Spark"} />
           </div>
 
           {/* User Account Dropdown */}
@@ -1138,6 +1142,15 @@ export default function DashboardPage() {
                   <p className={`text-sm whitespace-pre-wrap font-sans leading-relaxed ${isDarkMode ? "text-slate-100" : "text-slate-800"}`}>
                     {typeof result === "object" ? result.improvedCopy : String(result)}
                   </p>
+
+                  {/* Inline Drill Critique Feedback */}
+                  <div className="mt-4 pt-3 border-t border-slate-800/60">
+                    <DrillCritiqueFeedback
+                      userCopyInput={text}
+                      aiOutputString={typeof result === "object" ? result.improvedCopy : String(result)}
+                      userTier={plan === "pro" ? "Pro" : "Spark"}
+                    />
+                  </div>
                 </div>
               </div>
             ) : (

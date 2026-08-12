@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Button from "../ui/Button";
 import Logo from "../ui/Logo";
+import FeedbackModal from "../ui/FeedbackModal";
 
 export default function Navbar() {
   return (
@@ -49,6 +50,7 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
+          <FeedbackModal triggerClassName="hidden sm:inline-flex" />
 
           <Link
             href="/auth/login"
