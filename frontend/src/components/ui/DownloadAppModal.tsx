@@ -56,7 +56,7 @@ export default function DownloadAppModal({
           onClick={() => setIsOpen(false)}
         >
           <div
-            className="relative w-full max-w-xl bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-slate-100 flex flex-col max-h-[90vh] overflow-y-auto cursor-default"
+            className="relative w-full max-w-xl bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-slate-100 flex flex-col max-h-[90vh] overflow-y-auto cursor-default animate-slideInRight"
             onClick={(e) => e.stopPropagation()}
           >
             {/* CLOSE BUTTON */}

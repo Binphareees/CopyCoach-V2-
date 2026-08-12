@@ -2,7 +2,7 @@ import Logo from "../ui/Logo";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 py-12">
+    <footer className="border-t border-white/10 py-12 bg-slate-950/80">
 
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 md:flex-row md:items-center md:justify-between">
 
@@ -14,8 +14,8 @@ export default function Footer() {
           </div>
 
           <p className="mt-2 max-w-sm text-sm text-gray-400">
-            Your AI-powered coach for mastering copywriting through practice,
-            feedback, and improvement.
+            Your AI-powered coach for mastering copywriting through interactive drills,
+            real-time red-pen feedback, and framework mastery.
           </p>
 
         </div>
@@ -31,6 +31,12 @@ export default function Footer() {
             Features
           </a>
 
+          <a
+            href="#about-app"
+            className="transition hover:text-white"
+          >
+            About App
+          </a>
 
           <a
             href="#pricing"
@@ -39,6 +45,19 @@ export default function Footer() {
             Pricing
           </a>
 
+          <a
+            href="#mobile-app"
+            className="transition hover:text-cyan-400 text-cyan-300 font-medium"
+          >
+            Mobile App (Android/iOS)
+          </a>
+
+          <a
+            href="#support"
+            className="transition hover:text-white"
+          >
+            Help & Support
+          </a>
 
           <a
             href="#faq"
@@ -47,30 +66,22 @@ export default function Footer() {
             FAQ
           </a>
 
-
-          <a
-            href="#"
-            className="transition hover:text-white"
-          >
-            Privacy
-          </a>
-
-
-          <a
-            href="#"
-            className="transition hover:text-white"
-          >
-            Terms
-          </a>
-
         </div>
 
       </div>
 
 
-      <div className="mx-auto mt-8 max-w-7xl px-6 text-sm text-gray-500">
+      <div className="mx-auto mt-8 max-w-7xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500 border-t border-white/5 pt-6">
 
-        © {new Date().getFullYear()} CopyCoach AI. All rights reserved.
+        <span>© {new Date().getFullYear()} CopyCoach AI. All rights reserved.</span>
+
+        <div className="flex items-center gap-4 text-slate-400">
+          <a href="#about-app" className="hover:text-white transition">About</a>
+          <span>•</span>
+          <a href="#mobile-app" className="hover:text-cyan-400 transition">Download Mobile App</a>
+          <span>•</span>
+          <a href="#support" className="hover:text-white transition">24/7 Support Hub</a>
+        </div>
 
       </div>
 

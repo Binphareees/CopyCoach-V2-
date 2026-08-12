@@ -51,7 +51,10 @@ import {
   LifeBuoy,
   ExternalLink,
   Activity,
-  Laptop
+  Laptop,
+  Maximize2,
+  Minimize2,
+  FileDown
 } from "lucide-react";
 
 interface CopyResult {
@@ -207,8 +210,72 @@ export default function DashboardPage() {
 
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
+  const [showFullOutput, setShowFullOutput] = useState(false);
   const [supportSubject, setSupportSubject] = useState("");
   const [supportMessage, setSupportMessage] = useState("");
+
+  // EXPORT OPTIMIZED COPY AS STYLED PDF USING JSPDF
+  const handleExportPDF = async (textToExport?: string) => {
+    const activeText = textToExport || (typeof result === "object" ? result?.improvedCopy : String(result)) || output;
+    if (!activeText) return;
+    try {
+      const { default: jsPDF } = await import("jspdf");
+      const doc = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      // Header / Branding
+      doc.setFillColor(15, 23, 42); // slate-900
+      doc.rect(0, 0, 210, 32, "F");
+
+      doc.setTextColor(6, 182, 212); // cyan-500
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text("CopyCoach AI", 15, 18);
+
+      doc.setTextColor(148, 163, 184); // slate-400
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.text("Optimized Copy & Line-by-Line AI Critique", 15, 25);
+
+      // Title / Copy Type Metadata
+      doc.setTextColor(30, 41, 59); // slate-800
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.text(`Document: ${copyType || "Copywriting Drill"}`, 15, 44);
+
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(100, 116, 139);
+      const scoreVal = typeof result === "object" && result?.score ? result.score : score;
+      doc.text(`Generated: ${new Date().toLocaleDateString()} | Tone: ${tone} | Score: ${scoreVal}/100`, 15, 51);
+
+      doc.setDrawColor(226, 232, 240);
+      doc.line(15, 55, 195, 55);
+
+      // Main Content Box
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.setTextColor(15, 23, 42);
+
+      const splitLines = doc.splitTextToSize(activeText, 180);
+      doc.text(splitLines, 15, 65);
+
+      // Footer
+      doc.setFontSize(8);
+      doc.setTextColor(148, 163, 184);
+      doc.text("Generated via CopyCoach AI Assistant | slastbornn@gmail.com", 15, 285);
+
+      const timestamp = new Date().getTime();
+      doc.save(`CopyCoach-Optimized-Copy-${timestamp}.pdf`);
+      showToast("PDF Document Exported Successfully!");
+    } catch (err) {
+      console.error("PDF Export failed:", err);
+      showToast("PDF Export Failed. Please try again.");
+    }
+  };
 
   // Configuration Check
   const [showConfigBanner, setShowConfigBanner] = useState(false);
@@ -576,7 +643,7 @@ export default function DashboardPage() {
               <span>New Project</span>
             </button>
 
-            <DownloadAppModal triggerText="Get App (APK/iOS)" />
+            <DownloadAppModal triggerText="Get App" />
             <FeedbackModal userId={userId} userTier={plan === "pro" ? "Pro" : "Spark"} />
           </div>
 
@@ -1136,7 +1203,7 @@ export default function DashboardPage() {
                 )}
 
                 {/* Improved Copy Output Box */}
-                <div className={`border rounded-2xl p-4.5 shadow-xs relative ${isDarkMode ? "bg-slate-950 border-cyan-500/30 text-slate-100" : "bg-slate-50 border-cyan-400 text-slate-900"}`}>
+                <div className={`border rounded-2xl p-4.5 shadow-xs relative animate-slideInRight ${isDarkMode ? "bg-slate-950 border-cyan-500/30 text-slate-100" : "bg-slate-50 border-cyan-400 text-slate-900"}`}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-semibold text-cyan-500 uppercase tracking-wider flex items-center gap-1">
                       <Award className="w-3.5 h-3.5" />
@@ -1144,6 +1211,28 @@ export default function DashboardPage() {
                     </span>
 
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleExportPDF(typeof result === "object" ? result.improvedCopy || "" : String(result))}
+                        className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
+                          isDarkMode ? "bg-slate-900 hover:bg-slate-800 border-slate-800 text-cyan-300" : "bg-white hover:bg-slate-100 border-slate-200 text-slate-800"
+                        }`}
+                        title="Export as PDF"
+                      >
+                        <FileDown className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>Export PDF</span>
+                      </button>
+
+                      <button
+                        onClick={() => setShowFullOutput(true)}
+                        className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
+                          isDarkMode ? "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300" : "bg-white hover:bg-slate-100 border-slate-200 text-slate-800"
+                        }`}
+                        title="Expand to Full View"
+                      >
+                        <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>Show Full</span>
+                      </button>
+
                       <button
                         onClick={() =>
                           handleCopy(
@@ -1184,6 +1273,71 @@ export default function DashboardPage() {
                     />
                   </div>
                 </div>
+
+                {/* FULL-SCREEN EXPANDED OUTPUT OVERLAY */}
+                {showFullOutput && (
+                  <div
+                    className="fixed inset-0 z-[9999] bg-slate-950/90 backdrop-blur-md p-4 sm:p-8 flex items-center justify-center animate-fadeIn cursor-pointer"
+                    onClick={() => setShowFullOutput(false)}
+                  >
+                    <div
+                      className="relative w-full max-w-4xl max-h-[90vh] bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-slate-100 flex flex-col overflow-hidden animate-slideInRight cursor-default"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+                        <div className="flex items-center gap-2">
+                          <Award className="w-5 h-5 text-cyan-400" />
+                          <h3 className="text-lg font-bold text-white">Full-Screen Optimized Copy</h3>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleExportPDF(typeof result === "object" ? result.improvedCopy || "" : String(result))}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded-xl transition-all cursor-pointer"
+                          >
+                            <FileDown className="w-4 h-4" />
+                            <span>Export PDF</span>
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              handleCopy(
+                                typeof result === "object" ? result.improvedCopy || "" : String(result),
+                                "full-result"
+                              )
+                            }
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl border border-slate-700 transition-all cursor-pointer"
+                          >
+                            {copiedId === "full-result" ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                            <span>{copiedId === "full-result" ? "Copied!" : "Copy Text"}</span>
+                          </button>
+
+                          <button
+                            onClick={() => setShowFullOutput(false)}
+                            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex-1 overflow-y-auto p-4 bg-slate-950 border border-slate-800 rounded-2xl text-slate-200 text-base leading-relaxed whitespace-pre-wrap font-sans selection:bg-cyan-500 selection:text-slate-950">
+                        {typeof result === "object" ? result.improvedCopy : String(result)}
+                      </div>
+
+                      <div className="pt-4 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800 mt-4">
+                        <span>Framework: <strong className="text-cyan-400">{typeof result === "object" ? result.framework || "Direct Response" : "Custom"}</strong></span>
+                        <button
+                          onClick={() => setShowFullOutput(false)}
+                          className="inline-flex items-center gap-1 text-slate-400 hover:text-white text-xs font-medium cursor-pointer"
+                        >
+                          <Minimize2 className="w-3.5 h-3.5" />
+                          <span>Close Full View</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               /* Empty Placeholder State */

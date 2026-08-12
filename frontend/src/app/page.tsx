@@ -8,6 +8,7 @@ import Testimonials from "@/components/landing/Testimonials";
 import Pricing from "@/components/landing/Pricing";
 import FAQ from "@/components/landing/FAQ";
 import CTA from "@/components/landing/CTA";
+import AppInfoAndSupport from "@/components/landing/AppInfoAndSupport";
 
 export default function Home() {
   return (
@@ -28,6 +29,8 @@ export default function Home() {
       <FAQ />
 
       <CTA />
+
+      <AppInfoAndSupport />
 
       <Footer />
 
