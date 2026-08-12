@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { sendDeveloperEmailNotification, DEVELOPER_EMAIL } from "@/lib/email";
 
 // In-memory store for dev/testing if Supabase table is absent
 const localFeedbackStore: Array<{
@@ -26,7 +27,7 @@ function getSupabaseAdmin() {
   return null;
 }
 
-// POST: Submit feedback
+// POST: Submit feedback & dispatch email to developer slastbornn@gmail.com
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -77,6 +78,19 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // DISPATCH DEVELOPER EMAIL NOTIFICATION TO slastbornn@gmail.com
+    await sendDeveloperEmailNotification({
+      type: "BUG_REPORT",
+      subject: `${feedbackEntry.category} Report from User (${feedbackEntry.user_id})`,
+      category: feedbackEntry.category,
+      userTier: feedbackEntry.user_tier,
+      userId: feedbackEntry.user_id,
+      comment: feedbackEntry.comment,
+      userCopyInput: feedbackEntry.user_copy_input,
+      aiOutputString: feedbackEntry.ai_output_string,
+      priority: feedbackEntry.priority,
+    });
+
     // Optional Admin Webhook Forwarding (Slack / Discord / Zapier)
     const webhookUrl = process.env.ADMIN_WEBHOOK_URL;
     if (webhookUrl) {
@@ -85,7 +99,7 @@ export async function POST(req: NextRequest) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            text: `🚨 *[CopyCoach AI ${feedbackEntry.priority} Feedback]*\n*Tier:* ${feedbackEntry.user_tier}\n*Category:* ${feedbackEntry.category}\n*Comment:* ${feedbackEntry.comment}\n*User:* ${feedbackEntry.user_id}`,
+            text: `🚨 *[CopyCoach AI ${feedbackEntry.priority} Feedback]*\n*Tier:* ${feedbackEntry.user_tier}\n*Category:* ${feedbackEntry.category}\n*Comment:* ${feedbackEntry.comment}\n*User:* ${feedbackEntry.user_id}\n*Sent to:* ${DEVELOPER_EMAIL}`,
           }),
         });
       } catch (e) {
@@ -95,9 +109,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Feedback submitted successfully!",
+      message: `Feedback & Bug Report submitted! Dispatched to developer email (${DEVELOPER_EMAIL}).`,
       feedbackId: feedbackEntry.id,
       priority: feedbackEntry.priority,
+      developerEmailSentTo: DEVELOPER_EMAIL,
     });
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : "Unknown error";

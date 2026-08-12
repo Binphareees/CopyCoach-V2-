@@ -12,6 +12,10 @@
     "lint": "npm run lint --workspace=frontend"
   },
   "devDependencies": {
+    "@types/nodemailer": "^8.0.1",
     "jiti": "^2.7.0"
+  },
+  "dependencies": {
+    "nodemailer": "^9.0.5"
   }
 }

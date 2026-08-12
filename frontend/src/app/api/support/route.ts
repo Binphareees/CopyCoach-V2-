@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import Groq from "groq-sdk";
+import { sendDeveloperEmailNotification, DEVELOPER_EMAIL } from "@/lib/email";
 
 const supportSystemPrompt = `
 You are CopyCoach AI Support & Copywriting Assistant.
@@ -19,7 +20,7 @@ Be helpful, concise, friendly, and structured. If the question sounds like a bug
 
 export async function POST(req: NextRequest) {
   try {
-    const { question, userTier = "Spark" } = await req.json();
+    const { question, userId = "User", userTier = "Spark" } = await req.json();
 
     if (!question || !question.trim()) {
       return NextResponse.json({ error: "Question is required." }, { status: 400 });
@@ -59,9 +60,22 @@ Here is what you need to know:
 If you are experiencing a technical bug or require billing assistance, please switch to the **Submit Ticket** tab to route your request to our priority engineering queue.`;
     }
 
+    // DISPATCH DEVELOPER EMAIL NOTIFICATION TO slastbornn@gmail.com
+    await sendDeveloperEmailNotification({
+      type: "SUPPORT_QUESTION",
+      subject: `Support Query from ${userTier} User: "${question.substring(0, 40)}..."`,
+      category: "AI Support Assistance",
+      userTier,
+      userId,
+      question,
+      answer,
+      priority: userTier === "Pro" || userTier === "Studio" || userTier === "pro" ? "HIGH" : "NORMAL",
+    });
+
     return NextResponse.json({
       answer,
       timestamp: new Date().toISOString(),
+      developerEmailSentTo: DEVELOPER_EMAIL,
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Unknown error";

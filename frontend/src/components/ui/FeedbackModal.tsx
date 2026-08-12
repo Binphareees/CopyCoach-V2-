@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MessageSquarePlus, X, Send, CheckCircle2, AlertCircle, Bot, LifeBuoy, ArrowRight } from "lucide-react";
 
 interface FeedbackModalProps {
@@ -35,6 +35,17 @@ export default function FeedbackModal({
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
+  // Close modal on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
   const handleAskAiSupport = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!supportQuestion.trim()) return;
@@ -49,12 +60,13 @@ export default function FeedbackModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: qText,
+          userId: userId || "User",
           userTier,
         }),
       });
 
       const data = await res.json();
-      const answer = data.answer || "Sorry, I could not process your question right now. Please submit a support ticket below.";
+      const answer = data.answer || "Sorry, I could not process your question right now. You can submit a ticket to our engineering support team below.";
 
       setAiAnswers((prev) => [
         {
@@ -68,7 +80,7 @@ export default function FeedbackModal({
       setAiAnswers((prev) => [
         {
           q: qText,
-          a: "Network connection issue. You can submit a ticket to our engineering support team.",
+          a: "Network connection issue. Your ticket will be dispatched to developer support (slastbornn@gmail.com).",
           time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
         ...prev,
@@ -124,7 +136,7 @@ export default function FeedbackModal({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400 transition-all ${triggerClassName}`}
+        className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400 transition-all cursor-pointer ${triggerClassName}`}
       >
         <LifeBuoy className="w-3.5 h-3.5 text-cyan-400" />
         <span>Help & Support</span>
@@ -132,26 +144,33 @@ export default function FeedbackModal({
 
       {/* MODAL BACKDROP */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fadeIn">
-          <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-slate-100 flex flex-col max-h-[90vh]">
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn cursor-pointer"
+          onClick={() => setIsOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl text-slate-100 flex flex-col max-h-[90vh] cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* CLOSE BUTTON */}
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
+              title="Close (Esc)"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* MODAL HEADER */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 text-cyan-400">
+            <div className="flex items-center gap-3 mb-4 pr-8">
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 text-cyan-400 shrink-0">
                 <Bot className="w-6 h-6" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white">CopyCoach AI Support & Feedback</h3>
                 <p className="text-xs text-slate-400">
-                  Instant AI answers + direct admin triage support.
+                  Instant AI answers + Developer Email Dispatch (slastbornn@gmail.com)
                 </p>
               </div>
             </div>
@@ -161,7 +180,7 @@ export default function FeedbackModal({
               <button
                 type="button"
                 onClick={() => setActiveTab("ai-support")}
-                className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-3 rounded-lg font-semibold transition-all ${
+                className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-3 rounded-lg font-semibold transition-all cursor-pointer ${
                   activeTab === "ai-support"
                     ? "bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 shadow-sm"
                     : "text-slate-400 hover:text-white"
@@ -173,7 +192,7 @@ export default function FeedbackModal({
               <button
                 type="button"
                 onClick={() => setActiveTab("ticket")}
-                className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-3 rounded-lg font-semibold transition-all ${
+                className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-3 rounded-lg font-semibold transition-all cursor-pointer ${
                   activeTab === "ticket"
                     ? "bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 shadow-sm"
                     : "text-slate-400 hover:text-white"
@@ -198,14 +217,14 @@ export default function FeedbackModal({
                   <button
                     type="submit"
                     disabled={aiLoading || !supportQuestion.trim()}
-                    className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl transition-all disabled:opacity-40 flex items-center gap-1"
+                    className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl transition-all disabled:opacity-40 flex items-center gap-1 cursor-pointer"
                   >
                     {aiLoading ? "Thinking..." : "Ask AI"}
                   </button>
                 </form>
 
                 {/* AI Q&A HISTORY STREAM */}
-                <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[300px]">
+                <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[280px]">
                   {aiAnswers.map((item, idx) => (
                     <div key={idx} className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 space-y-2 text-xs">
                       <div className="flex items-center justify-between text-cyan-400 font-semibold">
@@ -223,13 +242,13 @@ export default function FeedbackModal({
                 </div>
 
                 <div className="pt-2 flex items-center justify-between text-[11px] text-slate-500 border-t border-slate-800/80">
-                  <span>Need human engineering support?</span>
+                  <span>Questions are dispatched to developer email</span>
                   <button
                     type="button"
                     onClick={() => setActiveTab("ticket")}
-                    className="text-cyan-400 hover:underline flex items-center gap-1 font-medium"
+                    className="text-cyan-400 hover:underline flex items-center gap-1 font-medium cursor-pointer"
                   >
-                    <span>File a Bug or Ticket</span>
+                    <span>File a Bug Report</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>
@@ -244,7 +263,7 @@ export default function FeedbackModal({
                     <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto animate-bounce" />
                     <h4 className="text-base font-bold text-white">Ticket Submitted!</h4>
                     <p className="text-xs text-slate-300">
-                      Your feedback has been logged in our administrative triage database. High-priority items are routed directly to our on-call team.
+                      Your bug report has been logged and sent to <strong>slastbornn@gmail.com</strong>.
                     </p>
                   </div>
                 ) : (
@@ -260,7 +279,7 @@ export default function FeedbackModal({
                             key={cat}
                             type="button"
                             onClick={() => setCategory(cat)}
-                            className={`text-xs py-1.5 px-2 rounded-lg border font-medium transition-all ${
+                            className={`text-xs py-1.5 px-2 rounded-lg border font-medium transition-all cursor-pointer ${
                               category === cat
                                 ? "bg-cyan-500/20 border-cyan-400 text-cyan-300"
                                 : "bg-slate-800/50 border-slate-700/60 text-slate-400 hover:text-slate-200"
@@ -297,19 +316,17 @@ export default function FeedbackModal({
                     {/* USER TIER NOTICE */}
                     <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
                       <span>Account Tier: <strong className="text-cyan-400 uppercase">{userTier}</strong></span>
-                      {(userTier === "Pro" || userTier === "Studio" || userTier === "pro") && (
-                        <span className="text-amber-400 font-semibold">⚡ Priority High Routing Active</span>
-                      )}
+                      <span className="text-cyan-400 font-semibold">📬 Sent to slastbornn@gmail.com</span>
                     </div>
 
                     {/* SUBMIT BUTTON */}
                     <button
                       type="submit"
                       disabled={ticketLoading}
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs py-2.5 rounded-xl transition-all shadow-lg disabled:opacity-50"
+                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs py-2.5 rounded-xl transition-all shadow-lg disabled:opacity-50 cursor-pointer"
                     >
                       <Send className="w-4 h-4" />
-                      <span>{ticketLoading ? "Routing Ticket..." : "Submit Support Ticket"}</span>
+                      <span>{ticketLoading ? "Sending to Developer..." : "Submit Bug / Support Ticket"}</span>
                     </button>
                   </form>
                 )}

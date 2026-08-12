@@ -604,32 +604,37 @@ export default function DashboardPage() {
 
             {/* Comprehensive Professional Dropdown Menu */}
             {showMenu && (
-              <div className={`absolute right-0 mt-2 w-72 rounded-2xl border p-2.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 backdrop-blur-2xl ${isDarkMode ? "bg-slate-900 border-slate-800/90 text-slate-100" : "bg-white border-slate-200 text-slate-900 shadow-xl"}`}>
-                {/* Profile Header */}
-                <div className={`px-3 py-2.5 border rounded-xl mb-2 ${isDarkMode ? "bg-slate-950/80 border-slate-800/80" : "bg-slate-50 border-slate-200"}`}>
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-cyan-950 border border-cyan-500/30 flex items-center justify-center font-bold text-xs text-cyan-300 shrink-0">
-                      {avatar ? (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img src={avatar} alt={fullName} className="h-full w-full object-cover rounded-lg" />
-                      ) : (
-                        fullName ? fullName.charAt(0).toUpperCase() : "U"
-                      )}
+              <>
+                <div
+                  className="fixed inset-0 z-40 bg-transparent cursor-default"
+                  onClick={() => setShowMenu(false)}
+                />
+                <div className={`absolute right-0 mt-2 w-72 rounded-2xl border p-2.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 backdrop-blur-2xl ${isDarkMode ? "bg-slate-900 border-slate-800/90 text-slate-100" : "bg-white border-slate-200 text-slate-900 shadow-xl"}`}>
+                  {/* Profile Header */}
+                  <div className={`px-3 py-2.5 border rounded-xl mb-2 ${isDarkMode ? "bg-slate-950/80 border-slate-800/80" : "bg-slate-50 border-slate-200"}`}>
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-lg bg-cyan-950 border border-cyan-500/30 flex items-center justify-center font-bold text-xs text-cyan-300 shrink-0">
+                        {avatar ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img src={avatar} alt={fullName} className="h-full w-full object-cover rounded-lg" />
+                        ) : (
+                          fullName ? fullName.charAt(0).toUpperCase() : "U"
+                        )}
+                      </div>
+                      <div className="overflow-hidden">
+                        <p className={`text-xs font-bold truncate ${isDarkMode ? "text-white" : "text-slate-900"}`}>{fullName || "CopyCoach User"}</p>
+                        <p className={`text-[11px] truncate mt-0.5 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>{userEmail || userId}</p>
+                      </div>
                     </div>
-                    <div className="overflow-hidden">
-                      <p className={`text-xs font-bold truncate ${isDarkMode ? "text-white" : "text-slate-900"}`}>{fullName || "CopyCoach User"}</p>
-                      <p className={`text-[11px] truncate mt-0.5 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>{userEmail || userId}</p>
-                    </div>
-                  </div>
 
-                  <div className={`mt-2.5 pt-2 border-t flex items-center justify-between text-[11px] ${isDarkMode ? "border-slate-800/60 text-slate-400" : "border-slate-200 text-slate-600"}`}>
-                    <span className="font-medium flex items-center gap-1">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>{plan === "pro" ? "Pro Membership" : "Starter Free Plan"}</span>
-                    </span>
-                    <span className="font-bold text-cyan-400">{credits} Credits Left</span>
+                    <div className={`mt-2.5 pt-2 border-t flex items-center justify-between text-[11px] ${isDarkMode ? "border-slate-800/60 text-slate-400" : "border-slate-200 text-slate-600"}`}>
+                      <span className="font-medium flex items-center gap-1">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>{plan === "pro" ? "Pro Membership" : "Starter Free Plan"}</span>
+                      </span>
+                      <span className="font-bold text-cyan-400">{credits} Credits Left</span>
+                    </div>
                   </div>
-                </div>
 
                 {/* Account & Settings Group */}
                 <div className="space-y-0.5 mb-2">
@@ -770,6 +775,7 @@ export default function DashboardPage() {
                   </button>
                 </div>
               </div>
+              </>
             )}
           </div>
         </div>
@@ -1303,8 +1309,14 @@ export default function DashboardPage() {
 
       {/* NEW PROJECT MODAL */}
       {showProjectModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in zoom-in-95">
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setShowProjectModal(false)}
+        >
+          <div
+            className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in zoom-in-95 cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
               <FolderPlus className="w-5 h-5 text-cyan-400" />
               <span>Create New Project Workspace</span>
@@ -1347,8 +1359,14 @@ export default function DashboardPage() {
 
       {/* COMPREHENSIVE PROFILE & SETTINGS MODAL */}
       {showProfileModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-          <div className={`border rounded-3xl w-full max-w-4xl shadow-2xl animate-in zoom-in-95 my-auto max-h-[90vh] flex flex-col overflow-hidden transition-colors ${isDarkMode ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-900"}`}>
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto cursor-pointer"
+          onClick={() => setShowProfileModal(false)}
+        >
+          <div
+            className={`border rounded-3xl w-full max-w-4xl shadow-2xl animate-in zoom-in-95 my-auto max-h-[90vh] flex flex-col overflow-hidden transition-colors cursor-default ${isDarkMode ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-900"}`}
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Modal Top Header */}
             <div className={`p-5 sm:p-6 border-b flex items-center justify-between shrink-0 ${isDarkMode ? "bg-slate-950/80 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
               <div className="flex items-center gap-3">
@@ -1788,8 +1806,14 @@ export default function DashboardPage() {
 
       {/* KEYBOARD SHORTCUTS MODAL */}
       {showShortcutsModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-lg w-full shadow-2xl animate-in zoom-in-95">
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setShowShortcutsModal(false)}
+        >
+          <div
+            className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-lg w-full shadow-2xl animate-in zoom-in-95 cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
                 <Keyboard className="w-5 h-5 text-emerald-400" />
