@@ -637,6 +637,18 @@ export default function DashboardPage() {
                     Account & Workspace
                   </span>
 
+                  <Link
+                    href="/dashboard/admin/feedback"
+                    onClick={() => setShowMenu(false)}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${isDarkMode ? "text-slate-200 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"}`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <ShieldCheck className="w-4 h-4 text-amber-400" />
+                      <span>Admin Feedback Triage</span>
+                    </div>
+                    <span className="text-[10px] font-bold text-amber-400 bg-amber-950/40 px-1.5 py-0.5 rounded border border-amber-800/50">Admin</span>
+                  </Link>
+
                   <button
                     onClick={() => {
                       setShowMenu(false);
