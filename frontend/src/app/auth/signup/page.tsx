@@ -182,19 +182,9 @@ export default function SignupPage() {
           return;
         }
 
-        const authWindow = window.open(
-          data.url,
-          "google_oauth_popup",
-          "width=600,height=700"
-        );
-
-        if (!authWindow) {
-          setMessage("Popup blocked by browser. Please allow popups for this site to sign in with Google.");
-          setLoading(false);
-          return;
-        }
-
-        setMessage("Opening Google Sign-In popup...");
+        setMessage("Redirecting to Google Sign-In...");
+        // Redirect directly to avoid popup blockers or stuck iframe states
+        window.location.href = data.url;
       } else {
         setMessage("Could not generate Google sign-up link.");
         setLoading(false);
