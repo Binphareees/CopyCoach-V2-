@@ -16,6 +16,7 @@
     "jiti": "^2.7.0"
   },
   "dependencies": {
+    "jspdf": "^4.2.1",
     "nodemailer": "^9.0.5"
   }
 }
