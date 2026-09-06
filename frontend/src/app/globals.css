@@ -11,11 +11,63 @@
   --foreground: #f8fafc;
 }
 
+/* ============================================================
+   CopyCoach AI — Premium dark navy design tokens
+   ============================================================ */
+:root,
+:root.dark,
+:root.light {
+  /* Surfaces */
+  --ink-950: #0b1326;  /* app background */
+  --ink-900: #101a2e;  /* raised surface */
+  --ink-800: #18243a;  /* cards / panels */
+  --ink-700: #1f2d47;  /* hover surface */
+  --ink-600: #2a3b57;  /* subtle raised */
+
+  /* Inputs fields */
+  --field-900: #0f192d;
+
+  /* Border */
+  --line: #40516a;
+  --line-soft: rgba(64, 81, 106, 0.55);
+
+  /* Accent — vibrant indigo-purple */
+  --accent: #5b5bef;
+  --accent-bright: #6868f5;
+  --accent-deep: #4b4bd8;
+  --accent-glow: rgba(91, 91, 239, 0.35);
+
+  /* Text */
+  --text-primary: #f4f5ff;
+  --text-secondary: #a4b0c5;
+  --text-muted: #7f8ba3;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-ink-950: var(--ink-950);
+  --color-ink-900: var(--ink-900);
+  --color-ink-800: var(--ink-800);
+  --color-ink-700: var(--ink-700);
+  --color-ink-600: var(--ink-600);
+  --color-field-900: var(--field-900);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+
+  --color-accent: var(--accent);
+  --color-accent-bright: var(--accent-bright);
+  --color-accent-deep: var(--accent-deep);
+
+  --color-brand-100: var(--text-primary);
+  --color-brand-200: var(--text-secondary);
+  --color-brand-300: var(--text-muted);
+
+  --shadow-accent-glow: 0 20px 60px -12px var(--accent-glow);
+  --shadow-accent-soft: 0 8px 30px -12px var(--accent-glow);
 }
 
 body {
@@ -31,4 +83,35 @@ input[type="submit"],
 input[type="button"],
 a {
   cursor: pointer;
+}
+
+/* Hide horizontal scrollbars on pill selectors */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Polished focus ring for custom inputs */
+.cc-input {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+.cc-input:focus {
+  border-color: var(--accent-bright);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  outline: none;
+}
+.cc-input::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+/* Gentle soft scroll for anchor jumps */
+html {
+  scroll-behavior: smooth;
 }

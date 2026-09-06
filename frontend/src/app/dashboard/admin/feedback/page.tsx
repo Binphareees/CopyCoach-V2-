@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Logo from "@/components/ui/Logo";
+import { getAccessToken } from "@/lib/supabase";
 import {
   Inbox,
   AlertTriangle,
@@ -17,6 +19,11 @@ import {
   ChevronRight,
   MessageSquare,
 } from "lucide-react";
+
+async function authHeaders(): Promise<Record<string, string>> {
+  const token = await getAccessToken();
+  return { ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+}
 
 interface FeedbackItem {
   id: string;
@@ -34,16 +41,52 @@ interface FeedbackItem {
 }
 
 export default function AdminFeedbackPage() {
+  const router = useRouter();
   const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [checkingAccess, setCheckingAccess] = useState(true);
+  const [forbidden, setForbidden] = useState(false);
   const [filterPriority, setFilterPriority] = useState<"ALL" | "HIGH" | "NORMAL">("ALL");
   const [filterStatus, setFilterStatus] = useState<"ALL" | "open" | "resolved">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTicket, setSelectedTicket] = useState<FeedbackItem | null>(null);
 
+  useEffect(() => {
+    let ignore = false;
+    async function checkAdmin() {
+      try {
+        const res = await fetch("/api/auth/me", {
+          headers: await authHeaders(),
+        });
+        const data = await res.json();
+        if (ignore) return;
+        if (!data.authenticated || !data.isAdmin) {
+          setForbidden(true);
+          return;
+        }
+      } catch (err) {
+        console.error("Admin access check failed:", err);
+      } finally {
+        if (!ignore) setCheckingAccess(false);
+      }
+    }
+    checkAdmin();
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (forbidden) {
+      router.replace("/dashboard");
+    }
+  }, [forbidden, router]);
+
   const fetchFeedback = useCallback(async () => {
     try {
-      const res = await fetch("/api/feedback");
+      const res = await fetch("/api/feedback", {
+        headers: await authHeaders(),
+      });
       const data = await res.json();
       if (data.feedback) {
         setFeedbackList(data.feedback);
@@ -59,7 +102,9 @@ export default function AdminFeedbackPage() {
     async function load() {
       setLoading(true);
       try {
-        const res = await fetch("/api/feedback");
+        const res = await fetch("/api/feedback", {
+          headers: await authHeaders(),
+        });
         const data = await res.json();
         if (!ignore && data.feedback) {
           setFeedbackList(data.feedback);
@@ -82,7 +127,7 @@ export default function AdminFeedbackPage() {
     try {
       await fetch("/api/feedback", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...(await authHeaders()) },
         body: JSON.stringify({ id: item.id, status: newStatus }),
       });
 
@@ -110,6 +155,24 @@ export default function AdminFeedbackPage() {
     }
     return true;
   });
+
+  if (checkingAccess) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center gap-3">
+        <div className="w-10 h-10 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-xs text-slate-400">Verifying admin access...</p>
+      </div>
+    );
+  }
+
+  if (forbidden) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center gap-3">
+        <ShieldAlert className="w-10 h-10 text-rose-500" />
+        <p className="text-xs text-slate-400">Unauthorized. Redirecting...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">

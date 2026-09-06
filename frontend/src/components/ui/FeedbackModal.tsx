@@ -2,11 +2,20 @@
 
 import React, { useState, useEffect } from "react";
 import { MessageSquarePlus, X, Send, CheckCircle2, AlertCircle, Bot, LifeBuoy, ArrowRight, Mail } from "lucide-react";
+import { getAccessToken } from "@/lib/supabase";
 
 interface FeedbackModalProps {
   userId?: string;
   userTier?: string;
   triggerClassName?: string;
+}
+
+async function authHeaders(): Promise<Record<string, string>> {
+  const token = await getAccessToken();
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 }
 
 export default function FeedbackModal({
@@ -57,7 +66,7 @@ export default function FeedbackModal({
     try {
       const res = await fetch("/api/support", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await authHeaders(),
         body: JSON.stringify({
           question: qText,
           userId: userId || "User",
@@ -103,7 +112,7 @@ export default function FeedbackModal({
     try {
       const res = await fetch("/api/feedback", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await authHeaders(),
         body: JSON.stringify({
           userId,
           category,

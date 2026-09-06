@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import Groq from "groq-sdk";
 import { sendDeveloperEmailNotification, DEVELOPER_EMAIL } from "@/lib/email";
+import { getServerUser, getClientIdentifier } from "@/lib/auth-server";
+import { getRateLimiter } from "@/lib/rate-limit";
 
 const supportSystemPrompt = `
 You are CopyCoach AI Support & Copywriting Assistant.
@@ -18,13 +20,42 @@ Your job is to assist users with:
 Be helpful, concise, friendly, and structured. If the question sounds like a bug report, critical complaint, or account billing refund issue, advise them to click "Submit Ticket" to escalate to human support.
 `;
 
+const supportLimiter = getRateLimiter(12, 60);
+
+const VALID_TIERS = new Set(["spark", "apprentice", "pro", "studio"]);
+
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIdentifier(req);
+    const rate = await supportLimiter(ip);
+    if (!rate.success) {
+      return NextResponse.json(
+        { error: "Too many support requests. Please wait a moment and try again." },
+        { status: 429 }
+      );
+    }
+
     const { question, userId = "User", userTier = "Spark" } = await req.json();
 
-    if (!question || !question.trim()) {
+    if (!question || typeof question !== "string" || !question.trim()) {
       return NextResponse.json({ error: "Question is required." }, { status: 400 });
     }
+    if (question.length > 2000) {
+      return NextResponse.json(
+        { error: "Question is too long. Please keep it under 2000 characters." },
+        { status: 400 }
+      );
+    }
+
+    // Identity is display-only; verified identity is preferred when available.
+    let displayUserId = userId;
+    const user = await getServerUser(req);
+    if (user) {
+      displayUserId = user.email || user.id;
+    }
+    const tierLabel = VALID_TIERS.has(String(userTier).toLowerCase())
+      ? String(userTier).toLowerCase()
+      : "spark";
 
     let answer = "";
 
@@ -32,16 +63,16 @@ export async function POST(req: NextRequest) {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
-        contents: `${supportSystemPrompt}\n\nUser Tier: ${userTier}\nUser Question: ${question}`,
+        contents: `${supportSystemPrompt}\n\nUser Tier: ${tierLabel}\nUser Question: ${question}`,
       });
       answer = response.text || "";
     } else if (process.env.GROQ_API_KEY) {
       const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
       const completion = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+        model: "groq/compound",
         messages: [
           { role: "system", content: supportSystemPrompt },
-          { role: "user", content: `User Tier: ${userTier}\nUser Question: ${question}` },
+          { role: "user", content: `User Tier: ${tierLabel}\nUser Question: ${question}` },
         ],
       });
       answer = completion.choices[0]?.message?.content || "";
@@ -60,16 +91,16 @@ Here is what you need to know:
 If you are experiencing a technical bug or require billing assistance, please switch to the **Submit Ticket** tab to route your request to our priority engineering queue.`;
     }
 
-    // DISPATCH DEVELOPER EMAIL NOTIFICATION TO slastbornn@gmail.com
+    // DISPATCH DEVELOPER EMAIL NOTIFICATION TO DEVELOPER_EMAIL
     await sendDeveloperEmailNotification({
       type: "SUPPORT_QUESTION",
-      subject: `Support Query from ${userTier} User: "${question.substring(0, 40)}..."`,
+      subject: `Support Query from ${tierLabel} user: "${question.substring(0, 40)}..."`,
       category: "AI Support Assistance",
-      userTier,
-      userId,
+      userTier: tierLabel,
+      userId: displayUserId,
       question,
       answer,
-      priority: userTier === "Pro" || userTier === "Studio" || userTier === "pro" ? "HIGH" : "NORMAL",
+      priority: tierLabel === "pro" || tierLabel === "studio" ? "HIGH" : "NORMAL",
     });
 
     return NextResponse.json({

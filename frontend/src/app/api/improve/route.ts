@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { GoogleGenAI } from "@google/genai";
 import { canGenerate, consumeCredit } from "@/lib/credits";
+import { getServerUser } from "@/lib/auth-server";
+import { getRateLimiter } from "@/lib/rate-limit";
+import { trackServerEvent } from "@/lib/analytics";
 
 const systemPrompt = `
 You are CopyCoach AI, an expert senior copywriter and marketing coach.
@@ -19,18 +22,27 @@ Return ONLY valid JSON with keys:
 Do not wrap in markdown block. Return raw JSON object.
 `;
 
+const improveLimiter = getRateLimiter(30, 60);
+
 export async function POST(request: Request) {
   try {
-    const userId = request.headers.get("x-user-id");
-
-    if (!userId) {
+    const user = await getServerUser(request);
+    if (!user) {
       return NextResponse.json(
         { error: "User not authenticated" },
         { status: 401 }
       );
     }
 
-    const check = await canGenerate(userId);
+    const rate = await improveLimiter(user.id);
+    if (!rate.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a moment and try again." },
+        { status: 429 }
+      );
+    }
+
+    const check = await canGenerate(user.id);
     if (!check.allowed) {
       return NextResponse.json(
         { error: check.reason || "Generation limit reached." },
@@ -38,12 +50,28 @@ export async function POST(request: Request) {
       );
     }
 
-    const { text, copyType, tone } = await request.json();
+    const { text, copyType, tone, productName, targetAudience, cta } = await request.json();
+
+    if (!text || typeof text !== "string" || !text.trim()) {
+      return NextResponse.json(
+        { error: "Please provide the copy you'd like to improve." },
+        { status: 400 }
+      );
+    }
+    if (text.length > 8000) {
+      return NextResponse.json(
+        { error: "Your copy is too long. Please keep it under 8000 characters." },
+        { status: 400 }
+      );
+    }
 
     const userPrompt = `
-Copy Type: ${copyType || "General"}
-Desired Tone: ${tone || "Professional"}
-Original Copy: ${text || ""}
+Copy Type: ${typeof copyType === "string" ? copyType.slice(0, 80) : "General"}
+Desired Tone: ${typeof tone === "string" ? tone.slice(0, 80) : "Professional"}
+Product / Brand Name: ${typeof productName === "string" ? productName.slice(0, 120) : "Not provided"}
+Target Audience: ${typeof targetAudience === "string" ? targetAudience.slice(0, 120) : "Not provided"}
+Call To Action (CTA): ${typeof cta === "string" ? cta.slice(0, 120) : "Not provided"}
+Original Copy / Product Description: ${text}
 `;
 
     let raw = "";
@@ -61,7 +89,7 @@ Original Copy: ${text || ""}
     } else if (process.env.GROQ_API_KEY) {
       const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
       const completion = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+        model: "groq/compound",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
@@ -83,7 +111,7 @@ Original Copy: ${text || ""}
           "Add emotional hook"
         ],
         framework: "PAS",
-        improvedCopy: `Transform your results with ${copyType || "our solution"}. Experience immediate improvement tailored with a ${tone || "professional"} touch.`,
+        improvedCopy: `Transform your results with ${typeof copyType === "string" && copyType ? copyType : "our solution"}. Experience immediate improvement tailored with a ${tone || "professional"} touch.`,
         coachAdvice: "Enhanced value messaging and introduced a stronger emotional trigger for better conversions."
       });
     }
@@ -104,10 +132,19 @@ Original Copy: ${text || ""}
     }
 
     try {
-      await consumeCredit(userId);
+      await consumeCredit(user.id);
     } catch (e) {
       console.warn("Credit update warning:", e);
     }
+
+    await trackServerEvent(user.id, "generation_completed", {
+      plan: check.plan,
+      provider: process.env.GEMINI_API_KEY
+        ? "gemini"
+        : process.env.GROQ_API_KEY
+          ? "groq"
+          : "mock",
+    });
 
     return NextResponse.json({
       result: parsed,

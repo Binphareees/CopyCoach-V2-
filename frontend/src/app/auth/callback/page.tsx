@@ -54,21 +54,15 @@ export default function CallbackPage() {
           setStatus("Creating your profile...");
         }
 
-        const user = session.user;
-        const fullName = user.user_metadata?.full_name || user.user_metadata?.name || "";
-        const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture || null;
-
-        // Sync profile via server endpoint
+        // Sync profile via server endpoint (identity is derived from the token)
         try {
           await fetch("/api/auth/profile-sync", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              userId: user.id,
-              email: user.email,
-              fullName,
-              avatarUrl,
-            }),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({}),
           });
         } catch (e) {
           console.warn("Profile sync warning:", e);

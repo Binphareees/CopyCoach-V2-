@@ -13,6 +13,12 @@ import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 import DrillCritiqueFeedback from "@/components/ui/DrillCritiqueFeedback";
 import FeedbackModal from "@/components/ui/FeedbackModal";
+import CategorySelector from "@/components/dashboard/CategorySelector";
+import ProductDetails from "@/components/dashboard/ProductDetails";
+import ToneSelector from "@/components/dashboard/ToneSelector";
+import GenerateButton from "@/components/dashboard/GenerateButton";
+import ProTipCard from "@/components/dashboard/ProTipCard";
+import SectionHeading from "@/components/dashboard/SectionHeading";
 import {
   Sparkles,
   Zap,
@@ -31,7 +37,6 @@ import {
   ArrowRight,
   TrendingUp,
   AlertTriangle,
-  RefreshCw,
   Folder,
   FileText,
   BarChart3,
@@ -53,7 +58,7 @@ import {
   Laptop,
   Maximize2,
   Minimize2,
-  FileDown
+  FileDown,
 } from "lucide-react";
 
 interface CopyResult {
@@ -94,6 +99,8 @@ export default function DashboardPage() {
 
   // Copy Generator Inputs & Outputs
   const [text, setText] = useState("");
+  const [productName, setProductName] = useState("");
+  const [cta, setCta] = useState("");
   const [result, setResult] = useState<CopyResult | string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -215,7 +222,8 @@ export default function DashboardPage() {
 
   // EXPORT OPTIMIZED COPY AS STYLED PDF USING JSPDF
   const handleExportPDF = async (textToExport?: string) => {
-    const activeText = textToExport || (typeof result === "object" ? result?.improvedCopy : String(result)) || output;
+    const activeText =
+      textToExport || (typeof result === "object" ? result?.improvedCopy : String(result));
     if (!activeText) return;
     try {
       const { default: jsPDF } = await import("jspdf");
@@ -226,21 +234,21 @@ export default function DashboardPage() {
       });
 
       // Header / Branding
-      doc.setFillColor(15, 23, 42); // slate-900
+      doc.setFillColor(15, 23, 42);
       doc.rect(0, 0, 210, 32, "F");
 
-      doc.setTextColor(6, 182, 212); // cyan-500
+      doc.setTextColor(6, 182, 212);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(18);
       doc.text("CopyCoach AI", 15, 18);
 
-      doc.setTextColor(148, 163, 184); // slate-400
+      doc.setTextColor(148, 163, 184);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
       doc.text("Optimized Copy & Line-by-Line AI Critique", 15, 25);
 
       // Title / Copy Type Metadata
-      doc.setTextColor(30, 41, 59); // slate-800
+      doc.setTextColor(30, 41, 59);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(14);
       doc.text(`Document: ${copyType || "Copywriting Drill"}`, 15, 44);
@@ -248,7 +256,7 @@ export default function DashboardPage() {
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
       doc.setTextColor(100, 116, 139);
-      const scoreVal = typeof result === "object" && result?.score ? result.score : score;
+      const scoreVal = typeof result === "object" && result?.score ? result.score : 70;
       doc.text(`Generated: ${new Date().toLocaleDateString()} | Tone: ${tone} | Score: ${scoreVal}/100`, 15, 51);
 
       doc.setDrawColor(226, 232, 240);
@@ -289,7 +297,7 @@ export default function DashboardPage() {
   };
 
   // 1. Load User Profile
-  const loadProfile = useCallback(async (id: string, userObj: { id: string; email?: string; user_metadata?: { full_name?: string; avatar_url?: string; picture?: string } }) => {
+  const loadProfile = useCallback(async (id: string, userObj: { id: string; email?: string; user_metadata?: { full_name?: string; avatar_url?: string; picture?: string; name?: string } }) => {
     setUserEmail(userObj.email || "");
     const { data, error } = await supabase
       .from("profiles")
@@ -424,7 +432,7 @@ export default function DashboardPage() {
     }
 
     if (!text.trim()) {
-      setMessage("Please enter or paste some copy to analyze and improve.");
+      setMessage("Please describe your product offer or paste the copy you'd like to improve.");
       return;
     }
 
@@ -435,12 +443,15 @@ export default function DashboardPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-user-id": user.id
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token || ""}`
         },
         body: JSON.stringify({
           text,
           copyType,
-          tone
+          tone,
+          productName,
+          targetAudience,
+          cta,
         })
       });
 
@@ -560,8 +571,11 @@ export default function DashboardPage() {
     try {
       const response = await fetch("/api/paystack/initialize", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: user.email, userId: user.id })
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token || ""}`
+        },
+        body: JSON.stringify({})
       });
       const data = await response.json();
       if (data.data?.authorization_url) {
@@ -598,36 +612,55 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className={`min-h-screen font-sans transition-colors duration-200 selection:bg-cyan-500 selection:text-slate-950 ${isDarkMode ? "bg-[#0B1020] text-slate-100" : "bg-slate-100 text-slate-900"}`}>
+    <div className="min-h-screen bg-ink-950 font-sans text-brand-100 selection:bg-accent selection:text-white">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl shadow-2xl text-sm font-medium animate-in fade-in slide-in-from-bottom-4 border ${isDarkMode ? "bg-slate-900 border-cyan-500/40 text-cyan-200" : "bg-white border-cyan-500 text-slate-800"}`}>
-          <Check className="w-4 h-4 text-cyan-400" />
+        <div className="fixed bottom-24 right-4 z-[60] flex items-center gap-2 border border-accent/40 bg-ink-800 px-4 py-3 text-sm font-medium text-brand-100 shadow-2xl lg:bottom-6 lg:right-6">
+          <Check className="h-4 w-4 text-accent-bright" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Top Professional Header Bar */}
-      <header className={`sticky top-0 z-40 backdrop-blur-xl border-b transition-colors duration-200 ${isDarkMode ? "bg-[#0B1020]/90 border-slate-800/80" : "bg-white/95 border-slate-200/80 shadow-xs"}`}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          {/* Logo Brand Branding */}
-          <Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-105">
-            <Logo theme={isDarkMode ? "dark" : "light"} size="md" showTagline={true} />
+      {/* Top Professional Header */}
+      <header className="sticky top-0 z-40 border-b border-ink-700/80 bg-ink-950/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          {/* Branding */}
+          <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
+            <Logo theme="dark" size="sm" showTagline={false} />
           </Link>
 
-          {/* Quick Active Project Indicator & Navigation */}
-          <div className="hidden md:flex items-center gap-4">
-            <div className={`flex items-center gap-2 border rounded-xl px-3.5 py-1.5 text-xs transition-colors ${isDarkMode ? "bg-slate-900/80 border-slate-800 text-slate-300" : "bg-slate-50 border-slate-200 text-slate-700"}`}>
-              <Folder className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Workspace:</span>
+          {/* Desktop status + workspace controls */}
+          <div className="hidden items-center gap-3 md:flex">
+            {/* AI Active status badge */}
+            <span className="flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-[11px] font-bold text-accent-bright">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-bright" />
+              AI Active
+            </span>
+
+            {/* Plan / Credits badge */}
+            <span
+              className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold ${
+                plan === "pro"
+                  ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
+                  : "border-line-soft bg-ink-800 text-brand-200"
+              }`}
+            >
+              <Zap className="h-3 w-3" />
+              {plan === "pro" ? "Pro Plan" : "Free Plan"} · {credits} credits
+            </span>
+
+            {/* Workspace selector */}
+            <div className="flex items-center gap-2 rounded-full border border-line-soft bg-ink-800 px-3.5 py-1.5 text-xs text-brand-200">
+              <Folder className="h-3.5 w-3.5 text-accent-bright" />
+              <span className="hidden lg:inline">Workspace:</span>
               <select
                 value={selectedProject}
                 onChange={(e) => setSelectedProject(e.target.value)}
-                className={`bg-transparent font-medium focus:outline-none cursor-pointer ${isDarkMode ? "text-white" : "text-slate-900"}`}
+                className="bg-transparent font-medium text-white focus:outline-none"
               >
-                <option value="" className={isDarkMode ? "bg-slate-900 text-slate-200" : "bg-white text-slate-800"}>Default Workspace</option>
+                <option value="" className="bg-ink-800 text-brand-100">Default Workspace</option>
                 {projects.map((p) => (
-                  <option key={p.id} value={p.id} className={isDarkMode ? "bg-slate-900 text-slate-200" : "bg-white text-slate-800"}>
+                  <option key={p.id} value={p.id} className="bg-ink-800 text-brand-100">
                     {p.name}
                   </option>
                 ))}
@@ -636,22 +669,28 @@ export default function DashboardPage() {
 
             <button
               onClick={() => setShowProjectModal(true)}
-              className="flex items-center gap-1.5 text-xs font-medium text-cyan-400 hover:text-cyan-300 bg-cyan-950/40 border border-cyan-800/50 hover:bg-cyan-900/40 px-3 py-1.5 rounded-xl transition-all cursor-pointer"
+              className="flex items-center gap-1.5 rounded-full border border-line-soft bg-ink-800 px-3.5 py-1.5 text-xs font-semibold text-brand-100 transition-colors hover:bg-ink-700"
             >
-              <FolderPlus className="w-3.5 h-3.5" />
-              <span>New Project</span>
+              <FolderPlus className="h-3.5 w-3.5 text-accent-bright" />
+              New Project
             </button>
 
             <FeedbackModal userId={userId} userTier={plan === "pro" ? "Pro" : "Spark"} />
           </div>
 
+          {/* Mobile AI Active chip */}
+          <span className="flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[10px] font-bold text-accent-bright md:hidden">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-bright" />
+            AI Active
+          </span>
+
           {/* User Account Dropdown */}
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className={`flex items-center gap-3 p-1.5 rounded-2xl border transition-all cursor-pointer ${isDarkMode ? "hover:bg-slate-800/60 border-transparent hover:border-slate-800 text-slate-200" : "hover:bg-slate-200/60 border-transparent hover:border-slate-300 text-slate-800"}`}
+              className="flex items-center gap-3 rounded-2xl border border-transparent p-1.5 transition-colors hover:bg-ink-800"
             >
-              <div className="h-10 w-10 rounded-xl overflow-hidden bg-slate-800 border border-cyan-500/30 flex items-center justify-center font-bold text-sm text-cyan-400 shrink-0">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-accent/30 bg-ink-800 text-sm font-bold text-accent-bright">
                 {avatar ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={avatar} alt={fullName} className="h-full w-full object-cover" />
@@ -659,189 +698,189 @@ export default function DashboardPage() {
                   fullName ? fullName.charAt(0).toUpperCase() : "U"
                 )}
               </div>
-              <div className="text-left hidden sm:block pr-1">
-                <p className={`text-xs font-semibold leading-tight ${isDarkMode ? "text-white" : "text-slate-900"}`}>{fullName || "CopyCoach User"}</p>
-                <p className={`text-[11px] font-medium capitalize mt-0.5 flex items-center gap-1 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
-                  <span className={`h-1.5 w-1.5 rounded-full ${plan === "pro" ? "bg-amber-400" : "bg-cyan-400"}`} />
+              <div className="hidden pr-1 text-left sm:block">
+                <p className="text-xs font-semibold leading-tight text-white">{fullName || "CopyCoach User"}</p>
+                <p className="mt-0.5 flex items-center gap-1 text-[11px] font-medium capitalize text-brand-300">
+                  <span className={`h-1.5 w-1.5 rounded-full ${plan === "pro" ? "bg-amber-400" : "bg-accent-bright"}`} />
                   {plan === "pro" ? "Pro Plan" : "Free Plan"}
                 </p>
               </div>
-              <ChevronDown className="w-4 h-4 text-slate-400 hidden sm:block" />
+              <ChevronDown className="hidden h-4 w-4 text-brand-300 sm:block" />
             </button>
 
-            {/* Comprehensive Professional Dropdown Menu */}
+            {/* Dropdown Menu */}
             {showMenu && (
               <>
                 <div
-                  className="fixed inset-0 z-40 bg-transparent cursor-default"
+                  className="fixed inset-0 z-40 cursor-default"
                   onClick={() => setShowMenu(false)}
                 />
-                <div className={`absolute right-0 mt-2 w-72 rounded-2xl border p-2.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 backdrop-blur-2xl ${isDarkMode ? "bg-slate-900 border-slate-800/90 text-slate-100" : "bg-white border-slate-200 text-slate-900 shadow-xl"}`}>
+                <div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-ink-700 bg-ink-900 p-2.5 text-brand-100 shadow-2xl">
                   {/* Profile Header */}
-                  <div className={`px-3 py-2.5 border rounded-xl mb-2 ${isDarkMode ? "bg-slate-950/80 border-slate-800/80" : "bg-slate-50 border-slate-200"}`}>
+                  <div className="mb-2 rounded-xl border border-ink-700 bg-ink-950/80 px-3 py-2.5">
                     <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-lg bg-cyan-950 border border-cyan-500/30 flex items-center justify-center font-bold text-xs text-cyan-300 shrink-0">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-accent/30 bg-ink-800 text-xs font-bold text-accent-bright">
                         {avatar ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
-                          <img src={avatar} alt={fullName} className="h-full w-full object-cover rounded-lg" />
+                          <img src={avatar} alt={fullName} className="h-full w-full rounded-lg object-cover" />
                         ) : (
                           fullName ? fullName.charAt(0).toUpperCase() : "U"
                         )}
                       </div>
                       <div className="overflow-hidden">
-                        <p className={`text-xs font-bold truncate ${isDarkMode ? "text-white" : "text-slate-900"}`}>{fullName || "CopyCoach User"}</p>
-                        <p className={`text-[11px] truncate mt-0.5 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>{userEmail || userId}</p>
+                        <p className="truncate text-xs font-bold text-white">{fullName || "CopyCoach User"}</p>
+                        <p className="mt-0.5 truncate text-[11px] text-brand-300">{userEmail || userId}</p>
                       </div>
                     </div>
 
-                    <div className={`mt-2.5 pt-2 border-t flex items-center justify-between text-[11px] ${isDarkMode ? "border-slate-800/60 text-slate-400" : "border-slate-200 text-slate-600"}`}>
-                      <span className="font-medium flex items-center gap-1">
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                    <div className="mt-2.5 flex items-center justify-between border-t border-ink-700 pt-2 text-[11px] text-brand-300">
+                      <span className="flex items-center gap-1 font-medium">
+                        <ShieldCheck className="h-3.5 w-3.5 text-accent-bright" />
                         <span>{plan === "pro" ? "Pro Membership" : "Starter Free Plan"}</span>
                       </span>
-                      <span className="font-bold text-cyan-400">{credits} Credits Left</span>
+                      <span className="font-bold text-accent-bright">{credits} Credits Left</span>
                     </div>
                   </div>
 
-                {/* Account & Settings Group */}
-                <div className="space-y-0.5 mb-2">
-                  <span className="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                    Account & Workspace
-                  </span>
-
-                  <Link
-                    href="/dashboard/admin/feedback"
-                    onClick={() => setShowMenu(false)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${isDarkMode ? "text-slate-200 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"}`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <ShieldCheck className="w-4 h-4 text-amber-400" />
-                      <span>Admin Feedback Triage</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-amber-400 bg-amber-950/40 px-1.5 py-0.5 rounded border border-amber-800/50">Admin</span>
-                  </Link>
-
-                  <button
-                    onClick={() => {
-                      setShowMenu(false);
-                      setProfileTab("profile");
-                      setShowProfileModal(true);
-                    }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${isDarkMode ? "text-slate-200 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"}`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <UserCheck className="w-4 h-4 text-cyan-400" />
-                      <span>Profile Settings</span>
-                    </div>
-                    <span className="text-[10px] text-slate-500">Edit</span>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setShowMenu(false);
-                      setProfileTab("brand_voice");
-                      setShowProfileModal(true);
-                    }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${isDarkMode ? "text-slate-200 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"}`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Sliders className="w-4 h-4 text-purple-400" />
-                      <span>Brand Voice & AI Persona</span>
-                    </div>
-                    <span className="text-[10px] text-purple-400/80 bg-purple-950/40 px-1.5 py-0.5 rounded">Custom</span>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setShowMenu(false);
-                      setProfileTab("billing");
-                      setShowProfileModal(true);
-                    }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${isDarkMode ? "text-slate-200 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"}`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <CreditCard className="w-4 h-4 text-amber-400" />
-                      <span>Subscription & Plan</span>
-                    </div>
-                    <span className={`text-[10px] font-bold ${plan === "pro" ? "text-amber-400" : "text-cyan-400"}`}>
-                      {plan === "pro" ? "Pro Active" : "Upgrade"}
+                  {/* Account & Settings Group */}
+                  <div className="mb-2 space-y-0.5">
+                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-brand-300">
+                      Account & Workspace
                     </span>
-                  </button>
-                </div>
 
-                {/* Preferences Group */}
-                <div className={`pt-2 border-t space-y-0.5 mb-2 ${isDarkMode ? "border-slate-800/80" : "border-slate-200"}`}>
-                  <span className="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                    Preferences
-                  </span>
+                    <Link
+                      href="/dashboard/admin/feedback"
+                      onClick={() => setShowMenu(false)}
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <ShieldCheck className="h-4 w-4 text-amber-400" />
+                        <span>Admin Feedback Triage</span>
+                      </div>
+                      <span className="rounded border border-amber-800/50 bg-amber-950/40 px-1.5 py-0.5 text-[10px] font-bold text-amber-400">Admin</span>
+                    </Link>
 
-                  <button
-                    onClick={() => {
-                      setShowMenu(false);
-                      setProfileTab("preferences");
-                      setShowProfileModal(true);
-                    }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${isDarkMode ? "text-slate-200 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"}`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      {isDarkMode ? <Moon className="w-4 h-4 text-blue-400" /> : <Sun className="w-4 h-4 text-amber-400" />}
-                      <span>Appearance & Theme</span>
-                    </div>
-                    <span className="text-[10px] font-medium text-cyan-300 bg-cyan-950/60 border border-cyan-800/40 px-2 py-0.5 rounded">
-                      {themeMode === "system" ? "System Sync" : isDarkMode ? "Dark Theme" : "Light Theme"}
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        setProfileTab("profile");
+                        setShowProfileModal(true);
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <UserCheck className="h-4 w-4 text-accent-bright" />
+                        <span>Profile Settings</span>
+                      </div>
+                      <span className="text-[10px] text-brand-300">Edit</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        setProfileTab("brand_voice");
+                        setShowProfileModal(true);
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Sliders className="h-4 w-4 text-accent-bright" />
+                        <span>Brand Voice & AI Persona</span>
+                      </div>
+                      <span className="rounded bg-accent/15 px-1.5 py-0.5 text-[10px] text-accent-bright">Custom</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        setProfileTab("billing");
+                        setShowProfileModal(true);
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <CreditCard className="h-4 w-4 text-amber-400" />
+                        <span>Subscription & Plan</span>
+                      </div>
+                      <span className={`text-[10px] font-bold ${plan === "pro" ? "text-amber-400" : "text-accent-bright"}`}>
+                        {plan === "pro" ? "Pro Active" : "Upgrade"}
+                      </span>
+                    </button>
+                  </div>
+
+                  {/* Preferences Group */}
+                  <div className="mb-2 space-y-0.5 border-t border-ink-700 pt-2">
+                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-brand-300">
+                      Preferences
                     </span>
-                  </button>
+
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        setProfileTab("preferences");
+                        setShowProfileModal(true);
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        {isDarkMode ? <Moon className="h-4 w-4 text-accent-bright" /> : <Sun className="h-4 w-4 text-amber-400" />}
+                        <span>Appearance & Theme</span>
+                      </div>
+                      <span className="rounded border border-line-soft bg-ink-800 px-2 py-0.5 text-[10px] font-medium text-accent-bright">
+                        {themeMode === "system" ? "System Sync" : isDarkMode ? "Dark Theme" : "Light Theme"}
+                      </span>
+                    </button>
+                  </div>
+
+                  {/* Resources & Help Group */}
+                  <div className="mb-2 space-y-0.5 border-t border-ink-700 pt-2">
+                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-brand-300">
+                      Support & Tools
+                    </span>
+
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        setShowShortcutsModal(true);
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Keyboard className="h-4 w-4 text-accent-bright" />
+                        <span>Keyboard Shortcuts</span>
+                      </div>
+                      <span className="font-mono text-[10px] text-brand-300">⌘K</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        setShowSupportModal(true);
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <HelpCircle className="h-4 w-4 text-accent-bright" />
+                        <span>Help & AI Support</span>
+                      </div>
+                      <span className="text-[10px] text-brand-300">24/7</span>
+                    </button>
+                  </div>
+
+                  {/* Sign Out Button */}
+                  <div className="border-t border-ink-700 pt-2">
+                    <button
+                      onClick={handleLogout}
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-rose-400 transition-colors hover:bg-rose-950/50 hover:text-rose-300"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <LogOut className="h-4 w-4" />
+                        <span>Sign Out</span>
+                      </div>
+                      <span className="text-[10px] opacity-70">Exit</span>
+                    </button>
+                  </div>
                 </div>
-
-                {/* Resources & Help Group */}
-                <div className="pt-2 border-t border-slate-800/80 space-y-0.5 mb-2">
-                  <span className="px-3 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                    Support & Tools
-                  </span>
-
-                  <button
-                    onClick={() => {
-                      setShowMenu(false);
-                      setShowShortcutsModal(true);
-                    }}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Keyboard className="w-4 h-4 text-emerald-400" />
-                      <span>Keyboard Shortcuts</span>
-                    </div>
-                    <span className="text-[10px] text-slate-500 font-mono">⌘K</span>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setShowMenu(false);
-                      setShowSupportModal(true);
-                    }}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <HelpCircle className="w-4 h-4 text-cyan-400" />
-                      <span>Help & AI Support</span>
-                    </div>
-                    <span className="text-[10px] text-slate-500">24/7</span>
-                  </button>
-                </div>
-
-                {/* Sign Out Button */}
-                <div className="pt-2 border-t border-slate-800/80">
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-950/50 hover:text-rose-300 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <LogOut className="w-4 h-4" />
-                      <span>Sign Out</span>
-                    </div>
-                    <span className="text-[10px] opacity-70">Exit</span>
-                  </button>
-                </div>
-              </div>
               </>
             )}
           </div>
@@ -850,23 +889,23 @@ export default function DashboardPage() {
 
       {/* Prominent Persistent Banner Warning for Placeholder Supabase Config */}
       {showConfigBanner && (
-        <div className="bg-amber-500/10 border-b border-amber-500/30 text-amber-200 px-4 py-3.5 sm:px-6 relative z-30">
-          <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="relative z-30 border-b border-amber-500/30 bg-amber-500/10 px-4 py-3.5 text-amber-200 sm:px-6">
+          <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-500/20 rounded-lg text-amber-400 shrink-0">
-                <AlertTriangle className="w-5 h-5" />
+              <div className="shrink-0 rounded-lg bg-amber-500/20 p-2 text-amber-400">
+                <AlertTriangle className="h-5 w-5" />
               </div>
               <div>
                 <p className="text-sm font-semibold text-amber-300">
                   Supabase Configuration Warning
                 </p>
-                <p className="text-xs text-amber-200/80 mt-0.5">
-                  The application is using a placeholder Supabase URL (<code className="bg-black/40 px-1.5 py-0.5 rounded text-amber-300">{activeSupabaseUrl || "placeholder.supabase.co"}</code>). Please set <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in project Settings to enable database features.
+                <p className="mt-0.5 text-xs text-amber-200/80">
+                  The application is using a placeholder Supabase URL (<code className="rounded bg-black/40 px-1.5 py-0.5 text-amber-300">{activeSupabaseUrl || "placeholder.supabase.co"}</code>). Please set <code className="rounded bg-black/40 px-1 py-0.5 text-amber-300">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="rounded bg-black/40 px-1 py-0.5 text-amber-300">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in project Settings to enable database features.
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1.5 rounded-lg font-medium">
+            <div className="shrink-0">
+              <span className="rounded-lg border border-amber-500/40 bg-amber-500/20 px-3 py-1.5 text-xs font-medium text-amber-300">
                 Invalid Configuration Detected
               </span>
             </div>
@@ -875,23 +914,42 @@ export default function DashboardPage() {
       )}
 
       {/* Main Content Area */}
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome & Analytics Banner */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          {/* Credits & Plan Gauge */}
-          <div className={`border rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden group transition-colors ${isDarkMode ? "bg-slate-900/60 border-slate-800/90 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-xs"}`}>
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* WELCOME & ANALYTICS BANNER */}
+        <div className="mb-8 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-[13px] font-medium text-brand-300">
+              Welcome back, {fullName.split(" ")[0] || "Creator"}
+            </p>
+            <h1 className="mt-1 text-[26px] font-bold leading-tight tracking-tight text-white sm:text-3xl">
+              Create high-converting copy in seconds
+            </h1>
+            <p className="mt-1.5 text-sm text-brand-200">
+              Describe your offer, choose a category and tone, then let CopyCoach AI do the writing.
+            </p>
+          </div>
+          <span className="flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-[11px] font-bold text-accent-bright">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-bright" />
+            AI Active
+          </span>
+        </div>
+
+        {/* STAT CARDS */}
+        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+          {/* Credits & Plan */}
+          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-5 transition-colors">
             <div className="flex items-center justify-between">
-              <span className={`text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>AI Generation Credits</span>
-              <Zap className="w-4 h-4 text-cyan-400" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">AI Generation Credits</span>
+              <Zap className="h-4 w-4 text-accent-bright" />
             </div>
             <div className="my-3">
               <div className="flex items-baseline gap-2">
-                <span className={`text-3xl font-extrabold ${isDarkMode ? "text-white" : "text-slate-900"}`}>{credits}</span>
-                <span className={`text-xs ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>/ {plan === "pro" ? 100 : 5} left today</span>
+                <span className="text-3xl font-extrabold text-white">{credits}</span>
+                <span className="text-xs text-brand-300">/ {plan === "pro" ? 100 : 5} left today</span>
               </div>
-              <div className={`w-full rounded-full h-2 mt-2.5 overflow-hidden ${isDarkMode ? "bg-slate-800" : "bg-slate-200"}`}>
+              <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-ink-800">
                 <div
-                  className="bg-gradient-to-r from-cyan-400 to-blue-600 h-full rounded-full transition-all duration-500"
+                  className="h-full rounded-full bg-gradient-to-r from-accent-deep to-accent-bright transition-all duration-500"
                   style={{ width: `${Math.min(100, (credits / (plan === "pro" ? 100 : 5)) * 100)}%` }}
                 />
               </div>
@@ -899,235 +957,183 @@ export default function DashboardPage() {
             {plan === "free" ? (
               <button
                 onClick={upgradeToPro}
-                className="text-xs font-semibold text-cyan-500 hover:text-cyan-600 flex items-center gap-1 group/btn cursor-pointer"
+                className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-accent-bright hover:text-[#7C7CF7]"
               >
-                <span>Upgrade to Pro (100 daily)</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1" />
+                Upgrade to Pro (100 daily)
+                <ArrowRight className="h-3.5 w-3.5 transition-transform" />
               </button>
             ) : (
-              <span className="text-[11px] text-emerald-500 font-medium flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Unlimited Pro Access Active</span>
+              <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-400">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Unlimited Pro Access Active
               </span>
             )}
           </div>
 
-          {/* Stat 2: Total Generations */}
-          <div className={`border rounded-2xl p-5 flex flex-col justify-between transition-colors ${isDarkMode ? "bg-slate-900/60 border-slate-800/90 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-xs"}`}>
+          {/* Total Generations */}
+          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-5 transition-colors">
             <div className="flex items-center justify-between">
-              <span className={`text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Total Copy Improvements</span>
-              <FileText className="w-4 h-4 text-blue-500" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Total Copy Improvements</span>
+              <FileText className="h-4 w-4 text-accent-bright" />
             </div>
             <div className="my-3">
-              <div className={`text-3xl font-extrabold ${isDarkMode ? "text-white" : "text-slate-900"}`}>{totalCopies}</div>
-              <p className={`text-xs mt-1 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Saved in history library</p>
+              <div className="text-3xl font-extrabold text-white">{totalCopies}</div>
+              <p className="mt-1 text-xs text-brand-300">Saved in history library</p>
             </div>
-            <span className="text-[11px] text-slate-500 flex items-center gap-1">
-              <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
-              <span>Real-time persistence</span>
+            <span className="flex items-center gap-1 text-[11px] text-brand-300">
+              <TrendingUp className="h-3.5 w-3.5 text-accent-bright" />
+              Real-time persistence
             </span>
           </div>
 
-          {/* Stat 3: Favorites Saved */}
-          <div className={`border rounded-2xl p-5 flex flex-col justify-between transition-colors ${isDarkMode ? "bg-slate-900/60 border-slate-800/90 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-xs"}`}>
+          {/* Favorites */}
+          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-5 transition-colors">
             <div className="flex items-center justify-between">
-              <span className={`text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Starred Favorites</span>
-              <Star className="w-4 h-4 text-amber-500 fill-amber-500/20" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Starred Favorites</span>
+              <Star className="h-4 w-4 fill-amber-500/20 text-amber-500" />
             </div>
             <div className="my-3">
-              <div className={`text-3xl font-extrabold ${isDarkMode ? "text-white" : "text-slate-900"}`}>{favoriteCount}</div>
-              <p className={`text-xs mt-1 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>High-converting snippets</p>
+              <div className="text-3xl font-extrabold text-white">{favoriteCount}</div>
+              <p className="mt-1 text-xs text-brand-300">High-converting snippets</p>
             </div>
             <button
               onClick={() => setShowFavorites(!showFavorites)}
-              className="text-xs font-semibold text-amber-500 hover:text-amber-600 flex items-center gap-1 cursor-pointer"
+              className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-amber-400 hover:text-amber-300"
             >
-              <span>{showFavorites ? "View All Copies" : "Filter Favorites"}</span>
+              {showFavorites ? "View All Copies" : "Filter Favorites"}
             </button>
           </div>
 
-          {/* Stat 4: Active Workspaces */}
-          <div className={`border rounded-2xl p-5 flex flex-col justify-between transition-colors ${isDarkMode ? "bg-slate-900/60 border-slate-800/90 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-xs"}`}>
+          {/* Projects */}
+          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-5 transition-colors">
             <div className="flex items-center justify-between">
-              <span className={`text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Active Projects</span>
-              <Layers className="w-4 h-4 text-purple-500" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Active Projects</span>
+              <Layers className="h-4 w-4 text-accent-bright" />
             </div>
             <div className="my-3">
-              <div className={`text-3xl font-extrabold ${isDarkMode ? "text-white" : "text-slate-900"}`}>{projects.length}</div>
-              <p className={`text-xs mt-1 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Organized campaigns</p>
+              <div className="text-3xl font-extrabold text-white">{projects.length}</div>
+              <p className="mt-1 text-xs text-brand-300">Organized campaigns</p>
             </div>
             <button
               onClick={() => setShowProjectModal(true)}
-              className="text-xs font-semibold text-purple-500 hover:text-purple-600 flex items-center gap-1 cursor-pointer"
+              className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-accent-bright hover:text-[#7C7CF7]"
             >
-              <span>+ Create Project</span>
+              + Create Project
             </button>
           </div>
         </div>
 
         {/* WORKSPACE GRID: LEFT INPUT & RIGHT OUTPUT */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-          {/* LEFT PANEL: INPUT FORM & STARTERS */}
-          <div className={`lg:col-span-7 border rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xl transition-colors ${isDarkMode ? "bg-slate-900/70 border-slate-800 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-md"}`}>
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className={`text-xl font-bold flex items-center gap-2 ${isDarkMode ? "text-white" : "text-slate-900"}`}>
-                    <Sparkles className="w-5 h-5 text-cyan-500" />
-                    <span>CopyCoach AI Studio</span>
-                  </h2>
-                  <p className={`text-xs mt-1 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
-                    Paste raw copy to receive strategic coaching, score analysis, and instant AI optimization.
-                  </p>
-                </div>
-
-                <div className="hidden sm:flex items-center gap-2">
-                  <span className={`text-[11px] ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Tone:</span>
-                  <span className="text-xs font-medium text-cyan-500 bg-cyan-50 border border-cyan-200 dark:bg-cyan-950/60 dark:border-cyan-800/40 dark:text-cyan-300 px-2.5 py-1 rounded-lg">
-                    {tone}
-                  </span>
-                </div>
+        <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-12">
+          {/* LEFT PANEL: GENERATOR FORM */}
+          <div className="flex flex-col justify-between rounded-3xl border border-line-soft bg-ink-900 md:col-span-7">
+            {/* Panel Header */}
+            <div className="flex items-center justify-between border-b border-ink-700 p-6">
+              <div>
+                <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+                  <Sparkles className="h-5 w-5 text-accent-bright" />
+                  CopyCoach AI Studio
+                </h2>
+                <p className="mt-1 text-xs text-brand-300">
+                  Build your product offer, category, and tone — then let CopyCoach AI write copy that converts.
+                </p>
               </div>
+              <span className="hidden items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent-bright sm:flex">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-bright" />
+                AI Ready
+              </span>
+            </div>
 
-              {/* Selector Controls */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-                <div>
-                  <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
-                    Content Type
-                  </label>
-                  <select
-                    value={copyType}
-                    onChange={(e) => setCopyType(e.target.value)}
-                    className={`w-full border rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer ${isDarkMode ? "bg-slate-950 border-slate-800 text-slate-200" : "bg-slate-50 border-slate-300 text-slate-800"}`}
-                  >
-                    <option value="Advertisement">Social Media & Search Ad</option>
-                    <option value="Email">Sales & Nurture Email</option>
-                    <option value="Landing Page">Landing Page & Hero Headline</option>
-                    <option value="Social Media">LinkedIn & Twitter Post</option>
-                    <option value="Blog">Blog Post & Article Intro</option>
-                    <option value="Product Description">E-commerce Product Copy</option>
-                    <option value="SMS">SMS & Push Notification</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
-                    Brand Tone
-                  </label>
-                  <select
-                    value={tone}
-                    onChange={(e) => setTone(e.target.value)}
-                    className={`w-full border rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer ${isDarkMode ? "bg-slate-950 border-slate-800 text-slate-200" : "bg-slate-50 border-slate-300 text-slate-800"}`}
-                  >
-                    <option value="Professional">Professional & Direct</option>
-                    <option value="Persuasive">Persuasive & High Energy</option>
-                    <option value="Bold & Punchy">Bold & Punchy</option>
-                    <option value="Friendly">Conversational & Warm</option>
-                    <option value="Luxury">Luxury & Premium</option>
-                    <option value="Urgent">Urgent & FOMO Driven</option>
-                    <option value="Witty">Witty & Engaging</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Quick Prompt Starters */}
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className={`text-[11px] font-semibold uppercase tracking-wider flex items-center gap-1 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
-                    <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
-                    <span>Quick Templates</span>
-                  </span>
-                  {text && (
-                    <button
-                      onClick={() => setText("")}
-                      className="text-[11px] text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
-                    >
-                      Clear Input
-                    </button>
-                  )}
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => insertSample("Double your sales team efficiency with our AI CRM platform that automates follow-ups in seconds.", "Advertisement", "Bold & Punchy")}
-                    className={`text-xs border px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${isDarkMode ? "bg-slate-950 hover:bg-slate-800 border-slate-800 text-slate-300" : "bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700"}`}
-                  >
-                    ⚡ SaaS Ad Headline
-                  </button>
-                  <button
-                    onClick={() => insertSample("Hey John, you left something behind in your cart! Grab your discount before midnight.", "Email", "Urgent")}
-                    className={`text-xs border px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${isDarkMode ? "bg-slate-950 hover:bg-slate-800 border-slate-800 text-slate-300" : "bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700"}`}
-                  >
-                    🛒 Cart Abandonment Email
-                  </button>
-                  <button
-                    onClick={() => insertSample("Transform your morning routine with our organic cold-pressed matcha blend.", "Product Description", "Luxury")}
-                    className={`text-xs border px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${isDarkMode ? "bg-slate-950 hover:bg-slate-800 border-slate-800 text-slate-300" : "bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700"}`}
-                  >
-                    ✨ E-commerce Hook
-                  </button>
-                </div>
-              </div>
-
-              {/* Main Copy Input Box */}
-              <div className="relative">
-                <textarea
-                  rows={8}
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder="Paste or write your raw copywriting draft here... (e.g. ad hooks, email subject lines, landing page copy)"
-                  className={`w-full border rounded-2xl p-4 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-none font-sans ${isDarkMode ? "bg-slate-950 border-slate-800 text-slate-100 placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400"}`}
+            <div className="flex flex-1 flex-col gap-8 p-6">
+              {/* Section 1: Select Category */}
+              <section>
+                <SectionHeading
+                  number="1"
+                  title="Select Category"
+                  subtitle="What type of marketing copy are you creating?"
                 />
-                <div className={`absolute bottom-3 right-4 text-[11px] font-mono ${isDarkMode ? "text-slate-500" : "text-slate-400"}`}>
-                  {text.length} chars
+                <div className="mt-4">
+                  <CategorySelector value={copyType} onChange={setCopyType} />
                 </div>
-              </div>
+              </section>
 
+              {/* Section 2: Offer & Product Details */}
+              <section>
+                <SectionHeading
+                  number="2"
+                  title="Offer & Product Details"
+                  subtitle="Tell CopyCoach about your offer so it can write copy that converts."
+                />
+                <div className="mt-5 rounded-2xl border border-line-soft bg-ink-950/60 p-5">
+                  <ProductDetails
+                    productName={productName}
+                    onProductNameChange={setProductName}
+                    description={text}
+                    onDescriptionChange={setText}
+                    targetAudience={targetAudience}
+                    onTargetAudienceChange={setTargetAudience}
+                    cta={cta}
+                    onCtaChange={setCta}
+                  />
+                </div>
+              </section>
+
+              {/* Section 3: Select Tone of Voice */}
+              <section>
+                <SectionHeading
+                  number="3"
+                  title="Select Tone of Voice"
+                  subtitle="How should your brand sound?"
+                />
+                <div className="mt-4">
+                  <ToneSelector value={tone} onChange={setTone} />
+                </div>
+              </section>
+
+              {/* Inline error message */}
               {message && (
-                <div className="mt-3 p-3 rounded-xl bg-rose-950/60 border border-rose-800/60 text-rose-300 text-xs flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                <div className="flex items-start gap-2.5 rounded-2xl border border-rose-800/60 bg-rose-950/60 p-3.5 text-xs text-rose-300">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
                   <span>{message}</span>
                 </div>
               )}
-            </div>
 
-            {/* Action Trigger Button */}
-            <div className={`mt-6 pt-4 border-t flex items-center justify-between ${isDarkMode ? "border-slate-800/80" : "border-slate-200"}`}>
-              <span className={`text-xs hidden sm:inline ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
-                Cost: <strong className={isDarkMode ? "text-slate-200" : "text-slate-800"}>1 Credit</strong>
-              </span>
+              {/* Generate CTA */}
+              <div className="mt-auto pt-2">
+                <GenerateButton
+                  loading={loading}
+                  disabled={loading || credits <= 0}
+                  onClick={improveCopy}
+                />
 
-              <button
-                onClick={improveCopy}
-                disabled={loading || credits <= 0}
-                className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold px-8 py-3.5 rounded-2xl text-sm transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin text-slate-950" />
-                    <span>Analyzing & Refining Copy...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 text-slate-950 fill-slate-950" />
-                    <span>Improve Copy with CopyCoach AI</span>
-                  </>
+                {credits <= 0 && !loading && (
+                  <p className="mt-2 text-center text-xs text-amber-400">
+                    You&apos;ve used all your free credits.{" "}
+                    <button onClick={upgradeToPro} className="font-semibold underline underline-offset-2 hover:text-amber-300">
+                      Upgrade to Pro
+                    </button>{" "}
+                    for 100 daily generations.
+                  </p>
                 )}
-              </button>
+
+                <div className="mt-5">
+                  <ProTipCard />
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* RIGHT PANEL: REAL-TIME AI COACHING ANALYSIS & OUTPUT */}
-          <div className={`lg:col-span-5 border rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xl min-h-[480px] transition-colors ${isDarkMode ? "bg-slate-900/70 border-slate-800 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-md"}`}>
+          {/* RIGHT PANEL: AI COACHING OUTPUT */}
+          <div className="flex min-h-[480px] flex-col rounded-3xl border border-line-soft bg-ink-900 md:col-span-5">
             {result ? (
-              <div className="space-y-5 animate-in fade-in duration-300">
-                {/* Header with Score */}
-                <div className={`flex items-center justify-between border-b pb-4 ${isDarkMode ? "border-slate-800" : "border-slate-200"}`}>
+              <div className="flex flex-1 flex-col gap-5 p-6">
+                {/* Score header */}
+                <div className="flex items-center justify-between border-b border-ink-700 pb-4">
                   <div>
-                    <span className={`text-xs font-semibold uppercase tracking-wider ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>AI Copy Evaluation</span>
-                    <h3 className={`text-lg font-bold flex items-center gap-2 mt-0.5 ${isDarkMode ? "text-white" : "text-slate-900"}`}>
-                      <BarChart3 className="w-5 h-5 text-cyan-500" />
-                      <span>Optimization Score</span>
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-brand-300">AI Copy Evaluation</span>
+                    <h3 className="mt-0.5 flex items-center gap-2 text-lg font-bold text-white">
+                      <BarChart3 className="h-5 w-5 text-accent-bright" />
+                      Optimization Score
                     </h3>
                   </div>
 
@@ -1135,40 +1141,57 @@ export default function DashboardPage() {
                     <span
                       className={`text-3xl font-extrabold ${
                         (typeof result === "object" && result.score && result.score >= 80)
-                          ? "text-emerald-500"
+                          ? "text-emerald-400"
                           : (typeof result === "object" && result.score && result.score >= 60)
-                          ? "text-amber-500"
-                          : "text-cyan-500"
+                          ? "text-amber-400"
+                          : "text-accent-bright"
                       }`}
                     >
-                      {typeof result === "object" && result.score ? `${result.score}/100` : "85/100"}
+                      {typeof result === "object" && result.score ? `${result.score}/100` : "70/100"}
                     </span>
-                    <p className={`text-[10px] uppercase tracking-wider ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Conversion Ready</p>
+                    <p className="text-[10px] uppercase tracking-wider text-brand-300">Conversion Ready</p>
                   </div>
                 </div>
 
                 {/* Framework & Strengths */}
                 {typeof result === "object" && (
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="space-y-3">
                     {result.framework && (
-                      <div className={`border p-3 rounded-xl flex items-center justify-between text-xs ${isDarkMode ? "bg-slate-950 border-slate-800 text-slate-300" : "bg-slate-50 border-slate-200 text-slate-700"}`}>
-                        <span className={isDarkMode ? "text-slate-400" : "text-slate-500"}>Framework Applied:</span>
-                        <span className="font-semibold text-cyan-500 bg-cyan-50 dark:bg-cyan-950/60 px-2.5 py-0.5 rounded border border-cyan-200 dark:border-cyan-800/40">
+                      <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950/60 p-3 text-xs text-brand-200">
+                        <span className="text-brand-300">Framework Applied:</span>
+                        <span className="rounded bg-accent/15 px-2.5 py-0.5 font-semibold text-accent-bright">
                           {result.framework}
                         </span>
                       </div>
                     )}
 
-                    {result.strengths && result.strengths.length > 0 && (
-                      <div className={`border p-3.5 rounded-xl text-xs space-y-1.5 ${isDarkMode ? "bg-slate-950 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
-                        <div className="font-semibold text-emerald-500 flex items-center gap-1.5 mb-1">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>Key Strengths Identified</span>
+                    {result.weaknesses && result.weaknesses.length > 0 && (
+                      <div className="space-y-1.5 rounded-xl border border-line-soft bg-ink-950/60 p-3.5 text-xs">
+                        <div className="mb-1 flex items-center gap-1.5 font-semibold text-rose-400">
+                          <AlertTriangle className="h-3.5 w-3.5" />
+                          Areas to Improve
                         </div>
-                        <ul className={`space-y-1 ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>
+                        <ul className="space-y-1 text-brand-200">
+                          {result.weaknesses.map((w, idx) => (
+                            <li key={idx} className="flex items-start gap-1.5">
+                              <span className="font-bold text-rose-400">•</span>
+                              <span>{w}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {result.strengths && result.strengths.length > 0 && (
+                      <div className="space-y-1.5 rounded-xl border border-line-soft bg-ink-950/60 p-3.5 text-xs">
+                        <div className="mb-1 flex items-center gap-1.5 font-semibold text-emerald-400">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          Key Strengths Identified
+                        </div>
+                        <ul className="space-y-1 text-brand-200">
                           {result.strengths.map((str, idx) => (
                             <li key={idx} className="flex items-start gap-1.5">
-                              <span className="text-emerald-500 font-bold">•</span>
+                              <span className="font-bold text-emerald-400">•</span>
                               <span>{str}</span>
                             </li>
                           ))}
@@ -1177,46 +1200,42 @@ export default function DashboardPage() {
                     )}
 
                     {result.coachAdvice && (
-                      <div className={`border p-3.5 rounded-xl text-xs space-y-1 ${isDarkMode ? "bg-slate-950 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
-                        <div className="font-semibold text-amber-500 flex items-center gap-1.5 mb-1">
-                          <Lightbulb className="w-3.5 h-3.5" />
-                          <span>Coach Advice</span>
+                      <div className="space-y-1 rounded-xl border border-line-soft bg-ink-950/60 p-3.5 text-xs">
+                        <div className="mb-1 flex items-center gap-1.5 font-semibold text-amber-400">
+                          <Lightbulb className="h-3.5 w-3.5" />
+                          Coach Advice
                         </div>
-                        <p className={`leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>{result.coachAdvice}</p>
+                        <p className="leading-relaxed text-brand-200">{result.coachAdvice}</p>
                       </div>
                     )}
                   </div>
                 )}
 
                 {/* Improved Copy Output Box */}
-                <div className={`border rounded-2xl p-4.5 shadow-xs relative animate-slideInRight ${isDarkMode ? "bg-slate-950 border-cyan-500/30 text-slate-100" : "bg-slate-50 border-cyan-400 text-slate-900"}`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-cyan-500 uppercase tracking-wider flex items-center gap-1">
-                      <Award className="w-3.5 h-3.5" />
-                      <span>Optimized Copy Version</span>
+                <div className="relative rounded-2xl border border-accent/30 bg-ink-950/60 p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-accent-bright">
+                      <Award className="h-3.5 w-3.5" />
+                      Optimized Copy Version
                     </span>
 
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleExportPDF(typeof result === "object" ? result.improvedCopy || "" : String(result))}
-                        className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
-                          isDarkMode ? "bg-slate-900 hover:bg-slate-800 border-slate-800 text-cyan-300" : "bg-white hover:bg-slate-100 border-slate-200 text-slate-800"
-                        }`}
+                        className="inline-flex items-center gap-1 rounded-lg border border-line-soft bg-ink-800 px-2.5 py-1 text-[11px] font-semibold text-accent-bright transition-colors hover:bg-ink-700"
                         title="Export as PDF"
                       >
-                        <FileDown className="w-3.5 h-3.5 text-cyan-400" />
-                        <span>Export PDF</span>
+                        <FileDown className="h-3.5 w-3.5" />
+                        Export PDF
                       </button>
 
                       <button
                         onClick={() => setShowFullOutput(true)}
-                        className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
-                          isDarkMode ? "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300" : "bg-white hover:bg-slate-100 border-slate-200 text-slate-800"
-                        }`}
+                        className="inline-flex items-center gap-1 rounded-lg border border-line-soft bg-ink-800 px-2.5 py-1 text-[11px] font-semibold text-brand-200 transition-colors hover:bg-ink-700"
                         title="Expand to Full View"
                       >
-                        <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
-                        <span>Show Full</span>
+                        <Maximize2 className="h-3.5 w-3.5 text-accent-bright" />
+                        Show Full
                       </button>
 
                       <button
@@ -1226,10 +1245,10 @@ export default function DashboardPage() {
                             "result"
                           )
                         }
-                        className={`p-1.5 rounded-lg transition-colors cursor-pointer ${isDarkMode ? "bg-slate-900 hover:bg-slate-800 text-slate-300" : "bg-white hover:bg-slate-200 text-slate-700"}`}
+                        className="rounded-lg bg-ink-800 p-1.5 text-brand-200 transition-colors hover:bg-ink-700"
                         title="Copy text"
                       >
-                        {copiedId === "result" ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copiedId === "result" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                       </button>
 
                       <button
@@ -1238,20 +1257,20 @@ export default function DashboardPage() {
                             typeof result === "object" ? result.improvedCopy || "" : String(result)
                           )
                         }
-                        className={`p-1.5 rounded-lg transition-colors cursor-pointer ${isDarkMode ? "bg-slate-900 hover:bg-slate-800 text-slate-300" : "bg-white hover:bg-slate-200 text-slate-700"}`}
+                        className="rounded-lg bg-ink-800 p-1.5 text-brand-200 transition-colors hover:bg-ink-700"
                         title="Download text"
                       >
-                        <Download className="w-3.5 h-3.5" />
+                        <Download className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </div>
 
-                  <p className={`text-sm whitespace-pre-wrap font-sans leading-relaxed ${isDarkMode ? "text-slate-100" : "text-slate-800"}`}>
+                  <p className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-brand-100">
                     {typeof result === "object" ? result.improvedCopy : String(result)}
                   </p>
 
                   {/* Inline Drill Critique Feedback */}
-                  <div className="mt-4 pt-3 border-t border-slate-800/60">
+                  <div className="mt-4 border-t border-ink-700 pt-3">
                     <DrillCritiqueFeedback
                       userCopyInput={text}
                       aiOutputString={typeof result === "object" ? result.improvedCopy : String(result)}
@@ -1259,228 +1278,180 @@ export default function DashboardPage() {
                     />
                   </div>
                 </div>
-
-                {/* FULL-SCREEN EXPANDED OUTPUT OVERLAY */}
-                {showFullOutput && (
-                  <div
-                    className="fixed inset-0 z-[9999] bg-slate-950/90 backdrop-blur-md p-4 sm:p-8 flex items-center justify-center animate-fadeIn cursor-pointer"
-                    onClick={() => setShowFullOutput(false)}
-                  >
-                    <div
-                      className="relative w-full max-w-4xl max-h-[90vh] bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-slate-100 flex flex-col overflow-hidden animate-slideInRight cursor-default"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
-                        <div className="flex items-center gap-2">
-                          <Award className="w-5 h-5 text-cyan-400" />
-                          <h3 className="text-lg font-bold text-white">Full-Screen Optimized Copy</h3>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => handleExportPDF(typeof result === "object" ? result.improvedCopy || "" : String(result))}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded-xl transition-all cursor-pointer"
-                          >
-                            <FileDown className="w-4 h-4" />
-                            <span>Export PDF</span>
-                          </button>
-
-                          <button
-                            onClick={() =>
-                              handleCopy(
-                                typeof result === "object" ? result.improvedCopy || "" : String(result),
-                                "full-result"
-                              )
-                            }
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl border border-slate-700 transition-all cursor-pointer"
-                          >
-                            {copiedId === "full-result" ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                            <span>{copiedId === "full-result" ? "Copied!" : "Copy Text"}</span>
-                          </button>
-
-                          <button
-                            onClick={() => setShowFullOutput(false)}
-                            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
-                          >
-                            <X className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="flex-1 overflow-y-auto p-4 bg-slate-950 border border-slate-800 rounded-2xl text-slate-200 text-base leading-relaxed whitespace-pre-wrap font-sans selection:bg-cyan-500 selection:text-slate-950">
-                        {typeof result === "object" ? result.improvedCopy : String(result)}
-                      </div>
-
-                      <div className="pt-4 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800 mt-4">
-                        <span>Framework: <strong className="text-cyan-400">{typeof result === "object" ? result.framework || "Direct Response" : "Custom"}</strong></span>
-                        <button
-                          onClick={() => setShowFullOutput(false)}
-                          className="inline-flex items-center gap-1 text-slate-400 hover:text-white text-xs font-medium cursor-pointer"
-                        >
-                          <Minimize2 className="w-3.5 h-3.5" />
-                          <span>Close Full View</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             ) : (
               /* Empty Placeholder State */
-              <div className="h-full flex flex-col items-center justify-center text-center p-6 my-auto">
-                <div className={`h-16 w-16 rounded-3xl border flex items-center justify-center mb-4 text-cyan-500 shadow-xl ${isDarkMode ? "bg-slate-950 border-slate-800" : "bg-slate-100 border-slate-200"}`}>
-                  <Sparkles className="w-8 h-8" />
+              <div className="flex h-full flex-col items-center justify-center p-6 text-center">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl border border-accent/30 bg-ink-950 text-accent-bright">
+                  <Sparkles className="h-8 w-8" />
                 </div>
-                <h3 className={`text-base font-semibold mb-1 ${isDarkMode ? "text-white" : "text-slate-900"}`}>Awaiting Copy Analysis</h3>
-                <p className={`text-xs max-w-xs leading-relaxed ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
-                  Enter your copy on the left and click <strong className={isDarkMode ? "text-slate-200" : "text-slate-800"}>&quot;Improve Copy&quot;</strong> to receive AI scoring, strategic recommendations, and high-converting rewrites.
+                <h3 className="mb-1 text-base font-semibold text-white">Awaiting Copy Analysis</h3>
+                <p className="max-w-xs text-xs leading-relaxed text-brand-300">
+                  Enter your offer on the left and click <strong className="text-brand-100">Generate AI Marketing Copy</strong> to receive AI scoring, strategic recommendations, and high-converting rewrites.
                 </p>
               </div>
             )}
           </div>
         </div>
 
-        {/* BOTTOM SECTION: COPY HISTORY & SAVED LIBRARY */}
-        <div className={`border rounded-3xl p-6 sm:p-8 transition-colors ${isDarkMode ? "bg-slate-900/60 border-slate-800 text-slate-100" : "bg-white border-slate-200/90 text-slate-900 shadow-md"}`}>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <h2 className={`text-xl font-bold flex items-center gap-2 ${isDarkMode ? "text-white" : "text-slate-900"}`}>
-                <FileText className="w-5 h-5 text-cyan-500" />
-                <span>Copy History & Saved Library</span>
-              </h2>
-              <p className={`text-xs mt-0.5 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
-                Manage, filter, copy, or export your past optimized copy generations.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-              <div className="relative flex-1 sm:w-64">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                <input
-                  type="text"
-                  placeholder="Search history..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className={`w-full border rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-cyan-500 ${isDarkMode ? "bg-slate-950 border-slate-800 text-slate-200" : "bg-slate-50 border-slate-300 text-slate-800"}`}
-                />
+        {/* LIBRARY / COPY HISTORY */}
+        <section id="copy-library" className="mt-4 scroll-mt-24">
+          <div className="rounded-3xl border border-line-soft bg-ink-900 p-5 sm:p-7">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div>
+                <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+                  <FileText className="h-5 w-5 text-accent-bright" />
+                  Copy History & Saved Library
+                </h2>
+                <p className="mt-0.5 text-xs text-brand-200">
+                  Manage, filter, copy, or export your past optimized copy generations.
+                </p>
               </div>
 
-              <button
-                onClick={() => setShowFavorites(!showFavorites)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
-                  showFavorites
-                    ? "bg-amber-500/20 text-amber-500 border-amber-500/40"
-                    : isDarkMode
-                    ? "bg-slate-950 text-slate-400 border-slate-800 hover:text-white"
-                    : "bg-slate-100 text-slate-600 border-slate-300 hover:text-slate-900"
-                }`}
-              >
-                <Star className={`w-3.5 h-3.5 ${showFavorites ? "fill-amber-500" : ""}`} />
-                <span>{showFavorites ? "Starred Only" : "All Copies"}</span>
-              </button>
-            </div>
-          </div>
+              <div className="flex flex-wrap items-center gap-3">
+                {plan === "free" ? (
+                  <button
+                    onClick={upgradeToPro}
+                    className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-accent-deep to-accent-bright px-3.5 py-2 text-xs font-bold text-white shadow-accent-soft transition-colors hover:opacity-90"
+                  >
+                    Upgrade to Pro
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                ) : (
+                  <span className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-semibold text-emerald-400">
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    Pro Active
+                  </span>
+                )}
 
-          {/* History Cards List */}
-          {filteredHistory.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredHistory.map((item) => (
-                <div
-                  key={item.id}
-                  className={`border rounded-2xl p-5 flex flex-col justify-between transition-all group hover:shadow-xl ${isDarkMode ? "bg-slate-950/80 border-slate-800/80 hover:border-slate-700/80 text-slate-100" : "bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-900"}`}
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-semibold text-cyan-300 bg-cyan-950/60 border border-cyan-800/40 px-2.5 py-0.5 rounded-md">
-                          {item.copy_type || "Copy"}
-                        </span>
-                        <span className="text-[11px] text-slate-400 bg-slate-900 px-2 py-0.5 rounded">
-                          Tone: {item.tone || "Default"}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          onClick={() => toggleFavorite(item.id, item.favorite)}
-                          className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
-                            item.favorite
-                              ? "bg-amber-500/20 border-amber-500/40 text-amber-300"
-                              : "bg-slate-900 border-slate-800 text-slate-400 hover:text-white"
-                          }`}
-                          title="Star favorite"
-                        >
-                          <Star className={`w-3.5 h-3.5 ${item.favorite ? "fill-amber-300" : ""}`} />
-                        </button>
-
-                        <button
-                          onClick={() => handleCopy(item.improved_text, item.id)}
-                          className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
-                          title="Copy text"
-                        >
-                          {copiedId === item.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                        </button>
-
-                        <button
-                          onClick={() => handleDownload(item.improved_text, `${item.copy_type || "copy"}-improved.txt`)}
-                          className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
-                          title="Download"
-                        >
-                          <Download className="w-3.5 h-3.5" />
-                        </button>
-
-                        <button
-                          onClick={() => deleteHistory(item.id)}
-                          className="p-1.5 rounded-lg bg-slate-900 hover:bg-rose-950/60 border border-slate-800 text-slate-400 hover:text-rose-300 transition-colors cursor-pointer"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-slate-300 whitespace-pre-wrap line-clamp-4 leading-relaxed font-sans mb-3">
-                      {item.improved_text}
-                    </p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-brand-300" />
+                    <input
+                      type="text"
+                      placeholder="Search history..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 py-2 pl-9 pr-3 text-xs text-brand-100 sm:w-56"
+                    />
                   </div>
 
-                  {item.original_text && (
-                    <div className="pt-2.5 border-t border-slate-900 text-[11px] text-slate-500 flex items-center justify-between">
-                      <span className="truncate max-w-[240px]">Original: &quot;{item.original_text}&quot;</span>
-                      <span className="shrink-0">{item.created_at ? new Date(item.created_at).toLocaleDateString() : ""}</span>
-                    </div>
-                  )}
+                  <button
+                    onClick={() => setShowFavorites(!showFavorites)}
+                    className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
+                      showFavorites
+                        ? "border-amber-500/40 bg-amber-500/20 text-amber-400"
+                        : "border-line-soft bg-ink-950 text-brand-300 hover:text-white"
+                    }`}
+                  >
+                    <Star className={`h-3.5 w-3.5 ${showFavorites ? "fill-amber-400" : ""}`} />
+                    {showFavorites ? "Starred Only" : "All Copies"}
+                  </button>
                 </div>
-              ))}
+              </div>
             </div>
-          ) : (
-            <div className="text-center py-12 border border-dashed border-slate-800 rounded-2xl text-slate-400 text-xs">
-              No saved copy history found. Run a copy improvement above to populate your library!
-            </div>
-          )}
-        </div>
+
+            {/* History Cards */}
+            {filteredHistory.length > 0 ? (
+              <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+                {filteredHistory.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex flex-col justify-between rounded-2xl border border-line-soft bg-ink-950/70 p-5 transition-all hover:border-ink-600"
+                  >
+                    <div>
+                      <div className="mb-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="rounded-md border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-[11px] font-semibold text-accent-bright">
+                            {item.copy_type || "Copy"}
+                          </span>
+                          <span className="rounded bg-ink-800 px-2 py-0.5 text-[11px] text-brand-300">
+                            Tone: {item.tone || "Default"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => toggleFavorite(item.id, item.favorite)}
+                            className={`rounded-lg border p-1.5 transition-colors ${
+                              item.favorite
+                                ? "border-amber-500/40 bg-amber-500/20 text-amber-300"
+                                : "border-line-soft bg-ink-800 text-brand-300 hover:text-white"
+                            }`}
+                            title="Star favorite"
+                          >
+                            <Star className={`h-3.5 w-3.5 ${item.favorite ? "fill-amber-300" : ""}`} />
+                          </button>
+
+                          <button
+                            onClick={() => handleCopy(item.improved_text, item.id)}
+                            className="rounded-lg border border-line-soft bg-ink-800 p-1.5 text-brand-300 transition-colors hover:text-white"
+                            title="Copy text"
+                          >
+                            {copiedId === item.id ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                          </button>
+
+                          <button
+                            onClick={() => handleDownload(item.improved_text, `${item.copy_type || "copy"}-improved.txt`)}
+                            className="rounded-lg border border-line-soft bg-ink-800 p-1.5 text-brand-300 transition-colors hover:text-white"
+                            title="Download"
+                          >
+                            <Download className="h-3.5 w-3.5" />
+                          </button>
+
+                          <button
+                            onClick={() => deleteHistory(item.id)}
+                            className="rounded-lg border border-line-soft bg-ink-800 p-1.5 text-brand-300 transition-colors hover:bg-rose-950/60 hover:text-rose-300"
+                            title="Delete"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <p className="mb-3 whitespace-pre-wrap font-sans text-xs leading-relaxed text-brand-100 line-clamp-4">
+                        {item.improved_text}
+                      </p>
+                    </div>
+
+                    {item.original_text && (
+                      <div className="flex items-center justify-between border-t border-ink-700 pt-2.5 text-[11px] text-brand-300">
+                        <span className="max-w-[240px] truncate">Original: &quot;{item.original_text}&quot;</span>
+                        <span className="shrink-0">{item.created_at ? new Date(item.created_at).toLocaleDateString() : ""}</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-5 rounded-2xl border border-dashed border-ink-700 py-12 text-center text-xs text-brand-300">
+                No saved copy history found. Run a copy improvement above to populate your library!
+              </div>
+            )}
+          </div>
+        </section>
       </main>
 
       {/* NEW PROJECT MODAL */}
       {showProjectModal && (
         <div
-          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-pointer"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/80 p-4 backdrop-blur-sm"
           onClick={() => setShowProjectModal(false)}
         >
           <div
-            className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in zoom-in-95 cursor-default"
+            className="w-full max-w-md rounded-3xl border border-ink-700 bg-ink-900 p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
-              <FolderPlus className="w-5 h-5 text-cyan-400" />
-              <span>Create New Project Workspace</span>
+            <h3 className="mb-1 flex items-center gap-2 text-lg font-bold text-white">
+              <FolderPlus className="h-5 w-5 text-accent-bright" />
+              Create New Project Workspace
             </h3>
-            <p className="text-xs text-slate-400 mb-5">
+            <p className="mb-5 text-xs text-brand-200">
               Organize campaigns, clients, or product lines into separate workspaces.
             </p>
 
             <div className="mb-5">
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                 Project Name
               </label>
               <input
@@ -1488,7 +1459,7 @@ export default function DashboardPage() {
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
                 placeholder="e.g. Summer Marketing Campaign"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-cyan-500"
+                className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-sm text-brand-100"
                 autoFocus
               />
             </div>
@@ -1496,13 +1467,13 @@ export default function DashboardPage() {
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowProjectModal(false)}
-                className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-ink-800 hover:text-white"
               >
                 Cancel
               </button>
               <button
                 onClick={createProject}
-                className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-2 rounded-xl text-xs transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer"
+                className="rounded-xl bg-gradient-to-r from-accent-deep to-accent-bright px-5 py-2 text-xs font-bold text-white shadow-accent-soft transition-colors hover:opacity-90"
               >
                 Create Project
               </button>
@@ -1514,127 +1485,115 @@ export default function DashboardPage() {
       {/* COMPREHENSIVE PROFILE & SETTINGS MODAL */}
       {showProfileModal && (
         <div
-          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto cursor-pointer"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-ink-950/80 p-3 backdrop-blur-md sm:p-6"
           onClick={() => setShowProfileModal(false)}
         >
           <div
-            className={`border rounded-3xl w-full max-w-4xl shadow-2xl animate-in zoom-in-95 my-auto max-h-[90vh] flex flex-col overflow-hidden transition-colors cursor-default ${isDarkMode ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-900"}`}
+            className="my-auto flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-ink-700 bg-ink-900 text-brand-100 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Top Header */}
-            <div className={`p-5 sm:p-6 border-b flex items-center justify-between shrink-0 ${isDarkMode ? "bg-slate-950/80 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
+            <div className="flex shrink-0 items-center justify-between border-b border-ink-700 bg-ink-950/80 p-5 sm:p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-cyan-950 border border-cyan-500/30 text-cyan-400 rounded-xl">
-                  <UserCheck className="w-6 h-6" />
+                <div className="rounded-xl border border-accent/30 bg-accent/10 p-2.5 text-accent-bright">
+                  <UserCheck className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-slate-900"}`}>Profile & Account Settings</h3>
-                  <p className={`text-xs ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>Manage your persona, brand voices, security, and preferences</p>
+                  <h3 className="text-lg font-bold text-white">Profile & Account Settings</h3>
+                  <p className="text-xs text-brand-200">Manage your persona, brand voices, security, and preferences</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowProfileModal(false)}
-                className={`p-2 rounded-xl transition-colors cursor-pointer ${isDarkMode ? "hover:bg-slate-800 text-slate-400 hover:text-white" : "hover:bg-slate-200 text-slate-500 hover:text-slate-900"}`}
+                className="rounded-xl p-2 text-brand-300 transition-colors hover:bg-ink-800 hover:text-white"
               >
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
             {/* Modal Content Body */}
-            <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1">
+            <div className="flex-1 space-y-6 overflow-y-auto p-5 sm:p-6">
               {/* Tab Navigation Pill Bar */}
-              <div className={`flex flex-wrap items-center gap-2 border-b pb-4 ${isDarkMode ? "border-slate-800" : "border-slate-200"}`}>
+              <div className="flex flex-wrap items-center gap-2 border-b border-ink-700 pb-4">
                 <button
                   onClick={() => setProfileTab("profile")}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "profile"
-                      ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20"
-                      : isDarkMode
-                      ? "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
-                      : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
+                      ? "bg-accent text-white shadow-accent-soft"
+                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-white"
                   }`}
                 >
-                  <User className="w-4 h-4" />
-                  <span>Personal Profile</span>
+                  <User className="h-4 w-4" />
+                  Personal Profile
                 </button>
 
                 <button
                   onClick={() => setProfileTab("brand_voice")}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "brand_voice"
-                      ? "bg-purple-600 text-white shadow-md shadow-purple-600/20"
-                      : isDarkMode
-                      ? "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
-                      : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
+                      ? "bg-accent text-white shadow-accent-soft"
+                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-white"
                   }`}
                 >
-                  <Sliders className="w-4 h-4" />
-                  <span>Brand Voice</span>
+                  <Sliders className="h-4 w-4" />
+                  Brand Voice
                 </button>
 
                 <button
                   onClick={() => setProfileTab("preferences")}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "preferences"
-                      ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
-                      : isDarkMode
-                      ? "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
-                      : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
+                      ? "bg-accent text-white shadow-accent-soft"
+                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-white"
                   }`}
                 >
-                  <Sun className="w-4 h-4" />
-                  <span>Theme & AI Engine</span>
+                  <Sun className="h-4 w-4" />
+                  Theme & AI Engine
                 </button>
 
                 <button
                   onClick={() => setProfileTab("security")}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "security"
-                      ? "bg-rose-600 text-white shadow-md shadow-rose-600/20"
-                      : isDarkMode
-                      ? "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
-                      : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
+                      ? "bg-accent text-white shadow-accent-soft"
+                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-white"
                   }`}
                 >
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>Security</span>
+                  <ShieldCheck className="h-4 w-4" />
+                  Security
                 </button>
 
                 <button
                   onClick={() => setProfileTab("billing")}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "billing"
-                      ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
-                      : isDarkMode
-                      ? "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
-                      : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
+                      ? "bg-accent text-white shadow-accent-soft"
+                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-white"
                   }`}
                 >
-                  <CreditCard className="w-4 h-4" />
-                  <span>Subscription</span>
+                  <CreditCard className="h-4 w-4" />
+                  Subscription
                 </button>
 
                 <button
                   onClick={() => setProfileTab("support")}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "support"
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-600/20"
-                      : isDarkMode
-                      ? "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
-                      : "bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
+                      ? "bg-accent text-white shadow-accent-soft"
+                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-white"
                   }`}
                 >
-                  <LifeBuoy className="w-4 h-4" />
-                  <span>Support Hub</span>
+                  <LifeBuoy className="h-4 w-4" />
+                  Support Hub
                 </button>
               </div>
 
               {/* TAB 1: PERSONAL PROFILE */}
               {profileTab === "profile" && (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                         Full Name
                       </label>
                       <input
@@ -1642,24 +1601,24 @@ export default function DashboardPage() {
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder="e.g. S_last_born"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                         Email Address
                       </label>
                       <input
                         type="email"
                         value={userEmail || "user@example.com"}
                         disabled
-                        className="w-full bg-slate-950/60 border border-slate-800/80 rounded-xl px-4 py-2.5 text-xs text-slate-400 opacity-80 cursor-not-allowed"
+                        className="w-full cursor-not-allowed rounded-xl border border-line-soft bg-ink-950/60 px-4 py-2.5 text-xs text-brand-300 opacity-80"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                         Role / Title
                       </label>
                       <input
@@ -1667,12 +1626,12 @@ export default function DashboardPage() {
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
                         placeholder="e.g. Senior Copywriter"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                         Company / Brand Name
                       </label>
                       <input
@@ -1680,13 +1639,13 @@ export default function DashboardPage() {
                         value={company}
                         onChange={(e) => setCompany(e.target.value)}
                         placeholder="e.g. CopyCoach Labs"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                       Bio & Strategic Copy Goals
                     </label>
                     <textarea
@@ -1694,7 +1653,7 @@ export default function DashboardPage() {
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
                       placeholder="Briefly describe your copywriting goals..."
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 resize-none"
+                      className="cc-input w-full resize-none rounded-xl border border-line-soft bg-ink-950 p-3 text-xs text-brand-100"
                     />
                   </div>
                 </div>
@@ -1703,41 +1662,41 @@ export default function DashboardPage() {
               {/* TAB 2: BRAND VOICE */}
               {profileTab === "brand_voice" && (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                         Target Audience
                       </label>
                       <input
                         type="text"
                         value={targetAudience}
                         onChange={(e) => setTargetAudience(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-purple-500"
+                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                         Brand Niche
                       </label>
                       <input
                         type="text"
                         value={brandNiche}
                         onChange={(e) => setBrandNiche(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-purple-500"
+                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                       Custom Brand Guidelines
                     </label>
                     <textarea
                       rows={4}
                       value={brandGuidelines}
                       onChange={(e) => setBrandGuidelines(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-purple-500 resize-none"
+                      className="cc-input w-full resize-none rounded-xl border border-line-soft bg-ink-950 p-3 text-xs text-brand-100"
                     />
                   </div>
                 </div>
@@ -1747,65 +1706,59 @@ export default function DashboardPage() {
               {profileTab === "preferences" && (
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                    <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                       Theme Mode
                     </label>
                     <div className="grid grid-cols-3 gap-3">
                       <button
                         type="button"
                         onClick={() => applyTheme("dark")}
-                        className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                        className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-xs font-semibold transition-all ${
                           themeMode === "dark"
-                            ? "bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/20"
-                            : isDarkMode
-                            ? "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
-                            : "bg-slate-100 border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-200"
+                            ? "border-transparent bg-accent text-white shadow-accent-soft"
+                            : "border-line-soft bg-ink-950 text-brand-300 hover:bg-ink-800 hover:text-brand-100"
                         }`}
                       >
-                        <Moon className="w-4 h-4 text-indigo-300" />
-                        <span>Dark Mode</span>
+                        <Moon className="h-4 w-4" />
+                        Dark Mode
                       </button>
 
                       <button
                         type="button"
                         onClick={() => applyTheme("light")}
-                        className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                        className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-xs font-semibold transition-all ${
                           themeMode === "light"
-                            ? "bg-amber-500 text-slate-950 border-amber-400 font-bold shadow-md shadow-amber-500/20"
-                            : isDarkMode
-                            ? "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
-                            : "bg-slate-100 border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-200"
+                            ? "border-amber-400 bg-amber-500 font-bold text-ink-950"
+                            : "border-line-soft bg-ink-950 text-brand-300 hover:bg-ink-800 hover:text-brand-100"
                         }`}
                       >
-                        <Sun className="w-4 h-4 text-amber-500" />
-                        <span>Light Mode</span>
+                        <Sun className="h-4 w-4" />
+                        Light Mode
                       </button>
 
                       <button
                         type="button"
                         onClick={() => applyTheme("system")}
-                        className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                        className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-xs font-semibold transition-all ${
                           themeMode === "system"
-                            ? "bg-purple-600 text-white border-purple-500 shadow-md shadow-purple-600/20"
-                            : isDarkMode
-                            ? "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
-                            : "bg-slate-100 border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-200"
+                            ? "border-transparent bg-accent text-white shadow-accent-soft"
+                            : "border-line-soft bg-ink-950 text-brand-300 hover:bg-ink-800 hover:text-brand-100"
                         }`}
                       >
-                        <Laptop className="w-4 h-4 text-purple-400" />
-                        <span>System Sync</span>
+                        <Laptop className="h-4 w-4" />
+                        System Sync
                       </button>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                       Default AI Engine
                     </label>
                     <select
                       value={preferredModel}
                       onChange={(e) => setPreferredModel(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500 cursor-pointer"
+                      className="cc-input w-full cursor-pointer rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
                     >
                       <option value="Gemini 2.5 Flash (Recommended)">Gemini 2.5 Flash (Recommended - Super Fast)</option>
                       <option value="Gemini 2.5 Pro (Deep Copywriting Reasoning)">Gemini 2.5 Pro (Deep Strategy)</option>
@@ -1817,9 +1770,9 @@ export default function DashboardPage() {
               {/* TAB 4: SECURITY */}
               {profileTab === "security" && (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                         New Password
                       </label>
                       <input
@@ -1827,12 +1780,12 @@ export default function DashboardPage() {
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-rose-500"
+                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                         Confirm Password
                       </label>
                       <input
@@ -1840,15 +1793,15 @@ export default function DashboardPage() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-rose-500"
+                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800">
+                  <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950 p-3">
                     <div>
                       <p className="text-xs font-semibold text-white">Two-Factor Authentication (2FA)</p>
-                      <p className="text-[11px] text-slate-400">Add an extra layer of security to your CopyCoach account</p>
+                      <p className="text-[11px] text-brand-300">Add an extra layer of security to your CopyCoach account</p>
                     </div>
                     <button
                       type="button"
@@ -1856,8 +1809,8 @@ export default function DashboardPage() {
                         setTwoFactorEnabled(!twoFactorEnabled);
                         showToast(!twoFactorEnabled ? "2FA Enabled" : "2FA Disabled");
                       }}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer ${
-                        twoFactorEnabled ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-300"
+                      className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
+                        twoFactorEnabled ? "bg-emerald-500 text-ink-950" : "bg-ink-800 text-brand-200"
                       }`}
                     >
                       {twoFactorEnabled ? "Enabled" : "Enable"}
@@ -1869,11 +1822,11 @@ export default function DashboardPage() {
               {/* TAB 5: BILLING & SUBSCRIPTION */}
               {profileTab === "billing" && (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-purple-500/10 to-cyan-500/10 border border-amber-500/30 flex items-center justify-between">
+                  <div className="flex items-center justify-between rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-accent/10 to-accent/10 p-4">
                     <div>
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400">Current Plan</span>
-                      <h4 className="text-lg font-bold text-white capitalize">{plan} Plan</h4>
-                      <p className="text-xs text-slate-300 mt-0.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">Current Plan</span>
+                      <h4 className="text-lg font-bold capitalize text-white">{plan} Plan</h4>
+                      <p className="mt-0.5 text-xs text-brand-200">
                         {plan === "pro" ? "100 AI Generations Daily" : "5 Free Generations Daily"}
                       </p>
                     </div>
@@ -1882,7 +1835,7 @@ export default function DashboardPage() {
                       <button
                         type="button"
                         onClick={upgradeToPro}
-                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs shadow-lg shadow-amber-500/20 cursor-pointer"
+                        className="rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2 text-xs font-bold text-ink-950 shadow-accent-soft"
                       >
                         Upgrade to Pro
                       </button>
@@ -1894,13 +1847,13 @@ export default function DashboardPage() {
               {/* TAB 6: SUPPORT HUB */}
               {profileTab === "support" && (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 text-xs font-medium">
-                    <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
-                    <span>CopyCoach AI Status: All Systems Operational (100% Uptime)</span>
+                  <div className="flex items-center gap-2 rounded-xl border border-emerald-800/60 bg-emerald-950/40 p-3 text-xs font-medium text-emerald-300">
+                    <Activity className="h-4 w-4 animate-pulse text-emerald-400" />
+                    CopyCoach AI Status: All Systems Operational (100% Uptime)
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                       Submit Support Ticket
                     </label>
                     <input
@@ -1908,14 +1861,14 @@ export default function DashboardPage() {
                       placeholder="Subject line..."
                       value={supportSubject}
                       onChange={(e) => setSupportSubject(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-blue-500 mb-3"
+                      className="cc-input mb-3 w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
                     />
                     <textarea
                       rows={3}
                       placeholder="Describe your issue or question..."
                       value={supportMessage}
                       onChange={(e) => setSupportMessage(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-blue-500 resize-none"
+                      className="cc-input w-full resize-none rounded-xl border border-line-soft bg-ink-950 p-3 text-xs text-brand-100"
                     />
                   </div>
                 </div>
@@ -1923,19 +1876,19 @@ export default function DashboardPage() {
             </div>
 
             {/* Modal Bottom Actions */}
-            <div className="p-4 sm:p-6 bg-slate-950/80 border-t border-slate-800 flex items-center justify-between shrink-0">
+            <div className="flex shrink-0 items-center justify-between border-t border-ink-700 bg-ink-950/80 p-4 sm:p-6">
               <Link
                 href="/dashboard/profile"
-                className="text-xs text-cyan-400 hover:underline font-medium flex items-center gap-1"
+                className="flex items-center gap-1 text-xs font-medium text-accent-bright hover:underline"
               >
-                <span>Open Dedicated Profile Page</span>
-                <ExternalLink className="w-3.5 h-3.5" />
+                Open Dedicated Profile Page
+                <ExternalLink className="h-3.5 w-3.5" />
               </Link>
 
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowProfileModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-ink-800 hover:text-white"
                 >
                   Close
                 </button>
@@ -1947,10 +1900,10 @@ export default function DashboardPage() {
                     showToast("Profile Settings Saved Successfully!");
                     setShowProfileModal(false);
                   }}
-                  className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-6 py-2 rounded-xl text-xs transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer flex items-center gap-1.5"
+                  className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-accent-deep to-accent-bright px-6 py-2 text-xs font-bold text-white shadow-accent-soft transition-colors hover:opacity-90"
                 >
-                  <Save className="w-3.5 h-3.5" />
-                  <span>Save Changes</span>
+                  <Save className="h-3.5 w-3.5" />
+                  Save Changes
                 </button>
               </div>
             </div>
@@ -1961,56 +1914,56 @@ export default function DashboardPage() {
       {/* KEYBOARD SHORTCUTS MODAL */}
       {showShortcutsModal && (
         <div
-          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-pointer"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/80 p-4 backdrop-blur-sm"
           onClick={() => setShowShortcutsModal(false)}
         >
           <div
-            className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-lg w-full shadow-2xl animate-in zoom-in-95 cursor-default"
+            className="w-full max-w-lg rounded-3xl border border-ink-700 bg-ink-900 p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <Keyboard className="w-5 h-5 text-emerald-400" />
-                <span>Keyboard Shortcuts & Productivity</span>
+            <div className="mb-4 flex items-center justify-between border-b border-ink-700 pb-3">
+              <h3 className="flex items-center gap-2 text-lg font-bold text-white">
+                <Keyboard className="h-5 w-5 text-accent-bright" />
+                Keyboard Shortcuts & Productivity
               </h3>
               <button
                 onClick={() => setShowShortcutsModal(false)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+                className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-ink-800 hover:text-white"
               >
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="space-y-3 mb-6">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-                <span className="text-slate-300">Run Copy Optimization</span>
+            <div className="mb-6 space-y-3">
+              <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950 p-3 text-xs">
+                <span className="text-brand-200">Run Copy Optimization</span>
                 <div className="flex items-center gap-1 font-mono">
-                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">⌘</kbd>
-                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">Enter</kbd>
+                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">⌘</kbd>
+                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">Enter</kbd>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-                <span className="text-slate-300">Toggle Star Favorite</span>
+              <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950 p-3 text-xs">
+                <span className="text-brand-200">Toggle Star Favorite</span>
                 <div className="flex items-center gap-1 font-mono">
-                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">⌘</kbd>
-                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">F</kbd>
+                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">⌘</kbd>
+                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">F</kbd>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-                <span className="text-slate-300">Copy Improved Text</span>
+              <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950 p-3 text-xs">
+                <span className="text-brand-200">Copy Improved Text</span>
                 <div className="flex items-center gap-1 font-mono">
-                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">⌘</kbd>
-                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">C</kbd>
+                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">⌘</kbd>
+                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">C</kbd>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-                <span className="text-slate-300">Create New Project</span>
+              <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950 p-3 text-xs">
+                <span className="text-brand-200">Create New Project</span>
                 <div className="flex items-center gap-1 font-mono">
-                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">⌘</kbd>
-                  <kbd className="px-2 py-1 bg-slate-800 rounded text-cyan-300 border border-slate-700">P</kbd>
+                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">⌘</kbd>
+                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">P</kbd>
                 </div>
               </div>
             </div>
@@ -2018,7 +1971,7 @@ export default function DashboardPage() {
             <div className="flex justify-end">
               <button
                 onClick={() => setShowShortcutsModal(false)}
-                className="bg-slate-800 hover:bg-slate-700 text-white font-medium px-5 py-2 rounded-xl text-xs transition-colors"
+                className="rounded-xl bg-ink-800 px-5 py-2 text-xs font-medium text-white transition-colors hover:bg-ink-700"
               >
                 Close
               </button>
@@ -2029,28 +1982,28 @@ export default function DashboardPage() {
 
       {/* HELP & AI SUPPORT MODAL */}
       {showSupportModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-lg w-full shadow-2xl animate-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <HelpCircle className="w-5 h-5 text-cyan-400" />
-                <span>CopyCoach AI Support & Feedback</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-3xl border border-ink-700 bg-ink-900 p-6 shadow-2xl">
+            <div className="mb-4 flex items-center justify-between border-b border-ink-700 pb-3">
+              <h3 className="flex items-center gap-2 text-lg font-bold text-white">
+                <HelpCircle className="h-5 w-5 text-accent-bright" />
+                CopyCoach AI Support & Feedback
               </h3>
               <button
                 onClick={() => setShowSupportModal(false)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+                className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-ink-800 hover:text-white"
               >
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
-            <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+            <p className="mb-4 text-xs leading-relaxed text-brand-200">
               Have a question about your copy analysis or need help setting up custom brand voices? Send us a message and our team will assist you shortly.
             </p>
 
-            <div className="space-y-4 mb-6">
+            <div className="mb-6 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                   Topic / Subject
                 </label>
                 <input
@@ -2058,12 +2011,12 @@ export default function DashboardPage() {
                   placeholder="e.g., Custom Brand Tone Request"
                   value={supportSubject}
                   onChange={(e) => setSupportSubject(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                  className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
                   Message
                 </label>
                 <textarea
@@ -2071,7 +2024,7 @@ export default function DashboardPage() {
                   placeholder="Describe your question or feedback..."
                   value={supportMessage}
                   onChange={(e) => setSupportMessage(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 resize-none"
+                  className="cc-input w-full resize-none rounded-xl border border-line-soft bg-ink-950 p-3 text-xs text-brand-100"
                 />
               </div>
             </div>
@@ -2079,7 +2032,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowSupportModal(false)}
-                className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-ink-800 hover:text-white"
               >
                 Cancel
               </button>
@@ -2090,7 +2043,7 @@ export default function DashboardPage() {
                   setSupportMessage("");
                   showToast("Support ticket submitted! We'll reply via email.");
                 }}
-                className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-2 rounded-xl text-xs transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer"
+                className="rounded-xl bg-gradient-to-r from-accent-deep to-accent-bright px-5 py-2 text-xs font-bold text-white shadow-accent-soft transition-colors hover:opacity-90"
               >
                 Send Message
               </button>

@@ -57,18 +57,7 @@ export default function LoginPage() {
 
       setMessage("Logging in...");
 
-      // Call login helper to ensure email confirmation state if unconfirmed
-      try {
-        await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        });
-      } catch (e) {
-        console.warn("Login helper route check failed:", e);
-      }
-
-      const timeoutPromise = new Promise<{ data: { user: null; session: null }; error: { message: string } }>((_, reject) =>
+const timeoutPromise = new Promise<{ data: { user: null; session: null }; error: { message: string } }>((_, reject) =>
         setTimeout(() => reject(new Error("Connection timed out. Please check your Supabase URL and network connection.")), 10000)
       );
 

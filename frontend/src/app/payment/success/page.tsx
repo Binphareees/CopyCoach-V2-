@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
+import { getAccessToken } from "@/lib/supabase";
 import { CheckCircle2, ArrowRight, Loader2, Sparkles, AlertCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -30,7 +31,12 @@ function PaymentSuccessContent() {
       }
 
       try {
-        const response = await fetch(`/api/paystack/verify?reference=${encodeURIComponent(reference)}`);
+        const accessToken = await getAccessToken();
+        const response = await fetch(`/api/paystack/verify?reference=${encodeURIComponent(reference)}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken || ""}`,
+          },
+        });
         const data = await response.json();
 
         if (!ignore) {

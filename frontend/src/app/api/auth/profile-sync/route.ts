@@ -1,24 +1,34 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { getServerUser } from "@/lib/auth-server";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { userId, email, fullName, avatarUrl } = await request.json();
-
-    if (!userId || !email) {
-      return NextResponse.json(
-        { error: "UserId and email are required." },
-        { status: 400 }
-      );
+    // Identity is ALWAYS derived from the verified access token. Any userId
+    // supplied in the request body is ignored to prevent profile overwrites.
+    const user = await getServerUser(request);
+    if (!user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
+
+    const userId = user.id;
+    const email = user.email;
+    const fullName =
+      (user.user_metadata?.full_name as string | undefined) ||
+      (user.user_metadata?.name as string | undefined) ||
+      "";
+    const avatarUrl =
+      (user.user_metadata?.avatar_url as string | undefined) ||
+      (user.user_metadata?.picture as string | undefined) ||
+      null;
 
     // 1. Upsert profile
     const { error: profileError } = await supabaseAdmin.from("profiles").upsert(
       {
         id: userId,
         email,
-        full_name: fullName || "",
-        avatar_url: avatarUrl || null,
+        full_name: fullName,
+        avatar_url: avatarUrl,
         updated_at: new Date().toISOString(),
       },
       { onConflict: "id" }

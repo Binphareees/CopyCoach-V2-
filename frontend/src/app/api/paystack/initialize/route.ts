@@ -1,8 +1,25 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getServerUser } from "@/lib/auth-server";
+import { trackServerEvent } from "@/lib/analytics";
 
-export async function POST(req: Request) {
+const PRO_PRICE_KOBO = 5000 * 100; // ₦5,000 in kobo
+
+export async function POST(req: NextRequest) {
   try {
-    const { email, userId } = await req.json();
+    const user = await getServerUser(req);
+    if (!user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    if (!process.env.PAYSTACK_SECRET_KEY) {
+      return NextResponse.json(
+        { error: "Paystack is not configured on the server." },
+        { status: 500 }
+      );
+    }
+
+    const email = user.email || "";
+    const userId = user.id;
 
     const origin = req.headers.get("origin") || req.headers.get("referer");
     let baseUrl = process.env.NEXT_PUBLIC_APP_URL;
@@ -30,17 +47,20 @@ export async function POST(req: Request) {
         },
         body: JSON.stringify({
           email,
-          amount: 5000 * 100, // ₦5,000 in kobo
+          amount: PRO_PRICE_KOBO,
           callback_url,
           metadata: {
             user_id: userId,
-            email: email,
+            email,
           },
         }),
       }
     );
 
     const data = await response.json();
+
+    await trackServerEvent(userId, "upgrade_started", { gateway: "paystack" });
+
     return NextResponse.json(data);
   } catch (error) {
     console.error("Paystack initialize error:", error);

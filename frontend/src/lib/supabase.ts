@@ -30,7 +30,16 @@ export function getIsSupabaseConfigured() {
   return checkIsConfigured(currentUrl, currentKey);
 }
 
-let clientInstance: SupabaseClient = createClient(currentUrl, currentKey);
+const authClientOptions = {
+  auth: {
+    flowType: "pkce" as const,
+    detectSessionInUrl: true,
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+};
+
+let clientInstance: SupabaseClient = createClient(currentUrl, currentKey, authClientOptions);
 let configFetched = false;
 let configFetchPromise: Promise<SupabaseClient> | null = null;
 
@@ -52,7 +61,7 @@ export async function ensureSupabaseConfig(): Promise<SupabaseClient> {
     if (checkIsConfigured(serverUrl, serverKey)) {
       currentUrl = serverUrl;
       currentKey = serverKey;
-      clientInstance = createClient(currentUrl, currentKey);
+      clientInstance = createClient(currentUrl, currentKey, authClientOptions);
     }
     return clientInstance;
   }
@@ -70,7 +79,7 @@ export async function ensureSupabaseConfig(): Promise<SupabaseClient> {
           if (data.isConfigured && data.url && data.key) {
             currentUrl = data.url;
             currentKey = data.key;
-            clientInstance = createClient(currentUrl, currentKey);
+clientInstance = createClient(currentUrl, currentKey, authClientOptions);
           }
         }
       } catch (e) {
@@ -92,6 +101,18 @@ if (typeof window !== "undefined") {
 
 export function getActiveSupabaseUrl() {
   return currentUrl;
+}
+
+// Client-only: returns the current Supabase access token, or null when the
+// user is signed out / not configured yet. Used to authenticate API routes.
+export async function getAccessToken(): Promise<string | null> {
+  if (typeof window === "undefined") return null;
+  try {
+    const { data } = await supabase.auth.getSession();
+    return data.session?.access_token ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export function getActiveSupabaseKey() {

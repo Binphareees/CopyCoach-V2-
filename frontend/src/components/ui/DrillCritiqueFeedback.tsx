@@ -2,6 +2,15 @@
 
 import React, { useState } from "react";
 import { ThumbsUp, ThumbsDown, Check, Send } from "lucide-react";
+import { getAccessToken } from "@/lib/supabase";
+
+async function authHeaders(): Promise<Record<string, string>> {
+  const token = await getAccessToken();
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
 
 interface DrillCritiqueFeedbackProps {
   drillId?: string;
@@ -40,7 +49,7 @@ export default function DrillCritiqueFeedback({
     try {
       await fetch("/api/feedback", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await authHeaders(),
         body: JSON.stringify({
           drillId,
           rating,

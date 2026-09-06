@@ -1,11 +1,36 @@
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function activateSubscription(userId: string) {
+  // Idempotency guard: rapid duplicate activations (e.g. Paystack webhook +
+  // client-side verify firing for the same payment) must not reset the billing
+  // window or re-extend it. A real renewal is still honored once the previous
+  // activation is older than DUPLICATE_WINDOW_MS.
+  const DUPLICATE_WINDOW_MS = 10 * 60 * 1000;
+
+  const { data: existing } = await supabaseAdmin
+    .from("user_usage")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (existing?.plan === "pro" && existing.subscription_status === "active") {
+    const lastPayment = existing.last_payment_date
+      ? new Date(existing.last_payment_date).getTime()
+      : 0;
+    if (Date.now() - lastPayment < DUPLICATE_WINDOW_MS) {
+      return {
+        data: existing,
+        error: null,
+        alreadyActive: true,
+      };
+    }
+  }
+
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 30);
   const now = new Date().toISOString();
 
-  return await supabaseAdmin
+  const result = await supabaseAdmin
     .from("user_usage")
     .upsert({
       user_id: userId,
@@ -18,6 +43,12 @@ export async function activateSubscription(userId: string) {
     }, { onConflict: "user_id" })
     .select()
     .single();
+
+  return {
+    data: result.data,
+    error: result.error,
+    alreadyActive: false,
+  };
 }
 
 export async function checkSubscription(userId: string) {

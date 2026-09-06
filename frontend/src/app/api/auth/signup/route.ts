@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { getClientIdentifier } from "@/lib/auth-server";
+import { getRateLimiter } from "@/lib/rate-limit";
+import { trackServerEvent } from "@/lib/analytics";
 
-export async function POST(request: Request) {
+const signupLimiter = getRateLimiter(5, 3600);
+
+export async function POST(request: NextRequest) {
   try {
     const { email, password, name } = await request.json();
 
@@ -9,6 +14,23 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Email and password are required." },
         { status: 400 }
+      );
+    }
+
+    if (typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "A valid email is required." }, { status: 400 });
+    }
+
+    if (typeof name === "string" && name.length > 120) {
+      return NextResponse.json({ error: "Name is too long." }, { status: 400 });
+    }
+
+    const ip = getClientIdentifier(request);
+    const rate = await signupLimiter(ip);
+    if (!rate.success) {
+      return NextResponse.json(
+        { error: "Too many sign-up attempts from this location. Please try again later." },
+        { status: 429 }
       );
     }
 
@@ -86,6 +108,8 @@ export async function POST(request: Request) {
           subscription_status: "active",
         });
       }
+
+      await trackServerEvent(user.id, "signup_completed", { channel: "email" });
     }
 
     return NextResponse.json({
