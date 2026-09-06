@@ -60,13 +60,22 @@ export async function POST(req: NextRequest) {
     let answer = "";
 
     if (process.env.GEMINI_API_KEY) {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `${supportSystemPrompt}\n\nUser Tier: ${tierLabel}\nUser Question: ${question}`,
-      });
-      answer = response.text || "";
-    } else if (process.env.GROQ_API_KEY) {
+      try {
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const response = await ai.models.generateContent({
+          model: "gemini-3.6-flash",
+          contents: `${supportSystemPrompt}\n\nUser Tier: ${tierLabel}\nUser Question: ${question}`,
+        });
+        answer = response.text || "";
+      } catch (geminiError) {
+        console.error(
+          "Gemini support generation failed, falling back:",
+          geminiError instanceof Error ? geminiError.message : geminiError
+        );
+      }
+    }
+
+    if (!answer && process.env.GROQ_API_KEY) {
       const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
       const completion = await groq.chat.completions.create({
         model: "groq/compound",
@@ -76,7 +85,9 @@ export async function POST(req: NextRequest) {
         ],
       });
       answer = completion.choices[0]?.message?.content || "";
-    } else {
+    }
+
+    if (!answer) {
       // Smart Fallback Response
       answer = `Thank you for asking about CopyCoach AI! 
 

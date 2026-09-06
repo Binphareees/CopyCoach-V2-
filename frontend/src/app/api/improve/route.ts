@@ -77,16 +77,25 @@ Original Copy / Product Description: ${text}
     let raw = "";
 
     if (process.env.GEMINI_API_KEY) {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `${systemPrompt}\n\n${userPrompt}`,
-        config: {
-          responseMimeType: "application/json",
-        },
-      });
-      raw = response.text || "";
-    } else if (process.env.GROQ_API_KEY) {
+      try {
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const response = await ai.models.generateContent({
+          model: "gemini-3.6-flash",
+          contents: `${systemPrompt}\n\n${userPrompt}`,
+          config: {
+            responseMimeType: "application/json",
+          },
+        });
+        raw = response.text || "";
+      } catch (geminiError) {
+        console.error(
+          "Gemini generation failed, falling back:",
+          geminiError instanceof Error ? geminiError.message : geminiError
+        );
+      }
+    }
+
+    if (!raw && process.env.GROQ_API_KEY) {
       const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
       const completion = await groq.chat.completions.create({
         model: "groq/compound",
@@ -96,8 +105,10 @@ Original Copy / Product Description: ${text}
         ],
       });
       raw = completion.choices[0]?.message?.content || "";
-    } else {
-      // Graceful fallback when no API key is provided
+    }
+
+    if (!raw) {
+      // Graceful fallback when no provider is configured or an upstream call fails
       raw = JSON.stringify({
         score: 85,
         strengths: [
