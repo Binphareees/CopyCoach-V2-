@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Button from "../ui/Button";
 import Logo from "../ui/Logo";
-import FeedbackModal from "../ui/FeedbackModal";
-import DownloadAppModal from "../ui/DownloadAppModal";
 import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
 import { User, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -114,24 +112,10 @@ export default function Navbar() {
           <Link href="#about-app" className="transition hover:text-white">
             About App
           </Link>
-
-          <Link href="#support" className="transition hover:text-white">
-            Help & Support
-          </Link>
-
-          <a
-            href="#mobile-app"
-            className="transition text-cyan-300 hover:text-cyan-200 font-medium flex items-center gap-1"
-          >
-            <span>Get App APK/iOS</span>
-          </a>
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <DownloadAppModal triggerText="Get App APK/iOS" triggerClassName="hidden sm:inline-flex" />
-          <FeedbackModal triggerClassName="hidden sm:inline-flex" />
-
           {loading ? (
             <div className="h-9 w-20 bg-white/5 animate-pulse rounded-lg" />
           ) : user ? (
@@ -209,7 +193,7 @@ export default function Navbar() {
             <>
               <Link
                 href="/auth/login"
-                className="hidden text-sm text-gray-300 transition hover:text-white sm:block"
+                className="text-sm text-gray-300 transition hover:text-white"
               >
                 Login
               </Link>
