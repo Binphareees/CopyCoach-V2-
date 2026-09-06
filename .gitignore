@@ -1,3 +1,5 @@
 .dyad/
 node_modules/
 .next/
+.env*
+.vercel

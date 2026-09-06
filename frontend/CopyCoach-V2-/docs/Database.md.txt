@@ -1,0 +1,768 @@
+# CopyCoach AI Database Specification
+
+Version:
+1.0 MVP
+
+
+# Database Overview
+
+Database technology:
+
+PostgreSQL (Supabase)
+
+
+The database stores:
+
+- User accounts
+- User profiles
+- Copywriting exercises
+- User drafts
+- AI evaluations
+- Progress tracking
+- Achievements
+
+
+---
+
+# 1. Users Table
+
+## Purpose
+
+Stores account information.
+
+
+Table Name:
+
+users
+
+
+Fields:
+
+
+id
+
+Type:
+UUID
+
+Description:
+Unique user identifier.
+
+
+---
+
+email
+
+Type:
+Text
+
+Description:
+User email address.
+
+
+---
+
+password
+
+Type:
+Managed by Supabase Auth
+
+
+Description:
+Secure authentication.
+
+
+---
+
+created_at
+
+Type:
+Timestamp
+
+Description:
+Account creation date.
+
+
+---
+
+# 2. Profiles Table
+
+
+## Purpose
+
+Stores additional user information.
+
+
+Table Name:
+
+profiles
+
+
+Fields:
+
+
+id
+
+Type:
+UUID
+
+Description:
+Links to user account.
+
+
+---
+
+username
+
+Type:
+Text
+
+
+---
+
+avatar_url
+
+Type:
+Text
+
+
+Profile image location.
+
+
+---
+
+level
+
+Type:
+Integer
+
+
+Default:
+
+1
+
+
+---
+
+xp
+
+Type:
+Integer
+
+
+Default:
+
+0
+
+
+---
+
+streak
+
+Type:
+Integer
+
+
+Default:
+
+0
+
+
+---
+
+total_words_written
+
+Type:
+Integer
+
+
+Default:
+
+0
+
+
+---
+
+created_at
+
+Type:
+Timestamp
+
+
+---
+
+# 3. Copy Exercises Table
+
+
+## Purpose
+
+Stores practice tasks.
+
+
+Table Name:
+
+exercises
+
+
+Fields:
+
+
+id
+
+Type:
+UUID
+
+
+---
+
+title
+
+Type:
+Text
+
+
+Example:
+
+"Write a Facebook Ad for a fitness app"
+
+
+---
+
+copy_type
+
+Type:
+Text
+
+
+Examples:
+
+Email
+
+Advertisement
+
+Landing Page
+
+
+---
+
+framework
+
+Type:
+Text
+
+
+Examples:
+
+AIDA
+
+PAS
+
+BAB
+
+
+---
+
+difficulty
+
+Type:
+Text
+
+
+Examples:
+
+Beginner
+
+Intermediate
+
+Advanced
+
+
+---
+
+prompt
+
+Type:
+Text
+
+
+Contains exercise instructions.
+
+
+---
+
+created_at
+
+Type:
+Timestamp
+
+
+---
+
+# 4. User Drafts Table
+
+
+## Purpose
+
+Stores user writing attempts.
+
+
+Table Name:
+
+drafts
+
+
+Fields:
+
+
+id
+
+Type:
+UUID
+
+
+---
+
+user_id
+
+Type:
+UUID
+
+
+Links draft to user.
+
+
+---
+
+exercise_id
+
+Type:
+UUID
+
+
+Links draft to exercise.
+
+
+---
+
+title
+
+Type:
+Text
+
+
+---
+
+content
+
+Type:
+Text
+
+
+The user's written copy.
+
+
+---
+
+word_count
+
+Type:
+Integer
+
+
+---
+
+version
+
+Type:
+Integer
+
+
+Tracks rewrites.
+
+
+---
+
+created_at
+
+Type:
+Timestamp
+
+
+---
+
+# 5. AI Reviews Table
+
+
+## Purpose
+
+Stores AI analysis results.
+
+
+Table Name:
+
+reviews
+
+
+Fields:
+
+
+id
+
+Type:
+UUID
+
+
+---
+
+draft_id
+
+Type:
+UUID
+
+
+Links review to draft.
+
+
+---
+
+overall_score
+
+Type:
+Integer
+
+
+Range:
+
+0-100
+
+
+---
+
+headline_score
+
+Type:
+Integer
+
+
+0-10
+
+
+---
+
+hook_score
+
+Type:
+Integer
+
+
+0-10
+
+
+---
+
+benefits_score
+
+Type:
+Integer
+
+
+0-10
+
+
+---
+
+emotion_score
+
+Type:
+Integer
+
+
+0-10
+
+
+---
+
+cta_score
+
+Type:
+Integer
+
+
+0-10
+
+
+---
+
+strengths
+
+Type:
+Text
+
+
+AI positive feedback.
+
+
+---
+
+weaknesses
+
+Type:
+Text
+
+
+AI improvement feedback.
+
+
+---
+
+suggestions
+
+Type:
+Text
+
+
+AI recommendations.
+
+
+---
+
+created_at
+
+Type:
+Timestamp
+
+
+---
+
+# 6. Progress Table
+
+
+## Purpose
+
+Tracks user improvement.
+
+
+Table Name:
+
+progress
+
+
+Fields:
+
+
+id
+
+Type:
+UUID
+
+
+---
+
+user_id
+
+Type:
+UUID
+
+
+---
+
+average_score
+
+Type:
+Integer
+
+
+---
+
+total_exercises
+
+Type:
+Integer
+
+
+---
+
+best_score
+
+Type:
+Integer
+
+
+---
+
+updated_at
+
+Type:
+Timestamp
+
+
+---
+
+# 7. Achievements Table
+
+
+## Purpose
+
+Stores available badges.
+
+
+Table Name:
+
+achievements
+
+
+Fields:
+
+
+id
+
+Type:
+UUID
+
+
+---
+
+name
+
+Type:
+Text
+
+
+Example:
+
+"First Draft"
+
+
+---
+
+description
+
+Type:
+Text
+
+
+---
+
+xp_reward
+
+Type:
+Integer
+
+
+---
+
+# 8. User Achievements Table
+
+
+## Purpose
+
+Tracks earned achievements.
+
+
+Table Name:
+
+user_achievements
+
+
+Fields:
+
+
+id
+
+Type:
+UUID
+
+
+---
+
+user_id
+
+Type:
+UUID
+
+
+---
+
+achievement_id
+
+Type:
+UUID
+
+
+---
+
+earned_at
+
+Type:
+Timestamp
+
+
+---
+
+# Database Relationships
+
+
+User
+
+↓
+
+Profile
+
+
+User
+
+↓
+
+Drafts
+
+↓
+
+AI Reviews
+
+
+User
+
+↓
+
+Progress
+
+
+User
+
+↓
+
+Achievements
+
+
+---
+
+# Security Rules
+
+
+Users can:
+
+- View their own profile
+- Create their own drafts
+- View their own reviews
+- Update their own progress
+
+
+Users cannot:
+
+- Access another user's private data
+
+
+---
+
+# Future Database Expansion
+
+
+Possible future tables:
+
+- Subscriptions
+- Payments
+- Teams
+- Community posts
+- Comments
+- Leaderboards
+- Templates
+- Swipe files

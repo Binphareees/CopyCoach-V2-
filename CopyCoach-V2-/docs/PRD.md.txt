@@ -1,0 +1,291 @@
+CopyCoach AI — Product Requirements Document (PRD)
+Version
+
+1.0 MVP
+
+Product Name
+
+CopyCoach AI
+
+Tagline
+
+Practice. Improve. Master Copywriting.
+
+1. Product Overview
+1.1 Vision
+
+CopyCoach AI is an AI-powered copywriting training platform designed to help people develop professional copywriting skills through continuous practice, feedback, and improvement.
+
+The platform works like a personal copywriting mentor:
+
+User writes copy → AI analyzes → User receives feedback → User improves → Skill increases.
+
+1.2 Mission
+
+To become the world's most effective learning platform for mastering persuasive writing.
+
+1.3 Problem Statement
+
+Many aspiring copywriters struggle because:
+
+They study theory but lack practice.
+They don't know if their writing is good.
+They cannot afford professional mentors.
+Existing AI tools write the copy for them instead of teaching them.
+They lack structured improvement tracking.
+
+CopyCoach AI solves this by creating a practice environment where users learn through repetition and feedback.
+
+1.4 Solution
+
+CopyCoach AI provides:
+
+Copywriting challenges
+AI-powered copy evaluation
+Framework-based learning
+Personalized feedback
+Progress tracking
+Skill development system
+2. Target Users
+Primary Users
+Beginner Copywriters
+
+Age:
+18–40
+
+Goals:
+
+Learn copywriting
+Build confidence
+Get freelance work
+
+Problems:
+
+Don't know where to start
+Need feedback
+Freelancers
+
+Goals:
+
+Improve client results
+Write faster
+Increase income
+
+Problems:
+
+Need consistent practice
+Need quality control
+Marketers
+
+Goals:
+
+Improve conversion rates
+Create better campaigns
+
+Problems:
+
+Need stronger messaging
+3. Product Philosophy
+
+CopyCoach AI should behave like:
+
+A Teacher
+
+It explains mistakes.
+
+A Coach
+
+It encourages improvement.
+
+A Trainer
+
+It creates challenges.
+
+A Judge
+
+It scores performance.
+
+4. Core User Experience
+
+The main learning loop:
+
+Choose Challenge
+
+↓
+
+Write Copy
+
+↓
+
+Submit
+
+↓
+
+AI Analysis
+
+↓
+
+Receive Score
+
+↓
+
+Review Mistakes
+
+↓
+
+Rewrite
+
+↓
+
+Improve Score
+
+↓
+
+Earn XP
+
+↓
+
+Repeat
+5. MVP Goals
+
+The first version must prove:
+
+Users enjoy practicing copywriting.
+AI feedback improves writing ability.
+Users return regularly.
+Users improve their scores over time.
+6. MVP Features
+Authentication
+
+Users can:
+
+Create account
+Login
+Logout
+Reset password
+Dashboard
+
+Displays:
+
+User name
+Current level
+XP
+Writing streak
+Average score
+Recent exercises
+Improvement graph
+Copy Practice
+
+Users can select:
+
+Copy Type
+Email
+Facebook Ad
+Google Ad
+Landing Page
+Product Description
+Sales Letter
+Headline
+CTA
+Copywriting Frameworks
+
+Supported frameworks:
+
+AIDA
+
+Attention
+Interest
+Desire
+Action
+
+PAS
+
+Problem
+Agitate
+Solution
+
+BAB
+
+Before
+After
+Bridge
+
+FAB
+
+Features
+Advantages
+Benefits
+
+7. AI Copy Evaluation System
+
+The AI evaluates:
+
+Structure
+Headline
+Hook
+Body
+CTA
+Persuasion
+Emotional appeal
+Curiosity
+Urgency
+Trust
+Specificity
+Writing Quality
+Clarity
+Grammar
+Simplicity
+Readability
+Conversion Potential
+Audience understanding
+Benefits
+Call-to-action strength
+8. Scoring System
+
+Each category receives:
+
+0-10 score
+
+Example:
+
+Headline:
+8/10
+
+Hook:
+7/10
+
+Emotion:
+9/10
+
+CTA:
+6/10
+
+Overall:
+78/100
+9. AI Feedback Rules
+
+The AI must:
+
+Explain problems
+Teach concepts
+Provide examples
+Give improvement suggestions
+Encourage rewriting
+
+The AI must NOT:
+
+Simply replace the user's writing
+Complete the task for the user immediately
+
+The goal is learning, not dependency.
+
+10. Success Metrics
+
+Track:
+
+Number of copies written
+Average score improvement
+Daily active users
+Weekly retention
+Completed challenges
+Rewrite attempts

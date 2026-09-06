@@ -12,15 +12,6 @@
     "lint": "npm run lint --workspace=frontend"
   },
   "devDependencies": {
-    "@types/nodemailer": "^8.0.1",
     "jiti": "^2.7.0"
-  },
-  "dependencies": {
-    "@swc/helpers": "^0.5.23",
-    "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0",
-    "jspdf": "^4.2.1",
-    "nodemailer": "^9.0.5",
-    "scheduler": "^0.27.0"
   }
 }

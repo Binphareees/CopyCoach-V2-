@@ -1,0 +1,233 @@
+# CopyCoach AI Development Roadmap
+
+## Product Goal
+
+Build an AI-powered copywriting coach that helps users improve their persuasive writing skills through practice, feedback, and repetition.
+
+---
+
+# Phase 1 — MVP Foundation
+
+## Goal:
+Create the first usable version of CopyCoach AI.
+
+The user should be able to:
+
+1. Create an account
+2. Log in
+3. Choose a copywriting exercise
+4. Write copy
+5. Submit their writing
+6. Receive AI feedback
+7. Receive a score
+8. Save their work
+9. Track improvement
+
+---
+
+## Features
+
+### Authentication
+
+- User registration
+- Login
+- Logout
+- Password reset
+- User profile
+
+---
+
+### User Dashboard
+
+Displays:
+
+- User name
+- Current XP
+- Level
+- Writing streak
+- Average copy score
+- Recent writing attempts
+- Progress chart
+
+---
+
+### Copy Practice System
+
+Users can choose:
+
+## Copy Types
+
+- Email
+- Landing Page
+- Facebook Advertisement
+- Google Advertisement
+- Product Description
+- Sales Letter
+- Headline
+- Call To Action
+
+---
+
+## Copywriting Frameworks
+
+The system supports:
+
+### AIDA
+
+Attention
+Interest
+Desire
+Action
+
+
+### PAS
+
+Problem
+Agitate
+Solution
+
+
+### BAB
+
+Before
+After
+Bridge
+
+
+### FAB
+
+Features
+Advantages
+Benefits
+
+---
+
+# AI Coaching System
+
+The AI analyzes:
+
+## Copy Structure
+
+- Headline strength
+- Opening hook
+- Body structure
+- Call to action
+
+
+## Persuasion
+
+- Emotional appeal
+- Curiosity
+- Urgency
+- Trust
+- Specificity
+
+
+## Writing Quality
+
+- Clarity
+- Grammar
+- Simplicity
+- Readability
+
+
+## Conversion Ability
+
+- Audience understanding
+- Benefits
+- Offer strength
+- CTA effectiveness
+
+---
+
+# Phase 2 — Learning System
+
+## Goal:
+
+Transform the app from a writing evaluator into a complete copywriting teacher.
+
+Features:
+
+- Daily copy challenges
+- Beginner lessons
+- Advanced lessons
+- Rewrite exercises
+- AI hints
+- Skill levels
+- XP system
+- Badges
+- Achievements
+- Streak rewards
+
+---
+
+# Phase 3 — Community
+
+## Goal:
+
+Create engagement and accountability.
+
+Features:
+
+- User profiles
+- Public writing challenges
+- Copy competitions
+- Leaderboards
+- Community feedback
+- Following other writers
+
+---
+
+# Phase 4 — Premium Features
+
+## Goal:
+
+Create a profitable SaaS business.
+
+Features:
+
+- Unlimited AI reviews
+- Advanced scoring
+- Professional templates
+- Swipe file library
+- AI personal mentor
+- Portfolio builder
+- Client simulation
+
+---
+
+# Phase 5 — Expansion
+
+Future features:
+
+- Mobile application
+- Voice coaching
+- Freelance marketplace
+- Agency version
+- Team accounts
+- Copywriting certification
+
+---
+
+# Development Priority
+
+The order of importance:
+
+1. AI feedback quality
+2. Writing experience
+3. User progress tracking
+4. Learning system
+5. Community
+6. Monetization
+
+---
+
+# MVP Success Criteria
+
+The first version is successful if:
+
+- Users complete writing exercises
+- Users improve their scores
+- Users return regularly
+- Users understand their mistakes
+- Users feel they are learning copywriting
