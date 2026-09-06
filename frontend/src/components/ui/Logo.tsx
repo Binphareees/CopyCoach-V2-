@@ -49,28 +49,23 @@ export default function Logo({
       {/* BRAND ICON (Neural Brain + Coach Pencil) */}
       <div className={`relative flex items-center justify-center shrink-0 ${iconSizes[size]}`}>
         <svg
-          viewBox="0 0 120 120"
+          viewBox="0 0 200 200"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-full drop-shadow-md transition-transform duration-200 hover:scale-105"
         >
           <defs>
-            {/* Gradients */}
-            <linearGradient id="brainGrad" x1="10" y1="20" x2="110" y2="100" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#06B6D4" />
-              <stop offset="50%" stopColor="#3B82F6" />
-              <stop offset="100%" stopColor="#8B5CF6" />
+            {/* AI Brain Network Gradient */}
+            <linearGradient id="brainGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#00f5d4" />
+              <stop offset="50%" stopColor="#00b4d8" />
+              <stop offset="100%" stopColor="#7209b7" />
             </linearGradient>
 
-            <linearGradient id="pencilGrad" x1="20" y1="100" x2="90" y2="20" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#0284C7" />
-              <stop offset="50%" stopColor="#38BDF8" />
-              <stop offset="100%" stopColor="#818CF8" />
-            </linearGradient>
-
-            <linearGradient id="eraserGrad" x1="80" y1="15" x2="100" y2="35" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#C084FC" />
-              <stop offset="100%" stopColor="#7E22CE" />
+            {/* Pencil/Coach Gradient */}
+            <linearGradient id="pencilGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#00b4d8" />
+              <stop offset="100%" stopColor="#3a0ca3" />
             </linearGradient>
 
             <filter id="glowPulse" x="-20%" y="-20%" width="140%" height="140%">
@@ -81,82 +76,48 @@ export default function Logo({
 
           {/* App Icon Container Background (If variant="app-icon") */}
           {variant === "app-icon" && (
-            <rect x="2" y="2" width="116" height="116" rx="28" fill="#0B132B" stroke="#1E293B" strokeWidth="2" />
+            <rect x="6" y="6" width="188" height="188" rx="48" fill="#0f172a" stroke="#1E293B" strokeWidth="3" />
           )}
 
-          {/* 1. NEURAL BRAIN NETWORK BACKGROUND */}
-          <g filter="url(#glowPulse)">
-            {/* Brain Left Hemisphere */}
-            <path
-              d="M 50 30 C 35 25 20 35 20 50 C 18 62 25 72 32 78 C 28 85 35 95 48 92 C 55 90 58 82 58 75 Z"
-              fill="url(#brainGrad)"
-              fillOpacity="0.25"
-              stroke="#06B6D4"
-              strokeWidth="1.8"
-            />
-            {/* Brain Right Hemisphere */}
-            <path
-              d="M 58 30 C 73 25 88 35 88 50 C 90 62 83 72 76 78 C 80 85 73 95 60 92 C 53 90 50 82 50 75 Z"
-              fill="url(#brainGrad)"
-              fillOpacity="0.2"
-              stroke="#8B5CF6"
-              strokeWidth="1.8"
-            />
+          {/* AI Brain Nodes Background */}
+          <g stroke="url(#brainGlow)" strokeWidth="3" opacity="0.85">
+            <line x1="50" y1="80" x2="80" y2="50" />
+            <line x1="80" y1="50" x2="120" y2="60" />
+            <line x1="50" y1="80" x2="65" y2="110" />
+            <line x1="65" y1="110" x2="100" y2="120" />
+            <line x1="80" y1="50" x2="100" y2="90" />
 
-            {/* Neural Circuit Lines */}
-            <path d="M 28 45 L 38 40 L 48 48 L 38 60 L 28 55 Z" stroke="#38BDF8" strokeWidth="1.2" strokeDasharray="2 2" fill="none" />
-            <path d="M 70 42 L 80 48 L 72 62 L 62 55 Z" stroke="#A855F7" strokeWidth="1.2" strokeDasharray="2 2" fill="none" />
-            <path d="M 38 40 L 50 32 L 68 35 L 70 42" stroke="#06B6D4" strokeWidth="1.2" fill="none" />
-
-            {/* Glowing Neural Node Dots */}
-            <circle cx="28" cy="45" r="2.5" fill="#38BDF8" />
-            <circle cx="38" cy="40" r="2" fill="#06B6D4" />
-            <circle cx="48" cy="48" r="2.5" fill="#60A5FA" />
-            <circle cx="38" cy="60" r="2" fill="#818CF8" />
-            <circle cx="70" cy="42" r="2.5" fill="#C084FC" />
-            <circle cx="80" cy="48" r="2" fill="#A855F7" />
-            <circle cx="72" cy="62" r="2.5" fill="#E879F9" />
-            <circle cx="50" cy="32" r="2" fill="#38BDF8" />
+            <circle cx="50" cy="80" r="5" fill="#00f5d4" />
+            <circle cx="80" cy="50" r="6" fill="#00b4d8" />
+            <circle cx="120" cy="60" r="5" fill="#7209b7" />
+            <circle cx="65" cy="110" r="5" fill="#00f5d4" />
+            <circle cx="100" cy="120" r="6" fill="#00b4d8" />
+            <circle cx="100" cy="90" r="4" fill="#ffffff" />
           </g>
 
-          {/* Analytics Data Signal Bars */}
-          <rect x="22" y="28" width="2" height="6" rx="1" fill="#38BDF8" />
-          <rect x="26" y="24" width="2" height="10" rx="1" fill="#06B6D4" />
-          <rect x="30" y="21" width="2" height="13" rx="1" fill="#60A5FA" />
+          {/* Stylized Pencil & Coach Figure */}
+          <g transform="rotate(-35 100 100)">
+            {/* Pencil Body */}
+            <rect x="85" y="30" width="30" height="110" rx="6" fill="url(#pencilGrad)" stroke="#ffffff" strokeWidth="4" />
 
-          <rect x="88" y="28" width="2" height="6" rx="1" fill="#A855F7" />
-          <rect x="92" y="25" width="2" height="9" rx="1" fill="#C084FC" />
+            {/* Eraser Cap */}
+            <path d="M 85 45 L 115 45 L 115 36 C 115 32 111 28 107 28 L 93 28 C 89 28 85 32 85 36 Z" fill="#7209b7" />
+            <line x1="85" y1="45" x2="115" y2="45" stroke="#ffffff" strokeWidth="2" />
 
-          {/* 2. ANGLED CREATIVE PENCIL WITH COACH SILHOUETTE */}
-          {/* Main Pencil Body */}
-          <g transform="rotate(-38 58 60)">
-            {/* Pencil Outer Frame */}
-            <rect x="46" y="22" width="24" height="68" rx="8" fill="url(#pencilGrad)" stroke="#0F172A" strokeWidth="3" />
+            {/* Pencil Tip */}
+            <path d="M 85 140 L 100 170 L 115 140 Z" fill="#00b4d8" />
+            <polygon points="95,160 100,170 105,160" fill="#0f172a" />
 
-            {/* Eraser Top */}
-            <path d="M 46 28 C 46 22 70 22 70 28 L 70 34 L 46 34 Z" fill="url(#eraserGrad)" stroke="#0F172A" strokeWidth="2.5" />
-            <line x1="46" y1="34" x2="70" y2="34" stroke="#CBD5E1" strokeWidth="3" />
-
-            {/* Coach / Mentor Silhouette inside Pencil Barrel */}
-            {/* Head */}
-            <circle cx="58" cy="44" r="3" fill="#FFFFFF" />
-            {/* Body & Arms pointing forward */}
-            <path d="M 58 48 L 52 64 L 56 64 L 58 54 L 60 64 L 64 64 Z" fill="#FFFFFF" />
-            {/* Shield in Left Arm */}
-            <path d="M 50 52 C 50 50 54 50 54 52 C 54 57 50 59 50 59 C 50 59 46 57 46 52 Z" fill="#38BDF8" stroke="#FFFFFF" strokeWidth="1" />
-            {/* Arm Pointing Forward */}
-            <path d="M 58 52 L 66 48 L 65 51 Z" fill="#FFFFFF" />
-
-            {/* Pencil Tip / Rocket Cone */}
-            <path d="M 46 88 L 58 104 L 70 88 Z" fill="#0F172A" />
-            <path d="M 50 88 L 58 100 L 66 88 Z" fill="#F8FAFC" />
-            <path d="M 55 95 L 58 102 L 61 95 Z" fill="#0EA5E9" />
+            {/* Coach Silhouette Detail inside Pencil */}
+            <circle cx="100" cy="75" r="5" fill="#ffffff" />
+            <path d="M 92 95 C 92 85 108 85 108 95 L 108 115 L 92 115 Z" fill="#ffffff" />
+            {/* Pointer arm */}
+            <line x1="104" y1="90" x2="114" y2="82" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" />
           </g>
 
-          {/* Target Impact Point Ring at Tip */}
-          <circle cx="21" cy="98" r="7" stroke="#38BDF8" strokeWidth="1.5" strokeDasharray="3 2" fill="none" />
-          <circle cx="21" cy="98" r="3" fill="#06B6D4" />
-          <circle cx="21" cy="98" r="1.5" fill="#FFFFFF" />
+          {/* Glowing Focal Point at Tip */}
+          <circle cx="50" cy="155" r="7" fill="#00f5d4" />
+          <circle cx="50" cy="155" r="14" fill="#00f5d4" opacity="0.3" />
         </svg>
       </div>
 
@@ -176,7 +137,7 @@ export default function Logo({
             >
               CopyCoach
             </span>
-            <span className={`font-black tracking-tight bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent ${titleSizes[size]}`}>
+            <span className={`font-black tracking-tight bg-gradient-to-r from-teal-400 via-cyan-400 to-violet-500 bg-clip-text text-transparent ${titleSizes[size]}`}>
               AI
             </span>
           </div>
