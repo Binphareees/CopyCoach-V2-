@@ -1,1 +1,3 @@
 .dyad/
+node_modules/
+.next/
