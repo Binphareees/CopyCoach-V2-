@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Button from "../ui/Button";
 import Logo from "../ui/Logo";
@@ -18,6 +18,21 @@ export default function Navbar() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close the account dropdown when clicking/tapping anywhere outside it
+  useEffect(() => {
+    if (!showDropdown) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [showDropdown]);
 
   useEffect(() => {
     let isMounted = true;
@@ -130,7 +145,7 @@ export default function Navbar() {
               </Link>
 
               {/* User Dropdown */}
-              <div className="relative">
+              <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="flex items-center gap-2 p-1.5 rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white cursor-pointer"

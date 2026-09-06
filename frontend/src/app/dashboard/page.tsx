@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import {
   supabase,
   ensureSupabaseConfig,
@@ -96,6 +96,21 @@ export default function DashboardPage() {
   const [userEmail, setUserEmail] = useState("");
   const [avatar, setAvatar] = useState("");
   const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close the account dropdown when clicking/tapping anywhere outside it
+  useEffect(() => {
+    if (!showMenu) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [showMenu]);
 
   // Copy Generator Inputs & Outputs
   const [text, setText] = useState("");
@@ -685,7 +700,7 @@ export default function DashboardPage() {
           </span>
 
           {/* User Account Dropdown */}
-          <div className="relative">
+          <div className="relative" ref={menuRef}>
             <button
               onClick={() => setShowMenu(!showMenu)}
               className="flex items-center gap-3 rounded-2xl border border-transparent p-1.5 transition-colors hover:bg-ink-800"
@@ -1877,13 +1892,16 @@ export default function DashboardPage() {
 
             {/* Modal Bottom Actions */}
             <div className="flex shrink-0 items-center justify-between border-t border-ink-700 bg-ink-950/80 p-4 sm:p-6">
-              <Link
-                href="/dashboard/profile"
-                className="flex items-center gap-1 text-xs font-medium text-accent-bright hover:underline"
+              <button
+                onClick={() => {
+                  setShowProfileModal(false);
+                  router.push("/dashboard/profile");
+                }}
+                className="flex cursor-pointer items-center gap-1 text-xs font-medium text-accent-bright hover:underline"
               >
                 Open Dedicated Profile Page
                 <ExternalLink className="h-3.5 w-3.5" />
-              </Link>
+              </button>
 
               <div className="flex items-center gap-3">
                 <button
