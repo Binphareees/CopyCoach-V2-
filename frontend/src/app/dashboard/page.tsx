@@ -935,9 +935,9 @@ export default function DashboardPage() {
         </div>
 
         {/* STAT CARDS */}
-        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+        <div className="mb-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
           {/* Credits & Plan */}
-          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-5 transition-colors">
+          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-4 sm:p-5 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">AI Generation Credits</span>
               <Zap className="h-4 w-4 text-accent-bright" />
@@ -971,7 +971,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Total Generations */}
-          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-5 transition-colors">
+          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-4 sm:p-5 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Total Copy Improvements</span>
               <FileText className="h-4 w-4 text-accent-bright" />
@@ -987,7 +987,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Favorites */}
-          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-5 transition-colors">
+          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-4 sm:p-5 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Starred Favorites</span>
               <Star className="h-4 w-4 fill-amber-500/20 text-amber-500" />
@@ -1005,7 +1005,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Projects */}
-          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-5 transition-colors">
+          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-4 sm:p-5 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Active Projects</span>
               <Layers className="h-4 w-4 text-accent-bright" />
