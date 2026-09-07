@@ -16,7 +16,7 @@ interface ProductDetailsProps {
 const labelClass =
   "mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-300";
 const inputClass =
-  "cc-input w-full rounded-2xl border border-line-soft bg-field-900 px-4 py-3.5 text-[15px] font-medium text-brand-100";
+  "cc-input w-full rounded-2xl border border-glass-input-border bg-glass-input-bg px-4 py-3.5 text-[15px] font-medium text-brand-100";
 
 export default function ProductDetails({
   productName,

@@ -629,14 +629,14 @@ export default function DashboardPage() {
     <div className="min-h-screen font-sans text-brand-100 selection:bg-accent selection:text-text-primary">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-24 right-4 z-[60] flex items-center gap-2 border border-accent/40 bg-ink-800 px-4 py-3 text-sm font-medium text-brand-100 shadow-2xl lg:bottom-6 lg:right-6">
+        <div className="fixed bottom-24 right-4 z-[60] flex items-center gap-2 border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass px-4 py-3 text-sm font-medium text-brand-100 lg:bottom-6 lg:right-6">
           <Check className="h-4 w-4 text-accent-bright" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Top Professional Header */}
-      <header className="sticky top-0 z-40 border-b border-ink-700/80 bg-ink-950/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-glass-border bg-glass-bg backdrop-blur-xl">
         <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Branding */}
           <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
@@ -656,7 +656,7 @@ export default function DashboardPage() {
               className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold ${
                 plan === "pro"
                   ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
-                  : "border-line-soft bg-ink-800 text-brand-200"
+                  : "border-glass-border bg-glass-bg-elevated text-brand-200"
               }`}
             >
               <Zap className="h-3 w-3" />
@@ -664,7 +664,7 @@ export default function DashboardPage() {
             </span>
 
             {/* Workspace selector */}
-            <div className="flex items-center gap-2 rounded-full border border-line-soft bg-ink-800 px-3.5 py-1.5 text-xs text-brand-200">
+            <div className="flex items-center gap-2 rounded-full border border-glass-border bg-glass-bg-elevated px-3.5 py-1.5 text-xs text-brand-200">
               <Folder className="h-3.5 w-3.5 text-accent-bright" />
               <span className="hidden lg:inline">Workspace:</span>
               <select
@@ -683,7 +683,7 @@ export default function DashboardPage() {
 
             <button
               onClick={() => setShowProjectModal(true)}
-              className="flex items-center gap-1.5 rounded-full border border-line-soft bg-ink-800 px-3.5 py-1.5 text-xs font-semibold text-brand-100 transition-colors hover:bg-ink-700"
+              className="flex items-center gap-1.5 rounded-full border border-glass-border bg-glass-bg-elevated px-3.5 py-1.5 text-xs font-semibold text-brand-100 transition-colors hover:bg-glass-bg-hover"
             >
               <FolderPlus className="h-3.5 w-3.5 text-accent-bright" />
               New Project
@@ -700,9 +700,9 @@ export default function DashboardPage() {
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="flex items-center gap-3 rounded-2xl border border-transparent p-1.5 transition-colors hover:bg-ink-800"
+              className="flex items-center gap-3 rounded-2xl border border-transparent p-1.5 transition-colors hover:bg-glass-bg-hover"
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-accent/30 bg-ink-800 text-sm font-bold text-accent-bright">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-glass-border bg-glass-bg-elevated text-sm font-bold text-accent-bright">
                 {avatar ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={avatar} alt={fullName} className="h-full w-full object-cover" />
@@ -727,11 +727,11 @@ export default function DashboardPage() {
                   className="fixed inset-0 z-40 cursor-default"
                   onClick={() => setShowMenu(false)}
                 />
-                <div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-ink-700 bg-ink-900 p-2.5 text-brand-100 shadow-2xl">
+                <div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-glass-border bg-glass-bg p-2.5 text-brand-100 backdrop-blur-xl shadow-glass">
                   {/* Profile Header */}
-                  <div className="mb-2 rounded-xl border border-ink-700 bg-ink-950/80 px-3 py-2.5">
+                  <div className="mb-2 rounded-xl border border-glass-border-subtle bg-glass-bg-deep px-3 py-2.5">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-accent/30 bg-ink-800 text-xs font-bold text-accent-bright">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-glass-border bg-glass-bg-elevated text-xs font-bold text-accent-bright">
                         {avatar ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={avatar} alt={fullName} className="h-full w-full rounded-lg object-cover" />
@@ -745,7 +745,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
-                    <div className="mt-2.5 flex items-center justify-between border-t border-ink-700 pt-2 text-[11px] text-brand-300">
+                    <div className="mt-2.5 flex items-center justify-between border-t border-glass-border pt-2 text-[11px] text-brand-300">
                       <span className="flex items-center gap-1 font-medium">
                         <ShieldCheck className="h-3.5 w-3.5 text-accent-bright" />
                         <span>{plan === "pro" ? "Pro Membership" : "Starter Free Plan"}</span>
@@ -763,7 +763,7 @@ export default function DashboardPage() {
                     <Link
                       href="/dashboard/admin/feedback"
                       onClick={() => setShowMenu(false)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <ShieldCheck className="h-4 w-4 text-amber-400" />
@@ -775,7 +775,7 @@ export default function DashboardPage() {
                     <Link
                       href="/dashboard/profile"
                       onClick={() => setShowMenu(false)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <UserCheck className="h-4 w-4 text-accent-bright" />
@@ -790,7 +790,7 @@ export default function DashboardPage() {
                         setProfileTab("brand_voice");
                         setShowProfileModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <Sliders className="h-4 w-4 text-accent-bright" />
@@ -805,7 +805,7 @@ export default function DashboardPage() {
                         setProfileTab("billing");
                         setShowProfileModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <CreditCard className="h-4 w-4 text-amber-400" />
@@ -818,7 +818,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Preferences Group */}
-                  <div className="mb-2 space-y-0.5 border-t border-ink-700 pt-2">
+                  <div className="mb-2 space-y-0.5 border-t border-glass-border pt-2">
                     <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-brand-300">
                       Preferences
                     </span>
@@ -829,20 +829,20 @@ export default function DashboardPage() {
                         setProfileTab("preferences");
                         setShowProfileModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         {isDarkMode ? <Moon className="h-4 w-4 text-accent-bright" /> : <Sun className="h-4 w-4 text-amber-400" />}
                         <span>Appearance & Theme</span>
                       </div>
-                      <span className="rounded border border-line-soft bg-ink-800 px-2 py-0.5 text-[10px] font-medium text-accent-bright">
+                      <span className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-0.5 text-[10px] font-medium text-accent-bright">
                         {themeMode === "system" ? "System Sync" : isDarkMode ? "Dark Theme" : "Light Theme"}
                       </span>
                     </button>
                   </div>
 
                   {/* Resources & Help Group */}
-                  <div className="mb-2 space-y-0.5 border-t border-ink-700 pt-2">
+                  <div className="mb-2 space-y-0.5 border-t border-glass-border pt-2">
                     <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-brand-300">
                       Support & Tools
                     </span>
@@ -852,7 +852,7 @@ export default function DashboardPage() {
                         setShowMenu(false);
                         setShowShortcutsModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <Keyboard className="h-4 w-4 text-accent-bright" />
@@ -866,7 +866,7 @@ export default function DashboardPage() {
                         setShowMenu(false);
                         setShowSupportModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <HelpCircle className="h-4 w-4 text-accent-bright" />
@@ -877,7 +877,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Sign Out Button */}
-                  <div className="border-t border-ink-700 pt-2">
+                  <div className="border-t border-glass-border pt-2">
                     <button
                       onClick={handleLogout}
                       className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-rose-400 transition-colors hover:bg-rose-950/50 hover:text-rose-300"
@@ -946,7 +946,7 @@ export default function DashboardPage() {
         {/* STAT CARDS */}
         <div className="mb-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
           {/* Credits & Plan */}
-          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-4 sm:p-5 transition-colors">
+          <div className="rounded-2xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass p-4 sm:p-5 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">AI Generation Credits</span>
               <Zap className="h-4 w-4 text-accent-bright" />
@@ -956,7 +956,7 @@ export default function DashboardPage() {
                 <span className="text-3xl font-extrabold text-text-primary">{credits}</span>
                 <span className="text-xs text-brand-300">/ {plan === "pro" ? 100 : 5} left today</span>
               </div>
-              <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-ink-800">
+              <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-glass-bg-elevated">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-accent-deep to-accent-bright transition-all duration-500"
                   style={{ width: `${Math.min(100, (credits / (plan === "pro" ? 100 : 5)) * 100)}%` }}
@@ -980,7 +980,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Total Generations */}
-          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-4 sm:p-5 transition-colors">
+          <div className="rounded-2xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass p-4 sm:p-5 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Total Copy Improvements</span>
               <FileText className="h-4 w-4 text-accent-bright" />
@@ -996,7 +996,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Favorites */}
-          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-4 sm:p-5 transition-colors">
+          <div className="rounded-2xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass p-4 sm:p-5 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Starred Favorites</span>
               <Star className="h-4 w-4 fill-amber-500/20 text-amber-500" />
@@ -1014,7 +1014,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Projects */}
-          <div className="rounded-2xl border border-line-soft bg-ink-900/80 p-4 sm:p-5 transition-colors">
+          <div className="rounded-2xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass p-4 sm:p-5 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Active Projects</span>
               <Layers className="h-4 w-4 text-accent-bright" />
@@ -1035,9 +1035,9 @@ export default function DashboardPage() {
         {/* WORKSPACE GRID: LEFT INPUT & RIGHT OUTPUT */}
         <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* LEFT PANEL: GENERATOR FORM */}
-          <div className="flex flex-col justify-between rounded-3xl border border-line-soft bg-ink-900 md:col-span-7">
+          <div className="flex flex-col justify-between rounded-3xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass md:col-span-7">
             {/* Panel Header */}
-            <div className="flex items-center justify-between border-b border-ink-700 p-6">
+            <div className="flex items-center justify-between border-b border-glass-border p-6">
               <div>
                 <h2 className="flex items-center gap-2 text-xl font-bold text-text-primary">
                   <Sparkles className="h-5 w-5 text-accent-bright" />
@@ -1073,7 +1073,7 @@ export default function DashboardPage() {
                   title="Offer & Product Details"
                   subtitle="Tell CopyCoach about your offer so it can write copy that converts."
                 />
-                <div className="mt-5 rounded-2xl border border-line-soft bg-ink-950/60 p-5">
+                <div className="mt-5 rounded-2xl border border-glass-border-subtle bg-glass-bg-deep p-5">
                   <ProductDetails
                     productName={productName}
                     onProductNameChange={setProductName}
@@ -1133,11 +1133,11 @@ export default function DashboardPage() {
           </div>
 
           {/* RIGHT PANEL: AI COACHING OUTPUT */}
-          <div className="flex min-h-[480px] flex-col rounded-3xl border border-line-soft bg-ink-900 md:col-span-5">
+          <div className="flex min-h-[480px] flex-col rounded-3xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass md:col-span-5">
             {result ? (
               <div className="flex flex-1 flex-col gap-5 p-6">
                 {/* Score header */}
-                <div className="flex items-center justify-between border-b border-ink-700 pb-4">
+                <div className="flex items-center justify-between border-b border-glass-border pb-4">
                   <div>
                     <span className="text-[11px] font-semibold uppercase tracking-wider text-brand-300">AI Copy Evaluation</span>
                     <h3 className="mt-0.5 flex items-center gap-2 text-lg font-bold text-text-primary">
@@ -1166,7 +1166,7 @@ export default function DashboardPage() {
                 {typeof result === "object" && (
                   <div className="space-y-3">
                     {result.framework && (
-                      <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950/60 p-3 text-xs text-brand-200">
+                      <div className="flex items-center justify-between rounded-xl border border-glass-border-subtle bg-glass-bg-deep p-3 text-xs text-brand-200">
                         <span className="text-brand-300">Framework Applied:</span>
                         <span className="rounded bg-accent/15 px-2.5 py-0.5 font-semibold text-accent-bright">
                           {result.framework}
@@ -1175,7 +1175,7 @@ export default function DashboardPage() {
                     )}
 
                     {result.weaknesses && result.weaknesses.length > 0 && (
-                      <div className="space-y-1.5 rounded-xl border border-line-soft bg-ink-950/60 p-3.5 text-xs">
+                      <div className="space-y-1.5 rounded-xl border border-glass-border-subtle bg-glass-bg-deep p-3.5 text-xs">
                         <div className="mb-1 flex items-center gap-1.5 font-semibold text-rose-400">
                           <AlertTriangle className="h-3.5 w-3.5" />
                           Areas to Improve
@@ -1192,7 +1192,7 @@ export default function DashboardPage() {
                     )}
 
                     {result.strengths && result.strengths.length > 0 && (
-                      <div className="space-y-1.5 rounded-xl border border-line-soft bg-ink-950/60 p-3.5 text-xs">
+                      <div className="space-y-1.5 rounded-xl border border-glass-border-subtle bg-glass-bg-deep p-3.5 text-xs">
                         <div className="mb-1 flex items-center gap-1.5 font-semibold text-emerald-400">
                           <CheckCircle2 className="h-3.5 w-3.5" />
                           Key Strengths Identified
@@ -1209,7 +1209,7 @@ export default function DashboardPage() {
                     )}
 
                     {result.coachAdvice && (
-                      <div className="space-y-1 rounded-xl border border-line-soft bg-ink-950/60 p-3.5 text-xs">
+                      <div className="space-y-1 rounded-xl border border-glass-border-subtle bg-glass-bg-deep p-3.5 text-xs">
                         <div className="mb-1 flex items-center gap-1.5 font-semibold text-amber-400">
                           <Lightbulb className="h-3.5 w-3.5" />
                           Coach Advice
@@ -1221,7 +1221,7 @@ export default function DashboardPage() {
                 )}
 
                 {/* Improved Copy Output Box */}
-                <div className="relative rounded-2xl border border-accent/30 bg-ink-950/60 p-4">
+                <div className="relative rounded-2xl border border-accent/30 bg-glass-bg-deep p-4">
                   <div className="mb-3 flex items-center justify-between">
                     <span className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-accent-bright">
                       <Award className="h-3.5 w-3.5" />
@@ -1231,7 +1231,7 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleExportPDF(typeof result === "object" ? result.improvedCopy || "" : String(result))}
-                        className="inline-flex items-center gap-1 rounded-lg border border-line-soft bg-ink-800 px-2.5 py-1 text-[11px] font-semibold text-accent-bright transition-colors hover:bg-ink-700"
+                        className="inline-flex items-center gap-1 rounded-lg border border-glass-border bg-glass-bg-elevated px-2.5 py-1 text-[11px] font-semibold text-accent-bright transition-colors hover:bg-glass-bg-hover"
                         title="Export as PDF"
                       >
                         <FileDown className="h-3.5 w-3.5" />
@@ -1240,7 +1240,7 @@ export default function DashboardPage() {
 
                       <button
                         onClick={() => setShowFullOutput(true)}
-                        className="inline-flex items-center gap-1 rounded-lg border border-line-soft bg-ink-800 px-2.5 py-1 text-[11px] font-semibold text-brand-200 transition-colors hover:bg-ink-700"
+                        className="inline-flex items-center gap-1 rounded-lg border border-glass-border bg-glass-bg-elevated px-2.5 py-1 text-[11px] font-semibold text-brand-200 transition-colors hover:bg-glass-bg-hover"
                         title="Expand to Full View"
                       >
                         <Maximize2 className="h-3.5 w-3.5 text-accent-bright" />
@@ -1254,7 +1254,7 @@ export default function DashboardPage() {
                             "result"
                           )
                         }
-                        className="rounded-lg bg-ink-800 p-1.5 text-brand-200 transition-colors hover:bg-ink-700"
+                        className="rounded-lg bg-glass-bg-elevated p-1.5 text-brand-200 transition-colors hover:bg-glass-bg-hover"
                         title="Copy text"
                       >
                         {copiedId === "result" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
@@ -1266,7 +1266,7 @@ export default function DashboardPage() {
                             typeof result === "object" ? result.improvedCopy || "" : String(result)
                           )
                         }
-                        className="rounded-lg bg-ink-800 p-1.5 text-brand-200 transition-colors hover:bg-ink-700"
+                        className="rounded-lg bg-glass-bg-elevated p-1.5 text-brand-200 transition-colors hover:bg-glass-bg-hover"
                         title="Download text"
                       >
                         <Download className="h-3.5 w-3.5" />
@@ -1279,7 +1279,7 @@ export default function DashboardPage() {
                   </p>
 
                   {/* Inline Drill Critique Feedback */}
-                  <div className="mt-4 border-t border-ink-700 pt-3">
+                  <div className="mt-4 border-t border-glass-border pt-3">
                     <DrillCritiqueFeedback
                       userCopyInput={text}
                       aiOutputString={typeof result === "object" ? result.improvedCopy : String(result)}
@@ -1291,7 +1291,7 @@ export default function DashboardPage() {
             ) : (
               /* Empty Placeholder State */
               <div className="flex h-full flex-col items-center justify-center p-6 text-center">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl border border-accent/30 bg-ink-950 text-accent-bright">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl border border-accent/30 bg-glass-bg-deep text-accent-bright">
                   <Sparkles className="h-8 w-8" />
                 </div>
                 <h3 className="mb-1 text-base font-semibold text-text-primary">Awaiting Copy Analysis</h3>
@@ -1305,7 +1305,7 @@ export default function DashboardPage() {
 
         {/* LIBRARY / COPY HISTORY */}
         <section id="copy-library" className="mt-4 scroll-mt-24">
-          <div className="rounded-3xl border border-line-soft bg-ink-900 p-5 sm:p-7">
+          <div className="rounded-3xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass p-5 sm:p-7">
             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
               <div>
                 <h2 className="flex items-center gap-2 text-xl font-bold text-text-primary">
@@ -1341,7 +1341,7 @@ export default function DashboardPage() {
                       placeholder="Search history..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 py-2 pl-9 pr-3 text-xs text-brand-100 sm:w-56"
+                      className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg py-2 pl-9 pr-3 text-xs text-brand-100 sm:w-56"
                     />
                   </div>
 
@@ -1350,7 +1350,7 @@ export default function DashboardPage() {
                     className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
                       showFavorites
                         ? "border-amber-500/40 bg-amber-500/20 text-amber-400"
-                        : "border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
+                        : "border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                     }`}
                   >
                     <Star className={`h-3.5 w-3.5 ${showFavorites ? "fill-amber-400" : ""}`} />
@@ -1366,7 +1366,7 @@ export default function DashboardPage() {
                 {filteredHistory.map((item) => (
                   <div
                     key={item.id}
-                    className="flex flex-col justify-between rounded-2xl border border-line-soft bg-ink-950/70 p-5 transition-all hover:border-ink-600"
+                    className="flex flex-col justify-between rounded-2xl border border-glass-border bg-glass-bg-deep p-5 transition-all hover:border-glass-border"
                   >
                     <div>
                       <div className="mb-3 flex items-center justify-between">
@@ -1374,7 +1374,7 @@ export default function DashboardPage() {
                           <span className="rounded-md border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-[11px] font-semibold text-accent-bright">
                             {item.copy_type || "Copy"}
                           </span>
-                          <span className="rounded bg-ink-800 px-2 py-0.5 text-[11px] text-brand-300">
+                          <span className="rounded bg-glass-bg-elevated px-2 py-0.5 text-[11px] text-brand-300">
                             Tone: {item.tone || "Default"}
                           </span>
                         </div>
@@ -1385,7 +1385,7 @@ export default function DashboardPage() {
                             className={`rounded-lg border p-1.5 transition-colors ${
                               item.favorite
                                 ? "border-amber-500/40 bg-amber-500/20 text-amber-300"
-                                : "border-line-soft bg-ink-800 text-brand-300 hover:text-text-primary"
+                                : "border-glass-border bg-glass-bg-elevated text-brand-300 hover:text-text-primary"
                             }`}
                             title="Star favorite"
                           >
@@ -1394,7 +1394,7 @@ export default function DashboardPage() {
 
                           <button
                             onClick={() => handleCopy(item.improved_text, item.id)}
-                            className="rounded-lg border border-line-soft bg-ink-800 p-1.5 text-brand-300 transition-colors hover:text-text-primary"
+                            className="rounded-lg border border-glass-border bg-glass-bg-elevated p-1.5 text-brand-300 transition-colors hover:text-text-primary"
                             title="Copy text"
                           >
                             {copiedId === item.id ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
@@ -1402,7 +1402,7 @@ export default function DashboardPage() {
 
                           <button
                             onClick={() => handleDownload(item.improved_text, `${item.copy_type || "copy"}-improved.txt`)}
-                            className="rounded-lg border border-line-soft bg-ink-800 p-1.5 text-brand-300 transition-colors hover:text-text-primary"
+                            className="rounded-lg border border-glass-border bg-glass-bg-elevated p-1.5 text-brand-300 transition-colors hover:text-text-primary"
                             title="Download"
                           >
                             <Download className="h-3.5 w-3.5" />
@@ -1410,7 +1410,7 @@ export default function DashboardPage() {
 
                           <button
                             onClick={() => deleteHistory(item.id)}
-                            className="rounded-lg border border-line-soft bg-ink-800 p-1.5 text-brand-300 transition-colors hover:bg-rose-950/60 hover:text-rose-300"
+                            className="rounded-lg border border-glass-border bg-glass-bg-elevated p-1.5 text-brand-300 transition-colors hover:bg-rose-950/60 hover:text-rose-300"
                             title="Delete"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -1424,7 +1424,7 @@ export default function DashboardPage() {
                     </div>
 
                     {item.original_text && (
-                      <div className="flex items-center justify-between border-t border-ink-700 pt-2.5 text-[11px] text-brand-300">
+                      <div className="flex items-center justify-between border-t border-glass-border pt-2.5 text-[11px] text-brand-300">
                         <span className="max-w-[240px] truncate">Original: &quot;{item.original_text}&quot;</span>
                         <span className="shrink-0">{item.created_at ? new Date(item.created_at).toLocaleDateString() : ""}</span>
                       </div>
@@ -1433,7 +1433,7 @@ export default function DashboardPage() {
                 ))}
               </div>
             ) : (
-              <div className="mt-5 rounded-2xl border border-dashed border-ink-700 py-12 text-center text-xs text-brand-300">
+              <div className="mt-5 rounded-2xl border border-dashed border-glass-border py-12 text-center text-xs text-brand-300">
                 No saved copy history found. Run a copy improvement above to populate your library!
               </div>
             )}
@@ -1444,11 +1444,11 @@ export default function DashboardPage() {
       {/* NEW PROJECT MODAL */}
       {showProjectModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/80 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-glass-bg-deep/80 p-4 backdrop-blur-sm"
           onClick={() => setShowProjectModal(false)}
         >
           <div
-            className="w-full max-w-md rounded-3xl border border-ink-700 bg-ink-900 p-6 shadow-2xl"
+            className="w-full max-w-md rounded-3xl border border-glass-border bg-glass-bg p-6 backdrop-blur-xl shadow-glass"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="mb-1 flex items-center gap-2 text-lg font-bold text-text-primary">
@@ -1468,7 +1468,7 @@ export default function DashboardPage() {
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
                 placeholder="e.g. Summer Marketing Campaign"
-                className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-sm text-brand-100"
+                className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-sm text-brand-100"
                 autoFocus
               />
             </div>
@@ -1476,7 +1476,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowProjectModal(false)}
-                className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
                 Cancel
               </button>
@@ -1494,15 +1494,15 @@ export default function DashboardPage() {
       {/* COMPREHENSIVE PROFILE & SETTINGS MODAL */}
       {showProfileModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-ink-950/80 p-3 backdrop-blur-md sm:p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-glass-bg-deep/80 p-3 backdrop-blur-md sm:p-6"
           onClick={() => setShowProfileModal(false)}
         >
           <div
-            className="my-auto flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-ink-700 bg-ink-900 text-brand-100 shadow-2xl"
+            className="my-auto flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-glass-border bg-glass-bg text-brand-100 backdrop-blur-xl shadow-glass"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Top Header */}
-            <div className="flex shrink-0 items-center justify-between border-b border-ink-700 bg-ink-950/80 p-5 sm:p-6">
+            <div className="flex shrink-0 items-center justify-between border-b border-glass-border bg-glass-bg-deep p-5 sm:p-6">
               <div className="flex items-center gap-3">
                 <div className="rounded-xl border border-accent/30 bg-accent/10 p-2.5 text-accent-bright">
                   <UserCheck className="h-6 w-6" />
@@ -1514,7 +1514,7 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={() => setShowProfileModal(false)}
-                className="rounded-xl p-2 text-brand-300 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                className="rounded-xl p-2 text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1523,13 +1523,13 @@ export default function DashboardPage() {
             {/* Modal Content Body */}
             <div className="flex-1 space-y-6 overflow-y-auto p-5 sm:p-6">
               {/* Tab Navigation Pill Bar */}
-              <div className="flex flex-wrap items-center gap-2 border-b border-ink-700 pb-4">
+              <div className="flex flex-wrap items-center gap-2 border-b border-glass-border pb-4">
                 <button
                   onClick={() => setProfileTab("profile")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "profile"
                       ? "bg-accent text-text-primary shadow-accent-soft"
-                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
+                      : "border border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                   }`}
                 >
                   <User className="h-4 w-4" />
@@ -1541,7 +1541,7 @@ export default function DashboardPage() {
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "brand_voice"
                       ? "bg-accent text-text-primary shadow-accent-soft"
-                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
+                      : "border border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                   }`}
                 >
                   <Sliders className="h-4 w-4" />
@@ -1553,7 +1553,7 @@ export default function DashboardPage() {
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "preferences"
                       ? "bg-accent text-text-primary shadow-accent-soft"
-                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
+                      : "border border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                   }`}
                 >
                   <Sun className="h-4 w-4" />
@@ -1565,7 +1565,7 @@ export default function DashboardPage() {
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "security"
                       ? "bg-accent text-text-primary shadow-accent-soft"
-                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
+                      : "border border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                   }`}
                 >
                   <ShieldCheck className="h-4 w-4" />
@@ -1577,7 +1577,7 @@ export default function DashboardPage() {
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "billing"
                       ? "bg-accent text-text-primary shadow-accent-soft"
-                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
+                      : "border border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                   }`}
                 >
                   <CreditCard className="h-4 w-4" />
@@ -1589,7 +1589,7 @@ export default function DashboardPage() {
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "support"
                       ? "bg-accent text-text-primary shadow-accent-soft"
-                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
+                      : "border border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                   }`}
                 >
                   <LifeBuoy className="h-4 w-4" />
@@ -1610,7 +1610,7 @@ export default function DashboardPage() {
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder="e.g. S_last_born"
-                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
+                        className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
 
@@ -1622,7 +1622,7 @@ export default function DashboardPage() {
                         type="email"
                         value={userEmail || "user@example.com"}
                         disabled
-                        className="w-full cursor-not-allowed rounded-xl border border-line-soft bg-ink-950/60 px-4 py-2.5 text-xs text-brand-300 opacity-80"
+                        className="w-full cursor-not-allowed rounded-xl border border-glass-border-subtle bg-glass-bg-deep px-4 py-2.5 text-xs text-brand-300 opacity-80"
                       />
                     </div>
 
@@ -1635,7 +1635,7 @@ export default function DashboardPage() {
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
                         placeholder="e.g. Senior Copywriter"
-                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
+                        className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
 
@@ -1648,7 +1648,7 @@ export default function DashboardPage() {
                         value={company}
                         onChange={(e) => setCompany(e.target.value)}
                         placeholder="e.g. CopyCoach Labs"
-                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
+                        className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
                   </div>
@@ -1662,7 +1662,7 @@ export default function DashboardPage() {
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
                       placeholder="Briefly describe your copywriting goals..."
-                      className="cc-input w-full resize-none rounded-xl border border-line-soft bg-ink-950 p-3 text-xs text-brand-100"
+                      className="cc-input w-full resize-none rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs text-brand-100"
                     />
                   </div>
                 </div>
@@ -1680,7 +1680,7 @@ export default function DashboardPage() {
                         type="text"
                         value={targetAudience}
                         onChange={(e) => setTargetAudience(e.target.value)}
-                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
+                        className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
 
@@ -1692,7 +1692,7 @@ export default function DashboardPage() {
                         type="text"
                         value={brandNiche}
                         onChange={(e) => setBrandNiche(e.target.value)}
-                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
+                        className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
                   </div>
@@ -1705,7 +1705,7 @@ export default function DashboardPage() {
                       rows={4}
                       value={brandGuidelines}
                       onChange={(e) => setBrandGuidelines(e.target.value)}
-                      className="cc-input w-full resize-none rounded-xl border border-line-soft bg-ink-950 p-3 text-xs text-brand-100"
+                      className="cc-input w-full resize-none rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs text-brand-100"
                     />
                   </div>
                 </div>
@@ -1725,7 +1725,7 @@ export default function DashboardPage() {
                         className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-xs font-semibold transition-all ${
                           themeMode === "dark"
                             ? "border-transparent bg-accent text-text-primary shadow-accent-soft"
-                            : "border-line-soft bg-ink-950 text-brand-300 hover:bg-ink-800 hover:text-brand-100"
+                            : "border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:bg-glass-bg-hover hover:text-brand-100"
                         }`}
                       >
                         <Moon className="h-4 w-4" />
@@ -1738,7 +1738,7 @@ export default function DashboardPage() {
                         className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-xs font-semibold transition-all ${
                           themeMode === "light"
                             ? "border-amber-400 bg-amber-500 font-bold text-ink-950"
-                            : "border-line-soft bg-ink-950 text-brand-300 hover:bg-ink-800 hover:text-brand-100"
+                            : "border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:bg-glass-bg-hover hover:text-brand-100"
                         }`}
                       >
                         <Sun className="h-4 w-4" />
@@ -1751,7 +1751,7 @@ export default function DashboardPage() {
                         className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-xs font-semibold transition-all ${
                           themeMode === "system"
                             ? "border-transparent bg-accent text-text-primary shadow-accent-soft"
-                            : "border-line-soft bg-ink-950 text-brand-300 hover:bg-ink-800 hover:text-brand-100"
+                            : "border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:bg-glass-bg-hover hover:text-brand-100"
                         }`}
                       >
                         <Laptop className="h-4 w-4" />
@@ -1767,7 +1767,7 @@ export default function DashboardPage() {
                     <select
                       value={preferredModel}
                       onChange={(e) => setPreferredModel(e.target.value)}
-                      className="cc-input w-full cursor-pointer rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
+                      className="cc-input w-full cursor-pointer rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                     >
                       <option value="Gemini 2.5 Flash (Recommended)">Gemini 2.5 Flash (Recommended - Super Fast)</option>
                       <option value="Gemini 2.5 Pro (Deep Copywriting Reasoning)">Gemini 2.5 Pro (Deep Strategy)</option>
@@ -1789,7 +1789,7 @@ export default function DashboardPage() {
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
+                        className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
 
@@ -1802,12 +1802,12 @@ export default function DashboardPage() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
+                        className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950 p-3">
+                  <div className="flex items-center justify-between rounded-xl border border-glass-input-border bg-glass-input-bg p-3">
                     <div>
                       <p className="text-xs font-semibold text-text-primary">Two-Factor Authentication (2FA)</p>
                       <p className="text-[11px] text-brand-300">Add an extra layer of security to your CopyCoach account</p>
@@ -1819,7 +1819,7 @@ export default function DashboardPage() {
                         showToast(!twoFactorEnabled ? "2FA Enabled" : "2FA Disabled");
                       }}
                       className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
-                        twoFactorEnabled ? "bg-emerald-500 text-ink-950" : "bg-ink-800 text-brand-200"
+                        twoFactorEnabled ? "bg-emerald-500 text-ink-950" : "bg-glass-bg-elevated text-brand-200"
                       }`}
                     >
                       {twoFactorEnabled ? "Enabled" : "Enable"}
@@ -1870,14 +1870,14 @@ export default function DashboardPage() {
                       placeholder="Subject line..."
                       value={supportSubject}
                       onChange={(e) => setSupportSubject(e.target.value)}
-                      className="cc-input mb-3 w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
+                      className="cc-input mb-3 w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                     />
                     <textarea
                       rows={3}
                       placeholder="Describe your issue or question..."
                       value={supportMessage}
                       onChange={(e) => setSupportMessage(e.target.value)}
-                      className="cc-input w-full resize-none rounded-xl border border-line-soft bg-ink-950 p-3 text-xs text-brand-100"
+                      className="cc-input w-full resize-none rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs text-brand-100"
                     />
                   </div>
                 </div>
@@ -1885,11 +1885,11 @@ export default function DashboardPage() {
             </div>
 
             {/* Modal Bottom Actions */}
-            <div className="flex shrink-0 items-center justify-end border-t border-ink-700 bg-ink-950/80 p-4 sm:p-6">
+            <div className="flex shrink-0 items-center justify-end border-t border-glass-border bg-glass-bg-deep p-4 sm:p-6">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowProfileModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                  className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
                 >
                   Close
                 </button>
@@ -1915,56 +1915,56 @@ export default function DashboardPage() {
       {/* KEYBOARD SHORTCUTS MODAL */}
       {showShortcutsModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/80 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-glass-bg-deep/80 p-4 backdrop-blur-sm"
           onClick={() => setShowShortcutsModal(false)}
         >
           <div
-            className="w-full max-w-lg rounded-3xl border border-ink-700 bg-ink-900 p-6 shadow-2xl"
+            className="w-full max-w-lg rounded-3xl border border-glass-border bg-glass-bg p-6 backdrop-blur-xl shadow-glass"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-4 flex items-center justify-between border-b border-ink-700 pb-3">
+            <div className="mb-4 flex items-center justify-between border-b border-glass-border pb-3">
               <h3 className="flex items-center gap-2 text-lg font-bold text-text-primary">
                 <Keyboard className="h-5 w-5 text-accent-bright" />
                 Keyboard Shortcuts & Productivity
               </h3>
               <button
                 onClick={() => setShowShortcutsModal(false)}
-                className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <div className="mb-6 space-y-3">
-              <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950 p-3 text-xs">
+              <div className="flex items-center justify-between rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs">
                 <span className="text-brand-200">Run Copy Optimization</span>
                 <div className="flex items-center gap-1 font-mono">
-                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">⌘</kbd>
-                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">Enter</kbd>
+                  <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">⌘</kbd>
+                  <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">Enter</kbd>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950 p-3 text-xs">
+              <div className="flex items-center justify-between rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs">
                 <span className="text-brand-200">Toggle Star Favorite</span>
                 <div className="flex items-center gap-1 font-mono">
-                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">⌘</kbd>
-                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">F</kbd>
+                  <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">⌘</kbd>
+                  <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">F</kbd>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950 p-3 text-xs">
+              <div className="flex items-center justify-between rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs">
                 <span className="text-brand-200">Copy Improved Text</span>
                 <div className="flex items-center gap-1 font-mono">
-                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">⌘</kbd>
-                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">C</kbd>
+                  <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">⌘</kbd>
+                  <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">C</kbd>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950 p-3 text-xs">
+              <div className="flex items-center justify-between rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs">
                 <span className="text-brand-200">Create New Project</span>
                 <div className="flex items-center gap-1 font-mono">
-                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">⌘</kbd>
-                  <kbd className="rounded border border-ink-600 bg-ink-800 px-2 py-1 text-accent-bright">P</kbd>
+                  <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">⌘</kbd>
+                  <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">P</kbd>
                 </div>
               </div>
             </div>
@@ -1972,7 +1972,7 @@ export default function DashboardPage() {
             <div className="flex justify-end">
               <button
                 onClick={() => setShowShortcutsModal(false)}
-                className="rounded-xl bg-ink-800 px-5 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-ink-700"
+                className="rounded-xl bg-glass-bg-elevated px-5 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-glass-bg-hover"
               >
                 Close
               </button>
@@ -1983,16 +1983,16 @@ export default function DashboardPage() {
 
       {/* HELP & AI SUPPORT MODAL */}
       {showSupportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/80 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl border border-ink-700 bg-ink-900 p-6 shadow-2xl">
-            <div className="mb-4 flex items-center justify-between border-b border-ink-700 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-glass-bg-deep/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-3xl border border-glass-border bg-glass-bg p-6 backdrop-blur-xl shadow-glass">
+            <div className="mb-4 flex items-center justify-between border-b border-glass-border pb-3">
               <h3 className="flex items-center gap-2 text-lg font-bold text-text-primary">
                 <HelpCircle className="h-5 w-5 text-accent-bright" />
                 CopyCoach AI Support & Feedback
               </h3>
               <button
                 onClick={() => setShowSupportModal(false)}
-                className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -2012,7 +2012,7 @@ export default function DashboardPage() {
                   placeholder="e.g., Custom Brand Tone Request"
                   value={supportSubject}
                   onChange={(e) => setSupportSubject(e.target.value)}
-                  className="cc-input w-full rounded-xl border border-line-soft bg-ink-950 px-4 py-2.5 text-xs text-brand-100"
+                  className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                 />
               </div>
 
@@ -2025,7 +2025,7 @@ export default function DashboardPage() {
                   placeholder="Describe your question or feedback..."
                   value={supportMessage}
                   onChange={(e) => setSupportMessage(e.target.value)}
-                  className="cc-input w-full resize-none rounded-xl border border-line-soft bg-ink-950 p-3 text-xs text-brand-100"
+                  className="cc-input w-full resize-none rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs text-brand-100"
                 />
               </div>
             </div>
@@ -2033,7 +2033,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowSupportModal(false)}
-                className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-ink-800 hover:text-text-primary"
+                className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
                 Cancel
               </button>

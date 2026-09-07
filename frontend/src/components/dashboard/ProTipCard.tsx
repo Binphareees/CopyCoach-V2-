@@ -10,7 +10,7 @@ const DEFAULT_TIP =
 
 export default function ProTipCard({ text = DEFAULT_TIP }: ProTipCardProps) {
   return (
-    <div className="flex items-start gap-3.5 rounded-2xl border border-line-soft bg-ink-900 p-4.5">
+    <div className="flex items-start gap-3.5 rounded-2xl border border-glass-border bg-glass-bg backdrop-blur-sm p-4.5">
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent-bright">
         <Lightbulb className="h-5 w-5" />
       </div>

@@ -36,7 +36,7 @@ export default function ToneSelector({ value, onChange }: ToneSelectorProps) {
             className={`flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-center text-[13px] font-semibold leading-snug transition-all duration-200 active:scale-[0.97] ${
               isActive
                 ? "border-transparent bg-accent text-white shadow-accent-soft"
-                : "border-line-soft bg-ink-800 text-brand-200 hover:border-line hover:bg-ink-700 hover:text-white"
+                : "border-glass-border bg-glass-bg-elevated text-brand-200 hover:border-glass-border hover:bg-glass-bg-hover hover:text-white"
             }`}
           >
             {isActive && <Check className="h-3.5 w-3.5 shrink-0" />}

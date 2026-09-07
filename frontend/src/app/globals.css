@@ -65,6 +65,22 @@
   /* Modal */
   --modal-backdrop: rgba(0, 0, 0, 0.7);
   --modal-surface: #0f1420;
+
+  /* Glass / Sign-Up System */
+  --glass-bg: rgba(255, 255, 255, 0.07);
+  --glass-bg-elevated: rgba(255, 255, 255, 0.04);
+  --glass-bg-deep: rgba(255, 255, 255, 0.02);
+  --glass-bg-hover: rgba(255, 255, 255, 0.10);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-border-subtle: rgba(255, 255, 255, 0.06);
+  --glass-input-bg: rgba(255, 255, 255, 0.05);
+  --glass-input-border: rgba(255, 255, 255, 0.10);
+  --button-start: #2a1f5e;
+  --button-end: #1a1545;
+  --button-hover-start: #352870;
+  --button-hover-end: #221a55;
+  --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --card-glow: rgba(91, 91, 239, 0.06);
 }
 
 /* Light Theme */
@@ -127,6 +143,22 @@
   /* Modal */
   --modal-backdrop: rgba(0, 0, 0, 0.4);
   --modal-surface: #ffffff;
+
+  /* Glass / Sign-Up System */
+  --glass-bg: rgba(0, 0, 0, 0.03);
+  --glass-bg-elevated: rgba(0, 0, 0, 0.02);
+  --glass-bg-deep: rgba(0, 0, 0, 0.01);
+  --glass-bg-hover: rgba(0, 0, 0, 0.05);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-border-subtle: rgba(0, 0, 0, 0.05);
+  --glass-input-bg: rgba(0, 0, 0, 0.02);
+  --glass-input-border: rgba(0, 0, 0, 0.10);
+  --button-start: #2a1f5e;
+  --button-end: #1a1545;
+  --button-hover-start: #352870;
+  --button-hover-end: #221a55;
+  --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+  --card-glow: rgba(91, 91, 239, 0.04);
 }
 
 /* Tailwind Theme Integration */
@@ -184,6 +216,22 @@
   /* Input tokens */
   --color-input: var(--input-background);
   --color-input-border: var(--input-border);
+
+  /* Glass tokens (Sign-Up design system) */
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-bg-elevated: var(--glass-bg-elevated);
+  --color-glass-bg-deep: var(--glass-bg-deep);
+  --color-glass-bg-hover: var(--glass-bg-hover);
+  --color-glass-border: var(--glass-border);
+  --color-glass-border-subtle: var(--glass-border-subtle);
+  --color-glass-input-bg: var(--glass-input-bg);
+  --color-glass-input-border: var(--glass-input-border);
+  --color-button-start: var(--button-start);
+  --color-button-end: var(--button-end);
+  --color-button-hover-start: var(--button-hover-start);
+  --color-button-hover-end: var(--button-hover-end);
+  --shadow-glass: var(--glass-shadow);
+  --color-card-glow: var(--card-glow);
 
   /* Legacy tokens (for backward compatibility) */
   --color-ink-950: var(--surface);

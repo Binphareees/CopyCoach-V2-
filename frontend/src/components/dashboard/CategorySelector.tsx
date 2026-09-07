@@ -38,7 +38,7 @@ export default function CategorySelector({ value, onChange }: CategorySelectorPr
             className={`flex shrink-0 items-center gap-2 rounded-2xl border px-4 py-3 text-[13px] font-semibold transition-all duration-200 active:scale-[0.97] ${
               isActive
                 ? "border-transparent bg-accent text-white shadow-accent-soft"
-                : "border-line-soft bg-ink-800 text-brand-200 hover:border-line hover:bg-ink-700 hover:text-white"
+                : "border-glass-border bg-glass-bg-elevated text-brand-200 hover:border-glass-border hover:bg-glass-bg-hover hover:text-white"
             }`}
           >
             <Icon className={`h-4 w-4 ${isActive ? "text-white" : "text-brand-300"}`} />
