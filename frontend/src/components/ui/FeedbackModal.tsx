@@ -165,7 +165,7 @@ export default function FeedbackModal({
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-xl text-text-muted hover:text-text-primary hover:bg-slate-800 transition-all cursor-pointer"
+              className="absolute top-5 right-5 p-2 rounded-xl text-text-muted hover:text-text-primary hover:bg-surface-muted transition-all cursor-pointer"
               title="Close (Esc)"
             >
               <X className="w-5 h-5" />
@@ -186,7 +186,7 @@ export default function FeedbackModal({
             </div>
 
             {/* TAB SELECTOR */}
-            <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-2xl border border-slate-800 mb-4">
+            <div className="flex items-center gap-1 bg-surface p-1 rounded-2xl border border-border mb-4">
               <button
                 type="button"
                 onClick={() => setActiveTab("ai-support")}
@@ -222,7 +222,7 @@ export default function FeedbackModal({
                     value={supportQuestion}
                     onChange={(e) => setSupportQuestion(e.target.value)}
                     placeholder="Ask anything about copywriting, drills, or pricing..."
-                    className="flex-1 text-xs bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-text-primary placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                    className="flex-1 text-xs bg-surface border-border rounded-xl px-3.5 py-2.5 text-text-primary placeholder-text-muted focus:outline-none focus:border-cyan-500"
                   />
                   <button
                     type="submit"
@@ -236,22 +236,22 @@ export default function FeedbackModal({
                 {/* AI Q&A HISTORY STREAM */}
                 <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[260px]">
                   {aiAnswers.map((item, idx) => (
-                    <div key={idx} className="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 space-y-2 text-xs">
+                    <div key={idx} className="bg-surface/80 border border-border rounded-2xl p-3.5 space-y-2 text-xs">
                       <div className="flex items-center justify-between text-cyan-400 font-semibold">
                         <span className="flex items-center gap-1.5">
                           <Bot className="w-3.5 h-3.5 text-cyan-400" />
                           <span>Q: {item.q}</span>
                         </span>
-                        <span className="text-[10px] text-slate-500">{item.time}</span>
+                        <span className="text-[10px] text-text-muted">{item.time}</span>
                       </div>
-                      <p className="text-slate-300 whitespace-pre-wrap leading-relaxed">
+                      <p className="text-text-secondary whitespace-pre-wrap leading-relaxed">
                         {item.a}
                       </p>
                     </div>
                   ))}
                 </div>
 
-                <div className="pt-2.5 flex items-center justify-between text-[11px] text-slate-500 border-t border-slate-800/80">
+                <div className="pt-2.5 flex items-center justify-between text-[11px] text-text-muted border-t border-border/80">
                   <span className="flex items-center gap-1">
                     <Mail className="w-3 h-3 text-cyan-400" />
                     <span>Dispatched to slastbornn@gmail.com</span>
@@ -275,7 +275,7 @@ export default function FeedbackModal({
                   <div className="py-8 text-center space-y-3">
                     <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto animate-bounce" />
                     <h4 className="text-base font-bold text-text-primary">Ticket & Bug Report Submitted!</h4>
-                    <p className="text-xs text-slate-300">
+                    <p className="text-xs text-text-secondary">
                       Your report has been logged and queued for developer dispatch to <strong>slastbornn@gmail.com</strong>.
                     </p>
                   </div>
@@ -283,7 +283,7 @@ export default function FeedbackModal({
                   <form onSubmit={handleTicketSubmit} className="space-y-4">
                     {/* CATEGORY SELECTOR */}
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      <label className="block text-xs font-semibold text-text-secondary mb-1.5">
                         Ticket Category
                       </label>
                       <div className="grid grid-cols-4 gap-1.5">
@@ -295,7 +295,7 @@ export default function FeedbackModal({
                             className={`text-xs py-2 px-2 rounded-xl border font-medium transition-all cursor-pointer ${
                               category === cat
                                 ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold"
-                                : "bg-slate-800/50 border-slate-700/60 text-text-muted hover:text-slate-200"
+                                : "bg-surface border-border text-text-muted hover:text-text-primary"
                             }`}
                           >
                             {cat}
@@ -306,7 +306,7 @@ export default function FeedbackModal({
 
                     {/* DESCRIPTION */}
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      <label className="block text-xs font-semibold text-text-secondary mb-1.5">
                         Issue / Bug / Feedback Description
                       </label>
                       <textarea
@@ -314,7 +314,7 @@ export default function FeedbackModal({
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Describe what happened, error messages, or feature requests..."
-                        className="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-text-primary placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                        className="w-full text-xs bg-surface border-border rounded-xl p-3 text-text-primary placeholder-text-muted focus:outline-none focus:border-cyan-500"
                       />
                     </div>
 
@@ -327,7 +327,7 @@ export default function FeedbackModal({
                     )}
 
                     {/* USER TIER & EMAIL DISPATCH INFO */}
-                    <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 flex items-center justify-between text-[11px] text-text-muted">
+                    <div className="bg-surface p-2.5 rounded-xl border border-border/80 flex items-center justify-between text-[11px] text-text-muted">
                       <span>Tier: <strong className="text-cyan-400 uppercase">{userTier}</strong></span>
                       <span className="text-cyan-300 font-semibold flex items-center gap-1">
                         <Mail className="w-3 h-3 text-cyan-400" />

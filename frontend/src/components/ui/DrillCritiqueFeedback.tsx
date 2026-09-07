@@ -80,7 +80,7 @@ export default function DrillCritiqueFeedback({
 
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
-      <div className="flex items-center gap-3 text-xs text-slate-400">
+      <div className="flex items-center gap-3 text-xs text-text-muted">
         <span>Was this AI critique helpful?</span>
         <div className="flex items-center gap-1.5">
           <button
@@ -89,7 +89,7 @@ export default function DrillCritiqueFeedback({
             className={`p-1.5 rounded-md transition-all ${
               rating === "up"
                 ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
-                : "hover:bg-slate-800 text-slate-400 hover:text-white"
+                : "hover:bg-surface-muted text-text-muted hover:text-text-primary"
             }`}
             title="Helpful critique"
           >
@@ -101,7 +101,7 @@ export default function DrillCritiqueFeedback({
             className={`p-1.5 rounded-md transition-all ${
               rating === "down"
                 ? "bg-rose-500/20 text-rose-400 border border-rose-500/40"
-                : "hover:bg-slate-800 text-slate-400 hover:text-white"
+                : "hover:bg-surface-muted text-text-muted hover:text-text-primary"
             }`}
             title="Needs improvement"
           >
@@ -111,8 +111,8 @@ export default function DrillCritiqueFeedback({
       </div>
 
       {showTagSelector && (
-        <div className="mt-1 p-3 bg-slate-900/90 border border-slate-800 rounded-xl space-y-2 animate-fadeIn">
-          <p className="text-[11px] font-medium text-slate-300">
+        <div className="mt-1 p-3 bg-surface-elevated border border-border rounded-xl space-y-2 animate-fadeIn">
+          <p className="text-[11px] font-medium text-text-secondary">
             {rating === "down" ? "What went wrong with this critique?" : "What was most helpful?"}
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -124,7 +124,7 @@ export default function DrillCritiqueFeedback({
                 className={`text-[10px] px-2.5 py-1 rounded-full border transition-all ${
                   selectedTag === tag
                     ? "bg-cyan-500/20 border-cyan-400 text-cyan-300"
-                    : "bg-slate-800/60 border-slate-700/60 text-slate-400 hover:text-slate-200"
+                    : "bg-surface border-border text-text-muted hover:text-text-primary"
                 }`}
               >
                 {tag}
@@ -138,13 +138,13 @@ export default function DrillCritiqueFeedback({
               value={customComment}
               onChange={(e) => setCustomComment(e.target.value)}
               placeholder="Additional details (optional)..."
-              className="flex-1 text-xs bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+              className="flex-1 text-xs bg-surface border border-border rounded-lg px-2.5 py-1.5 text-text-primary placeholder-text-muted focus:outline-none focus:border-cyan-500"
             />
             <button
               type="button"
               onClick={handleSubmit}
               disabled={loading}
-              className="inline-flex items-center gap-1 text-xs bg-gradient-to-r from-[#1e1a3a] to-[#2a2550] hover:from-[#2a2550] hover:to-[#352e60] text-white font-medium px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-1 text-xs bg-gradient-to-r from-[#1e1a3a] to-[#2a2550] hover:from-[#2a2550] hover:to-[#352e60] text-text-primary font-medium px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
             >
               <Send className="w-3 h-3" />
               <span>{loading ? "Sending..." : "Submit"}</span>

@@ -626,7 +626,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen font-sans text-brand-100 selection:bg-accent selection:text-white">
+    <div className="min-h-screen font-sans text-brand-100 selection:bg-accent selection:text-text-primary">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-24 right-4 z-[60] flex items-center gap-2 border border-accent/40 bg-ink-800 px-4 py-3 text-sm font-medium text-brand-100 shadow-2xl lg:bottom-6 lg:right-6">
@@ -670,7 +670,7 @@ export default function DashboardPage() {
               <select
                 value={selectedProject}
                 onChange={(e) => setSelectedProject(e.target.value)}
-                className="bg-transparent font-medium text-white focus:outline-none"
+                className="bg-transparent font-medium text-text-primary focus:outline-none"
               >
                 <option value="" className="bg-ink-800 text-brand-100">Default Workspace</option>
                 {projects.map((p) => (
@@ -711,7 +711,7 @@ export default function DashboardPage() {
                 )}
               </div>
               <div className="hidden pr-1 text-left sm:block">
-                <p className="text-xs font-semibold leading-tight text-white">{fullName || "CopyCoach User"}</p>
+                <p className="text-xs font-semibold leading-tight text-text-primary">{fullName || "CopyCoach User"}</p>
                 <p className="mt-0.5 flex items-center gap-1 text-[11px] font-medium capitalize text-brand-300">
                   <span className={`h-1.5 w-1.5 rounded-full ${plan === "pro" ? "bg-amber-400" : "bg-accent-bright"}`} />
                   {plan === "pro" ? "Pro Plan" : "Free Plan"}
@@ -740,7 +740,7 @@ export default function DashboardPage() {
                         )}
                       </div>
                       <div className="overflow-hidden">
-                        <p className="truncate text-xs font-bold text-white">{fullName || "CopyCoach User"}</p>
+                        <p className="truncate text-xs font-bold text-text-primary">{fullName || "CopyCoach User"}</p>
                         <p className="mt-0.5 truncate text-[11px] text-brand-300">{userEmail || userId}</p>
                       </div>
                     </div>
@@ -763,7 +763,7 @@ export default function DashboardPage() {
                     <Link
                       href="/dashboard/admin/feedback"
                       onClick={() => setShowMenu(false)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <ShieldCheck className="h-4 w-4 text-amber-400" />
@@ -775,7 +775,7 @@ export default function DashboardPage() {
                     <Link
                       href="/dashboard/profile"
                       onClick={() => setShowMenu(false)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <UserCheck className="h-4 w-4 text-accent-bright" />
@@ -790,7 +790,7 @@ export default function DashboardPage() {
                         setProfileTab("brand_voice");
                         setShowProfileModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <Sliders className="h-4 w-4 text-accent-bright" />
@@ -805,7 +805,7 @@ export default function DashboardPage() {
                         setProfileTab("billing");
                         setShowProfileModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <CreditCard className="h-4 w-4 text-amber-400" />
@@ -829,7 +829,7 @@ export default function DashboardPage() {
                         setProfileTab("preferences");
                         setShowProfileModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         {isDarkMode ? <Moon className="h-4 w-4 text-accent-bright" /> : <Sun className="h-4 w-4 text-amber-400" />}
@@ -852,7 +852,7 @@ export default function DashboardPage() {
                         setShowMenu(false);
                         setShowShortcutsModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <Keyboard className="h-4 w-4 text-accent-bright" />
@@ -866,7 +866,7 @@ export default function DashboardPage() {
                         setShowMenu(false);
                         setShowSupportModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <HelpCircle className="h-4 w-4 text-accent-bright" />
@@ -930,7 +930,7 @@ export default function DashboardPage() {
             <p className="text-[13px] font-medium text-brand-300">
               Welcome back, {fullName.split(" ")[0] || "Creator"}
             </p>
-            <h1 className="mt-1 text-[26px] font-bold leading-tight tracking-tight text-white sm:text-3xl">
+            <h1 className="mt-1 text-[26px] font-bold leading-tight tracking-tight text-text-primary sm:text-3xl">
               Create high-converting copy in seconds
             </h1>
             <p className="mt-1.5 text-sm text-brand-200">
@@ -953,7 +953,7 @@ export default function DashboardPage() {
             </div>
             <div className="my-3">
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-extrabold text-white">{credits}</span>
+                <span className="text-3xl font-extrabold text-text-primary">{credits}</span>
                 <span className="text-xs text-brand-300">/ {plan === "pro" ? 100 : 5} left today</span>
               </div>
               <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-ink-800">
@@ -986,7 +986,7 @@ export default function DashboardPage() {
               <FileText className="h-4 w-4 text-accent-bright" />
             </div>
             <div className="my-3">
-              <div className="text-3xl font-extrabold text-white">{totalCopies}</div>
+              <div className="text-3xl font-extrabold text-text-primary">{totalCopies}</div>
               <p className="mt-1 text-xs text-brand-300">Saved in history library</p>
             </div>
             <span className="flex items-center gap-1 text-[11px] text-brand-300">
@@ -1002,7 +1002,7 @@ export default function DashboardPage() {
               <Star className="h-4 w-4 fill-amber-500/20 text-amber-500" />
             </div>
             <div className="my-3">
-              <div className="text-3xl font-extrabold text-white">{favoriteCount}</div>
+              <div className="text-3xl font-extrabold text-text-primary">{favoriteCount}</div>
               <p className="mt-1 text-xs text-brand-300">High-converting snippets</p>
             </div>
             <button
@@ -1020,7 +1020,7 @@ export default function DashboardPage() {
               <Layers className="h-4 w-4 text-accent-bright" />
             </div>
             <div className="my-3">
-              <div className="text-3xl font-extrabold text-white">{projects.length}</div>
+              <div className="text-3xl font-extrabold text-text-primary">{projects.length}</div>
               <p className="mt-1 text-xs text-brand-300">Organized campaigns</p>
             </div>
             <button
@@ -1039,7 +1039,7 @@ export default function DashboardPage() {
             {/* Panel Header */}
             <div className="flex items-center justify-between border-b border-ink-700 p-6">
               <div>
-                <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+                <h2 className="flex items-center gap-2 text-xl font-bold text-text-primary">
                   <Sparkles className="h-5 w-5 text-accent-bright" />
                   CopyCoach AI Studio
                 </h2>
@@ -1140,7 +1140,7 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between border-b border-ink-700 pb-4">
                   <div>
                     <span className="text-[11px] font-semibold uppercase tracking-wider text-brand-300">AI Copy Evaluation</span>
-                    <h3 className="mt-0.5 flex items-center gap-2 text-lg font-bold text-white">
+                    <h3 className="mt-0.5 flex items-center gap-2 text-lg font-bold text-text-primary">
                       <BarChart3 className="h-5 w-5 text-accent-bright" />
                       Optimization Score
                     </h3>
@@ -1294,7 +1294,7 @@ export default function DashboardPage() {
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl border border-accent/30 bg-ink-950 text-accent-bright">
                   <Sparkles className="h-8 w-8" />
                 </div>
-                <h3 className="mb-1 text-base font-semibold text-white">Awaiting Copy Analysis</h3>
+                <h3 className="mb-1 text-base font-semibold text-text-primary">Awaiting Copy Analysis</h3>
                 <p className="max-w-xs text-xs leading-relaxed text-brand-300">
                   Enter your offer on the left and click <strong className="text-brand-100">Generate AI Marketing Copy</strong> to receive AI scoring, strategic recommendations, and high-converting rewrites.
                 </p>
@@ -1308,7 +1308,7 @@ export default function DashboardPage() {
           <div className="rounded-3xl border border-line-soft bg-ink-900 p-5 sm:p-7">
             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
               <div>
-                <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+                <h2 className="flex items-center gap-2 text-xl font-bold text-text-primary">
                   <FileText className="h-5 w-5 text-accent-bright" />
                   Copy History & Saved Library
                 </h2>
@@ -1321,7 +1321,7 @@ export default function DashboardPage() {
                 {plan === "free" ? (
                   <button
                     onClick={upgradeToPro}
-                    className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-accent-deep to-accent-bright px-3.5 py-2 text-xs font-bold text-white shadow-accent-soft transition-colors hover:opacity-90"
+                    className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-accent-deep to-accent-bright px-3.5 py-2 text-xs font-bold text-text-primary shadow-accent-soft transition-colors hover:opacity-90"
                   >
                     Upgrade to Pro
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -1350,7 +1350,7 @@ export default function DashboardPage() {
                     className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
                       showFavorites
                         ? "border-amber-500/40 bg-amber-500/20 text-amber-400"
-                        : "border-line-soft bg-ink-950 text-brand-300 hover:text-white"
+                        : "border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
                     }`}
                   >
                     <Star className={`h-3.5 w-3.5 ${showFavorites ? "fill-amber-400" : ""}`} />
@@ -1385,7 +1385,7 @@ export default function DashboardPage() {
                             className={`rounded-lg border p-1.5 transition-colors ${
                               item.favorite
                                 ? "border-amber-500/40 bg-amber-500/20 text-amber-300"
-                                : "border-line-soft bg-ink-800 text-brand-300 hover:text-white"
+                                : "border-line-soft bg-ink-800 text-brand-300 hover:text-text-primary"
                             }`}
                             title="Star favorite"
                           >
@@ -1394,7 +1394,7 @@ export default function DashboardPage() {
 
                           <button
                             onClick={() => handleCopy(item.improved_text, item.id)}
-                            className="rounded-lg border border-line-soft bg-ink-800 p-1.5 text-brand-300 transition-colors hover:text-white"
+                            className="rounded-lg border border-line-soft bg-ink-800 p-1.5 text-brand-300 transition-colors hover:text-text-primary"
                             title="Copy text"
                           >
                             {copiedId === item.id ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
@@ -1402,7 +1402,7 @@ export default function DashboardPage() {
 
                           <button
                             onClick={() => handleDownload(item.improved_text, `${item.copy_type || "copy"}-improved.txt`)}
-                            className="rounded-lg border border-line-soft bg-ink-800 p-1.5 text-brand-300 transition-colors hover:text-white"
+                            className="rounded-lg border border-line-soft bg-ink-800 p-1.5 text-brand-300 transition-colors hover:text-text-primary"
                             title="Download"
                           >
                             <Download className="h-3.5 w-3.5" />
@@ -1451,7 +1451,7 @@ export default function DashboardPage() {
             className="w-full max-w-md rounded-3xl border border-ink-700 bg-ink-900 p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="mb-1 flex items-center gap-2 text-lg font-bold text-white">
+            <h3 className="mb-1 flex items-center gap-2 text-lg font-bold text-text-primary">
               <FolderPlus className="h-5 w-5 text-accent-bright" />
               Create New Project Workspace
             </h3>
@@ -1476,13 +1476,13 @@ export default function DashboardPage() {
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowProjectModal(false)}
-                className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-ink-800 hover:text-white"
+                className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-ink-800 hover:text-text-primary"
               >
                 Cancel
               </button>
               <button
                 onClick={createProject}
-                className="rounded-xl bg-gradient-to-r from-accent-deep to-accent-bright px-5 py-2 text-xs font-bold text-white shadow-accent-soft transition-colors hover:opacity-90"
+                className="rounded-xl bg-gradient-to-r from-accent-deep to-accent-bright px-5 py-2 text-xs font-bold text-text-primary shadow-accent-soft transition-colors hover:opacity-90"
               >
                 Create Project
               </button>
@@ -1508,13 +1508,13 @@ export default function DashboardPage() {
                   <UserCheck className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">Profile & Account Settings</h3>
+                  <h3 className="text-lg font-bold text-text-primary">Profile & Account Settings</h3>
                   <p className="text-xs text-brand-200">Manage your persona, brand voices, security, and preferences</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowProfileModal(false)}
-                className="rounded-xl p-2 text-brand-300 transition-colors hover:bg-ink-800 hover:text-white"
+                className="rounded-xl p-2 text-brand-300 transition-colors hover:bg-ink-800 hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1528,8 +1528,8 @@ export default function DashboardPage() {
                   onClick={() => setProfileTab("profile")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "profile"
-                      ? "bg-accent text-white shadow-accent-soft"
-                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-white"
+                      ? "bg-accent text-text-primary shadow-accent-soft"
+                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
                   }`}
                 >
                   <User className="h-4 w-4" />
@@ -1540,8 +1540,8 @@ export default function DashboardPage() {
                   onClick={() => setProfileTab("brand_voice")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "brand_voice"
-                      ? "bg-accent text-white shadow-accent-soft"
-                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-white"
+                      ? "bg-accent text-text-primary shadow-accent-soft"
+                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
                   }`}
                 >
                   <Sliders className="h-4 w-4" />
@@ -1552,8 +1552,8 @@ export default function DashboardPage() {
                   onClick={() => setProfileTab("preferences")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "preferences"
-                      ? "bg-accent text-white shadow-accent-soft"
-                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-white"
+                      ? "bg-accent text-text-primary shadow-accent-soft"
+                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
                   }`}
                 >
                   <Sun className="h-4 w-4" />
@@ -1564,8 +1564,8 @@ export default function DashboardPage() {
                   onClick={() => setProfileTab("security")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "security"
-                      ? "bg-accent text-white shadow-accent-soft"
-                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-white"
+                      ? "bg-accent text-text-primary shadow-accent-soft"
+                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
                   }`}
                 >
                   <ShieldCheck className="h-4 w-4" />
@@ -1576,8 +1576,8 @@ export default function DashboardPage() {
                   onClick={() => setProfileTab("billing")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "billing"
-                      ? "bg-accent text-white shadow-accent-soft"
-                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-white"
+                      ? "bg-accent text-text-primary shadow-accent-soft"
+                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
                   }`}
                 >
                   <CreditCard className="h-4 w-4" />
@@ -1588,8 +1588,8 @@ export default function DashboardPage() {
                   onClick={() => setProfileTab("support")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "support"
-                      ? "bg-accent text-white shadow-accent-soft"
-                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-white"
+                      ? "bg-accent text-text-primary shadow-accent-soft"
+                      : "border border-line-soft bg-ink-950 text-brand-300 hover:text-text-primary"
                   }`}
                 >
                   <LifeBuoy className="h-4 w-4" />
@@ -1724,7 +1724,7 @@ export default function DashboardPage() {
                         onClick={() => applyTheme("dark")}
                         className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-xs font-semibold transition-all ${
                           themeMode === "dark"
-                            ? "border-transparent bg-accent text-white shadow-accent-soft"
+                            ? "border-transparent bg-accent text-text-primary shadow-accent-soft"
                             : "border-line-soft bg-ink-950 text-brand-300 hover:bg-ink-800 hover:text-brand-100"
                         }`}
                       >
@@ -1750,7 +1750,7 @@ export default function DashboardPage() {
                         onClick={() => applyTheme("system")}
                         className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-xs font-semibold transition-all ${
                           themeMode === "system"
-                            ? "border-transparent bg-accent text-white shadow-accent-soft"
+                            ? "border-transparent bg-accent text-text-primary shadow-accent-soft"
                             : "border-line-soft bg-ink-950 text-brand-300 hover:bg-ink-800 hover:text-brand-100"
                         }`}
                       >
@@ -1809,7 +1809,7 @@ export default function DashboardPage() {
 
                   <div className="flex items-center justify-between rounded-xl border border-line-soft bg-ink-950 p-3">
                     <div>
-                      <p className="text-xs font-semibold text-white">Two-Factor Authentication (2FA)</p>
+                      <p className="text-xs font-semibold text-text-primary">Two-Factor Authentication (2FA)</p>
                       <p className="text-[11px] text-brand-300">Add an extra layer of security to your CopyCoach account</p>
                     </div>
                     <button
@@ -1834,7 +1834,7 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-accent/10 to-accent/10 p-4">
                     <div>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">Current Plan</span>
-                      <h4 className="text-lg font-bold capitalize text-white">{plan} Plan</h4>
+                      <h4 className="text-lg font-bold capitalize text-text-primary">{plan} Plan</h4>
                       <p className="mt-0.5 text-xs text-brand-200">
                         {plan === "pro" ? "100 AI Generations Daily" : "5 Free Generations Daily"}
                       </p>
@@ -1889,7 +1889,7 @@ export default function DashboardPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowProfileModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-ink-800 hover:text-white"
+                  className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-ink-800 hover:text-text-primary"
                 >
                   Close
                 </button>
@@ -1901,7 +1901,7 @@ export default function DashboardPage() {
                     showToast("Profile Settings Saved Successfully!");
                     setShowProfileModal(false);
                   }}
-                  className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-accent-deep to-accent-bright px-6 py-2 text-xs font-bold text-white shadow-accent-soft transition-colors hover:opacity-90"
+                  className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-accent-deep to-accent-bright px-6 py-2 text-xs font-bold text-text-primary shadow-accent-soft transition-colors hover:opacity-90"
                 >
                   <Save className="h-3.5 w-3.5" />
                   Save Changes
@@ -1923,13 +1923,13 @@ export default function DashboardPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between border-b border-ink-700 pb-3">
-              <h3 className="flex items-center gap-2 text-lg font-bold text-white">
+              <h3 className="flex items-center gap-2 text-lg font-bold text-text-primary">
                 <Keyboard className="h-5 w-5 text-accent-bright" />
                 Keyboard Shortcuts & Productivity
               </h3>
               <button
                 onClick={() => setShowShortcutsModal(false)}
-                className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-ink-800 hover:text-white"
+                className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-ink-800 hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1972,7 +1972,7 @@ export default function DashboardPage() {
             <div className="flex justify-end">
               <button
                 onClick={() => setShowShortcutsModal(false)}
-                className="rounded-xl bg-ink-800 px-5 py-2 text-xs font-medium text-white transition-colors hover:bg-ink-700"
+                className="rounded-xl bg-ink-800 px-5 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-ink-700"
               >
                 Close
               </button>
@@ -1986,13 +1986,13 @@ export default function DashboardPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/80 p-4 backdrop-blur-sm">
           <div className="w-full max-w-lg rounded-3xl border border-ink-700 bg-ink-900 p-6 shadow-2xl">
             <div className="mb-4 flex items-center justify-between border-b border-ink-700 pb-3">
-              <h3 className="flex items-center gap-2 text-lg font-bold text-white">
+              <h3 className="flex items-center gap-2 text-lg font-bold text-text-primary">
                 <HelpCircle className="h-5 w-5 text-accent-bright" />
                 CopyCoach AI Support & Feedback
               </h3>
               <button
                 onClick={() => setShowSupportModal(false)}
-                className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-ink-800 hover:text-white"
+                className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-ink-800 hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -2033,7 +2033,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowSupportModal(false)}
-                className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-ink-800 hover:text-white"
+                className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-ink-800 hover:text-text-primary"
               >
                 Cancel
               </button>
@@ -2044,7 +2044,7 @@ export default function DashboardPage() {
                   setSupportMessage("");
                   showToast("Support ticket submitted! We'll reply via email.");
                 }}
-                className="rounded-xl bg-gradient-to-r from-accent-deep to-accent-bright px-5 py-2 text-xs font-bold text-white shadow-accent-soft transition-colors hover:opacity-90"
+                className="rounded-xl bg-gradient-to-r from-accent-deep to-accent-bright px-5 py-2 text-xs font-bold text-text-primary shadow-accent-soft transition-colors hover:opacity-90"
               >
                 Send Message
               </button>

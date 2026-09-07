@@ -406,7 +406,7 @@ export default function ProfilePage() {
   return (
     <main className="min-h-screen text-text-primary font-sans pb-16">
       {/* Top Banner & Header */}
-      <div className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-30">
+      <div className="border-b border-border bg-navbar-bg backdrop-blur-md sticky top-0 z-30">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <button
             onClick={() => router.push("/dashboard")}
@@ -455,7 +455,7 @@ export default function ProfilePage() {
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10">
             {/* Avatar with Camera Overlay */}
             <div className="relative group shrink-0">
-              <div className="h-28 w-28 rounded-2xl overflow-hidden bg-slate-800 border-2 border-indigo-500/30 shadow-xl relative">
+              <div className="h-28 w-28 rounded-2xl overflow-hidden bg-surface border-2 border-indigo-500/30 shadow-xl relative">
                 {avatar ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
@@ -469,7 +469,7 @@ export default function ProfilePage() {
                   </div>
                 )}
                 {uploading && (
-                  <div className="absolute inset-0 bg-slate-950/80 flex items-center justify-center text-xs text-indigo-300 font-medium">
+                  <div className="absolute inset-0 bg-surface/80 flex items-center justify-center text-xs text-indigo-300 font-medium">
                     Uploading...
                   </div>
                 )}
@@ -497,7 +497,7 @@ export default function ProfilePage() {
                   className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
                     plan === "pro"
                       ? "bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/30 text-amber-300"
-                      : "bg-slate-800 border border-slate-700 text-slate-300"
+                      : "bg-surface border border-border text-text-secondary"
                   }`}
                 >
                   {plan === "pro" ? "⚡ Pro Plan" : "Free Member"}
@@ -505,12 +505,12 @@ export default function ProfilePage() {
               </div>
 
               <p className="text-text-muted text-sm flex items-center justify-center sm:justify-start gap-2 mb-4">
-                <Mail className="w-4 h-4 text-slate-500" />
+                <Mail className="w-4 h-4 text-text-muted" />
                 <span>{email}</span>
                 {createdAt && (
                   <>
-                    <span className="text-slate-600">•</span>
-                    <Calendar className="w-4 h-4 text-slate-500 ml-1" />
+                    <span className="text-text-muted">•</span>
+                    <Calendar className="w-4 h-4 text-text-muted ml-1" />
                     <span>Member since {createdAt}</span>
                   </>
                 )}
@@ -527,12 +527,12 @@ export default function ProfilePage() {
                     <span>Remove Photo</span>
                   </button>
                 )}
-                <span className="text-xs text-text-muted bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60">
-                  Role: <strong className="text-slate-200 font-medium">{role}</strong>
+                <span className="text-xs text-text-muted bg-surface/80 px-3 py-1.5 rounded-lg border border-border/60">
+                  Role: <strong className="text-text-primary font-medium">{role}</strong>
                 </span>
                 {company && (
-                  <span className="text-xs text-text-muted bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60">
-                    Company: <strong className="text-slate-200 font-medium">{company}</strong>
+                  <span className="text-xs text-text-muted bg-surface/80 px-3 py-1.5 rounded-lg border border-border/60">
+                    Company: <strong className="text-text-primary font-medium">{company}</strong>
                   </span>
                 )}
               </div>
@@ -541,13 +541,13 @@ export default function ProfilePage() {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-4 mb-8 overflow-x-auto scrollbar-none">
+        <div className="flex flex-wrap items-center gap-2 border-b border-border pb-4 mb-8 overflow-x-auto scrollbar-none">
           <button
             onClick={() => setActiveTab("profile")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "profile"
                 ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
-                : "bg-slate-900/60 text-text-muted hover:text-slate-200 hover:bg-surface-muted border border-slate-800/80"
+                : "bg-surface-elevated text-text-muted hover:text-text-primary hover:bg-surface-muted border border-border"
             }`}
           >
             <User className="w-4 h-4" />
@@ -559,7 +559,7 @@ export default function ProfilePage() {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "brand_voice"
                 ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
-                : "bg-slate-900/60 text-text-muted hover:text-slate-200 hover:bg-surface-muted border border-slate-800/80"
+                : "bg-surface-elevated text-text-muted hover:text-text-primary hover:bg-surface-muted border border-border"
             }`}
           >
             <Sparkles className="w-4 h-4" />
@@ -571,7 +571,7 @@ export default function ProfilePage() {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "security"
                 ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
-                : "bg-slate-900/60 text-text-muted hover:text-slate-200 hover:bg-surface-muted border border-slate-800/80"
+                : "bg-surface-elevated text-text-muted hover:text-text-primary hover:bg-surface-muted border border-border"
             }`}
           >
             <ShieldCheck className="w-4 h-4" />
@@ -583,7 +583,7 @@ export default function ProfilePage() {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "preferences"
                 ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
-                : "bg-slate-900/60 text-text-muted hover:text-slate-200 hover:bg-surface-muted border border-slate-800/80"
+                : "bg-surface-elevated text-text-muted hover:text-text-primary hover:bg-surface-muted border border-border"
             }`}
           >
             <Sliders className="w-4 h-4" />
@@ -595,7 +595,7 @@ export default function ProfilePage() {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "billing"
                 ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
-                : "bg-slate-900/60 text-text-muted hover:text-slate-200 hover:bg-surface-muted border border-slate-800/80"
+                : "bg-surface-elevated text-text-muted hover:text-text-primary hover:bg-surface-muted border border-border"
             }`}
           >
             <CreditCard className="w-4 h-4" />
@@ -607,7 +607,7 @@ export default function ProfilePage() {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "support"
                 ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
-                : "bg-slate-900/60 text-text-muted hover:text-slate-200 hover:bg-surface-muted border border-slate-800/80"
+                : "bg-surface-elevated text-text-muted hover:text-text-primary hover:bg-surface-muted border border-border"
             }`}
           >
             <LifeBuoy className="w-4 h-4" />
@@ -630,28 +630,28 @@ export default function ProfilePage() {
                     Full Name
                   </label>
                   <div className="relative">
-                    <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                    <User className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Sarah Jenkins"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                      className="w-full bg-surface border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Email Address <span className="text-slate-500 lowercase">(Primary)</span>
+                    Email Address <span className="text-text-muted lowercase">(Primary)</span>
                   </label>
                   <div className="relative">
-                    <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                    <Mail className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
                     <input
                       type="email"
                       value={email}
                       disabled
-                      className="w-full bg-slate-950/60 border border-slate-800/80 rounded-xl pl-10 pr-4 py-2.5 text-text-muted text-sm cursor-not-allowed"
+                      className="w-full bg-surface/60 border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-muted text-sm cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -661,13 +661,13 @@ export default function ProfilePage() {
                     Professional Role / Job Title
                   </label>
                   <div className="relative">
-                    <Briefcase className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                    <Briefcase className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
                     <input
                       type="text"
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
                       placeholder="e.g. Senior Conversion Copywriter"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                      className="w-full bg-surface border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                     />
                   </div>
                 </div>
@@ -677,13 +677,13 @@ export default function ProfilePage() {
                     Company or Organization
                   </label>
                   <div className="relative">
-                    <Building className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                    <Building className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
                     <input
                       type="text"
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
                       placeholder="e.g. Apex Copy Studio"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                      className="w-full bg-surface border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                     />
                   </div>
                 </div>
@@ -697,12 +697,12 @@ export default function ProfilePage() {
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
                     placeholder="Tell us a little bit about your copywriting focus or business goals..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-slate-100 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                    className="w-full bg-surface border border-border rounded-xl p-3.5 text-text-primary text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                   />
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-slate-800 flex justify-end">
+              <div className="mt-8 pt-6 border-t border-border flex justify-end">
                 <button
                   onClick={saveProfile}
                   disabled={loading}
@@ -738,7 +738,7 @@ export default function ProfilePage() {
                   <select
                     value={defaultTone}
                     onChange={(e) => setDefaultTone(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer"
+                    className="w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer"
                   >
                     <option value="Professional & Direct">Professional & Direct</option>
                     <option value="Conversational & Friendly">Conversational & Friendly</option>
@@ -755,11 +755,11 @@ export default function ProfilePage() {
                     Preferred Output Language
                   </label>
                   <div className="relative">
-                    <Globe className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                    <Globe className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
                     <select
                       value={preferredLanguage}
                       onChange={(e) => setPreferredLanguage(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer"
+                      className="w-full bg-surface border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer"
                     >
                       <option value="English (US)">English (US)</option>
                       <option value="English (UK)">English (UK)</option>
@@ -780,7 +780,7 @@ export default function ProfilePage() {
                     value={targetAudience}
                     onChange={(e) => setTargetAudience(e.target.value)}
                     placeholder="e.g. B2B Founders, Marketing Directors"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                    className="w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                   />
                 </div>
 
@@ -793,7 +793,7 @@ export default function ProfilePage() {
                     value={brandNiche}
                     onChange={(e) => setBrandNiche(e.target.value)}
                     placeholder="e.g. E-commerce, SaaS, Fitness, Finance"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                    className="w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                   />
                 </div>
 
@@ -806,12 +806,12 @@ export default function ProfilePage() {
                     value={brandGuidelines}
                     onChange={(e) => setBrandGuidelines(e.target.value)}
                     placeholder="Enter specific rules, key selling points, words to avoid, or brand guidelines..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-slate-100 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                    className="w-full bg-surface border border-border rounded-xl p-3.5 text-text-primary text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                   />
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-slate-800 flex justify-end">
+              <div className="mt-8 pt-6 border-t border-border flex justify-end">
                 <button
                   onClick={saveProfile}
                   disabled={loading}
@@ -844,18 +844,18 @@ export default function ProfilePage() {
                     New Password
                   </label>
                   <div className="relative">
-                    <Key className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                    <Key className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
                     <input
                       type={showPassword ? "text" : "password"}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="Minimum 6 characters"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                      className="w-full bg-surface border border-border rounded-xl pl-10 pr-10 py-2.5 text-text-primary text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-3 text-slate-500 hover:text-slate-300"
+                      className="absolute right-3.5 top-3 text-text-muted hover:text-text-secondary"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -867,13 +867,13 @@ export default function ProfilePage() {
                     Confirm New Password
                   </label>
                   <div className="relative">
-                    <Key className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                    <Key className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
                     <input
                       type={showPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Re-enter new password"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                      className="w-full bg-surface border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                     />
                   </div>
                 </div>
@@ -896,7 +896,7 @@ export default function ProfilePage() {
               <div className="divide-y divide-slate-800">
                 <div className="py-4 flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-medium text-slate-200">Two-Factor Authentication (2FA)</div>
+                    <div className="text-sm font-medium text-text-primary">Two-Factor Authentication (2FA)</div>
                     <div className="text-xs text-text-muted mt-0.5">
                       Add an additional layer of protection using authenticator apps
                     </div>
@@ -910,7 +910,7 @@ export default function ProfilePage() {
                       );
                     }}
                     className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      twoFactorEnabled ? "bg-emerald-500" : "bg-slate-800"
+                      twoFactorEnabled ? "bg-emerald-500" : "bg-surface"
                     }`}
                   >
                     <span
@@ -922,14 +922,14 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="pt-4">
-                  <div className="text-sm font-medium text-slate-200 mb-3">Active Login Sessions</div>
+                  <div className="text-sm font-medium text-text-primary mb-3">Active Login Sessions</div>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800/80 text-xs">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-surface border border-border/80 text-xs">
                       <div className="flex items-center gap-3">
                         <Laptop className="w-4 h-4 text-emerald-400" />
                         <div>
-                          <div className="font-medium text-slate-200">Current Web Browser Session</div>
-                          <div className="text-slate-500">Active Now • Cloud Run Container</div>
+                          <div className="font-medium text-text-primary">Current Web Browser Session</div>
+                          <div className="text-text-muted">Active Now • Cloud Run Container</div>
                         </div>
                       </div>
                       <span className="text-emerald-400 font-medium bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/50">
@@ -937,12 +937,12 @@ export default function ProfilePage() {
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 text-xs">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-surface/60 border border-border text-xs">
                       <div className="flex items-center gap-3">
                         <Smartphone className="w-4 h-4 text-text-muted" />
                         <div>
-                          <div className="font-medium text-slate-300">Mobile Companion Web App</div>
-                          <div className="text-slate-500">Last seen 2 days ago</div>
+                          <div className="font-medium text-text-secondary">Mobile Companion Web App</div>
+                          <div className="text-text-muted">Last seen 2 days ago</div>
                         </div>
                       </div>
                       <button
@@ -985,7 +985,7 @@ export default function ProfilePage() {
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                         themeMode === "dark"
                           ? "bg-indigo-600/20 border-indigo-500 text-indigo-200 ring-2 ring-indigo-500/30"
-                          : "bg-surface border-border text-text-muted hover:text-slate-200 hover:bg-slate-900"
+                          : "bg-surface border-border text-text-muted hover:text-text-primary hover:bg-surface-elevated"
                       }`}
                     >
                       <Moon className="w-4 h-4 text-indigo-400" />
@@ -1002,7 +1002,7 @@ export default function ProfilePage() {
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                         themeMode === "light"
                           ? "bg-amber-500/20 border-amber-500 text-amber-200 ring-2 ring-amber-500/30"
-                          : "bg-surface border-border text-text-muted hover:text-slate-200 hover:bg-slate-900"
+                          : "bg-surface border-border text-text-muted hover:text-text-primary hover:bg-surface-elevated"
                       }`}
                     >
                       <Sun className="w-4 h-4 text-amber-400" />
@@ -1019,7 +1019,7 @@ export default function ProfilePage() {
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                         themeMode === "system"
                           ? "bg-purple-600/20 border-purple-500 text-purple-200 ring-2 ring-purple-500/30"
-                          : "bg-surface border-border text-text-muted hover:text-slate-200 hover:bg-slate-900"
+                          : "bg-surface border-border text-text-muted hover:text-text-primary hover:bg-surface-elevated"
                       }`}
                     >
                       <Laptop className="w-4 h-4 text-purple-400" />
@@ -1035,7 +1035,7 @@ export default function ProfilePage() {
                   <select
                     value={preferredModel}
                     onChange={(e) => setPreferredModel(e.target.value)}
-                    className="w-full sm:w-1/2 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all cursor-pointer"
+                    className="w-full sm:w-1/2 bg-surface border border-border rounded-xl px-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all cursor-pointer"
                   >
                     <option value="Gemini 2.5 Flash (Recommended)">
                       Gemini 2.5 Flash (Fast & High Intelligence)
@@ -1045,10 +1045,10 @@ export default function ProfilePage() {
                   </select>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800 divide-y divide-slate-800">
+                <div className="pt-4 border-t border-border divide-y divide-slate-800">
                   <div className="py-4 flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-slate-200">Auto-Save Copy Generation History</div>
+                      <div className="text-sm font-medium text-text-primary">Auto-Save Copy Generation History</div>
                       <div className="text-xs text-text-muted mt-0.5">
                         Automatically record improved copy generations to your history workspace
                       </div>
@@ -1057,7 +1057,7 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => setAutoSaveHistory(!autoSaveHistory)}
                       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        autoSaveHistory ? "bg-purple-600" : "bg-slate-800"
+                        autoSaveHistory ? "bg-purple-600" : "bg-surface"
                       }`}
                     >
                       <span
@@ -1070,7 +1070,7 @@ export default function ProfilePage() {
 
                   <div className="py-4 flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-slate-200">Email Marketing & Strategy Updates</div>
+                      <div className="text-sm font-medium text-text-primary">Email Marketing & Strategy Updates</div>
                       <div className="text-xs text-text-muted mt-0.5">
                         Receive weekly copywriting frameworks and feature releases
                       </div>
@@ -1079,7 +1079,7 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => setEmailUpdates(!emailUpdates)}
                       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        emailUpdates ? "bg-purple-600" : "bg-slate-800"
+                        emailUpdates ? "bg-purple-600" : "bg-surface"
                       }`}
                     >
                       <span
@@ -1092,7 +1092,7 @@ export default function ProfilePage() {
 
                   <div className="py-4 flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-slate-200">Usage Limit Notifications</div>
+                      <div className="text-sm font-medium text-text-primary">Usage Limit Notifications</div>
                       <div className="text-xs text-text-muted mt-0.5">
                         Alert when monthly generation credits reach 80% threshold
                       </div>
@@ -1101,7 +1101,7 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => setUsageAlerts(!usageAlerts)}
                       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        usageAlerts ? "bg-purple-600" : "bg-slate-800"
+                        usageAlerts ? "bg-purple-600" : "bg-surface"
                       }`}
                     >
                       <span
@@ -1114,7 +1114,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-slate-800 flex justify-end">
+              <div className="mt-8 pt-6 border-t border-border flex justify-end">
                 <button
                   onClick={saveProfile}
                   disabled={loading}
@@ -1144,7 +1144,7 @@ export default function ProfilePage() {
                 <h3 className="text-2xl font-bold text-text-primary mb-2">
                   {plan === "pro" ? "Pro Copywriter Tier" : "Free Starter Tier"}
                 </h3>
-                <p className="text-slate-300 text-sm mb-6 max-w-md">
+                <p className="text-text-secondary text-sm mb-6 max-w-md">
                   {plan === "pro"
                     ? "Unlimited access to all copywriting frameworks, AI tone customization, and priority AI model execution."
                     : "Basic access to standard copy improvement algorithms with limited monthly generations."}
@@ -1163,17 +1163,17 @@ export default function ProfilePage() {
               {/* Usage Gauge Card */}
               <div className="bg-surface-elevated border border-border rounded-2xl p-6 flex flex-col justify-between">
                 <div>
-                  <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  <h4 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-2">
                     Monthly Credits Used
                   </h4>
                   <div className="text-3xl font-extrabold text-text-primary mb-1">
-                    {monthlyUsed} <span className="text-slate-500 text-lg font-normal">/ {totalCredits}</span>
+                    {monthlyUsed} <span className="text-text-muted text-lg font-normal">/ {totalCredits}</span>
                   </div>
                   <p className="text-xs text-text-muted">Generations reset on the 1st of every month.</p>
                 </div>
 
                 <div className="mt-6">
-                  <div className="w-full bg-slate-800 rounded-full h-3 overflow-hidden">
+                  <div className="w-full bg-surface rounded-full h-3 overflow-hidden">
                     <div
                       className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full transition-all duration-500"
                       style={{ width: `${Math.min(100, (monthlyUsed / totalCredits) * 100)}%` }}
@@ -1189,7 +1189,7 @@ export default function ProfilePage() {
             {/* Invoices & History placeholder */}
             <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
               <h3 className="text-lg font-semibold text-text-primary mb-4">Billing History & Receipts</h3>
-              <div className="text-sm text-text-muted py-6 text-center border border-dashed border-slate-800 rounded-xl">
+              <div className="text-sm text-text-muted py-6 text-center border border-dashed border-border rounded-xl">
                 No previous manual invoices found. Billing is managed automatically via Supabase/Paystack.
               </div>
             </div>
@@ -1201,7 +1201,7 @@ export default function ProfilePage() {
           <div className="space-y-6">
             {/* System Status Banner */}
             <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-800">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 pb-6 border-b border-border">
                 <div>
                   <h2 className="text-xl font-semibold text-text-primary flex items-center gap-2">
                     <LifeBuoy className="w-5 h-5 text-blue-400" />
@@ -1220,7 +1220,7 @@ export default function ProfilePage() {
 
               {/* Status Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <div className="bg-surface p-4 rounded-xl border border-border">
                   <div className="flex items-center justify-between text-xs text-text-muted mb-1">
                     <span>Copy Engine API</span>
                     <span className="text-emerald-400 font-medium">99.98%</span>
@@ -1231,7 +1231,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <div className="bg-surface p-4 rounded-xl border border-border">
                   <div className="flex items-center justify-between text-xs text-text-muted mb-1">
                     <span>Database & Auth</span>
                     <span className="text-emerald-400 font-medium">100% Uptime</span>
@@ -1242,7 +1242,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <div className="bg-surface p-4 rounded-xl border border-border">
                   <div className="flex items-center justify-between text-xs text-text-muted mb-1">
                     <span>Platform Build</span>
                     <span className="text-indigo-400 font-medium">v2.5.0-pro</span>
@@ -1257,7 +1257,7 @@ export default function ProfilePage() {
               {/* Support Ticket Form & Direct Contact */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Submit Ticket */}
-                <div className="lg:col-span-2 bg-slate-950/80 p-6 rounded-2xl border border-slate-800/80">
+                <div className="lg:col-span-2 bg-surface/80 p-6 rounded-2xl border border-border/80">
                   <h3 className="text-lg font-semibold text-text-primary mb-2 flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-blue-400" />
                     <span>Submit Support Ticket</span>
@@ -1275,7 +1275,7 @@ export default function ProfilePage() {
                         <select
                           value={supportCategory}
                           onChange={(e) => setSupportCategory(e.target.value)}
-                          className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-blue-500 cursor-pointer"
+                          className="w-full bg-surface-elevated border border-border rounded-xl px-3.5 py-2.5 text-text-primary text-sm focus:outline-none focus:border-blue-500 cursor-pointer"
                         >
                           <option value="Technical & AI Generation">Technical & AI Generation</option>
                           <option value="Account & Subscription">Account & Subscription</option>
@@ -1293,7 +1293,7 @@ export default function ProfilePage() {
                           value={supportSubject}
                           onChange={(e) => setSupportSubject(e.target.value)}
                           placeholder="e.g. Issue with tone customizer"
-                          className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                          className="w-full bg-surface-elevated border border-border rounded-xl px-3.5 py-2.5 text-text-primary text-sm focus:outline-none focus:border-blue-500"
                         />
                       </div>
                     </div>
@@ -1307,7 +1307,7 @@ export default function ProfilePage() {
                         value={supportMessage}
                         onChange={(e) => setSupportMessage(e.target.value)}
                         placeholder="Describe your request or bug in detail..."
-                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-blue-500 resize-none"
+                        className="w-full bg-surface-elevated border border-border rounded-xl px-3.5 py-2.5 text-text-primary text-sm focus:outline-none focus:border-blue-500 resize-none"
                       />
                     </div>
 
@@ -1324,7 +1324,7 @@ export default function ProfilePage() {
 
                 {/* Direct Contact & Resources */}
                 <div className="space-y-4">
-                  <div className="bg-slate-950/80 p-5 rounded-2xl border border-slate-800/80">
+                  <div className="bg-surface/80 p-5 rounded-2xl border border-border/80">
                     <h4 className="text-sm font-semibold text-text-primary mb-2 flex items-center gap-2">
                       <Mail className="w-4 h-4 text-indigo-400" />
                       <span>Direct Email Support</span>
@@ -1341,7 +1341,7 @@ export default function ProfilePage() {
                     </a>
                   </div>
 
-                  <div className="bg-slate-950/80 p-5 rounded-2xl border border-slate-800/80">
+                  <div className="bg-surface/80 p-5 rounded-2xl border border-border/80">
                     <h4 className="text-sm font-semibold text-text-primary mb-2 flex items-center gap-2">
                       <BookOpen className="w-4 h-4 text-amber-400" />
                       <span>Copywriting Playbooks</span>

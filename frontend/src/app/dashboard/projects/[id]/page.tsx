@@ -187,21 +187,21 @@ export default function ProjectPage() {
   });
 
   return (
-    <div className="min-h-screen text-slate-100 flex flex-col font-sans pb-16">
+    <div className="min-h-screen text-text-primary flex flex-col font-sans pb-16">
       {/* TOP HEADER */}
-      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-20">
+      <header className="border-b border-border bg-surface-elevated backdrop-blur sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <Logo theme="dark" size="sm" showTagline={false} />
             </Link>
-            <span className="text-slate-600">/</span>
-            <span className="text-xs font-semibold text-slate-400">Project View</span>
+            <span className="text-text-muted">/</span>
+            <span className="text-xs font-semibold text-text-muted">Project View</span>
           </div>
 
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors bg-slate-800/80 px-3.5 py-2 rounded-xl border border-slate-700 hover:bg-slate-800"
+            className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-text-primary transition-colors bg-surface px-3.5 py-2 rounded-xl border border-border hover:bg-surface-muted"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Return to Dashboard</span>
@@ -212,7 +212,7 @@ export default function ProjectPage() {
       {/* MAIN CONTENT CONTAINER */}
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         {/* PROJECT HERO CARD */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 relative overflow-hidden">
+        <div className="bg-surface-elevated border border-border rounded-3xl p-6 sm:p-8 mb-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -228,13 +228,13 @@ export default function ProjectPage() {
                       type="text"
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="text-xl font-bold bg-slate-950 border border-cyan-500 rounded-xl px-3 py-1.5 text-white focus:outline-none"
+                      className="text-xl font-bold bg-surface border border-cyan-500 rounded-xl px-3 py-1.5 text-text-primary focus:outline-none"
                       autoFocus
                     />
                     <button
                       type="button"
                       onClick={renameProject}
-                      className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl transition-colors cursor-pointer"
+                      className="bg-cyan-500 hover:bg-cyan-400 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition-colors cursor-pointer"
                     >
                       Save
                     </button>
@@ -244,37 +244,37 @@ export default function ProjectPage() {
                         setEditing(false);
                         setEditName(project?.name || "");
                       }}
-                      className="text-xs text-slate-400 hover:text-white px-3 py-2"
+                      className="text-xs text-text-muted hover:text-text-primary px-3 py-2"
                     >
                       Cancel
                     </button>
                   </div>
                 ) : (
                   <div className="flex items-center gap-3">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">
                       {project?.name || "Project Workspace"}
                     </h1>
                     <button
                       type="button"
                       onClick={() => setEditing(true)}
                       title="Rename Project"
-                      className="p-1.5 text-slate-400 hover:text-cyan-400 rounded-lg hover:bg-slate-800/80 transition-colors"
+                      className="p-1.5 text-text-muted hover:text-cyan-400 rounded-lg hover:bg-surface transition-colors"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                   </div>
                 )}
 
-                <div className="flex items-center gap-3 mt-2 text-xs text-slate-400">
+                <div className="flex items-center gap-3 mt-2 text-xs text-text-muted">
                   <span className="flex items-center gap-1.5">
-                    <FileText className="w-3.5 h-3.5 text-slate-500" />
+                    <FileText className="w-3.5 h-3.5 text-text-muted" />
                     <strong>{history.length}</strong> {history.length === 1 ? "saved copy" : "saved copies"}
                   </span>
                   {project?.created_at && (
                     <>
                       <span>•</span>
                       <span className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-slate-500" />
+                        <Clock className="w-3.5 h-3.5 text-text-muted" />
                         Created on {new Date(project.created_at).toLocaleDateString()}
                       </span>
                     </>
@@ -297,42 +297,42 @@ export default function ProjectPage() {
         </div>
 
         {/* SEARCH & FILTERS */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 mb-6 flex items-center justify-between gap-4">
+        <div className="bg-surface-elevated border border-border rounded-2xl p-4 mb-6 flex items-center justify-between gap-4">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search copies by text, framework, tone, or type..."
-              className="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
+              className="w-full text-xs bg-surface border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-primary placeholder-text-muted focus:outline-none focus:border-cyan-500 transition-colors"
             />
           </div>
 
-          <span className="text-xs text-slate-400 whitespace-nowrap hidden sm:block">
+          <span className="text-xs text-text-muted whitespace-nowrap hidden sm:block">
             Showing {filteredHistory.length} of {history.length}
           </span>
         </div>
 
         {/* COPIES LIST */}
         {loading ? (
-          <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-12 text-center text-slate-400 text-sm">
+          <div className="bg-navbar-bg/40 border border-border rounded-2xl p-12 text-center text-text-muted text-sm">
             Loading project data...
           </div>
         ) : filteredHistory.length === 0 ? (
-          <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center">
-            <FileText className="w-12 h-12 text-slate-600 mb-3" />
-            <h3 className="text-base font-bold text-white mb-1">
+          <div className="bg-navbar-bg/40 border border-border rounded-2xl p-12 text-center flex flex-col items-center">
+            <FileText className="w-12 h-12 text-text-muted mb-3" />
+            <h3 className="text-base font-bold text-text-primary mb-1">
               {search.trim() ? "No matching copy found" : "No copies in this project yet"}
             </h3>
-            <p className="text-xs text-slate-400 max-w-sm mb-6">
+            <p className="text-xs text-text-muted max-w-sm mb-6">
               {search.trim()
                 ? "Try searching for a different keyword or clearing your filter."
                 : "Head back to the CopyCoach AI Dashboard to generate and save your high-converting copy here."}
             </p>
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1e1a3a] to-[#2a2550] hover:from-[#2a2550] hover:to-[#352e60] text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-lg"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1e1a3a] to-[#2a2550] hover:from-[#2a2550] hover:to-[#352e60] text-text-primary font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-lg"
             >
               <Sparkles className="w-4 h-4" />
               <span>Create New Copy</span>
@@ -343,12 +343,12 @@ export default function ProjectPage() {
             {filteredHistory.map((item) => (
               <div
                 key={item.id}
-                className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all shadow-lg"
+                className="bg-surface-elevated border border-border rounded-2xl p-5 hover:border-border transition-all shadow-lg"
               >
                 {/* TOP META ROW */}
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-3 mb-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 mb-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-white bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700">
+                    <span className="text-xs font-bold text-text-primary bg-surface px-2.5 py-1 rounded-lg border border-border">
                       {item.copy_type || "Copywriting"}
                     </span>
                     {item.tone && (
@@ -366,7 +366,7 @@ export default function ProjectPage() {
 
                   <div className="flex items-center gap-2">
                     {item.created_at && (
-                      <span className="text-[11px] text-slate-500 mr-2">
+                      <span className="text-[11px] text-text-muted mr-2">
                         {new Date(item.created_at).toLocaleDateString()}
                       </span>
                     )}
@@ -378,7 +378,7 @@ export default function ProjectPage() {
                       className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
                         item.favorite
                           ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
-                          : "bg-slate-800/60 text-slate-400 border-slate-700 hover:text-amber-300"
+                          : "bg-surface text-text-muted border-border hover:text-amber-300"
                       }`}
                     >
                       <Star className={`w-3.5 h-3.5 ${item.favorite ? "fill-amber-400" : ""}`} />
@@ -387,7 +387,7 @@ export default function ProjectPage() {
                     <button
                       type="button"
                       onClick={() => handleCopyText(item.improved_text || item.original_text || "", item.id)}
-                      className="inline-flex items-center gap-1 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1 text-xs bg-surface hover:bg-surface-muted text-text-secondary px-3 py-1.5 rounded-lg border border-border transition-colors cursor-pointer"
                     >
                       {copiedId === item.id ? (
                         <>
@@ -414,7 +414,7 @@ export default function ProjectPage() {
                         <button
                           type="button"
                           onClick={() => setDeleteConfirmId(null)}
-                          className="text-xs text-slate-400 hover:text-white px-2 py-1.5"
+                          className="text-xs text-text-muted hover:text-text-primary px-2 py-1.5"
                         >
                           Cancel
                         </button>
@@ -424,7 +424,7 @@ export default function ProjectPage() {
                         type="button"
                         onClick={() => setDeleteConfirmId(item.id)}
                         title="Delete Copy"
-                        className="p-1.5 text-slate-500 hover:text-rose-400 rounded-lg hover:bg-rose-950/30 transition-colors"
+                        className="p-1.5 text-text-muted hover:text-rose-400 rounded-lg hover:bg-rose-950/30 transition-colors"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -433,7 +433,7 @@ export default function ProjectPage() {
                 </div>
 
                 {/* COPY CONTENT */}
-                <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 text-sm text-slate-200 font-mono whitespace-pre-wrap leading-relaxed">
+                <div className="p-4 rounded-xl bg-surface/80 border border-border text-sm text-text-secondary font-mono whitespace-pre-wrap leading-relaxed">
                   {item.improved_text || item.original_text || "No copy text available."}
                 </div>
               </div>
@@ -445,19 +445,19 @@ export default function ProjectPage() {
       {/* DELETE PROJECT CONFIRMATION MODAL */}
       {showDeleteProjectModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95">
+          <div className="bg-navbar-bg border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95">
             <div className="flex items-center gap-3 text-rose-400 mb-3">
               <AlertCircle className="w-6 h-6 shrink-0" />
-              <h3 className="text-lg font-bold text-white">Delete Project?</h3>
+              <h3 className="text-lg font-bold text-text-primary">Delete Project?</h3>
             </div>
-            <p className="text-xs text-slate-300 mb-6 leading-relaxed">
+            <p className="text-xs text-text-secondary mb-6 leading-relaxed">
               Are you sure you want to permanently delete <strong>&ldquo;{project?.name}&rdquo;</strong> and all associated saved copy records? This action cannot be undone.
             </p>
             <div className="flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setShowDeleteProjectModal(false)}
-                className="text-xs text-slate-300 hover:text-white px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-colors"
+                className="text-xs text-text-secondary hover:text-text-primary px-4 py-2 rounded-xl bg-surface border border-border hover:bg-surface-muted transition-colors"
               >
                 Cancel
               </button>

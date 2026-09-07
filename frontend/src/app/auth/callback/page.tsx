@@ -95,9 +95,9 @@ export default function CallbackPage() {
   }, [router]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 text-slate-100 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-surface-elevated text-text-primary p-4">
       <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-      <p className="text-lg font-medium text-slate-300">{status}</p>
+      <p className="text-lg font-medium text-text-secondary">{status}</p>
     </div>
   );
 }

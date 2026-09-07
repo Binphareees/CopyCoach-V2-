@@ -15,7 +15,7 @@ export default function ProTipCard({ text = DEFAULT_TIP }: ProTipCardProps) {
         <Lightbulb className="h-5 w-5" />
       </div>
       <div>
-        <p className="text-[14px] font-bold text-white">
+        <p className="text-[14px] font-bold text-text-primary">
           Pro Tip
         </p>
         <p className="mt-0.5 text-[13px] leading-relaxed text-brand-200">{text}</p>

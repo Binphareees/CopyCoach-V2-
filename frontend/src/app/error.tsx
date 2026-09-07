@@ -15,8 +15,8 @@ export default function ErrorBoundary({
   }, [error]);
 
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-slate-100">
-      <div className="max-w-md w-full bg-slate-800/80 border border-slate-700/60 rounded-2xl p-8 text-center shadow-xl">
+    <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-text-primary">
+      <div className="max-w-md w-full bg-surface-elevated border border-border rounded-2xl p-8 text-center shadow-xl">
         <div className="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center mx-auto mb-4 border border-amber-500/20">
           <svg
             className="w-6 h-6"
@@ -33,12 +33,12 @@ export default function ErrorBoundary({
           </svg>
         </div>
         <h2 className="text-xl font-semibold mb-2">An error occurred</h2>
-        <p className="text-slate-400 text-sm mb-6">
+        <p className="text-text-muted text-sm mb-6">
           {error.message || "Something went wrong while rendering this section."}
         </p>
         <button
           onClick={() => reset()}
-           className="px-5 py-2.5 bg-[#1e1a3a] hover:bg-[#2a2550] text-white font-medium text-sm rounded-xl transition-colors shadow-lg shadow-indigo-900/20"
+           className="px-5 py-2.5 bg-[#1e1a3a] hover:bg-[#2a2550] text-text-primary font-medium text-sm rounded-xl transition-colors shadow-lg shadow-indigo-900/20"
         >
           Try Again
         </button>

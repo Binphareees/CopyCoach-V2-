@@ -97,7 +97,7 @@ export default function DownloadAppModal({
                   e.preventDefault();
                   handleDownloadApk();
                 }}
-                className="group relative flex items-center gap-3.5 p-4 rounded-2xl bg-surface border-border hover:border-cyan-500/50 hover:bg-slate-800/80 transition-all shadow-md cursor-pointer"
+                className="group relative flex items-center gap-3.5 p-4 rounded-2xl bg-surface border-border hover:border-cyan-500/50 hover:bg-surface-muted transition-all shadow-md cursor-pointer"
               >
                 <div className="p-2.5 rounded-xl bg-surface-elevated border border-border text-cyan-400 group-hover:scale-105 transition-transform">
                   <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
@@ -122,7 +122,7 @@ export default function DownloadAppModal({
                 href="https://apps.apple.com/app/copycoach-ai/id640000000"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative flex items-center gap-3.5 p-4 rounded-2xl bg-surface border-border hover:border-cyan-500/50 hover:bg-slate-800/80 transition-all shadow-md cursor-pointer"
+                className="group relative flex items-center gap-3.5 p-4 rounded-2xl bg-surface border-border hover:border-cyan-500/50 hover:bg-surface-muted transition-all shadow-md cursor-pointer"
               >
                 <div className="p-2.5 rounded-xl bg-surface-elevated border border-border text-text-primary group-hover:scale-105 transition-transform">
                   <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
@@ -164,12 +164,12 @@ export default function DownloadAppModal({
                   <span>Downloading APK...</span>
                 ) : downloadSuccess ? (
                   <>
-                    <CheckCircle2 className="w-4 h-4 text-slate-950" />
+                    <CheckCircle2 className="w-4 h-4 text-white" />
                     <span>APK Downloaded!</span>
                   </>
                 ) : (
                   <>
-                    <Download className="w-4 h-4 text-slate-950" />
+                    <Download className="w-4 h-4 text-white" />
                     <span>Download APK File</span>
                   </>
                 )}
@@ -213,7 +213,7 @@ export default function DownloadAppModal({
                   </svg>
                 </div>
 
-                <div className="text-xs text-slate-300 space-y-1">
+                <div className="text-xs text-text-secondary space-y-1">
                   <p className="font-semibold text-text-primary">How to Install as Mobile App:</p>
                   <p className="text-[11px] text-text-muted">1. Open Camera on iPhone or Android</p>
                   <p className="text-[11px] text-text-muted">2. Scan QR Code & open link in Safari / Chrome</p>

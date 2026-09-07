@@ -34,34 +34,34 @@ const CleanMinimalSignIn = ({
         <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/10 mb-6">
           <LogIn className="w-7 h-7 text-indigo-400" />
         </div>
-        <h2 className="text-2xl font-semibold mb-2 text-center text-white">
+        <h2 className="text-2xl font-semibold mb-2 text-center text-text-primary">
           Sign in with email
         </h2>
-        <p className="text-gray-400 text-sm mb-6 text-center">
+        <p className="text-text-muted text-sm mb-6 text-center">
           Make a new doc to bring your words, data, and teams together. For free
         </p>
         <div className="w-full flex flex-col gap-3 mb-2">
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">
               <Mail className="w-4 h-4" />
             </span>
             <input
               placeholder="Email"
               type="email"
               value={email}
-              className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 bg-white/5 text-white text-sm placeholder:text-gray-500"
+              className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 bg-white/5 text-text-primary text-sm placeholder:text-text-muted"
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">
               <Lock className="w-4 h-4" />
             </span>
             <input
               placeholder="Password"
               type="password"
               value={password}
-              className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 bg-white/5 text-white text-sm placeholder:text-gray-500"
+              className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 bg-white/5 text-text-primary text-sm placeholder:text-text-muted"
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
@@ -80,13 +80,13 @@ const CleanMinimalSignIn = ({
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full bg-gradient-to-r from-[#2a1f5e] to-[#1a1545] hover:from-[#352870] hover:to-[#221a55] text-white font-medium py-2.5 rounded-xl shadow-lg shadow-indigo-900/30 transition-all duration-200 mb-4 mt-2 disabled:opacity-50 cursor-pointer"
+          className="w-full bg-gradient-to-r from-[#2a1f5e] to-[#1a1545] hover:from-[#352870] hover:to-[#221a55] text-text-primary font-medium py-2.5 rounded-xl shadow-lg shadow-indigo-900/30 transition-all duration-200 mb-4 mt-2 disabled:opacity-50 cursor-pointer"
         >
           {loading ? "Signing in..." : "Get Started"}
         </button>
         <div className="flex items-center w-full my-2">
           <div className="flex-grow border-t border-dashed border-white/10"></div>
-          <span className="mx-2 text-xs text-gray-500">Or sign in with</span>
+          <span className="mx-2 text-xs text-text-muted">Or sign in with</span>
           <div className="flex-grow border-t border-dashed border-white/10"></div>
         </div>
         <div className="flex gap-3 w-full justify-center mt-2">
@@ -113,7 +113,7 @@ const CleanMinimalSignIn = ({
             </svg>
           </button>
         </div>
-        <p className="mt-6 text-center text-xs text-gray-500">
+        <p className="mt-6 text-center text-xs text-text-muted">
           Don&apos;t have an account?{" "}
           <button onClick={onSignUp} className="text-indigo-400 hover:text-indigo-300 hover:underline font-medium">
             Sign up

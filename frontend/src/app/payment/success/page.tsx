@@ -81,8 +81,8 @@ function PaymentSuccessContent() {
         {verifying ? (
           <div className="py-8 flex flex-col items-center">
             <Loader2 className="w-12 h-12 text-cyan-400 animate-spin mb-4" />
-            <h2 className="text-xl font-bold text-white mb-2">Confirming Payment</h2>
-            <p className="text-xs text-slate-400 max-w-xs">{message}</p>
+            <h2 className="text-xl font-bold text-text-primary mb-2">Confirming Payment</h2>
+            <p className="text-xs text-text-muted max-w-xs">{message}</p>
           </div>
         ) : success ? (
           <div className="py-4 flex flex-col items-center">
@@ -95,8 +95,8 @@ function PaymentSuccessContent() {
               <span>CopyCoach Pro Activated</span>
             </div>
 
-            <h2 className="text-2xl font-bold text-white mb-2">Payment Successful!</h2>
-            <p className="text-xs text-slate-300 mb-6 leading-relaxed">
+            <h2 className="text-2xl font-bold text-text-primary mb-2">Payment Successful!</h2>
+            <p className="text-xs text-text-secondary mb-6 leading-relaxed">
               Thank you for upgrading! You now have full access to 100 monthly AI coaching generations, advanced AIDA &amp; PAS drills, and priority support.
             </p>
 
@@ -114,14 +114,14 @@ function PaymentSuccessContent() {
               <AlertCircle className="w-10 h-10" />
             </div>
 
-            <h2 className="text-xl font-bold text-white mb-2">Payment Status Notice</h2>
-            <p className="text-xs text-slate-400 mb-6 leading-relaxed">{message}</p>
+            <h2 className="text-xl font-bold text-text-primary mb-2">Payment Status Notice</h2>
+            <p className="text-xs text-text-muted mb-6 leading-relaxed">{message}</p>
 
             <div className="flex flex-col gap-2 w-full">
               <button
                 type="button"
                 onClick={() => router.push("/dashboard")}
-                className="w-full inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-medium text-xs py-3 rounded-xl transition-colors"
+                className="w-full inline-flex items-center justify-center gap-2 bg-surface hover:bg-surface-muted text-text-primary font-medium text-xs py-3 rounded-xl transition-colors"
               >
                 <span>Return to Dashboard</span>
               </button>
@@ -144,7 +144,7 @@ export default function PaymentSuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center text-slate-300">
+        <div className="min-h-screen flex items-center justify-center text-text-secondary">
           <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
         </div>
       }

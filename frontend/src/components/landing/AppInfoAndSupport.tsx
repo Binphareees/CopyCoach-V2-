@@ -150,7 +150,7 @@ export default function AppInfoAndSupport() {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800/80">
+                <div className="p-4 rounded-2xl bg-surface/80 border border-border">
                   <div className="flex items-center gap-2 text-blue-300 font-bold text-xs uppercase mb-1">
                     <FileText className="w-4 h-4 text-blue-400" />
                     <span>Line-by-Line Red Pen</span>
@@ -160,7 +160,7 @@ export default function AppInfoAndSupport() {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800/80">
+                <div className="p-4 rounded-2xl bg-surface/80 border border-border">
                   <div className="flex items-center gap-2 text-indigo-300 font-bold text-xs uppercase mb-1">
                     <Award className="w-4 h-4 text-indigo-400" />
                     <span>5 Core Frameworks</span>
@@ -170,7 +170,7 @@ export default function AppInfoAndSupport() {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800/80">
+                <div className="p-4 rounded-2xl bg-surface/80 border border-border">
                   <div className="flex items-center gap-2 text-emerald-300 font-bold text-xs uppercase mb-1">
                     <Users className="w-4 h-4 text-emerald-400" />
                     <span>Client Brief Simulator</span>
@@ -181,7 +181,7 @@ export default function AppInfoAndSupport() {
                 </div>
               </div>
 
-              <div className="border-t border-slate-800 pt-4 flex flex-wrap items-center justify-between text-xs text-text-muted gap-2">
+              <div className="border-t border-border pt-4 flex flex-wrap items-center justify-between text-xs text-text-muted gap-2">
                 <span className="flex items-center gap-1 text-emerald-400 font-medium">
                   <CheckCircle2 className="w-4 h-4" /> Built for real-world conversion goals
                 </span>
@@ -191,7 +191,7 @@ export default function AppInfoAndSupport() {
 
             {/* Right Framework Cards */}
             <div className="lg:col-span-5 space-y-4">
-              <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/40 transition-all">
+              <div className="p-6 rounded-2xl bg-surface-elevated border border-border hover:border-cyan-500/40 transition-all">
                 <h4 className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2">
                   <span className="px-2 py-0.5 rounded bg-cyan-950 border border-cyan-800 text-cyan-300 text-xs">AIDA</span>
                   <span>Attention, Interest, Desire, Action</span>
@@ -201,7 +201,7 @@ export default function AppInfoAndSupport() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-blue-500/40 transition-all">
+              <div className="p-6 rounded-2xl bg-surface-elevated border border-border hover:border-blue-500/40 transition-all">
                 <h4 className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2">
                   <span className="px-2 py-0.5 rounded bg-blue-950 border border-blue-800 text-blue-300 text-xs">PAS</span>
                   <span>Problem, Agitate, Solution</span>
@@ -211,7 +211,7 @@ export default function AppInfoAndSupport() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-indigo-500/40 transition-all">
+              <div className="p-6 rounded-2xl bg-surface-elevated border border-border hover:border-indigo-500/40 transition-all">
                 <h4 className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2">
                   <span className="px-2 py-0.5 rounded bg-indigo-950 border border-indigo-800 text-indigo-300 text-xs">BAB & FAB</span>
                   <span>Before-After-Bridge & Features</span>
@@ -227,7 +227,7 @@ export default function AppInfoAndSupport() {
         {/* ============================================================ */}
         {/* SECTION 2: MOBILE APP DOWNLOAD (REAL GOOGLE PLAY & APPLE LOGOS) */}
         {/* ============================================================ */}
-        <div id="mobile-app" className="scroll-mt-28 bg-white/[0.03] border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl relative">
+        <div id="mobile-app" className="scroll-mt-28 bg-white/[0.03] border border-border rounded-3xl p-8 sm:p-12 shadow-2xl relative">
           <div className="max-w-3xl mx-auto text-center mb-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold uppercase tracking-wider mb-4">
               <Smartphone className="w-4 h-4 text-cyan-400" />
@@ -253,10 +253,10 @@ export default function AppInfoAndSupport() {
                 e.preventDefault();
                 handleDownloadApk();
               }}
-              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-slate-950 border border-slate-800 hover:border-cyan-500/60 hover:bg-slate-900 transition-all shadow-xl cursor-pointer text-left"
+              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface border-border border-border hover:border-cyan-500/60 hover:bg-surface-elevated transition-all shadow-xl cursor-pointer text-left"
             >
               {/* AUTHENTIC MULTICOLOR GOOGLE PLAY TRIANGLE SVG */}
-              <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 shrink-0 group-hover:scale-105 transition-transform">
+              <div className="p-3 rounded-xl bg-surface-elevated border-border border-border shrink-0 group-hover:scale-105 transition-transform">
                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
                   <path d="M3.609 1.814L13.793 12 3.61 22.186C3.23 21.83 3 21.282 3 20.638V3.362c0-.644.23-1.192.609-1.548z" fill="#00D2FF"/>
                   <path d="M17.207 8.586L13.793 12l3.414 3.414 3.896-2.227c1.171-.67 1.171-1.761 0-2.431l-3.896-2.17z" fill="#FFC700"/>
@@ -283,10 +283,10 @@ export default function AppInfoAndSupport() {
               href="https://apps.apple.com/app/copycoach-ai/id640000000"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-slate-950 border border-slate-800 hover:border-cyan-500/60 hover:bg-slate-900 transition-all shadow-xl cursor-pointer text-left"
+              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface border-border border-border hover:border-cyan-500/60 hover:bg-surface-elevated transition-all shadow-xl cursor-pointer text-left"
             >
               {/* AUTHENTIC APPLE LOGO SVG */}
-              <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-text-primary shrink-0 group-hover:scale-105 transition-transform">
+              <div className="p-3 rounded-xl bg-surface-elevated border-border border-border text-text-primary shrink-0 group-hover:scale-105 transition-transform">
                 <svg className="w-8 h-8 fill-current text-text-primary" viewBox="0 0 24 24">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.28.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                 </svg>
@@ -307,7 +307,7 @@ export default function AppInfoAndSupport() {
           </div>
 
           {/* DIRECT APK DOWNLOAD BOX & SCANNER */}
-          <div className="max-w-2xl mx-auto bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="max-w-2xl mx-auto bg-surface p-5 rounded-2xl border border-border flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 shrink-0">
                 <Download className="w-5 h-5" />
@@ -327,12 +327,12 @@ export default function AppInfoAndSupport() {
                 <span>Downloading APK...</span>
               ) : downloadSuccess ? (
                 <>
-                  <CheckCircle2 className="w-4 h-4 text-slate-950" />
+                  <CheckCircle2 className="w-4 h-4 text-white" />
                   <span>APK Downloaded!</span>
                 </>
               ) : (
                 <>
-                  <Download className="w-4 h-4 text-slate-950" />
+                  <Download className="w-4 h-4 text-white" />
                   <span>Download APK Now</span>
                 </>
               )}
@@ -340,8 +340,8 @@ export default function AppInfoAndSupport() {
           </div>
 
           {/* QR CODE INSTANT MOBILE INSTALL */}
-          <div className="max-w-2xl mx-auto mt-6 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 w-full sm:w-auto">
+          <div className="max-w-2xl mx-auto mt-6 pt-6 border-t border-border/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4 bg-surface/80 p-3.5 rounded-2xl border border-border w-full sm:w-auto">
               <div className="bg-white p-2 rounded-xl shrink-0">
                 <svg className="w-14 h-14" viewBox="0 0 100 100" fill="none">
                   <rect width="100" height="100" fill="white" />
@@ -402,8 +402,8 @@ export default function AppInfoAndSupport() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
             {/* LEFT: INTERACTIVE SUPPORT FORM */}
-            <div className="lg:col-span-7 bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
-              <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-800">
+            <div className="lg:col-span-7 bg-surface-elevated/90 border border-border rounded-3xl p-6 sm:p-8 shadow-2xl">
+              <div className="flex items-center justify-between pb-4 mb-6 border-b border-border">
                 <div className="flex items-center gap-2">
                   <MessageSquare className="w-5 h-5 text-cyan-400" />
                   <h3 className="text-lg font-bold text-text-primary">Ask AI Support or Submit Ticket</h3>
@@ -416,18 +416,18 @@ export default function AppInfoAndSupport() {
               </div>
 
               {supportSuccess ? (
-                <div className="bg-slate-950 border border-cyan-500/30 rounded-2xl p-6 space-y-4">
+                <div className="bg-surface border-border border-cyan-500/30 rounded-2xl p-6 space-y-4">
                   <div className="flex items-center gap-3 text-emerald-400 font-bold text-sm">
                     <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" />
                     <span>Support Ticket Received!</span>
                   </div>
 
                   {aiAnswer && (
-                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 text-xs text-text-secondary leading-relaxed space-y-2">
+                    <div className="bg-surface-elevated border-border border-border rounded-xl p-4 text-xs text-text-secondary leading-relaxed space-y-2">
                       <p className="font-bold text-cyan-300 flex items-center gap-1.5">
                         <Sparkles className="w-4 h-4" /> Instant AI Assistant Answer:
                       </p>
-                      <div className="whitespace-pre-line text-slate-200">{aiAnswer}</div>
+                      <div className="whitespace-pre-line text-text-primary">{aiAnswer}</div>
                     </div>
                   )}
 
@@ -456,7 +456,7 @@ export default function AppInfoAndSupport() {
                       <select
                         value={supportCategory}
                         onChange={(e) => setSupportCategory(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 cursor-pointer"
+                        className="w-full bg-surface border-border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-primary focus:outline-none focus:border-cyan-500 cursor-pointer"
                       >
                         <option value="Copywriting Advice">Copywriting & Framework Advice</option>
                         <option value="Mobile App Support">Mobile App & APK Download Support</option>
@@ -475,7 +475,7 @@ export default function AppInfoAndSupport() {
                         placeholder="you@example.com"
                         value={supportEmail}
                         onChange={(e) => setSupportEmail(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                        className="w-full bg-surface border-border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-primary focus:outline-none focus:border-cyan-500"
                       />
                     </div>
                   </div>
@@ -489,7 +489,7 @@ export default function AppInfoAndSupport() {
                       placeholder="e.g., How to improve my headline score?"
                       value={supportSubject}
                       onChange={(e) => setSupportSubject(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                      className="w-full bg-surface border-border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-primary focus:outline-none focus:border-cyan-500"
                     />
                   </div>
 
@@ -503,12 +503,12 @@ export default function AppInfoAndSupport() {
                       placeholder="Type your question or detail your support request here..."
                       value={supportMessage}
                       onChange={(e) => setSupportMessage(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 resize-none"
+                      className="w-full bg-surface border-border border-border rounded-xl p-3.5 text-xs text-text-primary focus:outline-none focus:border-cyan-500 resize-none"
                     />
                   </div>
 
                   <div className="flex items-center justify-between pt-2">
-                    <span className="text-[11px] text-slate-500 flex items-center gap-1">
+                    <span className="text-[11px] text-text-muted flex items-center gap-1">
                       <Zap className="w-3.5 h-3.5 text-amber-400" /> Instant AI Answer + Dev Dispatch
                     </span>
 
@@ -543,12 +543,12 @@ export default function AppInfoAndSupport() {
                   return (
                     <div
                       key={idx}
-                      className="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden transition-all"
+                      className="bg-surface-elevated/80 border border-border rounded-2xl overflow-hidden transition-all"
                     >
                       <button
                         type="button"
                         onClick={() => setExpandedFaq(isOpen ? null : idx)}
-                        className="w-full p-4 text-left flex items-center justify-between gap-3 text-xs font-bold text-slate-200 hover:text-text-primary cursor-pointer"
+                        className="w-full p-4 text-left flex items-center justify-between gap-3 text-xs font-bold text-text-primary hover:text-text-primary cursor-pointer"
                       >
                         <span>{faq.q}</span>
                         {isOpen ? (
@@ -559,7 +559,7 @@ export default function AppInfoAndSupport() {
                       </button>
 
                       {isOpen && (
-                        <div className="px-4 pb-4 pt-1 text-xs text-text-muted leading-relaxed border-t border-slate-800/60 bg-slate-950/40">
+                        <div className="px-4 pb-4 pt-1 text-xs text-text-muted leading-relaxed border-t border-border/60 bg-surface/40">
                           {faq.a}
                         </div>
                       )}
