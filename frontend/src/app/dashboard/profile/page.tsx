@@ -404,7 +404,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen text-text-primary font-sans pb-16">
+    <main className="min-h-screen text-text-primary font-sans pb-16 bg-surface">
       {/* Top Banner & Header */}
       <div className="border-b border-border bg-navbar-bg backdrop-blur-md sticky top-0 z-30">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
