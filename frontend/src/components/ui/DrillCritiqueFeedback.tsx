@@ -144,7 +144,7 @@ export default function DrillCritiqueFeedback({
               type="button"
               onClick={handleSubmit}
               disabled={loading}
-              className="inline-flex items-center gap-1 text-xs bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-1 text-xs bg-gradient-to-r from-[#1e1a3a] to-[#2a2550] hover:from-[#2a2550] hover:to-[#352e60] text-white font-medium px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
             >
               <Send className="w-3 h-3" />
               <span>{loading ? "Sending..." : "Submit"}</span>

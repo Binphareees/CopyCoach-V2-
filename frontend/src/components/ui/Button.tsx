@@ -19,7 +19,7 @@ const buttonStyles = (
   clsx(
     "inline-flex items-center justify-center rounded-full font-semibold transition-all duration-300",
     {
-      "bg-[#5B5CEB] text-white hover:opacity-90":
+      "bg-[#1e1a3a] text-white hover:bg-[#2a2550]":
         variant === "primary",
 
       "bg-[#151A2D] text-white hover:bg-[#1F2745]":

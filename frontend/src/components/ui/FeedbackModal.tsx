@@ -339,7 +339,7 @@ export default function FeedbackModal({
                     <button
                       type="submit"
                       disabled={ticketLoading}
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs py-3 rounded-xl transition-all shadow-lg disabled:opacity-50 cursor-pointer"
+                       className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#1e1a3a] to-[#2a2550] hover:from-[#2a2550] hover:to-[#352e60] text-white font-bold text-xs py-3 rounded-xl transition-all shadow-lg disabled:opacity-50 cursor-pointer"
                     >
                       <Send className="w-4 h-4" />
                       <span>{ticketLoading ? "Dispatching Ticket..." : "Submit Bug / Support Ticket"}</span>

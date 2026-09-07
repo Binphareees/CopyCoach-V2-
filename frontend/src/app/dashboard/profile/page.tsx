@@ -475,7 +475,7 @@ export default function ProfilePage() {
                 )}
               </div>
 
-              <label className="absolute -bottom-2 -right-2 bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-105 border border-indigo-400/30">
+              <label className="absolute -bottom-2 -right-2 bg-[#1e1a3a] hover:bg-[#2a2550] text-white p-2 rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-105 border border-indigo-800/30">
                 <Camera className="w-4 h-4" />
                 <input
                   type="file"
@@ -815,7 +815,7 @@ export default function ProfilePage() {
                 <button
                   onClick={saveProfile}
                   disabled={loading}
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                   className="bg-[#1e1a3a] hover:bg-[#2a2550] text-white font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Brand Voice Settings</span>
@@ -1153,7 +1153,7 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => router.push("/dashboard")}
-                    className="bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-400 hover:to-blue-500 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-500/20 cursor-pointer"
+                    className="bg-gradient-to-r from-[#1e1a3a] to-[#2a2550] hover:from-[#2a2550] hover:to-[#352e60] text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-900/20 cursor-pointer"
                   >
                     {plan === "pro" ? "Manage Subscription" : "Upgrade to Pro"}
                   </button>

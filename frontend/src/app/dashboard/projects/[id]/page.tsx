@@ -332,7 +332,7 @@ export default function ProjectPage() {
             </p>
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-lg"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1e1a3a] to-[#2a2550] hover:from-[#2a2550] hover:to-[#352e60] text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-lg"
             >
               <Sparkles className="w-4 h-4" />
               <span>Create New Copy</span>

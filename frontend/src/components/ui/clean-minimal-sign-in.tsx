@@ -80,7 +80,7 @@ const CleanMinimalSignIn = ({
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium py-2.5 rounded-xl shadow-lg shadow-indigo-500/25 transition-all duration-200 mb-4 mt-2 disabled:opacity-50 cursor-pointer"
+          className="w-full bg-gradient-to-r from-[#2a1f5e] to-[#1a1545] hover:from-[#352870] hover:to-[#221a55] text-white font-medium py-2.5 rounded-xl shadow-lg shadow-indigo-900/30 transition-all duration-200 mb-4 mt-2 disabled:opacity-50 cursor-pointer"
         >
           {loading ? "Signing in..." : "Get Started"}
         </button>

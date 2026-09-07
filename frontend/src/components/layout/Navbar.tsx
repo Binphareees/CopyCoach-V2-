@@ -138,7 +138,7 @@ export default function Navbar() {
             <div className="flex items-center gap-3">
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 bg-[#5B5CEB] hover:bg-[#4a4be0] text-white font-medium text-xs sm:text-sm px-4 py-2 rounded-xl transition-all shadow-md shadow-indigo-500/20"
+                className="inline-flex items-center gap-2 bg-[#1e1a3a] hover:bg-[#2a2550] text-white font-medium text-xs sm:text-sm px-4 py-2 rounded-xl transition-all shadow-md shadow-indigo-900/20"
               >
                 <LayoutDashboard className="w-4 h-4" />
                 <span>Dashboard</span>
