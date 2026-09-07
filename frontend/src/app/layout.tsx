@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   title: "CopyCoach AI - Copywriting Coach & Generator",
   description: "AI-powered copywriting assistant and coaching application",
   icons: {
-    icon: "/images/logo-icon.png",
-    apple: "/images/logo-icon.png",
+    icon: "/favicon.svg",
+    apple: "/logo-symbol.svg",
   },
 };
 

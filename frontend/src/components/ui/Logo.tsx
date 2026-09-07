@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 interface LogoProps {
   className?: string;
@@ -20,6 +20,10 @@ export default function Logo({
   showTagline = true,
   variant = "standard",
 }: LogoProps) {
+  const { isDarkMode } = useTheme();
+
+  const isDarkTarget = theme === "dark" || (theme === "auto" && isDarkMode);
+
   // Size metrics for app icon
   const iconSizes = {
     sm: "w-8 h-8",
@@ -28,7 +32,7 @@ export default function Logo({
     xl: "w-20 h-20",
   };
 
-  // Proportional sizing for full logo (original aspect ratio ~1.67:1)
+  // Proportional sizing for full logo
   const logoWidths = {
     sm: 120,
     md: 180,
@@ -43,37 +47,31 @@ export default function Logo({
     xl: 192,
   };
 
-  const isDarkTarget = theme === "dark";
-  const isLightTarget = theme === "light";
-
-  // App icon variant - just the icon part
-  if (variant === "app-icon") {
+  // App icon variant - symbol SVG
+  if (variant === "app-icon" || iconOnly) {
     return (
       <div className={`relative flex items-center justify-center shrink-0 ${iconSizes[size]} ${className}`}>
-        <Image
-          src="/images/logo-icon.png"
+        <img
+          src="/logo-symbol.svg"
           alt="CopyCoach AI"
-          width={64}
-          height={64}
           className="w-full h-full object-contain"
-          priority
         />
       </div>
     );
   }
 
-  // Standard full logo - tagline is baked into the image
+  // Standard full logo - theme-aware SVG
+  const logoSrc = isDarkTarget ? "/logo-primary-dark.svg" : "/logo-primary-light.svg";
+
   return (
     <div className={`inline-flex items-center gap-3 select-none ${className}`}>
-      {/* BRAND IMAGE LOGO */}
       <div className="relative flex items-center justify-center shrink-0">
-        <Image
-          src="/images/logo-full.png"
+        <img
+          src={logoSrc}
           alt="CopyCoach AI - Elevate Your Copywriting with AI"
           width={logoWidths[size]}
           height={logoHeights[size]}
           className="object-contain transition-transform duration-200 hover:scale-105"
-          priority
         />
       </div>
     </div>
