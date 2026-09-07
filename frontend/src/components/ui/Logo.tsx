@@ -24,30 +24,30 @@ export default function Logo({
 
   const isDarkTarget = theme === "dark" || (theme === "auto" && isDarkMode);
 
-  // Size metrics for app icon
+  // Bigger size metrics for app icon — more noticeable
   const iconSizes = {
-    sm: "w-8 h-8",
-    md: "w-11 h-11",
-    lg: "w-14 h-14",
-    xl: "w-20 h-20",
+    sm: "w-10 h-10",
+    md: "w-14 h-14",
+    lg: "w-18 h-18",
+    xl: "w-24 h-24",
   };
 
   // Proportional sizing for full logo
   const logoWidths = {
-    sm: 120,
-    md: 180,
-    lg: 240,
-    xl: 320,
+    sm: 140,
+    md: 200,
+    lg: 260,
+    xl: 340,
   };
 
   const logoHeights = {
-    sm: 72,
-    md: 108,
-    lg: 144,
-    xl: 192,
+    sm: 84,
+    md: 120,
+    lg: 156,
+    xl: 204,
   };
 
-  // App icon variant - symbol SVG
+  // App icon variant — transparent brain+pencil icon, no background
   if (variant === "app-icon" || iconOnly) {
     return (
       <div className={`relative flex items-center justify-center shrink-0 ${iconSizes[size]} ${className}`}>
@@ -60,7 +60,10 @@ export default function Logo({
     );
   }
 
-  // Standard full logo - theme-aware SVG
+  // Standard full logo — theme-aware
+  // Both SVGs have transparent backgrounds with the brain+pencil icon
+  // Dark mode: white text, blue AI
+  // Light mode: dark text, blue AI
   const logoSrc = isDarkTarget ? "/logo-primary-dark.svg" : "/logo-primary-light.svg";
 
   return (
