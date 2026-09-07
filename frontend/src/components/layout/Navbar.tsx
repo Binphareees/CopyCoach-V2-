@@ -104,7 +104,7 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 z-50 w-full border-b border-border bg-navbar-bg backdrop-blur-lg">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group transition-transform hover:scale-105">
           <Logo theme="dark" size="md" showTagline={true} />
