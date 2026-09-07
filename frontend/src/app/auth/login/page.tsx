@@ -165,7 +165,7 @@ const timeoutPromise = new Promise<{ data: { user: null; session: null }; error:
 
   return (
 
-    <main className="flex min-h-screen items-center justify-center bg-[#0B1020] px-6">
+    <main className="flex min-h-screen items-center justify-center bg-background px-6">
 
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur">
 

@@ -12,7 +12,7 @@ import AppInfoAndSupport from "@/components/landing/AppInfoAndSupport";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#0B1020] text-white">
+    <main className="min-h-screen bg-background text-white">
 
       <Navbar />
 

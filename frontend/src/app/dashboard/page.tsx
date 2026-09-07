@@ -688,8 +688,6 @@ export default function DashboardPage() {
               <FolderPlus className="h-3.5 w-3.5 text-accent-bright" />
               New Project
             </button>
-
-            <FeedbackModal userId={userId} userTier={plan === "pro" ? "Pro" : "Spark"} />
           </div>
 
           {/* Mobile AI Active chip */}

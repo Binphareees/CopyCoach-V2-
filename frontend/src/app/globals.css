@@ -14,15 +14,13 @@
 /* ============================================================
    CopyCoach AI — Premium dark navy design tokens
    ============================================================ */
-:root,
-:root.dark,
-:root.light {
+:root.dark {
   /* Surfaces */
-  --ink-950: #0b1326;  /* app background */
-  --ink-900: #101a2e;  /* raised surface */
-  --ink-800: #18243a;  /* cards / panels */
-  --ink-700: #1f2d47;  /* hover surface */
-  --ink-600: #2a3b57;  /* subtle raised */
+  --ink-950: #0b1326;
+  --ink-900: #101a2e;
+  --ink-800: #18243a;
+  --ink-700: #1f2d47;
+  --ink-600: #2a3b57;
 
   /* Inputs fields */
   --field-900: #0f192d;
@@ -31,7 +29,7 @@
   --line: #40516a;
   --line-soft: rgba(64, 81, 106, 0.55);
 
-  /* Accent — vibrant indigo-purple */
+  /* Accent */
   --accent: #5b5bef;
   --accent-bright: #6868f5;
   --accent-deep: #4b4bd8;
@@ -41,6 +39,33 @@
   --text-primary: #f4f5ff;
   --text-secondary: #a4b0c5;
   --text-muted: #7f8ba3;
+}
+
+:root.light {
+  /* Surfaces */
+  --ink-950: #f1f5f9;
+  --ink-900: #e2e8f0;
+  --ink-800: #f8fafc;
+  --ink-700: #e2e8f0;
+  --ink-600: #cbd5e1;
+
+  /* Inputs fields */
+  --field-900: #f1f5f9;
+
+  /* Border */
+  --line: #cbd5e1;
+  --line-soft: rgba(203, 213, 225, 0.6);
+
+  /* Accent */
+  --accent: #5b5bef;
+  --accent-bright: #6868f5;
+  --accent-deep: #4b4bd8;
+  --accent-glow: rgba(91, 91, 239, 0.25);
+
+  /* Text */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
 }
 
 @theme inline {
@@ -74,7 +99,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 button,
