@@ -1,7 +1,8 @@
 import Groq from "groq-sdk";
 import { GoogleGenAI } from "@google/genai";
 
-export interface HumanWritingAnalysis {
+export interface HumanWritingResult {
+  polishedCopy: string;
   naturalness: number;
   specificity: number;
   voice: number;
@@ -10,13 +11,6 @@ export interface HumanWritingAnalysis {
   contextualFit: number;
   repetition: number;
   formulaicPatternRisk: number;
-}
-
-export interface HumanWritingResult {
-  humanWritingScore: number;
-  aiPatternRisk: number;
-  humanWritingAnalysis: HumanWritingAnalysis;
-  polishedCopy: string;
 }
 
 const humanWritingPrompt = `You are the Human Writing Engine inside CopyCoach AI.
@@ -104,7 +98,7 @@ scoring guide:
 
 Do not wrap in markdown block. Return raw JSON object.`;
 
-function calculateOverallScore(analysis: HumanWritingAnalysis): number {
+export function calculateOverallScore(result: HumanWritingResult): number {
   const weights = {
     naturalness: 0.2,
     specificity: 0.18,
@@ -117,7 +111,7 @@ function calculateOverallScore(analysis: HumanWritingAnalysis): number {
 
   let weighted = 0;
   for (const [key, weight] of Object.entries(weights)) {
-    weighted += (analysis[key as keyof typeof weights] || 70) * weight;
+    weighted += (result[key as keyof typeof weights] || 70) * weight;
   }
   return Math.round(weighted);
 }
@@ -132,7 +126,8 @@ function parseHumanWritingResponse(raw: string): HumanWritingResult | null {
       .trim();
     const parsed = JSON.parse(cleaned);
 
-    const analysis: HumanWritingAnalysis = {
+    const result: HumanWritingResult = {
+      polishedCopy: parsed.polishedCopy || "",
       naturalness: clamp(parsed.naturalness, 0, 100),
       specificity: clamp(parsed.specificity, 0, 100),
       voice: clamp(parsed.voice, 0, 100),
@@ -143,12 +138,7 @@ function parseHumanWritingResponse(raw: string): HumanWritingResult | null {
       formulaicPatternRisk: clamp(parsed.formulaicPatternRisk, 0, 100),
     };
 
-    return {
-      humanWritingScore: calculateOverallScore(analysis),
-      aiPatternRisk: analysis.formulaicPatternRisk,
-      humanWritingAnalysis: analysis,
-      polishedCopy: parsed.polishedCopy || "",
-    };
+    return result;
   } catch {
     return null;
   }
@@ -225,7 +215,8 @@ export async function runHumanWritingEngine(
   }
 
   // Graceful fallback: return the original copy with moderate scores
-  const fallbackAnalysis: HumanWritingAnalysis = {
+  return {
+    polishedCopy: copy,
     naturalness: 70,
     specificity: 70,
     voice: 70,
@@ -234,12 +225,5 @@ export async function runHumanWritingEngine(
     contextualFit: 70,
     repetition: 70,
     formulaicPatternRisk: 30,
-  };
-
-  return {
-    humanWritingScore: 70,
-    aiPatternRisk: 30,
-    humanWritingAnalysis: fallbackAnalysis,
-    polishedCopy: copy,
   };
 }

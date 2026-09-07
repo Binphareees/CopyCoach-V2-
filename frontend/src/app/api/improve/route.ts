@@ -5,7 +5,7 @@ import { canGenerate, consumeCredit } from "@/lib/credits";
 import { getServerUser } from "@/lib/auth-server";
 import { getRateLimiter } from "@/lib/rate-limit";
 import { trackServerEvent } from "@/lib/analytics";
-import { runHumanWritingEngine } from "@/lib/human-writing";
+import { runHumanWritingEngine, calculateOverallScore } from "@/lib/human-writing";
 
 const systemPrompt = `
 You are CopyCoach AI, an expert senior copywriter and marketing coach.
@@ -159,26 +159,30 @@ Original Copy / Product Description: ${text}
       humanWriting = null;
     }
 
-    // Use the polished copy from Human Writing Engine if available
-    if (humanWriting && humanWriting.polishedCopy) {
+    if (humanWriting?.polishedCopy) {
       parsed.improvedCopy = humanWriting.polishedCopy;
     }
 
-    // Merge Human Writing scores into result
+    const humanWritingScore = humanWriting
+      ? calculateOverallScore(humanWriting)
+      : 70;
+
     const finalResult = {
       ...parsed,
-      humanWritingScore: humanWriting?.humanWritingScore ?? 70,
-      aiPatternRisk: humanWriting?.aiPatternRisk ?? 30,
-      humanWritingAnalysis: humanWriting?.humanWritingAnalysis ?? {
-        naturalness: 70,
-        specificity: 70,
-        voice: 70,
-        sentenceRhythm: 70,
-        clarity: 70,
-        contextualFit: 70,
-        repetition: 70,
-        formulaicPatternRisk: 30,
-      },
+      humanWritingScore,
+      aiPatternRisk: humanWriting?.formulaicPatternRisk ?? 30,
+      humanWritingAnalysis: humanWriting
+        ? {
+            naturalness: humanWriting.naturalness,
+            specificity: humanWriting.specificity,
+            voice: humanWriting.voice,
+            sentenceRhythm: humanWriting.sentenceRhythm,
+            clarity: humanWriting.clarity,
+            contextualFit: humanWriting.contextualFit,
+            repetition: humanWriting.repetition,
+            formulaicPatternRisk: humanWriting.formulaicPatternRisk,
+          }
+        : {},
     };
 
     // Consume credit ONLY after successful generation
