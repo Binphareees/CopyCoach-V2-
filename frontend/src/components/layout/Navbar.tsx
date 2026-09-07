@@ -103,7 +103,7 @@ export default function Navbar() {
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-ink-950/80 backdrop-blur-lg">
+    <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-transparent backdrop-blur-lg">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group transition-transform hover:scale-105">

@@ -102,7 +102,7 @@ export default function AppInfoAndSupport() {
   ];
 
   return (
-    <section className="relative py-20 bg-slate-950 border-t border-white/10 text-slate-100 overflow-hidden">
+    <section className="relative py-20 border-t border-white/10 text-slate-100 overflow-hidden">
       {/* Background Glow Highlights */}
       <div className="absolute left-1/4 top-1/4 -z-10 h-96 w-96 rounded-full bg-cyan-600/10 blur-[120px]" />
       <div className="absolute right-1/4 bottom-1/4 -z-10 h-96 w-96 rounded-full bg-blue-600/10 blur-[120px]" />
@@ -227,7 +227,7 @@ export default function AppInfoAndSupport() {
         {/* ============================================================ */}
         {/* SECTION 2: MOBILE APP DOWNLOAD (REAL GOOGLE PLAY & APPLE LOGOS) */}
         {/* ============================================================ */}
-        <div id="mobile-app" className="scroll-mt-28 bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl relative">
+        <div id="mobile-app" className="scroll-mt-28 bg-white/[0.03] border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl relative">
           <div className="max-w-3xl mx-auto text-center mb-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold uppercase tracking-wider mb-4">
               <Smartphone className="w-4 h-4 text-cyan-400" />

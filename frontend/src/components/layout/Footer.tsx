@@ -2,7 +2,7 @@ import Logo from "../ui/Logo";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 py-12 bg-slate-950/80">
+    <footer className="border-t border-white/10 py-12">
 
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 md:flex-row md:items-center md:justify-between">
 

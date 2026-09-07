@@ -7,7 +7,7 @@ export default function CTA() {
 
       <div className="mx-auto max-w-5xl px-6">
 
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#151A2D] px-8 py-16 text-center">
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] px-8 py-16 text-center">
 
           {/* Glow */}
           <div className="absolute left-1/2 top-0 -z-0 h-40 w-40 -translate-x-1/2 rounded-full bg-[#5B5CEB]/40 blur-3xl" />
