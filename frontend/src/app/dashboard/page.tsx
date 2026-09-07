@@ -1444,7 +1444,7 @@ export default function DashboardPage() {
       {/* NEW PROJECT MODAL */}
       {showProjectModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-glass-bg-deep/80 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
           onClick={() => setShowProjectModal(false)}
         >
           <div
@@ -1494,7 +1494,7 @@ export default function DashboardPage() {
       {/* COMPREHENSIVE PROFILE & SETTINGS MODAL */}
       {showProfileModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-glass-bg-deep/80 p-3 backdrop-blur-md sm:p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-3 backdrop-blur-md sm:p-6"
           onClick={() => setShowProfileModal(false)}
         >
           <div
@@ -1915,7 +1915,7 @@ export default function DashboardPage() {
       {/* KEYBOARD SHORTCUTS MODAL */}
       {showShortcutsModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-glass-bg-deep/80 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
           onClick={() => setShowShortcutsModal(false)}
         >
           <div
@@ -1983,7 +1983,7 @@ export default function DashboardPage() {
 
       {/* HELP & AI SUPPORT MODAL */}
       {showSupportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-glass-bg-deep/80 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <div className="w-full max-w-lg rounded-3xl border border-glass-border bg-glass-bg p-6 backdrop-blur-xl shadow-glass">
             <div className="mb-4 flex items-center justify-between border-b border-glass-border pb-3">
               <h3 className="flex items-center gap-2 text-lg font-bold text-text-primary">

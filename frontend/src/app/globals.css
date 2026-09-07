@@ -141,18 +141,18 @@
   --sidebar-border: #e2e8f0;
 
   /* Modal */
-  --modal-backdrop: rgba(0, 0, 0, 0.4);
+  --modal-backdrop: rgba(0, 0, 0, 0.5);
   --modal-surface: #ffffff;
 
   /* Glass / Sign-Up System */
-  --glass-bg: rgba(0, 0, 0, 0.03);
-  --glass-bg-elevated: rgba(0, 0, 0, 0.02);
-  --glass-bg-deep: rgba(0, 0, 0, 0.01);
-  --glass-bg-hover: rgba(0, 0, 0, 0.05);
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --glass-border-subtle: rgba(0, 0, 0, 0.05);
-  --glass-input-bg: rgba(0, 0, 0, 0.02);
-  --glass-input-border: rgba(0, 0, 0, 0.10);
+  --glass-bg: #ffffff;
+  --glass-bg-elevated: #f8fafc;
+  --glass-bg-deep: #f1f5f9;
+  --glass-bg-hover: #e2e8f0;
+  --glass-border: #e2e8f0;
+  --glass-border-subtle: #f1f5f9;
+  --glass-input-bg: #f8fafc;
+  --glass-input-border: #d1d5db;
   --button-start: #2a1f5e;
   --button-end: #1a1545;
   --button-hover-start: #352870;

@@ -445,7 +445,7 @@ export default function ProjectPage() {
       {/* DELETE PROJECT CONFIRMATION MODAL */}
       {showDeleteProjectModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-navbar-bg border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95">
+          <div className="bg-modal-surface border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95">
             <div className="flex items-center gap-3 text-rose-400 mb-3">
               <AlertCircle className="w-6 h-6 shrink-0" />
               <h3 className="text-lg font-bold text-text-primary">Delete Project?</h3>
