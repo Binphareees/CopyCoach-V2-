@@ -102,7 +102,7 @@ export default function AppInfoAndSupport() {
   ];
 
   return (
-    <section className="relative py-20 border-t border-white/10 text-slate-100 overflow-hidden">
+    <section className="relative py-20 border-t border-border text-text-primary overflow-hidden">
       {/* Background Glow Highlights */}
       <div className="absolute left-1/4 top-1/4 -z-10 h-96 w-96 rounded-full bg-cyan-600/10 blur-[120px]" />
       <div className="absolute right-1/4 bottom-1/4 -z-10 h-96 w-96 rounded-full bg-blue-600/10 blur-[120px]" />
@@ -114,14 +114,14 @@ export default function AppInfoAndSupport() {
         {/* ============================================================ */}
         <div id="about-app" className="scroll-mt-28">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold uppercase tracking-wider mb-4">
-              <BookOpen className="w-4 h-4 text-cyan-400" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-bold uppercase tracking-wider mb-4">
+              <BookOpen className="w-4 h-4 text-accent" />
               <span>About CopyCoach AI</span>
             </div>
-            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+            <h2 className="text-3xl sm:text-5xl font-black text-text-primary tracking-tight leading-tight">
               Master High-Converting Copywriting Through <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400">Intelligent Practice</span>
             </h2>
-            <p className="mt-4 text-slate-300 text-base sm:text-lg leading-relaxed">
+            <p className="mt-4 text-text-secondary text-base sm:text-lg leading-relaxed">
               CopyCoach AI is an interactive copywriting mentor designed for marketers, entrepreneurs, copywriters, agency owners, and content creators who want to write copy that converts.
             </p>
           </div>
@@ -129,23 +129,23 @@ export default function AppInfoAndSupport() {
           {/* DETAILED APP DESCRIPTION GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Narrative Box */}
-            <div className="lg:col-span-7 bg-slate-900/80 border border-slate-800 rounded-3xl p-8 sm:p-10 shadow-2xl relative space-y-6">
-              <div className="flex items-center gap-3 text-cyan-400 font-bold text-sm">
-                <Sparkles className="w-5 h-5 text-cyan-400" />
+            <div className="lg:col-span-7 bg-surface-elevated border border-border rounded-3xl p-8 sm:p-10 shadow-2xl relative space-y-6">
+              <div className="flex items-center gap-3 text-accent font-bold text-sm">
+                <Sparkles className="w-5 h-5 text-accent" />
                 <span>The Personal Copywriting Coach Engine</span>
               </div>
 
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                Unlike static text generators that simply output generic templates, <strong className="text-white">CopyCoach AI acts as an interactive red-pen mentor</strong>. You input your headline drafts, sales emails, Facebook ads, or landing page copy, and the system evaluates your work using battle-tested direct response marketing principles.
+              <p className="text-text-secondary text-sm sm:text-base leading-relaxed">
+                Unlike static text generators that simply output generic templates, <strong className="text-text-primary">CopyCoach AI acts as an interactive red-pen mentor</strong>. You input your headline drafts, sales emails, Facebook ads, or landing page copy, and the system evaluates your work using battle-tested direct response marketing principles.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800/80">
-                  <div className="flex items-center gap-2 text-cyan-300 font-bold text-xs uppercase mb-1">
-                    <Target className="w-4 h-4 text-cyan-400" />
+                <div className="p-4 rounded-2xl bg-surface border border-border">
+                  <div className="flex items-center gap-2 text-accent font-bold text-xs uppercase mb-1">
+                    <Target className="w-4 h-4 text-accent" />
                     <span>0–100 Quality Score</span>
                   </div>
-                  <p className="text-xs text-slate-400 leading-normal">
+                  <p className="text-xs text-text-muted leading-normal">
                     Objective scoring based on hook strength, clarity, emotional resonance, and call-to-action drive.
                   </p>
                 </div>
@@ -155,7 +155,7 @@ export default function AppInfoAndSupport() {
                     <FileText className="w-4 h-4 text-blue-400" />
                     <span>Line-by-Line Red Pen</span>
                   </div>
-                  <p className="text-xs text-slate-400 leading-normal">
+                  <p className="text-xs text-text-muted leading-normal">
                     Detailed annotations pointing out exact word choice improvements and weak transitions.
                   </p>
                 </div>
@@ -165,7 +165,7 @@ export default function AppInfoAndSupport() {
                     <Award className="w-4 h-4 text-indigo-400" />
                     <span>5 Core Frameworks</span>
                   </div>
-                  <p className="text-xs text-slate-400 leading-normal">
+                  <p className="text-xs text-text-muted leading-normal">
                     Practice AIDA, PAS (Problem-Agitate-Solution), BAB, FAB, and 4Ps with instant guided rewrites.
                   </p>
                 </div>
@@ -175,13 +175,13 @@ export default function AppInfoAndSupport() {
                     <Users className="w-4 h-4 text-emerald-400" />
                     <span>Client Brief Simulator</span>
                   </div>
-                  <p className="text-xs text-slate-400 leading-normal">
+                  <p className="text-xs text-text-muted leading-normal">
                     Simulate real marketing assignments across SaaS, E-commerce, Finance, and Fitness niches.
                   </p>
                 </div>
               </div>
 
-              <div className="border-t border-slate-800 pt-4 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
+              <div className="border-t border-slate-800 pt-4 flex flex-wrap items-center justify-between text-xs text-text-muted gap-2">
                 <span className="flex items-center gap-1 text-emerald-400 font-medium">
                   <CheckCircle2 className="w-4 h-4" /> Built for real-world conversion goals
                 </span>
@@ -192,31 +192,31 @@ export default function AppInfoAndSupport() {
             {/* Right Framework Cards */}
             <div className="lg:col-span-5 space-y-4">
               <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/40 transition-all">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2 mb-2">
+                <h4 className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2">
                   <span className="px-2 py-0.5 rounded bg-cyan-950 border border-cyan-800 text-cyan-300 text-xs">AIDA</span>
                   <span>Attention, Interest, Desire, Action</span>
                 </h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-text-muted leading-relaxed">
                   The gold standard sales formula for landing pages, Facebook ads, and sales letters designed to turn casual readers into buyers.
                 </p>
               </div>
 
               <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-blue-500/40 transition-all">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2 mb-2">
+                <h4 className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2">
                   <span className="px-2 py-0.5 rounded bg-blue-950 border border-blue-800 text-blue-300 text-xs">PAS</span>
                   <span>Problem, Agitate, Solution</span>
                 </h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-text-muted leading-relaxed">
                   Ideal for cold emails, pain-point marketing, and problem-solving product pitches that demand urgent reader attention.
                 </p>
               </div>
 
               <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-indigo-500/40 transition-all">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2 mb-2">
+                <h4 className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2">
                   <span className="px-2 py-0.5 rounded bg-indigo-950 border border-indigo-800 text-indigo-300 text-xs">BAB & FAB</span>
                   <span>Before-After-Bridge & Features</span>
                 </h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-text-muted leading-relaxed">
                   Showcase transformative value propositions and feature-to-benefit translations for SaaS products and online courses.
                 </p>
               </div>
@@ -234,11 +234,11 @@ export default function AppInfoAndSupport() {
               <span>Mobile Application</span>
             </div>
 
-            <h3 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <h3 className="text-2xl sm:text-4xl font-extrabold text-text-primary tracking-tight">
               Get CopyCoach AI On Google Play & Apple App Store
             </h3>
 
-            <p className="mt-3 text-slate-300 text-xs sm:text-sm leading-relaxed max-w-xl mx-auto">
+            <p className="mt-3 text-text-secondary text-xs sm:text-sm leading-relaxed max-w-xl mx-auto">
               Take your copywriting drills on the go. Download our native mobile application or install the Android APK directly to practice anywhere, anytime.
             </p>
           </div>
@@ -266,10 +266,10 @@ export default function AppInfoAndSupport() {
               </div>
 
               <div>
-                <span className="text-[10px] uppercase font-extrabold text-slate-400 block tracking-widest">
+                <span className="text-[10px] uppercase font-extrabold text-text-muted block tracking-widest">
                   GET IT ON
                 </span>
-                <span className="text-base font-black text-white group-hover:text-cyan-300 transition-colors">
+                <span className="text-base font-black text-text-primary group-hover:text-cyan-300 transition-colors">
                   Google Play
                 </span>
                 <span className="text-[11px] text-emerald-400 block mt-0.5 font-medium flex items-center gap-1">
@@ -286,17 +286,17 @@ export default function AppInfoAndSupport() {
               className="group relative flex items-center gap-4 p-5 rounded-2xl bg-slate-950 border border-slate-800 hover:border-cyan-500/60 hover:bg-slate-900 transition-all shadow-xl cursor-pointer text-left"
             >
               {/* AUTHENTIC APPLE LOGO SVG */}
-              <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-white shrink-0 group-hover:scale-105 transition-transform">
-                <svg className="w-8 h-8 fill-current text-white" viewBox="0 0 24 24">
+              <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-text-primary shrink-0 group-hover:scale-105 transition-transform">
+                <svg className="w-8 h-8 fill-current text-text-primary" viewBox="0 0 24 24">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.28.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                 </svg>
               </div>
 
               <div>
-                <span className="text-[10px] uppercase font-extrabold text-slate-400 block tracking-widest">
+                <span className="text-[10px] uppercase font-extrabold text-text-muted block tracking-widest">
                   Download on the
                 </span>
-                <span className="text-base font-black text-white group-hover:text-cyan-300 transition-colors">
+                <span className="text-base font-black text-text-primary group-hover:text-cyan-300 transition-colors">
                   App Store
                 </span>
                 <span className="text-[11px] text-cyan-400 block mt-0.5 font-medium">
@@ -313,8 +313,8 @@ export default function AppInfoAndSupport() {
                 <Download className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h4 className="text-xs font-bold text-white">Direct Android APK File (v1.0.0)</h4>
-                <p className="text-[11px] text-slate-400">CopyCoach-AI-v1.0.apk • Clean & Verified Build</p>
+                <h4 className="text-xs font-bold text-text-primary">Direct Android APK File (v1.0.0)</h4>
+                <p className="text-[11px] text-text-muted">CopyCoach-AI-v1.0.apk • Clean & Verified Build</p>
               </div>
             </div>
 
@@ -364,16 +364,16 @@ export default function AppInfoAndSupport() {
                 </svg>
               </div>
 
-              <div className="text-left text-xs text-slate-300">
-                <p className="font-bold text-white flex items-center gap-1">
+              <div className="text-left text-xs text-text-secondary">
+                <p className="font-bold text-text-primary flex items-center gap-1">
                   <QrCode className="w-3.5 h-3.5 text-cyan-400" /> Instant Phone Scan
                 </p>
-                <p className="text-[11px] text-slate-400 mt-0.5">Scan with iPhone or Android camera</p>
+                <p className="text-[11px] text-text-muted mt-0.5">Scan with iPhone or Android camera</p>
                 <p className="text-[11px] text-cyan-400 font-medium mt-0.5">Open link to install mobile PWA</p>
               </div>
             </div>
 
-            <div className="text-xs text-slate-400 flex items-center gap-2">
+            <div className="text-xs text-text-muted flex items-center gap-2">
               <Shield className="w-4 h-4 text-emerald-400" />
               <span>Safe & Malware-Free Verified Application</span>
             </div>
@@ -390,11 +390,11 @@ export default function AppInfoAndSupport() {
               <span>Help & Support Hub</span>
             </div>
 
-            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-black text-text-primary tracking-tight">
               Have Questions? We&apos;re Here To Help 24/7
             </h2>
 
-            <p className="mt-3 text-slate-300 text-base leading-relaxed">
+            <p className="mt-3 text-text-secondary text-base leading-relaxed">
               Submit a support ticket, ask our AI assistant a question, or browse common help guides below.
             </p>
           </div>
@@ -406,7 +406,7 @@ export default function AppInfoAndSupport() {
               <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-800">
                 <div className="flex items-center gap-2">
                   <MessageSquare className="w-5 h-5 text-cyan-400" />
-                  <h3 className="text-lg font-bold text-white">Ask AI Support or Submit Ticket</h3>
+                  <h3 className="text-lg font-bold text-text-primary">Ask AI Support or Submit Ticket</h3>
                 </div>
 
                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-800/60 text-emerald-300 text-[11px] font-medium">
@@ -423,7 +423,7 @@ export default function AppInfoAndSupport() {
                   </div>
 
                   {aiAnswer && (
-                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 text-xs text-slate-300 leading-relaxed space-y-2">
+                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 text-xs text-text-secondary leading-relaxed space-y-2">
                       <p className="font-bold text-cyan-300 flex items-center gap-1.5">
                         <Sparkles className="w-4 h-4" /> Instant AI Assistant Answer:
                       </p>
@@ -431,7 +431,7 @@ export default function AppInfoAndSupport() {
                     </div>
                   )}
 
-                  <p className="text-xs text-slate-400 leading-relaxed">
+                  <p className="text-xs text-text-muted leading-relaxed">
                     A developer email notification has also been dispatched to our engineering desk. You will receive further follow-up if required.
                   </p>
 
@@ -450,7 +450,7 @@ export default function AppInfoAndSupport() {
                 <form onSubmit={handleSupportSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                      <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
                         Category
                       </label>
                       <select
@@ -467,7 +467,7 @@ export default function AppInfoAndSupport() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                      <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
                         Your Email (Optional)
                       </label>
                       <input
@@ -481,7 +481,7 @@ export default function AppInfoAndSupport() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
                       Subject
                     </label>
                     <input
@@ -494,7 +494,7 @@ export default function AppInfoAndSupport() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
                       Describe Your Question or Issue *
                     </label>
                     <textarea
@@ -532,7 +532,7 @@ export default function AppInfoAndSupport() {
 
             {/* RIGHT: ACCORDION FAQ SUPPORT GUIDES */}
             <div className="lg:col-span-5 space-y-4">
-              <h3 className="text-base font-bold text-white mb-2 flex items-center gap-2">
+              <h3 className="text-base font-bold text-text-primary mb-2 flex items-center gap-2">
                 <HelpCircle className="w-4 h-4 text-cyan-400" />
                 <span>Frequently Asked Questions</span>
               </h3>
@@ -548,18 +548,18 @@ export default function AppInfoAndSupport() {
                       <button
                         type="button"
                         onClick={() => setExpandedFaq(isOpen ? null : idx)}
-                        className="w-full p-4 text-left flex items-center justify-between gap-3 text-xs font-bold text-slate-200 hover:text-white cursor-pointer"
+                        className="w-full p-4 text-left flex items-center justify-between gap-3 text-xs font-bold text-slate-200 hover:text-text-primary cursor-pointer"
                       >
                         <span>{faq.q}</span>
                         {isOpen ? (
                           <ChevronUp className="w-4 h-4 text-cyan-400 shrink-0" />
                         ) : (
-                          <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
+                          <ChevronDown className="w-4 h-4 text-text-muted shrink-0" />
                         )}
                       </button>
 
                       {isOpen && (
-                        <div className="px-4 pb-4 pt-1 text-xs text-slate-400 leading-relaxed border-t border-slate-800/60 bg-slate-950/40">
+                        <div className="px-4 pb-4 pt-1 text-xs text-text-muted leading-relaxed border-t border-slate-800/60 bg-slate-950/40">
                           {faq.a}
                         </div>
                       )}
@@ -569,11 +569,11 @@ export default function AppInfoAndSupport() {
               </div>
 
               {/* DIRECT HELP CONTACT CARD */}
-              <div className="p-5 rounded-2xl bg-cyan-950/30 border border-cyan-800/50 mt-6 text-xs text-slate-300 space-y-2">
+              <div className="p-5 rounded-2xl bg-cyan-950/30 border border-cyan-800/50 mt-6 text-xs text-text-secondary space-y-2">
                 <p className="font-bold text-cyan-300 flex items-center gap-1.5">
                   <Shield className="w-4 h-4 text-cyan-400" /> Need Priority Assistance?
                 </p>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
+                <p className="text-[11px] text-text-muted leading-relaxed">
                   Our dedicated engineering support team monitors incoming submissions directly. You can also reach out via email or check platform updates anytime.
                 </p>
               </div>

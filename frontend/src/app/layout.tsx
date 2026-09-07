@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AnalyticsProvider from "@/components/providers/AnalyticsProvider";
 import SentryErrorBoundary from "@/components/providers/SentryErrorBoundary";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,12 +32,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <AnalyticsProvider>
-          <SentryErrorBoundary>{children}</SentryErrorBoundary>
-        </AnalyticsProvider>
+        <ThemeProvider>
+          <AnalyticsProvider>
+            <SentryErrorBoundary>{children}</SentryErrorBoundary>
+          </AnalyticsProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -82,46 +82,46 @@ export default function Pricing() {
               key={plan.name}
               className={
                 plan.popular
-                  ? "border-[#5B5CEB] shadow-xl shadow-indigo-500/10"
+                  ? "border-accent shadow-xl shadow-accent/10"
                   : ""
               }
             >
 
               {plan.popular && (
-                <div className="mb-4 text-xs font-bold tracking-wider text-[#7CFFB2] uppercase">
+                <div className="mb-4 text-xs font-bold tracking-wider text-success uppercase">
                   MOST POPULAR
                 </div>
               )}
 
 
-              <h3 className="text-xl font-bold text-white flex items-center justify-between">
+              <h3 className="text-xl font-bold text-text-primary flex items-center justify-between">
                 <span>{plan.name}</span>
-                <span className="text-xs font-normal text-gray-400">{plan.subtitle}</span>
+                <span className="text-xs font-normal text-text-muted">{plan.subtitle}</span>
               </h3>
 
 
-              <div className="mt-4 text-3xl font-black text-white">
+              <div className="mt-4 text-3xl font-black text-text-primary">
                 {plan.price}
-                <span className="text-sm font-normal text-gray-400">
+                <span className="text-sm font-normal text-text-muted">
                   /month
                 </span>
               </div>
 
-              <div className="mt-1 text-xs font-semibold text-cyan-400">
+              <div className="mt-1 text-xs font-semibold text-accent">
                 {plan.quota}
               </div>
 
 
-              <p className="mt-3 text-xs text-gray-300 min-h-[36px]">
+              <p className="mt-3 text-xs text-text-secondary min-h-[36px]">
                 {plan.description}
               </p>
 
 
-              <ul className="mt-6 space-y-2.5 text-xs text-gray-300">
+              <ul className="mt-6 space-y-2.5 text-xs text-text-secondary">
 
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-1.5">
-                    <span className="text-emerald-400 font-bold shrink-0">✓</span>
+                    <span className="text-success font-bold shrink-0">✓</span>
                     <span>{feature}</span>
                   </li>
                 ))}

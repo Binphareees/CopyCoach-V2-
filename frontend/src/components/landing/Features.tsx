@@ -63,11 +63,11 @@ export default function Features() {
                 {feature.icon}
               </div>
 
-              <h3 className="text-xl font-bold text-white">
+              <h3 className="text-xl font-bold text-text-primary">
                 {feature.title}
               </h3>
 
-              <p className="mt-3 leading-7 text-gray-300">
+              <p className="mt-3 leading-7 text-text-secondary">
                 {feature.description}
               </p>
 

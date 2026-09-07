@@ -70,8 +70,8 @@ function PaymentSuccessContent() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen text-slate-100 flex flex-col items-center justify-center p-6 font-sans">
-      <div className="w-full max-w-md bg-slate-900/80 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur text-center relative overflow-hidden">
+    <div className="min-h-screen text-text-primary flex flex-col items-center justify-center p-6 font-sans">
+      <div className="w-full max-w-md bg-surface-elevated border border-border rounded-3xl p-8 shadow-2xl backdrop-blur text-center relative overflow-hidden">
         <div className="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex justify-center mb-6">

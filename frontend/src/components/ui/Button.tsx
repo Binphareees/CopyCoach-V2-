@@ -19,13 +19,13 @@ const buttonStyles = (
   clsx(
     "inline-flex items-center justify-center rounded-full font-semibold transition-all duration-300",
     {
-      "bg-[#1e1a3a] text-white hover:bg-[#2a2550]":
+      "bg-accent text-accent-foreground hover:bg-accent-hover":
         variant === "primary",
 
-      "bg-[#151A2D] text-white hover:bg-[#1F2745]":
+      "bg-surface-elevated text-text-primary hover:bg-surface-muted border border-border":
         variant === "secondary",
 
-      "border border-white/20 text-white hover:bg-white/10":
+      "border border-border text-text-primary hover:bg-surface-elevated":
         variant === "outline",
 
       "px-4 py-2 text-sm":

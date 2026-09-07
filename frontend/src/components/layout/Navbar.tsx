@@ -103,7 +103,7 @@ export default function Navbar() {
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-transparent backdrop-blur-lg">
+    <nav className="fixed top-0 z-50 w-full border-b border-border bg-navbar-bg backdrop-blur-lg">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group transition-transform hover:scale-105">
@@ -111,20 +111,20 @@ export default function Navbar() {
         </Link>
 
         {/* Navigation Links */}
-        <div className="hidden items-center gap-8 text-sm text-gray-300 md:flex">
-          <Link href="#features" className="transition hover:text-white">
+        <div className="hidden items-center gap-8 text-sm text-text-secondary md:flex">
+          <Link href="#features" className="transition hover:text-text-primary">
             Features
           </Link>
 
-          <Link href="#how-it-works" className="transition hover:text-white">
+          <Link href="#how-it-works" className="transition hover:text-text-primary">
             How It Works
           </Link>
 
-          <Link href="#pricing" className="transition hover:text-white">
+          <Link href="#pricing" className="transition hover:text-text-primary">
             Pricing
           </Link>
 
-          <Link href="#about-app" className="transition hover:text-white">
+          <Link href="#about-app" className="transition hover:text-text-primary">
             About App
           </Link>
         </div>
@@ -132,13 +132,13 @@ export default function Navbar() {
         {/* Actions */}
         <div className="flex items-center gap-3">
           {loading ? (
-            <div className="h-9 w-20 bg-white/5 animate-pulse rounded-lg" />
+            <div className="h-9 w-20 bg-surface animate-pulse rounded-lg" />
           ) : user ? (
             /* Logged In User Profile & Navigation */
             <div className="flex items-center gap-3">
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 bg-[#1e1a3a] hover:bg-[#2a2550] text-white font-medium text-xs sm:text-sm px-4 py-2 rounded-xl transition-all shadow-md shadow-indigo-900/20"
+                className="inline-flex items-center gap-2 bg-accent hover:bg-accent-hover text-accent-foreground font-medium text-xs sm:text-sm px-4 py-2 rounded-xl transition-all shadow-md"
               >
                 <LayoutDashboard className="w-4 h-4" />
                 <span>Dashboard</span>
@@ -148,9 +148,9 @@ export default function Navbar() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className="flex items-center gap-2 p-1.5 rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white cursor-pointer"
+                  className="flex items-center gap-2 p-1.5 rounded-xl border border-border hover:border-border-strong hover:bg-surface-elevated transition-all text-text-primary cursor-pointer"
                 >
-                  <div className="h-8 w-8 rounded-lg overflow-hidden bg-indigo-900/60 border border-indigo-400/30 flex items-center justify-center font-bold text-xs text-indigo-200 shrink-0">
+                  <div className="h-8 w-8 rounded-lg overflow-hidden bg-surface-overlay border border-border flex items-center justify-center font-bold text-xs text-text-secondary shrink-0">
                     {avatarUrl ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
                       <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
@@ -161,39 +161,39 @@ export default function Navbar() {
                   <span className="hidden lg:inline-block text-xs font-semibold max-w-[120px] truncate">
                     {displayName}
                   </span>
-                  <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                  <ChevronDown className="w-3.5 h-3.5 text-text-muted" />
                 </button>
 
                 {showDropdown && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowDropdown(false)} />
-                    <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-slate-800 bg-slate-900 p-2 shadow-2xl z-50 text-slate-100 animate-in fade-in zoom-in-95">
-                      <div className="px-3 py-2 border-b border-slate-800 mb-1">
-                        <p className="text-xs font-bold text-white truncate">{displayName}</p>
-                        <p className="text-[11px] text-slate-400 truncate">{user.email}</p>
+                    <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-border bg-surface-elevated p-2 shadow-2xl z-50 text-text-primary animate-in fade-in zoom-in-95">
+                      <div className="px-3 py-2 border-b border-border mb-1">
+                        <p className="text-xs font-bold text-text-primary truncate">{displayName}</p>
+                        <p className="text-[11px] text-text-muted truncate">{user.email}</p>
                       </div>
 
                       <Link
                         href="/dashboard"
                         onClick={() => setShowDropdown(false)}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-slate-800 transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-surface-muted transition-colors"
                       >
-                        <LayoutDashboard className="w-4 h-4 text-cyan-400" />
+                        <LayoutDashboard className="w-4 h-4 text-accent" />
                         <span>Go to Dashboard</span>
                       </Link>
 
                       <Link
                         href="/dashboard/profile"
                         onClick={() => setShowDropdown(false)}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-slate-800 transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-surface-muted transition-colors"
                       >
-                        <User className="w-4 h-4 text-indigo-400" />
+                        <User className="w-4 h-4 text-accent" />
                         <span>My Profile Settings</span>
                       </Link>
 
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-950/40 transition-colors mt-1 border-t border-slate-800/80"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-danger hover:bg-danger-surface transition-colors mt-1 border-t border-border"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Sign Out</span>
@@ -208,7 +208,7 @@ export default function Navbar() {
             <>
               <Link
                 href="/auth/login"
-                className="text-sm text-gray-300 transition hover:text-white"
+                className="text-sm text-text-secondary transition hover:text-text-primary"
               >
                 Login
               </Link>

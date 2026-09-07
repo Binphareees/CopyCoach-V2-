@@ -41,17 +41,17 @@ export default function HowItWorks() {
           {steps.map((step) => (
             <Card key={step.number}>
 
-              <div className="mb-6 text-5xl font-bold text-[#5B5CEB]">
+              <div className="mb-6 text-5xl font-bold text-accent">
                 {step.number}
               </div>
 
 
-              <h3 className="text-2xl font-bold text-white">
+              <h3 className="text-2xl font-bold text-text-primary">
                 {step.title}
               </h3>
 
 
-              <p className="mt-4 leading-7 text-gray-300">
+              <p className="mt-4 leading-7 text-text-secondary">
                 {step.description}
               </p>
 

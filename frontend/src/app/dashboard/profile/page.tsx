@@ -404,13 +404,13 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen text-slate-100 font-sans pb-16">
+    <main className="min-h-screen text-text-primary font-sans pb-16">
       {/* Top Banner & Header */}
       <div className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-30">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <button
             onClick={() => router.push("/dashboard")}
-            className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors py-1 px-3 rounded-lg hover:bg-slate-800"
+            className="flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors py-1 px-3 rounded-lg hover:bg-surface-muted"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Dashboard</span>
@@ -420,7 +420,7 @@ export default function ProfilePage() {
             <button
               onClick={saveProfile}
               disabled={loading}
-              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium px-4 py-2 rounded-xl text-sm shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-text-primary font-medium px-4 py-2 rounded-xl text-sm shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{loading ? "Saving..." : "Save All Changes"}</span>
@@ -450,7 +450,7 @@ export default function ProfilePage() {
         )}
 
         {/* User Hero Summary Header */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 sm:p-8 mb-8 relative overflow-hidden">
+        <div className="bg-surface-elevated border border-border rounded-3xl p-6 sm:p-8 mb-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10">
             {/* Avatar with Camera Overlay */}
@@ -464,7 +464,7 @@ export default function ProfilePage() {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 text-white font-bold text-3xl">
+                  <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 text-text-primary font-bold text-3xl">
                     {name ? name.charAt(0).toUpperCase() : email ? email.charAt(0).toUpperCase() : "U"}
                   </div>
                 )}
@@ -475,7 +475,7 @@ export default function ProfilePage() {
                 )}
               </div>
 
-              <label className="absolute -bottom-2 -right-2 bg-[#1e1a3a] hover:bg-[#2a2550] text-white p-2 rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-105 border border-indigo-800/30">
+              <label className="absolute -bottom-2 -right-2 bg-[#1e1a3a] hover:bg-[#2a2550] text-text-primary p-2 rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-105 border border-indigo-800/30">
                 <Camera className="w-4 h-4" />
                 <input
                   type="file"
@@ -490,7 +490,7 @@ export default function ProfilePage() {
             {/* Profile Info Summary */}
             <div className="flex-1 text-center sm:text-left">
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mb-2">
-                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">
                   {name || "CopyCoach User"}
                 </h1>
                 <span
@@ -504,7 +504,7 @@ export default function ProfilePage() {
                 </span>
               </div>
 
-              <p className="text-slate-400 text-sm flex items-center justify-center sm:justify-start gap-2 mb-4">
+              <p className="text-text-muted text-sm flex items-center justify-center sm:justify-start gap-2 mb-4">
                 <Mail className="w-4 h-4 text-slate-500" />
                 <span>{email}</span>
                 {createdAt && (
@@ -527,11 +527,11 @@ export default function ProfilePage() {
                     <span>Remove Photo</span>
                   </button>
                 )}
-                <span className="text-xs text-slate-400 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60">
+                <span className="text-xs text-text-muted bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60">
                   Role: <strong className="text-slate-200 font-medium">{role}</strong>
                 </span>
                 {company && (
-                  <span className="text-xs text-slate-400 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60">
+                  <span className="text-xs text-text-muted bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60">
                     Company: <strong className="text-slate-200 font-medium">{company}</strong>
                   </span>
                 )}
@@ -546,8 +546,8 @@ export default function ProfilePage() {
             onClick={() => setActiveTab("profile")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "profile"
-                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
-                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80"
+                ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
+                : "bg-slate-900/60 text-text-muted hover:text-slate-200 hover:bg-surface-muted border border-slate-800/80"
             }`}
           >
             <User className="w-4 h-4" />
@@ -558,8 +558,8 @@ export default function ProfilePage() {
             onClick={() => setActiveTab("brand_voice")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "brand_voice"
-                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
-                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80"
+                ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
+                : "bg-slate-900/60 text-text-muted hover:text-slate-200 hover:bg-surface-muted border border-slate-800/80"
             }`}
           >
             <Sparkles className="w-4 h-4" />
@@ -570,8 +570,8 @@ export default function ProfilePage() {
             onClick={() => setActiveTab("security")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "security"
-                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
-                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80"
+                ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
+                : "bg-slate-900/60 text-text-muted hover:text-slate-200 hover:bg-surface-muted border border-slate-800/80"
             }`}
           >
             <ShieldCheck className="w-4 h-4" />
@@ -582,8 +582,8 @@ export default function ProfilePage() {
             onClick={() => setActiveTab("preferences")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "preferences"
-                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
-                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80"
+                ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
+                : "bg-slate-900/60 text-text-muted hover:text-slate-200 hover:bg-surface-muted border border-slate-800/80"
             }`}
           >
             <Sliders className="w-4 h-4" />
@@ -594,8 +594,8 @@ export default function ProfilePage() {
             onClick={() => setActiveTab("billing")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "billing"
-                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
-                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80"
+                ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
+                : "bg-slate-900/60 text-text-muted hover:text-slate-200 hover:bg-surface-muted border border-slate-800/80"
             }`}
           >
             <CreditCard className="w-4 h-4" />
@@ -606,8 +606,8 @@ export default function ProfilePage() {
             onClick={() => setActiveTab("support")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "support"
-                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
-                : "bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80"
+                ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
+                : "bg-slate-900/60 text-text-muted hover:text-slate-200 hover:bg-surface-muted border border-slate-800/80"
             }`}
           >
             <LifeBuoy className="w-4 h-4" />
@@ -618,15 +618,15 @@ export default function ProfilePage() {
         {/* TAB 1: PERSONAL PROFILE */}
         {activeTab === "profile" && (
           <div className="space-y-6">
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8">
-              <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+            <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
+              <h2 className="text-xl font-semibold text-text-primary mb-6 flex items-center gap-2">
                 <User className="w-5 h-5 text-blue-400" />
                 <span>Personal Information</span>
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     Full Name
                   </label>
                   <div className="relative">
@@ -642,7 +642,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     Email Address <span className="text-slate-500 lowercase">(Primary)</span>
                   </label>
                   <div className="relative">
@@ -651,13 +651,13 @@ export default function ProfilePage() {
                       type="email"
                       value={email}
                       disabled
-                      className="w-full bg-slate-950/60 border border-slate-800/80 rounded-xl pl-10 pr-4 py-2.5 text-slate-400 text-sm cursor-not-allowed"
+                      className="w-full bg-slate-950/60 border border-slate-800/80 rounded-xl pl-10 pr-4 py-2.5 text-text-muted text-sm cursor-not-allowed"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     Professional Role / Job Title
                   </label>
                   <div className="relative">
@@ -673,7 +673,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     Company or Organization
                   </label>
                   <div className="relative">
@@ -689,7 +689,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     Short Bio / Profile Summary
                   </label>
                   <textarea
@@ -706,7 +706,7 @@ export default function ProfilePage() {
                 <button
                   onClick={saveProfile}
                   disabled={loading}
-                  className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                  className="bg-blue-600 hover:bg-blue-500 text-text-primary font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>{loading ? "Saving..." : "Save Profile Details"}</span>
@@ -719,20 +719,20 @@ export default function ProfilePage() {
         {/* TAB 2: BRAND VOICE & COPYWRITING PREFERENCES */}
         {activeTab === "brand_voice" && (
           <div className="space-y-6">
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8">
+            <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
               <div className="mb-6">
-                <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                <h2 className="text-xl font-semibold text-text-primary flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-indigo-400" />
                   <span>Default Copywriting Brand Voice</span>
                 </h2>
-                <p className="text-slate-400 text-sm mt-1">
+                <p className="text-text-muted text-sm mt-1">
                   Configure default tone, audience, and niche guidelines used when CopyCoach AI creates or refines copy for you.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     Default Tone of Voice
                   </label>
                   <select
@@ -751,7 +751,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     Preferred Output Language
                   </label>
                   <div className="relative">
@@ -772,7 +772,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     Primary Target Audience
                   </label>
                   <input
@@ -785,7 +785,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     Brand Niche / Industry
                   </label>
                   <input
@@ -798,7 +798,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     Brand Voice Guidelines & Special Instructions
                   </label>
                   <textarea
@@ -815,7 +815,7 @@ export default function ProfilePage() {
                 <button
                   onClick={saveProfile}
                   disabled={loading}
-                   className="bg-[#1e1a3a] hover:bg-[#2a2550] text-white font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                   className="bg-[#1e1a3a] hover:bg-[#2a2550] text-text-primary font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Brand Voice Settings</span>
@@ -829,18 +829,18 @@ export default function ProfilePage() {
         {activeTab === "security" && (
           <div className="space-y-6">
             {/* Password Update Card */}
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8">
-              <h2 className="text-xl font-semibold text-white mb-2 flex items-center gap-2">
+            <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
+              <h2 className="text-xl font-semibold text-text-primary mb-2 flex items-center gap-2">
                 <Lock className="w-5 h-5 text-emerald-400" />
                 <span>Password & Authentication</span>
               </h2>
-              <p className="text-slate-400 text-sm mb-6">
+              <p className="text-text-muted text-sm mb-6">
                 Update your login password to ensure your account remains protected.
               </p>
 
               <form onSubmit={handleUpdatePassword} className="space-y-5 max-w-lg">
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     New Password
                   </label>
                   <div className="relative">
@@ -863,7 +863,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     Confirm New Password
                   </label>
                   <div className="relative">
@@ -881,7 +881,7 @@ export default function ProfilePage() {
                 <button
                   type="submit"
                   disabled={passwordLoading}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-text-primary font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Key className="w-4 h-4" />
                   <span>{passwordLoading ? "Updating..." : "Update Password"}</span>
@@ -890,14 +890,14 @@ export default function ProfilePage() {
             </div>
 
             {/* Two-Factor & Sessions Card */}
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8">
-              <h3 className="text-lg font-semibold text-white mb-4">Account Security Features</h3>
+            <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">Account Security Features</h3>
 
               <div className="divide-y divide-slate-800">
                 <div className="py-4 flex items-center justify-between">
                   <div>
                     <div className="text-sm font-medium text-slate-200">Two-Factor Authentication (2FA)</div>
-                    <div className="text-xs text-slate-400 mt-0.5">
+                    <div className="text-xs text-text-muted mt-0.5">
                       Add an additional layer of protection using authenticator apps
                     </div>
                   </div>
@@ -939,7 +939,7 @@ export default function ProfilePage() {
 
                     <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 text-xs">
                       <div className="flex items-center gap-3">
-                        <Smartphone className="w-4 h-4 text-slate-400" />
+                        <Smartphone className="w-4 h-4 text-text-muted" />
                         <div>
                           <div className="font-medium text-slate-300">Mobile Companion Web App</div>
                           <div className="text-slate-500">Last seen 2 days ago</div>
@@ -947,7 +947,7 @@ export default function ProfilePage() {
                       </div>
                       <button
                         onClick={() => showNotification("Session revoked")}
-                        className="text-slate-400 hover:text-rose-400"
+                        className="text-text-muted hover:text-rose-400"
                       >
                         Revoke
                       </button>
@@ -962,8 +962,8 @@ export default function ProfilePage() {
         {/* TAB 4: APP PREFERENCES */}
         {activeTab === "preferences" && (
           <div className="space-y-6">
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8">
-              <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+            <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
+              <h2 className="text-xl font-semibold text-text-primary mb-6 flex items-center gap-2">
                 <Sliders className="w-5 h-5 text-purple-400" />
                 <span>Application & Engine Settings</span>
               </h2>
@@ -971,7 +971,7 @@ export default function ProfilePage() {
               <div className="space-y-6">
                 {/* Theme & Appearance Selector */}
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-3">
                     Theme & Visual Appearance
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -985,7 +985,7 @@ export default function ProfilePage() {
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                         themeMode === "dark"
                           ? "bg-indigo-600/20 border-indigo-500 text-indigo-200 ring-2 ring-indigo-500/30"
-                          : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                          : "bg-surface border-border text-text-muted hover:text-slate-200 hover:bg-slate-900"
                       }`}
                     >
                       <Moon className="w-4 h-4 text-indigo-400" />
@@ -1002,7 +1002,7 @@ export default function ProfilePage() {
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                         themeMode === "light"
                           ? "bg-amber-500/20 border-amber-500 text-amber-200 ring-2 ring-amber-500/30"
-                          : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                          : "bg-surface border-border text-text-muted hover:text-slate-200 hover:bg-slate-900"
                       }`}
                     >
                       <Sun className="w-4 h-4 text-amber-400" />
@@ -1019,7 +1019,7 @@ export default function ProfilePage() {
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                         themeMode === "system"
                           ? "bg-purple-600/20 border-purple-500 text-purple-200 ring-2 ring-purple-500/30"
-                          : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                          : "bg-surface border-border text-text-muted hover:text-slate-200 hover:bg-slate-900"
                       }`}
                     >
                       <Laptop className="w-4 h-4 text-purple-400" />
@@ -1029,7 +1029,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
                     Default Copywriting AI Engine
                   </label>
                   <select
@@ -1049,7 +1049,7 @@ export default function ProfilePage() {
                   <div className="py-4 flex items-center justify-between">
                     <div>
                       <div className="text-sm font-medium text-slate-200">Auto-Save Copy Generation History</div>
-                      <div className="text-xs text-slate-400 mt-0.5">
+                      <div className="text-xs text-text-muted mt-0.5">
                         Automatically record improved copy generations to your history workspace
                       </div>
                     </div>
@@ -1071,7 +1071,7 @@ export default function ProfilePage() {
                   <div className="py-4 flex items-center justify-between">
                     <div>
                       <div className="text-sm font-medium text-slate-200">Email Marketing & Strategy Updates</div>
-                      <div className="text-xs text-slate-400 mt-0.5">
+                      <div className="text-xs text-text-muted mt-0.5">
                         Receive weekly copywriting frameworks and feature releases
                       </div>
                     </div>
@@ -1093,7 +1093,7 @@ export default function ProfilePage() {
                   <div className="py-4 flex items-center justify-between">
                     <div>
                       <div className="text-sm font-medium text-slate-200">Usage Limit Notifications</div>
-                      <div className="text-xs text-slate-400 mt-0.5">
+                      <div className="text-xs text-text-muted mt-0.5">
                         Alert when monthly generation credits reach 80% threshold
                       </div>
                     </div>
@@ -1118,7 +1118,7 @@ export default function ProfilePage() {
                 <button
                   onClick={saveProfile}
                   disabled={loading}
-                  className="bg-purple-600 hover:bg-purple-500 text-white font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                  className="bg-purple-600 hover:bg-purple-500 text-text-primary font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Preferences</span>
@@ -1141,7 +1141,7 @@ export default function ProfilePage() {
                   <Zap className="w-6 h-6 text-amber-400" />
                 </div>
 
-                <h3 className="text-2xl font-bold text-white mb-2">
+                <h3 className="text-2xl font-bold text-text-primary mb-2">
                   {plan === "pro" ? "Pro Copywriter Tier" : "Free Starter Tier"}
                 </h3>
                 <p className="text-slate-300 text-sm mb-6 max-w-md">
@@ -1153,7 +1153,7 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => router.push("/dashboard")}
-                    className="bg-gradient-to-r from-[#1e1a3a] to-[#2a2550] hover:from-[#2a2550] hover:to-[#352e60] text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-900/20 cursor-pointer"
+                    className="bg-gradient-to-r from-[#1e1a3a] to-[#2a2550] hover:from-[#2a2550] hover:to-[#352e60] text-text-primary font-semibold px-5 py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-900/20 cursor-pointer"
                   >
                     {plan === "pro" ? "Manage Subscription" : "Upgrade to Pro"}
                   </button>
@@ -1161,15 +1161,15 @@ export default function ProfilePage() {
               </div>
 
               {/* Usage Gauge Card */}
-              <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+              <div className="bg-surface-elevated border border-border rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                   <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-2">
                     Monthly Credits Used
                   </h4>
-                  <div className="text-3xl font-extrabold text-white mb-1">
+                  <div className="text-3xl font-extrabold text-text-primary mb-1">
                     {monthlyUsed} <span className="text-slate-500 text-lg font-normal">/ {totalCredits}</span>
                   </div>
-                  <p className="text-xs text-slate-400">Generations reset on the 1st of every month.</p>
+                  <p className="text-xs text-text-muted">Generations reset on the 1st of every month.</p>
                 </div>
 
                 <div className="mt-6">
@@ -1179,7 +1179,7 @@ export default function ProfilePage() {
                       style={{ width: `${Math.min(100, (monthlyUsed / totalCredits) * 100)}%` }}
                     />
                   </div>
-                  <div className="text-right text-xs text-slate-400 mt-2">
+                  <div className="text-right text-xs text-text-muted mt-2">
                     {Math.max(0, totalCredits - monthlyUsed)} generations remaining
                   </div>
                 </div>
@@ -1187,9 +1187,9 @@ export default function ProfilePage() {
             </div>
 
             {/* Invoices & History placeholder */}
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8">
-              <h3 className="text-lg font-semibold text-white mb-4">Billing History & Receipts</h3>
-              <div className="text-sm text-slate-400 py-6 text-center border border-dashed border-slate-800 rounded-xl">
+            <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">Billing History & Receipts</h3>
+              <div className="text-sm text-text-muted py-6 text-center border border-dashed border-slate-800 rounded-xl">
                 No previous manual invoices found. Billing is managed automatically via Supabase/Paystack.
               </div>
             </div>
@@ -1200,14 +1200,14 @@ export default function ProfilePage() {
         {activeTab === "support" && (
           <div className="space-y-6">
             {/* System Status Banner */}
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8">
+            <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-800">
                 <div>
-                  <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                  <h2 className="text-xl font-semibold text-text-primary flex items-center gap-2">
                     <LifeBuoy className="w-5 h-5 text-blue-400" />
                     <span>CopyCoach Help & Support Hub</span>
                   </h2>
-                  <p className="text-slate-400 text-sm mt-1">
+                  <p className="text-text-muted text-sm mt-1">
                     Get instant assistance, submit support tickets, or review platform health metrics.
                   </p>
                 </div>
@@ -1221,33 +1221,33 @@ export default function ProfilePage() {
               {/* Status Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                  <div className="flex items-center justify-between text-xs text-text-muted mb-1">
                     <span>Copy Engine API</span>
                     <span className="text-emerald-400 font-medium">99.98%</span>
                   </div>
-                  <div className="text-sm font-semibold text-white flex items-center gap-1.5">
+                  <div className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                     <span>Gemini 2.5 Flash</span>
                   </div>
                 </div>
 
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                  <div className="flex items-center justify-between text-xs text-text-muted mb-1">
                     <span>Database & Auth</span>
                     <span className="text-emerald-400 font-medium">100% Uptime</span>
                   </div>
-                  <div className="text-sm font-semibold text-white flex items-center gap-1.5">
+                  <div className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                     <span>Supabase Cloud</span>
                   </div>
                 </div>
 
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                  <div className="flex items-center justify-between text-xs text-text-muted mb-1">
                     <span>Platform Build</span>
                     <span className="text-indigo-400 font-medium">v2.5.0-pro</span>
                   </div>
-                  <div className="text-sm font-semibold text-white flex items-center gap-1.5">
+                  <div className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                     <span>Production Build</span>
                   </div>
@@ -1258,18 +1258,18 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Submit Ticket */}
                 <div className="lg:col-span-2 bg-slate-950/80 p-6 rounded-2xl border border-slate-800/80">
-                  <h3 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-text-primary mb-2 flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-blue-400" />
                     <span>Submit Support Ticket</span>
                   </h3>
-                  <p className="text-xs text-slate-400 mb-6">
+                  <p className="text-xs text-text-muted mb-6">
                     Our copywriting engineering team typical response time is under 15 minutes for Pro subscribers.
                   </p>
 
                   <form onSubmit={handleSupportSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium text-slate-400 mb-1.5">
+                        <label className="block text-xs font-medium text-text-muted mb-1.5">
                           Category
                         </label>
                         <select
@@ -1285,7 +1285,7 @@ export default function ProfilePage() {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-medium text-slate-400 mb-1.5">
+                        <label className="block text-xs font-medium text-text-muted mb-1.5">
                           Subject Line
                         </label>
                         <input
@@ -1299,7 +1299,7 @@ export default function ProfilePage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1.5">
+                      <label className="block text-xs font-medium text-text-muted mb-1.5">
                         Detailed Message
                       </label>
                       <textarea
@@ -1314,7 +1314,7 @@ export default function ProfilePage() {
                     <button
                       type="submit"
                       disabled={supportLoading}
-                      className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                      className="bg-blue-600 hover:bg-blue-500 text-text-primary font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
                     >
                       <Send className="w-4 h-4" />
                       <span>{supportLoading ? "Submitting..." : "Send Ticket"}</span>
@@ -1325,11 +1325,11 @@ export default function ProfilePage() {
                 {/* Direct Contact & Resources */}
                 <div className="space-y-4">
                   <div className="bg-slate-950/80 p-5 rounded-2xl border border-slate-800/80">
-                    <h4 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                    <h4 className="text-sm font-semibold text-text-primary mb-2 flex items-center gap-2">
                       <Mail className="w-4 h-4 text-indigo-400" />
                       <span>Direct Email Support</span>
                     </h4>
-                    <p className="text-xs text-slate-400 mb-3">
+                    <p className="text-xs text-text-muted mb-3">
                       Prefer email? Contact our technical team directly anytime.
                     </p>
                     <a
@@ -1342,11 +1342,11 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="bg-slate-950/80 p-5 rounded-2xl border border-slate-800/80">
-                    <h4 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                    <h4 className="text-sm font-semibold text-text-primary mb-2 flex items-center gap-2">
                       <BookOpen className="w-4 h-4 text-amber-400" />
                       <span>Copywriting Playbooks</span>
                     </h4>
-                    <p className="text-xs text-slate-400 mb-3">
+                    <p className="text-xs text-text-muted mb-3">
                       Master AIDA, PAS, and FAB copywriting frameworks with our guides.
                     </p>
                     <button
@@ -1370,7 +1370,7 @@ export default function ProfilePage() {
               <LogOut className="w-4 h-4" />
               <span>Session & Account Controls</span>
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-text-muted mt-0.5">
               Sign out from this device or manage account deletion requests.
             </p>
           </div>
@@ -1378,7 +1378,7 @@ export default function ProfilePage() {
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={handleLogout}
-              className="bg-rose-600 hover:bg-rose-500 text-white font-medium px-5 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
+              className="bg-rose-600 hover:bg-rose-500 text-text-primary font-medium px-5 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               <span>Sign Out</span>

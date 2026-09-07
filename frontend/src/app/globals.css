@@ -1,94 +1,200 @@
 @import "tailwindcss";
 
-:root,
-:root.light,
-:root.dark {
-  --background: #0a0a0f;
-  --foreground: #f8fafc;
-}
-
-body {
-  background: linear-gradient(135deg, #0a0a0f 0%, #0d1525 20%, #0a0a0f 40%, #111d35 60%, #0a0a0f 80%, #0d1525 100%);
-  background-attachment: fixed;
-  min-height: 100vh;
-}
-
 /* ============================================================
-   CopyCoach AI — Premium dark navy design tokens
+   CopyCoach AI — Unified Design System
    ============================================================ */
+
+/* Dark Theme (Default) */
+:root,
 :root.dark {
-  /* Surfaces */
-  --ink-950: #0b1326;
-  --ink-900: #101a2e;
-  --ink-800: #18243a;
-  --ink-700: #1f2d47;
-  --ink-600: #2a3b57;
+  /* Page Background */
+  --background: #050508;
+  --background-gradient: linear-gradient(135deg, #050508 0%, #0a0f1a 25%, #050508 50%, #0d1525 75%, #050508 100%);
 
-  /* Inputs fields */
-  --field-900: #0f192d;
+  /* Surface Layers */
+  --surface: #0a0e18;
+  --surface-elevated: #0f1420;
+  --surface-overlay: #141a28;
+  --surface-muted: #1a2235;
 
-  /* Border */
-  --line: #40516a;
-  --line-soft: rgba(64, 81, 106, 0.55);
+  /* Input Fields */
+  --input-background: #0a0e18;
+  --input-border: #1e2a40;
+  --input-focus: #5b5bef;
 
-  /* Accent */
-  --accent: #5b5bef;
-  --accent-bright: #6868f5;
-  --accent-deep: #4b4bd8;
-  --accent-glow: rgba(91, 91, 239, 0.35);
+  /* Borders */
+  --border: #1a2235;
+  --border-subtle: rgba(26, 34, 53, 0.6);
+  --border-strong: #2a3650;
 
   /* Text */
-  --text-primary: #f4f5ff;
-  --text-secondary: #a4b0c5;
-  --text-muted: #7f8ba3;
+  --text-primary: #f0f2f8;
+  --text-secondary: #8a95a8;
+  --text-muted: #5a6578;
+  --text-disabled: #3a4255;
+
+  /* Accent / Brand */
+  --accent: #5b5bef;
+  --accent-hover: #6b6bf5;
+  --accent-deep: #4b4bd8;
+  --accent-foreground: #ffffff;
+  --accent-glow: rgba(91, 91, 239, 0.3);
+
+  /* Semantic Colors */
+  --success: #22c55e;
+  --success-surface: rgba(34, 197, 94, 0.1);
+  --warning: #eab308;
+  --warning-surface: rgba(234, 179, 8, 0.1);
+  --danger: #ef4444;
+  --danger-surface: rgba(239, 68, 68, 0.1);
+  --info: #3b82f6;
+  --info-surface: rgba(59, 130, 246, 0.1);
+
+  /* Navbar */
+  --navbar-bg: rgba(5, 5, 8, 0.85);
+  --navbar-border: rgba(26, 34, 53, 0.5);
+
+  /* Card */
+  --card: #0a0e18;
+  --card-border: #1a2235;
+
+  /* Sidebar */
+  --sidebar: #080c14;
+  --sidebar-border: #1a2235;
+
+  /* Modal */
+  --modal-backdrop: rgba(0, 0, 0, 0.7);
+  --modal-surface: #0f1420;
 }
 
+/* Light Theme */
 :root.light {
-  /* Surfaces */
-  --ink-950: #f1f5f9;
-  --ink-900: #e2e8f0;
-  --ink-800: #f8fafc;
-  --ink-700: #e2e8f0;
-  --ink-600: #cbd5e1;
+  /* Page Background */
+  --background: #f8fafc;
+  --background-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 25%, #f8fafc 50%, #e2e8f0 75%, #f8fafc 100%);
 
-  /* Inputs fields */
-  --field-900: #f1f5f9;
+  /* Surface Layers */
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
+  --surface-overlay: #f8fafc;
+  --surface-muted: #f1f5f9;
 
-  /* Border */
-  --line: #cbd5e1;
-  --line-soft: rgba(203, 213, 225, 0.6);
+  /* Input Fields */
+  --input-background: #ffffff;
+  --input-border: #d1d5db;
+  --input-focus: #5b5bef;
 
-  /* Accent */
-  --accent: #5b5bef;
-  --accent-bright: #6868f5;
-  --accent-deep: #4b4bd8;
-  --accent-glow: rgba(91, 91, 239, 0.25);
+  /* Borders */
+  --border: #e2e8f0;
+  --border-subtle: rgba(226, 232, 240, 0.8);
+  --border-strong: #cbd5e1;
 
   /* Text */
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
+  --text-disabled: #cbd5e1;
+
+  /* Accent / Brand */
+  --accent: #5b5bef;
+  --accent-hover: #4b4bd8;
+  --accent-deep: #4338ca;
+  --accent-foreground: #ffffff;
+  --accent-glow: rgba(91, 91, 239, 0.2);
+
+  /* Semantic Colors */
+  --success: #16a34a;
+  --success-surface: rgba(22, 163, 74, 0.08);
+  --warning: #ca8a04;
+  --warning-surface: rgba(202, 138, 4, 0.08);
+  --danger: #dc2626;
+  --danger-surface: rgba(220, 38, 38, 0.08);
+  --info: #2563eb;
+  --info-surface: rgba(37, 99, 235, 0.08);
+
+  /* Navbar */
+  --navbar-bg: rgba(248, 250, 252, 0.9);
+  --navbar-border: rgba(226, 232, 240, 0.8);
+
+  /* Card */
+  --card: #ffffff;
+  --card-border: #e2e8f0;
+
+  /* Sidebar */
+  --sidebar: #ffffff;
+  --sidebar-border: #e2e8f0;
+
+  /* Modal */
+  --modal-backdrop: rgba(0, 0, 0, 0.4);
+  --modal-surface: #ffffff;
 }
 
+/* Tailwind Theme Integration */
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-foreground: var(--text-primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  --color-ink-950: var(--ink-950);
-  --color-ink-900: var(--ink-900);
-  --color-ink-800: var(--ink-800);
-  --color-ink-700: var(--ink-700);
-  --color-ink-600: var(--ink-600);
-  --color-field-900: var(--field-900);
-  --color-line: var(--line);
-  --color-line-soft: var(--line-soft);
+  /* Surface tokens */
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-surface-muted: var(--surface-muted);
 
+  /* Border tokens */
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+
+  /* Text tokens */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-disabled: var(--text-disabled);
+
+  /* Accent tokens */
   --color-accent: var(--accent);
-  --color-accent-bright: var(--accent-bright);
+  --color-accent-hover: var(--accent-hover);
   --color-accent-deep: var(--accent-deep);
+  --color-accent-foreground: var(--accent-foreground);
 
+  /* Semantic tokens */
+  --color-success: var(--success);
+  --color-success-surface: var(--success-surface);
+  --color-warning: var(--warning);
+  --color-warning-surface: var(--warning-surface);
+  --color-danger: var(--danger);
+  --color-danger-surface: var(--danger-surface);
+  --color-info: var(--info);
+  --color-info-surface: var(--info-surface);
+
+  /* Navbar tokens */
+  --color-navbar-bg: var(--navbar-bg);
+  --color-navbar-border: var(--navbar-border);
+
+  /* Card tokens */
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+
+  /* Sidebar tokens */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-border: var(--sidebar-border);
+
+  /* Input tokens */
+  --color-input: var(--input-background);
+  --color-input-border: var(--input-border);
+
+  /* Legacy tokens (for backward compatibility) */
+  --color-ink-950: var(--surface);
+  --color-ink-900: var(--surface-elevated);
+  --color-ink-800: var(--surface-overlay);
+  --color-ink-700: var(--surface-muted);
+  --color-ink-600: var(--border-strong);
+  --color-field-900: var(--input-background);
+  --color-line: var(--border);
+  --color-line-soft: var(--border-subtle);
+  --color-accent-bright: var(--accent-hover);
   --color-brand-100: var(--text-primary);
   --color-brand-200: var(--text-secondary);
   --color-brand-300: var(--text-muted);
@@ -97,14 +203,27 @@ body {
   --shadow-accent-soft: 0 8px 30px -12px var(--accent-glow);
 }
 
+/* ============================================================
+   Base Styles
+   ============================================================ */
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background: linear-gradient(135deg, #0a0a0f 0%, #0d1525 20%, #0a0a0f 40%, #111d35 60%, #0a0a0f 80%, #0d1525 100%);
-  background-attachment: fixed;
+  background: var(--background);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
   min-height: 100vh;
+}
+
+/* Theme transition for all elements */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-timing-function: ease;
+  transition-duration: 0.15s;
 }
 
 button,
@@ -126,24 +245,22 @@ a {
 
 /* Polished focus ring for custom inputs */
 .cc-input {
+  background-color: var(--input-background);
+  border-color: var(--input-border);
+  color: var(--text-primary);
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
     background-color 0.2s ease;
 }
 .cc-input:focus {
-  border-color: var(--accent-bright);
+  border-color: var(--input-focus);
   box-shadow: 0 0 0 3px var(--accent-glow);
   outline: none;
 }
 .cc-input::placeholder {
   color: var(--text-muted);
   opacity: 1;
-}
-
-/* Gentle soft scroll for anchor jumps */
-html {
-  scroll-behavior: smooth;
 }
 
 /* ============================================================
@@ -263,10 +380,9 @@ html {
   padding: 16px 36px;
   font-size: 1rem;
   line-height: 19px;
-  font-weight: 500;
+  font-weight: 700;
   color: white;
   font-family: var(--font-geist-sans), sans-serif;
-  font-weight: 700;
   background: radial-gradient(
     var(--spread-x) var(--spread-y) at var(--pos-x) var(--pos-y),
     var(--color-1) var(--stop-1),

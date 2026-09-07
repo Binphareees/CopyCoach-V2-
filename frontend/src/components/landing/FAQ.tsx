@@ -48,11 +48,11 @@ export default function FAQ() {
           {questions.map((item) => (
             <Card key={item.question}>
 
-              <h3 className="text-xl font-bold text-white">
+              <h3 className="text-xl font-bold text-text-primary">
                 {item.question}
               </h3>
 
-              <p className="mt-3 leading-7 text-gray-300">
+              <p className="mt-3 leading-7 text-text-secondary">
                 {item.answer}
               </p>
 

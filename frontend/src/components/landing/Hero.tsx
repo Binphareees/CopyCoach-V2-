@@ -7,7 +7,7 @@ export default function Hero() {
     <section className="relative overflow-hidden pt-36 pb-24">
 
       {/* Background Glow */}
-      <div className="absolute left-1/2 top-20 -z-10 h-96 w-96 -translate-x-1/2 rounded-full bg-[#5B5CEB]/30 blur-3xl" />
+      <div className="absolute left-1/2 top-20 -z-10 h-96 w-96 -translate-x-1/2 rounded-full bg-accent/20 blur-3xl" />
 
       <div className="mx-auto flex max-w-7xl flex-col items-center px-6 text-center">
 
@@ -18,7 +18,7 @@ export default function Hero() {
 
 
         {/* Heading */}
-        <h1 className="mt-8 max-w-5xl text-5xl font-extrabold leading-tight text-white md:text-7xl">
+        <h1 className="mt-8 max-w-5xl text-5xl font-extrabold leading-tight text-text-primary md:text-7xl">
 
           Master Copywriting Skills
 
@@ -30,7 +30,7 @@ export default function Hero() {
 
 
         {/* Description */}
-        <p className="mt-8 max-w-3xl text-lg leading-8 text-gray-300 md:text-xl">
+        <p className="mt-8 max-w-3xl text-lg leading-8 text-text-secondary md:text-xl">
 
           Practice real marketing scenarios, get instant AI feedback,
           improve your writing skills, and learn how professional
@@ -57,33 +57,33 @@ export default function Hero() {
         <div className="mt-16 grid gap-8 text-center sm:grid-cols-3">
 
           <div>
-            <p className="text-3xl font-bold text-white">
+            <p className="text-3xl font-bold text-text-primary">
               10+
             </p>
 
-            <p className="mt-2 text-sm text-gray-400">
+            <p className="mt-2 text-sm text-text-muted">
               Copywriting Frameworks
             </p>
           </div>
 
 
           <div>
-            <p className="text-3xl font-bold text-white">
+            <p className="text-3xl font-bold text-text-primary">
               AI
             </p>
 
-            <p className="mt-2 text-sm text-gray-400">
+            <p className="mt-2 text-sm text-text-muted">
               Personal Feedback System
             </p>
           </div>
 
 
           <div>
-            <p className="text-3xl font-bold text-white">
+            <p className="text-3xl font-bold text-text-primary">
               24/7
             </p>
 
-            <p className="mt-2 text-sm text-gray-400">
+            <p className="mt-2 text-sm text-text-muted">
               Unlimited Practice
             </p>
           </div>

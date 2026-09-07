@@ -38,18 +38,18 @@ export default function Testimonials() {
           {testimonials.map((testimonial) => (
             <Card key={testimonial.name}>
 
-              <p className="text-lg leading-8 text-gray-300">
+              <p className="text-lg leading-8 text-text-secondary">
                 &quot;{testimonial.quote}&quot;
               </p>
 
 
               <div className="mt-6">
 
-                <h3 className="font-bold text-white">
+                <h3 className="font-bold text-text-primary">
                   {testimonial.name}
                 </h3>
 
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-text-muted">
                   {testimonial.role}
                 </p>
 

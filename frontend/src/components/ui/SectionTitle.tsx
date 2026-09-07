@@ -10,12 +10,12 @@ export default function SectionTitle({
   return (
     <div className="mx-auto max-w-3xl text-center">
 
-      <h2 className="text-3xl font-bold text-white md:text-5xl">
+      <h2 className="text-3xl font-bold text-text-primary md:text-5xl">
         {title}
       </h2>
 
       {description && (
-        <p className="mt-5 text-lg leading-8 text-gray-300">
+        <p className="mt-5 text-lg leading-8 text-text-secondary">
           {description}
         </p>
       )}
