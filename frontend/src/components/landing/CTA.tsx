@@ -1,4 +1,5 @@
-import Button from "../ui/Button";
+import Link from "next/link";
+import { GradientButton } from "../ui/gradient-button";
 
 export default function CTA() {
   return (
@@ -27,9 +28,9 @@ export default function CTA() {
 
             <div className="mt-10 flex justify-center">
 
-              <Button size="lg">
-                Start Learning Free
-              </Button>
+              <GradientButton asChild>
+                <Link href="/auth/signup">Start Learning Free</Link>
+              </GradientButton>
 
             </div>
 

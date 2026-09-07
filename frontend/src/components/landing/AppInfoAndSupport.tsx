@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { GradientButton } from "../ui/gradient-button";
 import {
   Smartphone,
   Download,
@@ -317,11 +318,10 @@ export default function AppInfoAndSupport() {
               </div>
             </div>
 
-            <button
-              type="button"
+            <GradientButton
               onClick={handleDownloadApk}
               disabled={downloadingApk}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-extrabold text-xs px-5 py-2.5 rounded-xl transition-all shadow-lg cursor-pointer disabled:opacity-50 shrink-0"
+              className="w-full sm:w-auto"
             >
               {downloadingApk ? (
                 <span>Downloading APK...</span>
@@ -336,7 +336,7 @@ export default function AppInfoAndSupport() {
                   <span>Download APK Now</span>
                 </>
               )}
-            </button>
+            </GradientButton>
           </div>
 
           {/* QR CODE INSTANT MOBILE INSTALL */}
@@ -512,10 +512,9 @@ export default function AppInfoAndSupport() {
                       <Zap className="w-3.5 h-3.5 text-amber-400" /> Instant AI Answer + Dev Dispatch
                     </span>
 
-                    <button
+                    <GradientButton
                       type="submit"
                       disabled={isSubmitting || !supportMessage.trim()}
-                      className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-cyan-500/20 cursor-pointer disabled:opacity-50"
                     >
                       {isSubmitting ? (
                         <span>Processing...</span>
@@ -525,7 +524,7 @@ export default function AppInfoAndSupport() {
                           <span>Submit Ticket</span>
                         </>
                       )}
-                    </button>
+                    </GradientButton>
                   </div>
                 </form>
               )}

@@ -1,4 +1,5 @@
-import Button from "../ui/Button";
+import Link from "next/link";
+import { GradientButton } from "../ui/gradient-button";
 import Card from "../ui/Card";
 import SectionTitle from "../ui/SectionTitle";
 
@@ -129,17 +130,15 @@ export default function Pricing() {
 
 
               <div className="mt-8">
-                <Button
-                  variant={
-                    plan.popular
-                      ? "primary"
-                      : "outline"
-                  }
+                <GradientButton
+                  asChild
+                  variant={plan.popular ? "default" : "variant"}
                   className="w-full text-xs"
-                  href="/auth/signup"
                 >
-                  {plan.price === "$0" ? "Start Free" : "Subscribe Tier"}
-                </Button>
+                  <Link href="/auth/signup">
+                    {plan.price === "$0" ? "Start Free" : "Subscribe Tier"}
+                  </Link>
+                </GradientButton>
               </div>
 
 

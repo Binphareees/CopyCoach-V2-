@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
+import { GradientButton } from "@/components/ui/gradient-button";
 import { getAccessToken } from "@/lib/supabase";
 import { CheckCircle2, ArrowRight, Loader2, Sparkles, AlertCircle } from "lucide-react";
 
@@ -99,14 +100,13 @@ function PaymentSuccessContent() {
               Thank you for upgrading! You now have full access to 100 monthly AI coaching generations, advanced AIDA &amp; PAS drills, and priority support.
             </p>
 
-            <button
-              type="button"
+            <GradientButton
               onClick={() => router.push("/dashboard")}
-              className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold text-sm py-3 rounded-xl transition-all shadow-lg cursor-pointer"
+              className="w-full"
             >
               <span>Go to Dashboard</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </GradientButton>
           </div>
         ) : (
           <div className="py-4 flex flex-col items-center">

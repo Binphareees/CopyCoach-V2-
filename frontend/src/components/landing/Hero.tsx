@@ -1,4 +1,5 @@
-import Button from "../ui/Button";
+import Link from "next/link";
+import { GradientButton } from "../ui/gradient-button";
 import Badge from "../ui/Badge";
 
 export default function Hero() {
@@ -41,18 +42,13 @@ export default function Hero() {
         {/* Buttons */}
         <div className="mt-10 flex flex-wrap justify-center gap-4">
 
-          <Button size="lg" href="/auth/signup">
-  Start Practicing Free
-</Button>
+          <GradientButton asChild>
+            <Link href="/auth/signup">Start Practicing Free</Link>
+          </GradientButton>
 
-
-          <Button
-  size="lg"
-  variant="outline"
-  href="#how-it-works"
->
-  See How It Works
-</Button>
+          <GradientButton asChild variant="variant">
+            <Link href="#how-it-works">See How It Works</Link>
+          </GradientButton>
 
         </div>
 

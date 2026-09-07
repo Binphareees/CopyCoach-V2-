@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Button from "../ui/Button";
+import { GradientButton } from "../ui/gradient-button";
 import Logo from "../ui/Logo";
 import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
 import { User, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
@@ -213,9 +213,9 @@ export default function Navbar() {
                 Login
               </Link>
 
-              <Button size="sm" href="/auth/signup">
-                Get Started
-              </Button>
+              <GradientButton asChild>
+                <Link href="/auth/signup">Get Started</Link>
+              </GradientButton>
             </>
           )}
         </div>

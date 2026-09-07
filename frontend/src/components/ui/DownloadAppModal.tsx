@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { GradientButton } from "./gradient-button";
 import { Smartphone, Download, X, QrCode, CheckCircle2, Shield, Zap, ExternalLink } from "lucide-react";
 
 interface DownloadAppModalProps {
@@ -154,11 +155,10 @@ export default function DownloadAppModal({
                 </div>
               </div>
 
-              <button
-                type="button"
+              <GradientButton
                 onClick={handleDownloadApk}
                 disabled={downloading}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto"
               >
                 {downloading ? (
                   <span>Downloading APK...</span>
@@ -173,7 +173,7 @@ export default function DownloadAppModal({
                     <span>Download APK File</span>
                   </>
                 )}
-              </button>
+              </GradientButton>
             </div>
 
             {/* SCAN QR CODE FOR INSTANT PWA MOBILE INSTALL */}

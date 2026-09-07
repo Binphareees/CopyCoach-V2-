@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
+import { GradientButton } from "@/components/ui/gradient-button";
 import { getIsSupabaseConfigured, getActiveSupabaseUrl, ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
@@ -231,13 +232,13 @@ const timeoutPromise = new Promise<{ data: { user: null; session: null }; error:
           Continue with Google
         </button>
 
-        <button
+        <GradientButton
           onClick={handleLogin}
           disabled={loading}
-          className="mt-6 w-full rounded-lg bg-[#5B5CEB] py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-6 w-full"
         >
           {loading ? "Logging in..." : "Login"}
-        </button>
+        </GradientButton>
 
 
         {message && (

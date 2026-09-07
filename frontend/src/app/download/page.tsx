@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
+import { GradientButton } from "@/components/ui/gradient-button";
 import { Smartphone, Download, CheckCircle2, Shield, Zap, ArrowLeft, Layers } from "lucide-react";
 
 export default function DownloadLandingPage() {
@@ -111,11 +112,10 @@ export default function DownloadLandingPage() {
             <p className="text-xs text-slate-400">CopyCoach-AI-v1.0.apk (Clean & Verified Build)</p>
           </div>
 
-          <button
-            type="button"
+          <GradientButton
             onClick={handleDownloadApk}
             disabled={downloading}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-lg cursor-pointer disabled:opacity-50"
+            className="w-full sm:w-auto"
           >
             {downloading ? (
               <span>Preparing Download...</span>
@@ -130,7 +130,7 @@ export default function DownloadLandingPage() {
                 <span>Download APK</span>
               </>
             )}
-          </button>
+          </GradientButton>
         </div>
 
         {/* FEATURES GRID */}
