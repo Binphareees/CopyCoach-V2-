@@ -636,33 +636,15 @@ export default function DashboardPage() {
       )}
 
       {/* Top Professional Header */}
-      <header className="sticky top-0 z-40 border-b border-glass-border bg-glass-bg backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-border bg-surface-elevated backdrop-blur-xl">
         <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Branding */}
           <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
             <Logo theme="dark" size="sm" showTagline={false} />
           </Link>
 
-          {/* Desktop status + workspace controls */}
+          {/* Desktop workspace controls */}
           <div className="hidden items-center gap-3 md:flex">
-            {/* AI Active status badge */}
-            <span className="flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-[11px] font-bold text-accent-bright">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-bright" />
-              AI Active
-            </span>
-
-            {/* Plan / Credits badge */}
-            <span
-              className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold ${
-                plan === "pro"
-                  ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
-                  : "border-glass-border bg-glass-bg-elevated text-brand-200"
-              }`}
-            >
-              <Zap className="h-3 w-3" />
-              {plan === "pro" ? "Pro Plan" : "Free Plan"} · {credits} credits
-            </span>
-
             {/* Workspace selector */}
             <div className="flex items-center gap-2 rounded-full border border-glass-border bg-glass-bg-elevated px-3.5 py-1.5 text-xs text-brand-200">
               <Folder className="h-3.5 w-3.5 text-accent-bright" />
@@ -689,12 +671,6 @@ export default function DashboardPage() {
               New Project
             </button>
           </div>
-
-          {/* Mobile AI Active chip */}
-          <span className="flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[10px] font-bold text-accent-bright md:hidden">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-bright" />
-            AI Active
-          </span>
 
           {/* User Account Dropdown */}
           <div className="relative" ref={menuRef}>
@@ -727,11 +703,11 @@ export default function DashboardPage() {
                   className="fixed inset-0 z-40 cursor-default"
                   onClick={() => setShowMenu(false)}
                 />
-                <div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-glass-border bg-glass-bg p-2.5 text-brand-100 backdrop-blur-xl shadow-glass">
+                <div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-border/50 bg-[#0d1117] p-2.5 text-text-primary shadow-2xl">
                   {/* Profile Header */}
-                  <div className="mb-2 rounded-xl border border-glass-border-subtle bg-glass-bg-deep px-3 py-2.5">
+                  <div className="mb-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-glass-border bg-glass-bg-elevated text-xs font-bold text-accent-bright">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/10 text-xs font-bold text-accent-bright">
                         {avatar ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={avatar} alt={fullName} className="h-full w-full rounded-lg object-cover" />
@@ -741,11 +717,11 @@ export default function DashboardPage() {
                       </div>
                       <div className="overflow-hidden">
                         <p className="truncate text-xs font-bold text-text-primary">{fullName || "CopyCoach User"}</p>
-                        <p className="mt-0.5 truncate text-[11px] text-brand-300">{userEmail || userId}</p>
+                        <p className="mt-0.5 truncate text-[11px] text-white/50">{userEmail || userId}</p>
                       </div>
                     </div>
 
-                    <div className="mt-2.5 flex items-center justify-between border-t border-glass-border pt-2 text-[11px] text-brand-300">
+                    <div className="mt-2.5 flex items-center justify-between border-t border-white/10 pt-2 text-[11px] text-white/50">
                       <span className="flex items-center gap-1 font-medium">
                         <ShieldCheck className="h-3.5 w-3.5 text-accent-bright" />
                         <span>{plan === "pro" ? "Pro Membership" : "Starter Free Plan"}</span>
@@ -756,32 +732,32 @@ export default function DashboardPage() {
 
                   {/* Account & Settings Group */}
                   <div className="mb-2 space-y-0.5">
-                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-brand-300">
+                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
                       Account & Workspace
                     </span>
 
                     <Link
                       href="/dashboard/admin/feedback"
                       onClick={() => setShowMenu(false)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <div className="flex items-center gap-2.5">
                         <ShieldCheck className="h-4 w-4 text-amber-400" />
                         <span>Admin Feedback Triage</span>
                       </div>
-                      <span className="rounded border border-amber-800/50 bg-amber-950/40 px-1.5 py-0.5 text-[10px] font-bold text-amber-400">Admin</span>
+                      <span className="rounded border border-amber-500/30 bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-bold text-amber-400">Admin</span>
                     </Link>
 
                     <Link
                       href="/dashboard/profile"
                       onClick={() => setShowMenu(false)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <div className="flex items-center gap-2.5">
                         <UserCheck className="h-4 w-4 text-accent-bright" />
                         <span>Profile Settings</span>
                       </div>
-                      <span className="text-[10px] text-brand-300">Edit</span>
+                      <span className="text-[10px] text-white/40">Edit</span>
                     </Link>
 
                     <button
@@ -790,13 +766,13 @@ export default function DashboardPage() {
                         setProfileTab("brand_voice");
                         setShowProfileModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <div className="flex items-center gap-2.5">
                         <Sliders className="h-4 w-4 text-accent-bright" />
                         <span>Brand Voice & AI Persona</span>
                       </div>
-                      <span className="rounded bg-accent/15 px-1.5 py-0.5 text-[10px] text-accent-bright">Custom</span>
+                      <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[10px] text-accent-bright">Custom</span>
                     </button>
 
                     <button
@@ -805,7 +781,7 @@ export default function DashboardPage() {
                         setProfileTab("billing");
                         setShowProfileModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <div className="flex items-center gap-2.5">
                         <CreditCard className="h-4 w-4 text-amber-400" />
@@ -818,8 +794,8 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Preferences Group */}
-                  <div className="mb-2 space-y-0.5 border-t border-glass-border pt-2">
-                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-brand-300">
+                  <div className="mb-2 space-y-0.5 border-t border-white/10 pt-2">
+                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
                       Preferences
                     </span>
 
@@ -829,21 +805,21 @@ export default function DashboardPage() {
                         setProfileTab("preferences");
                         setShowProfileModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <div className="flex items-center gap-2.5">
                         {isDarkMode ? <Moon className="h-4 w-4 text-accent-bright" /> : <Sun className="h-4 w-4 text-amber-400" />}
                         <span>Appearance & Theme</span>
                       </div>
-                      <span className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-0.5 text-[10px] font-medium text-accent-bright">
+                      <span className="rounded border border-white/10 bg-white/10 px-2 py-0.5 text-[10px] font-medium text-accent-bright">
                         {themeMode === "system" ? "System Sync" : isDarkMode ? "Dark Theme" : "Light Theme"}
                       </span>
                     </button>
                   </div>
 
                   {/* Resources & Help Group */}
-                  <div className="mb-2 space-y-0.5 border-t border-glass-border pt-2">
-                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-brand-300">
+                  <div className="mb-2 space-y-0.5 border-t border-white/10 pt-2">
+                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
                       Support & Tools
                     </span>
 
@@ -852,13 +828,13 @@ export default function DashboardPage() {
                         setShowMenu(false);
                         setShowShortcutsModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <div className="flex items-center gap-2.5">
                         <Keyboard className="h-4 w-4 text-accent-bright" />
                         <span>Keyboard Shortcuts</span>
                       </div>
-                      <span className="font-mono text-[10px] text-brand-300">⌘K</span>
+                      <span className="font-mono text-[10px] text-white/40">⌘K</span>
                     </button>
 
                     <button
@@ -866,27 +842,27 @@ export default function DashboardPage() {
                         setShowMenu(false);
                         setShowSupportModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <div className="flex items-center gap-2.5">
                         <HelpCircle className="h-4 w-4 text-accent-bright" />
                         <span>Help & AI Support</span>
                       </div>
-                      <span className="text-[10px] text-brand-300">24/7</span>
+                      <span className="text-[10px] text-white/40">24/7</span>
                     </button>
                   </div>
 
                   {/* Sign Out Button */}
-                  <div className="border-t border-glass-border pt-2">
+                  <div className="border-t border-white/10 pt-2">
                     <button
                       onClick={handleLogout}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-rose-400 transition-colors hover:bg-rose-950/50 hover:text-rose-300"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-rose-400 transition-colors hover:bg-rose-500/15 hover:text-rose-300"
                     >
                       <div className="flex items-center gap-2.5">
                         <LogOut className="h-4 w-4" />
                         <span>Sign Out</span>
                       </div>
-                      <span className="text-[10px] opacity-70">Exit</span>
+                      <span className="text-[10px] text-white/40">Exit</span>
                     </button>
                   </div>
                 </div>
