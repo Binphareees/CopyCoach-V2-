@@ -703,11 +703,11 @@ export default function DashboardPage() {
                   className="fixed inset-0 z-40 cursor-default"
                   onClick={() => setShowMenu(false)}
                 />
-                <div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-border/50 bg-[#0d1117] p-2.5 text-text-primary shadow-2xl">
+                <div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-border bg-surface-elevated dark:bg-[#0a0e18] p-2.5 text-text-primary shadow-2xl">
                   {/* Profile Header */}
-                  <div className="mb-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
+                  <div className="mb-2 rounded-xl border border-border dark:border-white/10 bg-surface-muted dark:bg-white/5 px-3 py-2.5">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/10 text-xs font-bold text-accent-bright">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border dark:border-white/10 bg-surface dark:bg-white/10 text-xs font-bold text-accent-bright">
                         {avatar ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={avatar} alt={fullName} className="h-full w-full rounded-lg object-cover" />
@@ -717,11 +717,11 @@ export default function DashboardPage() {
                       </div>
                       <div className="overflow-hidden">
                         <p className="truncate text-xs font-bold text-text-primary">{fullName || "CopyCoach User"}</p>
-                        <p className="mt-0.5 truncate text-[11px] text-white/50">{userEmail || userId}</p>
+                        <p className="mt-0.5 truncate text-[11px] text-text-muted">{userEmail || userId}</p>
                       </div>
                     </div>
 
-                    <div className="mt-2.5 flex items-center justify-between border-t border-white/10 pt-2 text-[11px] text-white/50">
+                    <div className="mt-2.5 flex items-center justify-between border-t border-border dark:border-white/10 pt-2 text-[11px] text-text-muted">
                       <span className="flex items-center gap-1 font-medium">
                         <ShieldCheck className="h-3.5 w-3.5 text-accent-bright" />
                         <span>{plan === "pro" ? "Pro Membership" : "Starter Free Plan"}</span>
@@ -732,14 +732,14 @@ export default function DashboardPage() {
 
                   {/* Account & Settings Group */}
                   <div className="mb-2 space-y-0.5">
-                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                       Account & Workspace
                     </span>
 
                     <Link
                       href="/dashboard/admin/feedback"
                       onClick={() => setShowMenu(false)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <ShieldCheck className="h-4 w-4 text-amber-400" />
@@ -751,13 +751,13 @@ export default function DashboardPage() {
                     <Link
                       href="/dashboard/profile"
                       onClick={() => setShowMenu(false)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <UserCheck className="h-4 w-4 text-accent-bright" />
                         <span>Profile Settings</span>
                       </div>
-                      <span className="text-[10px] text-white/40">Edit</span>
+                      <span className="text-[10px] text-text-muted">Edit</span>
                     </Link>
 
                     <button
@@ -766,7 +766,7 @@ export default function DashboardPage() {
                         setProfileTab("brand_voice");
                         setShowProfileModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <Sliders className="h-4 w-4 text-accent-bright" />
@@ -781,7 +781,7 @@ export default function DashboardPage() {
                         setProfileTab("billing");
                         setShowProfileModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <CreditCard className="h-4 w-4 text-amber-400" />
@@ -794,8 +794,8 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Preferences Group */}
-                  <div className="mb-2 space-y-0.5 border-t border-white/10 pt-2">
-                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+                  <div className="mb-2 space-y-0.5 border-t border-border dark:border-white/10 pt-2">
+                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                       Preferences
                     </span>
 
@@ -805,21 +805,21 @@ export default function DashboardPage() {
                         setProfileTab("preferences");
                         setShowProfileModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         {isDarkMode ? <Moon className="h-4 w-4 text-accent-bright" /> : <Sun className="h-4 w-4 text-amber-400" />}
                         <span>Appearance & Theme</span>
                       </div>
-                      <span className="rounded border border-white/10 bg-white/10 px-2 py-0.5 text-[10px] font-medium text-accent-bright">
+                      <span className="rounded border border-border dark:border-white/10 bg-surface-muted dark:bg-white/10 px-2 py-0.5 text-[10px] font-medium text-accent-bright">
                         {themeMode === "system" ? "System Sync" : isDarkMode ? "Dark Theme" : "Light Theme"}
                       </span>
                     </button>
                   </div>
 
                   {/* Resources & Help Group */}
-                  <div className="mb-2 space-y-0.5 border-t border-white/10 pt-2">
-                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+                  <div className="mb-2 space-y-0.5 border-t border-border dark:border-white/10 pt-2">
+                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                       Support & Tools
                     </span>
 
@@ -828,13 +828,13 @@ export default function DashboardPage() {
                         setShowMenu(false);
                         setShowShortcutsModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <Keyboard className="h-4 w-4 text-accent-bright" />
                         <span>Keyboard Shortcuts</span>
                       </div>
-                      <span className="font-mono text-[10px] text-white/40">⌘K</span>
+                      <span className="font-mono text-[10px] text-text-muted">⌘K</span>
                     </button>
 
                     <button
@@ -842,18 +842,18 @@ export default function DashboardPage() {
                         setShowMenu(false);
                         setShowSupportModal(true);
                       }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
                     >
                       <div className="flex items-center gap-2.5">
                         <HelpCircle className="h-4 w-4 text-accent-bright" />
                         <span>Help & AI Support</span>
                       </div>
-                      <span className="text-[10px] text-white/40">24/7</span>
+                      <span className="text-[10px] text-text-muted">24/7</span>
                     </button>
                   </div>
 
                   {/* Sign Out Button */}
-                  <div className="border-t border-white/10 pt-2">
+                  <div className="border-t border-border dark:border-white/10 pt-2">
                     <button
                       onClick={handleLogout}
                       className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-rose-400 transition-colors hover:bg-rose-500/15 hover:text-rose-300"
@@ -862,7 +862,7 @@ export default function DashboardPage() {
                         <LogOut className="h-4 w-4" />
                         <span>Sign Out</span>
                       </div>
-                      <span className="text-[10px] text-white/40">Exit</span>
+                      <span className="text-[10px] text-text-muted">Exit</span>
                     </button>
                   </div>
                 </div>
