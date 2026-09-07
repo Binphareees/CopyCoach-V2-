@@ -47,12 +47,12 @@ export default function Logo({
     xl: 204,
   };
 
-  // App icon variant — transparent brain+pencil icon, no background
+  // App icon variant — extracted PNG from reference image, transparent background
   if (variant === "app-icon" || iconOnly) {
     return (
       <div className={`relative flex items-center justify-center shrink-0 ${iconSizes[size]} ${className}`}>
         <img
-          src="/logo-symbol.svg"
+          src="/images/logo-icon.png"
           alt="CopyCoach AI"
           className="w-full h-full object-contain"
         />
@@ -60,11 +60,8 @@ export default function Logo({
     );
   }
 
-  // Standard full logo — theme-aware
-  // Both SVGs have transparent backgrounds with the brain+pencil icon
-  // Dark mode: white text, blue AI
-  // Light mode: dark text, blue AI
-  const logoSrc = isDarkTarget ? "/logo-primary-dark.svg" : "/logo-primary-light.svg";
+  // Standard full logo — extracted PNG from reference image, transparent background
+  const logoSrc = "/images/logo-full.png";
 
   return (
     <div className={`inline-flex items-center gap-3 select-none ${className}`}>
