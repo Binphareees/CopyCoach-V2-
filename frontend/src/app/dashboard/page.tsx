@@ -67,6 +67,18 @@ interface CopyResult {
   framework?: string;
   improvedCopy?: string;
   coachAdvice?: string;
+  humanWritingScore?: number;
+  aiPatternRisk?: number;
+  humanWritingAnalysis?: {
+    naturalness?: number;
+    specificity?: number;
+    voice?: number;
+    sentenceRhythm?: number;
+    clarity?: number;
+    contextualFit?: number;
+    repetition?: number;
+    formulaicPatternRisk?: number;
+  };
 }
 
 interface HistoryItem {
@@ -930,7 +942,7 @@ export default function DashboardPage() {
             <div className="my-3">
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-extrabold text-text-primary">{credits}</span>
-                <span className="text-xs text-brand-300">/ {plan === "pro" ? 100 : 5} left today</span>
+                <span className="text-xs text-brand-300">/ {plan === "pro" ? 100 : 5} left {plan === "pro" ? "this month" : "today"}</span>
               </div>
               <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-glass-bg-elevated">
                 <div
@@ -944,7 +956,7 @@ export default function DashboardPage() {
                 onClick={upgradeToPro}
                 className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-accent-bright hover:text-[#7C7CF7]"
               >
-                Upgrade to Pro (100 daily)
+                Upgrade to Pro (100 monthly)
                 <ArrowRight className="h-3.5 w-3.5 transition-transform" />
               </button>
             ) : (
@@ -1097,7 +1109,7 @@ export default function DashboardPage() {
                     <button onClick={upgradeToPro} className="font-semibold underline underline-offset-2 hover:text-amber-300">
                       Upgrade to Pro
                     </button>{" "}
-                    for 100 daily generations.
+                    for 100 monthly generations.
                   </p>
                 )}
 
@@ -1137,6 +1149,86 @@ export default function DashboardPage() {
                     <p className="text-[10px] uppercase tracking-wider text-brand-300">Conversion Ready</p>
                   </div>
                 </div>
+
+                {/* Human Writing Score */}
+                {typeof result === "object" && result.humanWritingScore !== undefined && (
+                  <div className="rounded-xl border border-glass-border-subtle bg-glass-bg-deep p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Activity className="h-4 w-4 text-accent-bright" />
+                        <span className="text-xs font-semibold text-text-primary">Human Writing Score</span>
+                      </div>
+                      <span
+                        className={`text-lg font-extrabold ${
+                          (result.humanWritingScore >= 80)
+                            ? "text-emerald-400"
+                            : (result.humanWritingScore >= 60)
+                            ? "text-amber-400"
+                            : "text-rose-400"
+                        }`}
+                      >
+                        {result.humanWritingScore}/100
+                      </span>
+                    </div>
+
+                    {/* AI Pattern Risk Badge */}
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-[10px] uppercase tracking-wider text-brand-300">AI Pattern Risk</span>
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                          (result.aiPatternRisk ?? 30) <= 20
+                            ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                            : (result.aiPatternRisk ?? 30) <= 40
+                            ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                            : (result.aiPatternRisk ?? 30) <= 60
+                            ? "bg-orange-500/15 text-orange-400 border border-orange-500/30"
+                            : "bg-rose-500/15 text-rose-400 border border-rose-500/30"
+                        }`}
+                      >
+                        {(result.aiPatternRisk ?? 30) <= 20
+                          ? "LOW"
+                          : (result.aiPatternRisk ?? 30) <= 40
+                          ? "MODERATE"
+                          : (result.aiPatternRisk ?? 30) <= 60
+                          ? "ELEVATED"
+                          : "HIGH"}
+                      </span>
+                    </div>
+
+                    {/* Detailed Breakdown */}
+                    {result.humanWritingAnalysis && (
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px]">
+                        {[
+                          { label: "Naturalness", value: result.humanWritingAnalysis.naturalness },
+                          { label: "Specificity", value: result.humanWritingAnalysis.specificity },
+                          { label: "Voice", value: result.humanWritingAnalysis.voice },
+                          { label: "Rhythm", value: result.humanWritingAnalysis.sentenceRhythm },
+                          { label: "Clarity", value: result.humanWritingAnalysis.clarity },
+                          { label: "Audience Fit", value: result.humanWritingAnalysis.contextualFit },
+                        ].map((item) => (
+                          <div key={item.label} className="flex items-center justify-between">
+                            <span className="text-brand-300">{item.label}</span>
+                            <div className="flex items-center gap-2">
+                              <div className="h-1.5 w-16 overflow-hidden rounded-full bg-glass-bg-elevated">
+                                <div
+                                  className={`h-full rounded-full transition-all duration-500 ${
+                                    (item.value ?? 70) >= 80
+                                      ? "bg-emerald-400"
+                                      : (item.value ?? 70) >= 60
+                                      ? "bg-amber-400"
+                                      : "bg-rose-400"
+                                  }`}
+                                  style={{ width: `${item.value ?? 70}%` }}
+                                />
+                              </div>
+                              <span className="w-6 text-right font-semibold text-brand-200">{item.value ?? 70}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Framework & Strengths */}
                 {typeof result === "object" && (

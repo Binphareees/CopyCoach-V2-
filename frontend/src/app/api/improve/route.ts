@@ -5,6 +5,7 @@ import { canGenerate, consumeCredit } from "@/lib/credits";
 import { getServerUser } from "@/lib/auth-server";
 import { getRateLimiter } from "@/lib/rate-limit";
 import { trackServerEvent } from "@/lib/analytics";
+import { runHumanWritingEngine } from "@/lib/human-writing";
 
 const systemPrompt = `
 You are CopyCoach AI, an expert senior copywriter and marketing coach.
@@ -142,6 +143,45 @@ Original Copy / Product Description: ${text}
       };
     }
 
+    // --- Phase 2-6: Human Writing Engine second pass ---
+    const improvedCopyText = parsed.improvedCopy || text;
+    let humanWriting;
+    try {
+      humanWriting = await runHumanWritingEngine(
+        improvedCopyText,
+        typeof copyType === "string" ? copyType : "General",
+        typeof tone === "string" ? tone : "Professional",
+        typeof productName === "string" ? productName : "",
+        typeof targetAudience === "string" ? targetAudience : ""
+      );
+    } catch (hweErr) {
+      console.error("Human Writing Engine error:", hweErr);
+      humanWriting = null;
+    }
+
+    // Use the polished copy from Human Writing Engine if available
+    if (humanWriting && humanWriting.polishedCopy) {
+      parsed.improvedCopy = humanWriting.polishedCopy;
+    }
+
+    // Merge Human Writing scores into result
+    const finalResult = {
+      ...parsed,
+      humanWritingScore: humanWriting?.humanWritingScore ?? 70,
+      aiPatternRisk: humanWriting?.aiPatternRisk ?? 30,
+      humanWritingAnalysis: humanWriting?.humanWritingAnalysis ?? {
+        naturalness: 70,
+        specificity: 70,
+        voice: 70,
+        sentenceRhythm: 70,
+        clarity: 70,
+        contextualFit: 70,
+        repetition: 70,
+        formulaicPatternRisk: 30,
+      },
+    };
+
+    // Consume credit ONLY after successful generation
     try {
       await consumeCredit(user.id);
     } catch (e) {
@@ -155,10 +195,11 @@ Original Copy / Product Description: ${text}
         : process.env.GROQ_API_KEY
           ? "groq"
           : "mock",
+      humanWritingScore: finalResult.humanWritingScore,
     });
 
     return NextResponse.json({
-      result: parsed,
+      result: finalResult,
       creditsRemaining: Math.max(0, check.remaining - 1),
     });
   } catch (error) {
