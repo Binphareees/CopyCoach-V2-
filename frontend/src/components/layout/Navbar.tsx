@@ -167,8 +167,8 @@ export default function Navbar() {
                 {showDropdown && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowDropdown(false)} />
-                    <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-border bg-[#1a1f2e] dark:bg-[#0f1420] p-2 shadow-2xl z-50 text-text-primary animate-in fade-in zoom-in-95">
-                      <div className="px-3 py-2 border-b border-white/10 dark:border-border mb-1">
+                    <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-border/50 bg-[#0d1117] dark:bg-[#0a0e18] p-2 shadow-2xl z-50 text-text-primary animate-in fade-in zoom-in-95">
+                      <div className="px-3 py-2 border-b border-white/15 mb-1">
                         <p className="text-xs font-bold text-text-primary truncate">{displayName}</p>
                         <p className="text-[11px] text-text-muted truncate">{user.email}</p>
                       </div>
@@ -176,7 +176,7 @@ export default function Navbar() {
                       <Link
                         href="/dashboard"
                         onClick={() => setShowDropdown(false)}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-white/10 dark:hover:bg-surface-muted transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-white/15 transition-colors"
                       >
                         <LayoutDashboard className="w-4 h-4 text-accent" />
                         <span>Go to Dashboard</span>
@@ -185,7 +185,7 @@ export default function Navbar() {
                       <Link
                         href="/dashboard/profile"
                         onClick={() => setShowDropdown(false)}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-white/10 dark:hover:bg-surface-muted transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-white/15 transition-colors"
                       >
                         <User className="w-4 h-4 text-accent" />
                         <span>My Profile Settings</span>
@@ -193,7 +193,7 @@ export default function Navbar() {
 
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-danger hover:bg-danger-surface transition-colors mt-1 border-t border-white/10 dark:border-border"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-danger hover:bg-danger-surface transition-colors mt-1 border-t border-white/15"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Sign Out</span>
