@@ -185,22 +185,24 @@ Original Copy / Product Description: ${text}
         : {},
     };
 
-    // Consume credit ONLY after successful generation
-    try {
-      await consumeCredit(user.id);
-    } catch (e) {
-      console.warn("Credit update warning:", e);
-    }
+    // Only consume credit if both passes succeeded
+    if (humanWriting) {
+      try {
+        await consumeCredit(user.id);
+      } catch (e) {
+        console.warn("Credit update warning:", e);
+      }
 
-    await trackServerEvent(user.id, "generation_completed", {
-      plan: check.plan,
-      provider: process.env.GEMINI_API_KEY
-        ? "gemini"
-        : process.env.GROQ_API_KEY
-          ? "groq"
-          : "mock",
-      humanWritingScore: finalResult.humanWritingScore,
-    });
+      await trackServerEvent(user.id, "generation_completed", {
+        plan: check.plan,
+        provider: process.env.GEMINI_API_KEY
+          ? "gemini"
+          : process.env.GROQ_API_KEY
+            ? "groq"
+            : "mock",
+        humanWritingScore: finalResult.humanWritingScore,
+      });
+    }
 
     return NextResponse.json({
       result: finalResult,
