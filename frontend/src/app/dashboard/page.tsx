@@ -53,7 +53,6 @@ import {
   User,
   Save,
   LifeBuoy,
-  ExternalLink,
   Activity,
   Laptop,
   Maximize2,
@@ -775,12 +774,9 @@ export default function DashboardPage() {
                       <span className="rounded border border-amber-800/50 bg-amber-950/40 px-1.5 py-0.5 text-[10px] font-bold text-amber-400">Admin</span>
                     </Link>
 
-                    <button
-                      onClick={() => {
-                        setShowMenu(false);
-                        setProfileTab("profile");
-                        setShowProfileModal(true);
-                      }}
+                    <Link
+                      href="/dashboard/profile"
+                      onClick={() => setShowMenu(false)}
                       className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-brand-200 transition-colors hover:bg-ink-800 hover:text-white"
                     >
                       <div className="flex items-center gap-2.5">
@@ -788,7 +784,7 @@ export default function DashboardPage() {
                         <span>Profile Settings</span>
                       </div>
                       <span className="text-[10px] text-brand-300">Edit</span>
-                    </button>
+                    </Link>
 
                     <button
                       onClick={() => {
@@ -1891,18 +1887,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Modal Bottom Actions */}
-            <div className="flex shrink-0 items-center justify-between border-t border-ink-700 bg-ink-950/80 p-4 sm:p-6">
-              <button
-                onClick={() => {
-                  setShowProfileModal(false);
-                  router.push("/dashboard/profile");
-                }}
-                className="flex cursor-pointer items-center gap-1 text-xs font-medium text-accent-bright hover:underline"
-              >
-                Open Dedicated Profile Page
-                <ExternalLink className="h-3.5 w-3.5" />
-              </button>
-
+            <div className="flex shrink-0 items-center justify-end border-t border-ink-700 bg-ink-950/80 p-4 sm:p-6">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowProfileModal(false)}

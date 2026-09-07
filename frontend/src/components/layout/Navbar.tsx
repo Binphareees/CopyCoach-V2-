@@ -213,7 +213,7 @@ export default function Navbar() {
                 Login
               </Link>
 
-              <GradientButton asChild>
+              <GradientButton asChild className="!min-w-0 !px-5 !py-2.5 !text-sm !rounded-lg">
                 <Link href="/auth/signup">Get Started</Link>
               </GradientButton>
             </>
