@@ -203,6 +203,66 @@ export default function SignupPage() {
     }
   }
 
+  async function signInWithGitHub() {
+    setLoading(true);
+    setMessage("Connecting to GitHub...");
+
+    try {
+      const activeClient = await ensureSupabaseConfig();
+
+      if (!getIsSupabaseConfigured()) {
+        setLoading(false);
+        setMessage("Supabase credentials are missing or set to placeholder. Please check your NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
+        return;
+      }
+
+      const redirectUrl =
+        typeof window !== "undefined"
+          ? `${window.location.origin}/auth/callback`
+          : "http://localhost:3000/auth/callback";
+
+      const { data, error } = await activeClient.auth.signInWithOAuth({
+        provider: "github",
+        options: {
+          redirectTo: redirectUrl,
+          skipBrowserRedirect: true,
+        },
+      });
+
+      if (error) {
+        console.error("GitHub Auth error:", error);
+        if (error.message.toLowerCase().includes("provider is not enabled") || error.message.toLowerCase().includes("unsupported provider")) {
+          setMessage("GitHub provider is disabled in Supabase. Please enable GitHub under Supabase Dashboard -> Authentication -> Providers.");
+        } else {
+          setMessage(`GitHub sign-up error: ${error.message}`);
+        }
+        setLoading(false);
+        return;
+      }
+
+      if (data?.url) {
+        if (data.url.includes("placeholder.supabase.co")) {
+          setMessage(
+            "Supabase URL is using placeholder values. Please configure NEXT_PUBLIC_SUPABASE_URL in Settings."
+          );
+          setLoading(false);
+          return;
+        }
+
+        setMessage("Redirecting to GitHub Sign-In...");
+        window.location.href = data.url;
+      } else {
+        setMessage("Could not generate GitHub sign-up link.");
+        setLoading(false);
+      }
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : "Failed to initiate GitHub sign up";
+      console.error("GitHub sign up exception:", err);
+      setMessage(errorMsg);
+      setLoading(false);
+    }
+  }
+
   return (
     <>
       {!checkingConfig && !configured && (
@@ -213,6 +273,7 @@ export default function SignupPage() {
       <CleanMinimalSignUp
         onSignUp={handleSignup}
         onGoogleSignIn={signInWithGoogle}
+        onGitHubSignIn={signInWithGitHub}
         onSignIn={() => router.push("/auth/login")}
         loading={loading}
         error={message}
