@@ -703,11 +703,11 @@ export default function DashboardPage() {
                   className="fixed inset-0 z-40 cursor-default"
                   onClick={() => setShowMenu(false)}
                 />
-                <div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-border bg-surface-elevated dark:bg-[#0a0e18] p-2.5 text-text-primary shadow-2xl">
+                <div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#0a0e18] p-2.5 text-text-primary shadow-2xl">
                   {/* Profile Header */}
-                  <div className="mb-2 rounded-xl border border-border dark:border-white/10 bg-surface-muted dark:bg-white/5 px-3 py-2.5">
+                  <div className="mb-2 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-3 py-2.5">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border dark:border-white/10 bg-surface dark:bg-white/10 text-xs font-bold text-accent-bright">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/10 text-xs font-bold text-accent-bright">
                         {avatar ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={avatar} alt={fullName} className="h-full w-full rounded-lg object-cover" />
@@ -721,7 +721,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
-                    <div className="mt-2.5 flex items-center justify-between border-t border-border dark:border-white/10 pt-2 text-[11px] text-text-muted">
+                    <div className="mt-2.5 flex items-center justify-between border-t border-gray-200 dark:border-white/10 pt-2 text-[11px] text-text-muted">
                       <span className="flex items-center gap-1 font-medium">
                         <ShieldCheck className="h-3.5 w-3.5 text-accent-bright" />
                         <span>{plan === "pro" ? "Pro Membership" : "Starter Free Plan"}</span>
@@ -794,7 +794,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Preferences Group */}
-                  <div className="mb-2 space-y-0.5 border-t border-border dark:border-white/10 pt-2">
+                  <div className="mb-2 space-y-0.5 border-t border-gray-200 dark:border-white/10 pt-2">
                     <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                       Preferences
                     </span>
@@ -811,14 +811,14 @@ export default function DashboardPage() {
                         {isDarkMode ? <Moon className="h-4 w-4 text-accent-bright" /> : <Sun className="h-4 w-4 text-amber-400" />}
                         <span>Appearance & Theme</span>
                       </div>
-                      <span className="rounded border border-border dark:border-white/10 bg-surface-muted dark:bg-white/10 px-2 py-0.5 text-[10px] font-medium text-accent-bright">
+                      <span className="rounded border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/10 px-2 py-0.5 text-[10px] font-medium text-accent-bright">
                         {themeMode === "system" ? "System Sync" : isDarkMode ? "Dark Theme" : "Light Theme"}
                       </span>
                     </button>
                   </div>
 
                   {/* Resources & Help Group */}
-                  <div className="mb-2 space-y-0.5 border-t border-border dark:border-white/10 pt-2">
+                  <div className="mb-2 space-y-0.5 border-t border-gray-200 dark:border-white/10 pt-2">
                     <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                       Support & Tools
                     </span>
@@ -853,7 +853,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Sign Out Button */}
-                  <div className="border-t border-border dark:border-white/10 pt-2">
+                  <div className="border-t border-gray-200 dark:border-white/10 pt-2">
                     <button
                       onClick={handleLogout}
                       className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-rose-400 transition-colors hover:bg-rose-500/15 hover:text-rose-300"
