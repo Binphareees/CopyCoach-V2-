@@ -158,7 +158,7 @@ export default function AdminFeedbackPage() {
 
   if (checkingAccess) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center gap-3">
+      <div className="min-h-screen text-slate-100 flex flex-col items-center justify-center gap-3">
         <div className="w-10 h-10 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
         <p className="text-xs text-slate-400">Verifying admin access...</p>
       </div>
@@ -167,7 +167,7 @@ export default function AdminFeedbackPage() {
 
   if (forbidden) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center gap-3">
+      <div className="min-h-screen text-slate-100 flex flex-col items-center justify-center gap-3">
         <ShieldAlert className="w-10 h-10 text-rose-500" />
         <p className="text-xs text-slate-400">Unauthorized. Redirecting...</p>
       </div>
@@ -175,7 +175,7 @@ export default function AdminFeedbackPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen text-slate-100 flex flex-col font-sans">
       {/* HEADER */}
       <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">

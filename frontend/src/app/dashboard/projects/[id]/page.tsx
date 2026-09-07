@@ -187,7 +187,7 @@ export default function ProjectPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background text-slate-100 flex flex-col font-sans pb-16">
+    <div className="min-h-screen text-slate-100 flex flex-col font-sans pb-16">
       {/* TOP HEADER */}
       <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">

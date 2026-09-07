@@ -626,7 +626,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-ink-950 font-sans text-brand-100 selection:bg-accent selection:text-white">
+    <div className="min-h-screen font-sans text-brand-100 selection:bg-accent selection:text-white">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-24 right-4 z-[60] flex items-center gap-2 border border-accent/40 bg-ink-800 px-4 py-3 text-sm font-medium text-brand-100 shadow-2xl lg:bottom-6 lg:right-6">

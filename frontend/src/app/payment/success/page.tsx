@@ -70,7 +70,7 @@ function PaymentSuccessContent() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen bg-background text-slate-100 flex flex-col items-center justify-center p-6 font-sans">
+    <div className="min-h-screen text-slate-100 flex flex-col items-center justify-center p-6 font-sans">
       <div className="w-full max-w-md bg-slate-900/80 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur text-center relative overflow-hidden">
         <div className="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -144,7 +144,7 @@ export default function PaymentSuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-background text-slate-300">
+        <div className="min-h-screen flex items-center justify-center text-slate-300">
           <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
         </div>
       }
