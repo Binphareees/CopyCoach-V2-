@@ -20,7 +20,7 @@ export default function Logo({
   showTagline = true,
   variant = "standard",
 }: LogoProps) {
-  // Size metrics
+  // Size metrics for app icon
   const iconSizes = {
     sm: "w-8 h-8",
     md: "w-11 h-11",
@@ -28,25 +28,19 @@ export default function Logo({
     xl: "w-20 h-20",
   };
 
+  // Proportional sizing for full logo (original aspect ratio ~1.67:1)
   const logoWidths = {
-    sm: 80,
-    md: 120,
-    lg: 160,
-    xl: 220,
+    sm: 120,
+    md: 180,
+    lg: 240,
+    xl: 320,
   };
 
   const logoHeights = {
-    sm: 32,
-    md: 48,
-    lg: 64,
-    xl: 88,
-  };
-
-  const taglineSizes = {
-    sm: "text-[9px] sm:text-[10px]",
-    md: "text-[11px] sm:text-[12px]",
-    lg: "text-[13px] sm:text-[14px]",
-    xl: "text-[15px] sm:text-[16px]",
+    sm: 72,
+    md: 108,
+    lg: 144,
+    xl: 192,
   };
 
   const isDarkTarget = theme === "dark";
@@ -68,7 +62,7 @@ export default function Logo({
     );
   }
 
-  // Standard full logo
+  // Standard full logo - tagline is baked into the image
   return (
     <div className={`inline-flex items-center gap-3 select-none ${className}`}>
       {/* BRAND IMAGE LOGO */}
@@ -82,21 +76,6 @@ export default function Logo({
           priority
         />
       </div>
-
-      {/* TAGLINE (shown below logo when enabled) */}
-      {!iconOnly && showTagline && (
-        <p
-          className={`font-semibold tracking-wide transition-colors duration-200 ${taglineSizes[size]} ${
-            isDarkTarget
-              ? "text-slate-300"
-              : isLightTarget
-              ? "text-slate-600"
-              : "text-slate-600 dark:text-slate-300"
-          }`}
-        >
-          Elevate Your Copywriting with AI
-        </p>
-      )}
     </div>
   );
 }

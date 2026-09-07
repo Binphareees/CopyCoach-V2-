@@ -7,30 +7,49 @@
     </linearGradient>
     <linearGradient id="pencilGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#00b4d8" />
-      <stop offset="100%" stop-color="#3a0ca3" />
+      <stop offset="50%" stop-color="#818CF8" />
+      <stop offset="100%" stop-color="#7209b7" />
     </linearGradient>
   </defs>
 
-  <rect x="4" y="4" width="192" height="192" rx="48" fill="#0f172a" stroke="#1E293B" stroke-width="4" />
+  <rect x="4" y="4" width="192" height="192" rx="48" fill="#0B132B" stroke="#1E293B" stroke-width="4" />
 
-  <g stroke="url(#brainGlow)" stroke-width="4" opacity="0.9">
-    <line x1="52" y1="78" x2="80" y2="50" />
-    <line x1="80" y1="50" x2="118" y2="58" />
-    <line x1="52" y1="78" x2="64" y2="112" />
-    <line x1="64" y1="112" x2="98" y2="120" />
-    <circle cx="52" cy="78" r="6" fill="#00f5d4" />
-    <circle cx="80" cy="50" r="7" fill="#00b4d8" />
-    <circle cx="118" cy="58" r="6" fill="#7209b7" />
-    <circle cx="64" cy="112" r="6" fill="#00f5d4" />
-    <circle cx="98" cy="120" r="7" fill="#00b4d8" />
+  <!-- Brain Network -->
+  <g stroke="url(#brainGlow)" stroke-width="3" opacity="0.85">
+    <line x1="50" y1="75" x2="75" y2="48" />
+    <line x1="75" y1="48" x2="115" y2="55" />
+    <line x1="50" y1="75" x2="62" y2="108" />
+    <line x1="62" y1="108" x2="95" y2="118" />
+    <line x1="75" y1="48" x2="95" y2="88" />
+
+    <circle cx="50" cy="75" r="5.5" fill="#00f5d4" />
+    <circle cx="75" cy="48" r="6.5" fill="#00b4d8" />
+    <circle cx="115" cy="55" r="5.5" fill="#7209b7" />
+    <circle cx="62" cy="108" r="5.5" fill="#00f5d4" />
+    <circle cx="95" cy="118" r="6.5" fill="#00b4d8" />
+    <circle cx="95" cy="88" r="4.5" fill="#ffffff" />
   </g>
 
+  <!-- Pencil -->
   <g transform="rotate(-35 100 100)">
-    <rect x="86" y="30" width="28" height="110" rx="6" fill="url(#pencilGrad)" stroke="#ffffff" stroke-width="5" />
-    <path d="M 86 45 L 114 45 L 114 36 C 114 32 110 28 106 28 L 94 28 C 90 28 86 32 86 36 Z" fill="#7209b7" />
-    <path d="M 86 140 L 100 170 L 114 140 Z" fill="#00b4d8" />
+    <rect x="86" y="30" width="28" height="110" rx="6" fill="url(#pencilGrad)" stroke="#ffffff" stroke-width="4.5" />
+    
+    <!-- Eraser -->
+    <path d="M 86 44 L 114 44 L 114 35 C 114 31 110 27 106 27 L 94 27 C 90 27 86 31 86 35 Z" fill="#7209b7" stroke="#ffffff" stroke-width="2" />
+    <line x1="86" y1="44" x2="114" y2="44" stroke="#ffffff" stroke-width="2" />
+    
+    <!-- Pencil tip -->
+    <path d="M 86 140 L 100 168 L 114 140 Z" fill="#00b4d8" />
+    <polygon points="95,158 100,168 105,158" fill="#0B132B" />
+    
+    <!-- Coach silhouette -->
+    <circle cx="100" cy="72" r="5.5" fill="#ffffff" />
+    <path d="M 92 92 C 92 82 108 82 108 92 L 108 112 L 92 112 Z" fill="#ffffff" />
+    <!-- Pointer arm -->
+    <line x1="104" y1="88" x2="114" y2="80" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
   </g>
 
-  <circle cx="50" cy="152" r="8" fill="#00f5d4" />
-  <circle cx="50" cy="152" r="16" fill="#00f5d4" opacity="0.3" />
+  <!-- Writing tip glow -->
+  <circle cx="48" cy="153" r="7.5" fill="#00f5d4" />
+  <circle cx="48" cy="153" r="15" fill="#00f5d4" opacity="0.3" />
 </svg>
