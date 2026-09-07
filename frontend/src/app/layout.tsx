@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   description: "AI-powered copywriting assistant and coaching application",
   icons: {
     icon: "/favicon.svg",
-    apple: "/logo-symbol.svg",
+    apple: "/images/logo-icon.png",
   },
 };
 
