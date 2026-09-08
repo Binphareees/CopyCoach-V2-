@@ -10,6 +10,7 @@ import {
   getIsSupabaseConfigured,
 } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 import DrillCritiqueFeedback from "@/components/ui/DrillCritiqueFeedback";
@@ -172,70 +173,11 @@ export default function DashboardPage() {
   const [showPassword] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
-  // Appearance & Theme State
-  const [themeMode, setThemeMode] = useState<"dark" | "light" | "system">(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const savedTheme = localStorage.getItem("copycoach_theme");
-        if (savedTheme === "light" || savedTheme === "dark" || savedTheme === "system") {
-          return savedTheme;
-        }
-      } catch {
-        // fallback
-      }
-    }
-    return "dark";
-  });
-
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
-
-  // Sync isDarkMode and document HTML class with themeMode
-  useEffect(() => {
-    const updateTheme = () => {
-      let isDark = true;
-      if (themeMode === "light") {
-        isDark = false;
-      } else if (themeMode === "dark") {
-        isDark = true;
-      } else if (themeMode === "system") {
-        isDark = typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
-      }
-
-      setIsDarkMode(isDark);
-
-      if (typeof document !== "undefined") {
-        if (isDark) {
-          document.documentElement.classList.add("dark");
-          document.documentElement.classList.remove("light");
-        } else {
-          document.documentElement.classList.add("light");
-          document.documentElement.classList.remove("dark");
-        }
-      }
-    };
-
-    updateTheme();
-
-    if (themeMode === "system") {
-      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      const listener = (e: MediaQueryListEvent) => {
-        setIsDarkMode(e.matches);
-        if (e.matches) {
-          document.documentElement.classList.add("dark");
-          document.documentElement.classList.remove("light");
-        } else {
-          document.documentElement.classList.add("light");
-          document.documentElement.classList.remove("dark");
-        }
-      };
-      mediaQuery.addEventListener("change", listener);
-      return () => mediaQuery.removeEventListener("change", listener);
-    }
-  }, [themeMode]);
+  // Appearance & Theme State (single source of truth: global ThemeProvider)
+  const { themeMode, isDarkMode, setThemeMode } = useTheme();
 
   const applyTheme = (mode: "dark" | "light" | "system") => {
     setThemeMode(mode);
-    localStorage.setItem("copycoach_theme", mode);
     if (mode === "dark") showToast("Dark Theme Activated");
     else if (mode === "light") showToast("Light Theme Activated");
     else showToast("System Theme Synchronized");

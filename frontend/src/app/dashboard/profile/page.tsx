@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import {
   User,
   Sparkles,
@@ -75,28 +76,7 @@ export default function ProfilePage() {
 
   // App Preferences
   const [preferredModel, setPreferredModel] = useState("Gemini 2.5 Flash (Recommended)");
-  const [themeMode, setThemeMode] = useState<"dark" | "light" | "system">("dark");
-
-  useEffect(() => {
-    let isDark = true;
-    if (themeMode === "light") {
-      isDark = false;
-    } else if (themeMode === "dark") {
-      isDark = true;
-    } else if (themeMode === "system") {
-      isDark = typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    }
-
-    if (typeof document !== "undefined") {
-      if (isDark) {
-        document.documentElement.classList.add("dark");
-        document.documentElement.classList.remove("light");
-      } else {
-        document.documentElement.classList.add("light");
-        document.documentElement.classList.remove("dark");
-      }
-    }
-  }, [themeMode]);
+  const { themeMode, setThemeMode } = useTheme();
   const [autoSaveHistory, setAutoSaveHistory] = useState(true);
   const [emailUpdates, setEmailUpdates] = useState(true);
   const [usageAlerts, setUsageAlerts] = useState(true);
@@ -148,7 +128,7 @@ export default function ProfilePage() {
     } catch (e) {
       console.error("Error loading local settings", e);
     }
-  }, []);
+  }, [setThemeMode]);
 
   // Load User Data from Supabase
   const loadProfile = useCallback(async () => {
@@ -979,7 +959,6 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => {
                         setThemeMode("dark");
-                        localStorage.setItem("copycoach_theme", "dark");
                         showNotification("Dark Theme Selected");
                       }}
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
@@ -996,7 +975,6 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => {
                         setThemeMode("light");
-                        localStorage.setItem("copycoach_theme", "light");
                         showNotification("Light Theme Selected");
                       }}
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
@@ -1013,7 +991,6 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => {
                         setThemeMode("system");
-                        localStorage.setItem("copycoach_theme", "system");
                         showNotification("System Preference Theme Selected");
                       }}
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
