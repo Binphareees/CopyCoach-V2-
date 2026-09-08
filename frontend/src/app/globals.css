@@ -530,6 +530,10 @@ button:disabled {
   color: transparent;
 }
 
+:root.light .text-gradient {
+  background: linear-gradient(120deg, #2563eb, #4f46e5 50%, #7c3aed);
+}
+
 /* Metric value */
 .metric-value {
   font-variant-numeric: tabular-nums;
@@ -552,6 +556,16 @@ button:disabled {
     transform var(--duration-base) var(--ease-out),
     border-color var(--duration-base) var(--ease-out),
     box-shadow var(--duration-base) var(--ease-out);
+}
+.glass-stat::before {
+  content: "";
+  position: absolute;
+  inset: -1px -1px auto -1px;
+  height: 2px;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background: linear-gradient(90deg, transparent, var(--accent) 30%, #b8a7ff 70%, transparent);
+  opacity: 0.85;
+  pointer-events: none;
 }
 .glass-stat:hover {
   transform: translateY(-2px);

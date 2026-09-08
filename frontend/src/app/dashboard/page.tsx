@@ -639,7 +639,14 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen font-sans text-brand-100 selection:bg-accent selection:text-text-primary">
+    <div className="relative min-h-screen font-sans text-brand-100 selection:bg-accent selection:text-text-primary">
+      {/* Ambient Liquid Glass backdrop */}
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute left-1/2 top-8 h-[30rem] w-[56rem] max-w-none -translate-x-1/2 rounded-full bg-accent/15 blur-[120px]" />
+        <div className="absolute -right-32 top-40 h-96 w-96 rounded-full bg-accent-deep/10 blur-[110px]" />
+        <div className="absolute -left-40 bottom-0 h-96 w-96 rounded-full bg-[#6d5eff]/10 blur-[110px]" />
+      </div>
+
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-24 right-4 z-[60] flex items-center gap-2 glass-popover px-4 py-3 text-sm font-medium text-brand-100 animate-pop lg:bottom-6 lg:right-6">
@@ -919,7 +926,7 @@ export default function DashboardPage() {
             <p className="text-[13px] font-medium text-brand-300">
               Welcome back, {fullName.split(" ")[0] || "Creator"}
             </p>
-            <h1 className="mt-1 text-[26px] font-bold leading-tight tracking-tight text-text-primary sm:text-[2.35rem]">
+            <h1 className="text-gradient mt-1 text-[26px] font-bold leading-tight tracking-tight sm:text-[2.35rem]">
               Create high-converting copy in seconds
             </h1>
             <p className="mt-2 text-sm text-brand-200">
@@ -941,7 +948,9 @@ export default function DashboardPage() {
           <div className="glass-stat">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">AI Generation Credits</span>
-              <Zap className="h-4 w-4 text-accent-bright" />
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent-bright ring-1 ring-inset ring-accent/25">
+                <Zap className="h-4 w-4" />
+              </span>
             </div>
             <div className="my-3">
               <div className="flex items-baseline gap-2">
@@ -975,7 +984,9 @@ export default function DashboardPage() {
           <div className="glass-stat">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Total Copy Improvements</span>
-              <FileText className="h-4 w-4 text-accent-bright" />
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent-bright ring-1 ring-inset ring-accent/25">
+                <FileText className="h-4 w-4" />
+              </span>
             </div>
             <div className="my-3">
               <div className="text-3xl font-extrabold text-text-primary">{totalCopies}</div>
@@ -991,7 +1002,9 @@ export default function DashboardPage() {
           <div className="glass-stat">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Starred Favorites</span>
-              <Star className="h-4 w-4 fill-amber-500/20 text-amber-500" />
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-400 ring-1 ring-inset ring-amber-500/25">
+                <Star className="h-4 w-4 fill-amber-500/20" />
+              </span>
             </div>
             <div className="my-3">
               <div className="text-3xl font-extrabold text-text-primary">{favoriteCount}</div>
@@ -1009,7 +1022,9 @@ export default function DashboardPage() {
           <div className="glass-stat">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Active Projects</span>
-              <Layers className="h-4 w-4 text-accent-bright" />
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent-bright ring-1 ring-inset ring-accent/25">
+                <Layers className="h-4 w-4" />
+              </span>
             </div>
             <div className="my-3">
               <div className="text-3xl font-extrabold text-text-primary">{projects.length}</div>
