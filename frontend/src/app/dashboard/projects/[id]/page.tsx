@@ -189,7 +189,7 @@ export default function ProjectPage() {
   return (
     <div className="min-h-screen text-text-primary flex flex-col font-sans pb-16">
       {/* TOP HEADER */}
-      <header className="border-b border-border bg-surface-elevated backdrop-blur sticky top-0 z-20">
+      <header className="glass-nav sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">

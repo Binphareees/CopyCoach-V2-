@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import type { CSSProperties } from "react";
 import {
   supabase,
   ensureSupabaseConfig,
@@ -641,14 +642,14 @@ export default function DashboardPage() {
     <div className="min-h-screen font-sans text-brand-100 selection:bg-accent selection:text-text-primary">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-24 right-4 z-[60] flex items-center gap-2 border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass px-4 py-3 text-sm font-medium text-brand-100 lg:bottom-6 lg:right-6">
+        <div className="fixed bottom-24 right-4 z-[60] flex items-center gap-2 glass-popover px-4 py-3 text-sm font-medium text-brand-100 animate-pop lg:bottom-6 lg:right-6">
           <Check className="h-4 w-4 text-accent-bright" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Top Professional Header */}
-      <header className="sticky top-0 z-40 border-b border-border bg-surface-elevated backdrop-blur-xl">
+      <header className="glass-nav sticky top-0 z-40">
         <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Branding */}
           <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
@@ -715,11 +716,11 @@ export default function DashboardPage() {
                   className="fixed inset-0 z-40 cursor-default"
                   onClick={() => setShowMenu(false)}
                 />
-                <div className="absolute right-0 z-50 mt-2 w-72 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#0a0e18] p-2.5 text-text-primary shadow-2xl">
+                <div className="absolute right-0 z-50 mt-2 w-72 glass-popover p-2.5 text-text-primary animate-pop">
                   {/* Profile Header */}
-                  <div className="mb-2 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-3 py-2.5">
+                  <div className="mb-2 glass-panel-deep px-3 py-2.5">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/10 text-xs font-bold text-accent-bright">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-glass-border bg-glass-bg-elevated text-xs font-bold text-accent-bright">
                         {avatar ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={avatar} alt={fullName} className="h-full w-full rounded-lg object-cover" />
@@ -733,7 +734,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
-                    <div className="mt-2.5 flex items-center justify-between border-t border-gray-200 dark:border-white/10 pt-2 text-[11px] text-text-muted">
+                    <div className="mt-2.5 flex items-center justify-between border-t border-glass-border-subtle pt-2 text-[11px] text-text-muted">
                       <span className="flex items-center gap-1 font-medium">
                         <ShieldCheck className="h-3.5 w-3.5 text-accent-bright" />
                         <span>{plan === "pro" ? "Pro Membership" : "Starter Free Plan"}</span>
@@ -806,7 +807,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Preferences Group */}
-                  <div className="mb-2 space-y-0.5 border-t border-gray-200 dark:border-white/10 pt-2">
+                  <div className="mb-2 space-y-0.5 border-t border-glass-border-subtle pt-2">
                     <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                       Preferences
                     </span>
@@ -823,14 +824,14 @@ export default function DashboardPage() {
                         {isDarkMode ? <Moon className="h-4 w-4 text-accent-bright" /> : <Sun className="h-4 w-4 text-amber-400" />}
                         <span>Appearance & Theme</span>
                       </div>
-                      <span className="rounded border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/10 px-2 py-0.5 text-[10px] font-medium text-accent-bright">
+                      <span className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-0.5 text-[10px] font-medium text-accent-bright">
                         {themeMode === "system" ? "System Sync" : isDarkMode ? "Dark Theme" : "Light Theme"}
                       </span>
                     </button>
                   </div>
 
                   {/* Resources & Help Group */}
-                  <div className="mb-2 space-y-0.5 border-t border-gray-200 dark:border-white/10 pt-2">
+                  <div className="mb-2 space-y-0.5 border-t border-glass-border-subtle pt-2">
                     <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                       Support & Tools
                     </span>
@@ -865,7 +866,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Sign Out Button */}
-                  <div className="border-t border-gray-200 dark:border-white/10 pt-2">
+                  <div className="border-t border-glass-border-subtle pt-2">
                     <button
                       onClick={handleLogout}
                       className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-rose-400 transition-colors hover:bg-rose-500/15 hover:text-rose-300"
@@ -918,15 +919,18 @@ export default function DashboardPage() {
             <p className="text-[13px] font-medium text-brand-300">
               Welcome back, {fullName.split(" ")[0] || "Creator"}
             </p>
-            <h1 className="mt-1 text-[26px] font-bold leading-tight tracking-tight text-text-primary sm:text-3xl">
+            <h1 className="mt-1 text-[26px] font-bold leading-tight tracking-tight text-text-primary sm:text-[2.35rem]">
               Create high-converting copy in seconds
             </h1>
-            <p className="mt-1.5 text-sm text-brand-200">
+            <p className="mt-2 text-sm text-brand-200">
               Describe your offer, choose a category and tone, then let CopyCoach AI do the writing.
             </p>
           </div>
-          <span className="flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-[11px] font-bold text-accent-bright">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-bright" />
+          <span className="flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-[11px] font-bold text-accent-bright shadow-accent-soft">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-bright opacity-60" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-bright" />
+            </span>
             AI Active
           </span>
         </div>
@@ -934,7 +938,7 @@ export default function DashboardPage() {
         {/* STAT CARDS */}
         <div className="mb-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
           {/* Credits & Plan */}
-          <div className="rounded-2xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass p-4 sm:p-5 transition-colors">
+          <div className="glass-stat">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">AI Generation Credits</span>
               <Zap className="h-4 w-4 text-accent-bright" />
@@ -968,7 +972,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Total Generations */}
-          <div className="rounded-2xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass p-4 sm:p-5 transition-colors">
+          <div className="glass-stat">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Total Copy Improvements</span>
               <FileText className="h-4 w-4 text-accent-bright" />
@@ -984,7 +988,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Favorites */}
-          <div className="rounded-2xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass p-4 sm:p-5 transition-colors">
+          <div className="glass-stat">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Starred Favorites</span>
               <Star className="h-4 w-4 fill-amber-500/20 text-amber-500" />
@@ -1002,7 +1006,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Projects */}
-          <div className="rounded-2xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass p-4 sm:p-5 transition-colors">
+          <div className="glass-stat">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Active Projects</span>
               <Layers className="h-4 w-4 text-accent-bright" />
@@ -1023,7 +1027,7 @@ export default function DashboardPage() {
         {/* WORKSPACE GRID: LEFT INPUT & RIGHT OUTPUT */}
         <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* LEFT PANEL: GENERATOR FORM */}
-          <div className="flex flex-col justify-between rounded-3xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass md:col-span-7">
+          <div className="flex flex-col justify-between glass-panel-elevated md:col-span-7">
             {/* Panel Header */}
             <div className="flex items-center justify-between border-b border-glass-border p-6">
               <div>
@@ -1121,7 +1125,7 @@ export default function DashboardPage() {
           </div>
 
           {/* RIGHT PANEL: AI COACHING OUTPUT */}
-          <div className="flex min-h-[480px] flex-col rounded-3xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass md:col-span-5">
+          <div className="flex min-h-[480px] flex-col glass-panel-elevated md:col-span-5">
             {result ? (
               <div className="flex flex-1 flex-col gap-5 p-6">
                 {/* Score header */}
@@ -1134,19 +1138,34 @@ export default function DashboardPage() {
                     </h3>
                   </div>
 
-                  <div className="text-right">
-                    <span
-                      className={`text-3xl font-extrabold ${
-                        (typeof result === "object" && result.score && result.score >= 80)
-                          ? "text-emerald-400"
-                          : (typeof result === "object" && result.score && result.score >= 60)
-                          ? "text-amber-400"
-                          : "text-accent-bright"
-                      }`}
-                    >
-                      {typeof result === "object" && result.score ? `${result.score}/100` : "70/100"}
-                    </span>
-                    <p className="text-[10px] uppercase tracking-wider text-brand-300">Conversion Ready</p>
+                  <div className="flex flex-col items-end gap-1.5">
+                    {(() => {
+                      const scoreVal =
+                        typeof result === "object" && result.score ? result.score : 70;
+                      const ringColor =
+                        scoreVal >= 80
+                          ? "var(--success)"
+                          : scoreVal >= 60
+                          ? "var(--warning)"
+                          : "var(--accent)";
+                      const valColor =
+                        scoreVal >= 80
+                          ? "text-success"
+                          : scoreVal >= 60
+                          ? "text-warning"
+                          : "text-accent-hover";
+                      return (
+                        <>
+                          <div className="score-ring" style={{ "--ring": ringColor, "--score": `${Math.min(100, scoreVal)}%` } as CSSProperties}>
+                            <div className="z-10 flex flex-col items-center leading-none">
+                              <span className={`score-ring-value ${valColor}`}>{scoreVal}</span>
+                              <span className="score-ring-unit">/ 100</span>
+                            </div>
+                          </div>
+                          <p className="text-[10px] font-medium uppercase tracking-wider text-brand-300">Conversion Ready</p>
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
 
@@ -1373,7 +1392,7 @@ export default function DashboardPage() {
 
         {/* LIBRARY / COPY HISTORY */}
         <section id="copy-library" className="mt-4 scroll-mt-24">
-          <div className="rounded-3xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-glass p-5 sm:p-7">
+          <div className="glass-panel-elevated p-5 sm:p-7">
             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
               <div>
                 <h2 className="flex items-center gap-2 text-xl font-bold text-text-primary">
@@ -1512,11 +1531,11 @@ export default function DashboardPage() {
       {/* NEW PROJECT MODAL */}
       {showProjectModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--modal-backdrop)] p-4 backdrop-blur-sm"
           onClick={() => setShowProjectModal(false)}
         >
           <div
-            className="w-full max-w-md rounded-3xl border border-glass-border bg-glass-bg p-6 backdrop-blur-xl shadow-glass"
+            className="w-full max-w-md glass-modal p-6 animate-pop"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="mb-1 flex items-center gap-2 text-lg font-bold text-text-primary">
@@ -1562,11 +1581,11 @@ export default function DashboardPage() {
       {/* COMPREHENSIVE PROFILE & SETTINGS MODAL */}
       {showProfileModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-3 backdrop-blur-md sm:p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[var(--modal-backdrop)] p-3 backdrop-blur-md sm:p-6"
           onClick={() => setShowProfileModal(false)}
         >
           <div
-            className="my-auto flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-glass-border bg-glass-bg text-brand-100 backdrop-blur-xl shadow-glass"
+            className="glass-modal my-auto flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden text-brand-100 animate-fade-up"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Top Header */}
@@ -1983,11 +2002,11 @@ export default function DashboardPage() {
       {/* KEYBOARD SHORTCUTS MODAL */}
       {showShortcutsModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--modal-backdrop)] p-4 backdrop-blur-sm"
           onClick={() => setShowShortcutsModal(false)}
         >
           <div
-            className="w-full max-w-lg rounded-3xl border border-glass-border bg-glass-bg p-6 backdrop-blur-xl shadow-glass"
+            className="w-full max-w-lg glass-modal p-6 animate-pop"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between border-b border-glass-border pb-3">
@@ -2051,8 +2070,8 @@ export default function DashboardPage() {
 
       {/* HELP & AI SUPPORT MODAL */}
       {showSupportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl border border-glass-border bg-glass-bg p-6 backdrop-blur-xl shadow-glass">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--modal-backdrop)] p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg glass-modal p-6 animate-pop">
             <div className="mb-4 flex items-center justify-between border-b border-glass-border pb-3">
               <h3 className="flex items-center gap-2 text-lg font-bold text-text-primary">
                 <HelpCircle className="h-5 w-5 text-accent-bright" />
