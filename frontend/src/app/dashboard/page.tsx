@@ -642,9 +642,10 @@ export default function DashboardPage() {
     <div className="relative min-h-screen font-sans text-brand-100 selection:bg-accent selection:text-text-primary">
       {/* Ambient Liquid Glass backdrop */}
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-1/2 top-8 h-[30rem] w-[56rem] max-w-none -translate-x-1/2 rounded-full bg-accent/15 blur-[120px]" />
-        <div className="absolute -right-32 top-40 h-96 w-96 rounded-full bg-accent-deep/10 blur-[110px]" />
-        <div className="absolute -left-40 bottom-0 h-96 w-96 rounded-full bg-[#6d5eff]/10 blur-[110px]" />
+        <div className="absolute left-1/2 top-0 h-[32rem] w-[60rem] max-w-none -translate-x-1/2 rounded-full bg-accent/20 blur-[120px]" />
+        <div className="absolute -right-24 top-32 h-[26rem] w-[26rem] rounded-full bg-accent-deep/12 blur-[110px]" />
+        <div className="absolute -left-32 top-72 h-96 w-96 rounded-full bg-[#6d5eff]/12 blur-[110px]" />
+        <div className="absolute bottom-0 left-1/2 h-64 w-[44rem] max-w-none -translate-x-1/2 rounded-full bg-accent/15 blur-[110px]" />
       </div>
 
       {/* Toast Notification */}
@@ -926,7 +927,7 @@ export default function DashboardPage() {
             <p className="text-[13px] font-medium text-brand-300">
               Welcome back, {fullName.split(" ")[0] || "Creator"}
             </p>
-            <h1 className="text-gradient mt-1 text-[26px] font-bold leading-tight tracking-tight sm:text-[2.35rem]">
+            <h1 className="mt-1 bg-gradient-to-br from-sky-500 via-indigo-500 to-violet-600 bg-clip-text text-[26px] font-bold leading-tight tracking-tight text-transparent sm:text-[2.35rem]">
               Create high-converting copy in seconds
             </h1>
             <p className="mt-2 text-sm text-brand-200">

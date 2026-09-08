@@ -55,8 +55,8 @@
   --info-surface: rgba(76, 141, 255, 0.12);
 
   /* Navbar */
-  --navbar-bg: rgba(7, 9, 15, 0.72);
-  --navbar-border: rgba(255, 255, 255, 0.07);
+  --navbar-bg: rgba(7, 9, 15, 0.68);
+  --navbar-border: rgba(255, 255, 255, 0.12);
 
   /* Card */
   --card: rgba(255, 255, 255, 0.03);
@@ -71,19 +71,19 @@
   --modal-surface: rgba(13, 16, 26, 0.82);
 
   /* Liquid Glass Surfaces (5 levels) */
-  --glass-bg: rgba(255, 255, 255, 0.032);           /* 2.  base glass panel */
-  --glass-bg-elevated: rgba(255, 255, 255, 0.05);   /* 3.  interactive / fills */
-  --glass-bg-deep: rgba(255, 255, 255, 0.016);      /*     nested / recessed */
-  --glass-bg-hover: rgba(255, 255, 255, 0.09);      /*     hover state */
-  --glass-border: rgba(255, 255, 255, 0.09);
-  --glass-border-subtle: rgba(255, 255, 255, 0.055);
-  --glass-input-bg: rgba(255, 255, 255, 0.038);
-  --glass-input-border: rgba(255, 255, 255, 0.11);
-  --glass-strong: rgba(14, 17, 27, 0.78);           /* 5.  popovers / modals */
+  --glass-bg: rgba(255, 255, 255, 0.06);           /* 2.  base glass panel */
+  --glass-bg-elevated: rgba(255, 255, 255, 0.085); /* 3.  interactive / fills */
+  --glass-bg-deep: rgba(255, 255, 255, 0.032);     /*     nested / recessed */
+  --glass-bg-hover: rgba(255, 255, 255, 0.13);     /*     hover state */
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-border-subtle: rgba(255, 255, 255, 0.10);
+  --glass-input-bg: rgba(255, 255, 255, 0.06);
+  --glass-input-border: rgba(255, 255, 255, 0.16);
+  --glass-strong: rgba(14, 17, 27, 0.82);           /* 5.  popovers / modals */
 
   /* Blur levels */
-  --glass-blur: 14px;
-  --glass-blur-lg: 28px;
+  --glass-blur: 16px;
+  --glass-blur-lg: 32px;
 
   /* Gradient Button family (compatibility) */
   --button-start: #3d7bfd;
@@ -166,12 +166,12 @@
   --modal-backdrop: rgba(15, 23, 42, 0.35);
   --modal-surface: rgba(255, 255, 255, 0.9);
 
-  --glass-bg: rgba(255, 255, 255, 0.55);
-  --glass-bg-elevated: rgba(255, 255, 255, 0.75);
-  --glass-bg-deep: rgba(241, 245, 249, 0.7);
-  --glass-bg-hover: rgba(226, 232, 240, 0.7);
-  --glass-border: rgba(15, 23, 42, 0.09);
-  --glass-border-subtle: rgba(15, 23, 42, 0.06);
+  --glass-bg: rgba(255, 255, 255, 0.58);
+  --glass-bg-elevated: rgba(255, 255, 255, 0.8);
+  --glass-bg-deep: rgba(241, 245, 249, 0.72);
+  --glass-bg-hover: rgba(226, 232, 240, 0.75);
+  --glass-border: rgba(15, 23, 42, 0.12);
+  --glass-border-subtle: rgba(15, 23, 42, 0.08);
   --glass-input-bg: rgba(255, 255, 255, 0.8);
   --glass-input-border: rgba(15, 23, 42, 0.12);
   --glass-strong: rgba(255, 255, 255, 0.9);
@@ -398,8 +398,8 @@ button:disabled {
   position: relative;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0.02)
+    rgba(255, 255, 255, 0.07),
+    rgba(255, 255, 255, 0.03)
   );
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
@@ -415,8 +415,8 @@ button:disabled {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background: radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.06), transparent 60%);
-  opacity: 0.6;
+  background: radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.09), transparent 60%);
+  opacity: 0.7;
 }
 
 /* Elevated glass panel — level 3 */
@@ -424,17 +424,27 @@ button:disabled {
   position: relative;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.065),
-    rgba(255, 255, 255, 0.028)
+    rgba(255, 255, 255, 0.09),
+    rgba(255, 255, 255, 0.035)
   );
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-panel);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
     inset 0 -1px 0 rgba(0, 0, 0, 0.2),
     var(--shadow-elevated);
+}
+.glass-panel-elevated::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.12), transparent 60%),
+    radial-gradient(60% 45% at 92% 8%, rgba(61, 123, 253, 0.12), transparent 70%);
 }
 
 /* Recessed / nested glass — deepest level */
@@ -543,7 +553,7 @@ button:disabled {
 /* Dashboard stat card */
 .glass-stat {
   position: relative;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.022));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.035));
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
   padding: 1.1rem 1.25rem;
