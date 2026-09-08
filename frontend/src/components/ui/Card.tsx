@@ -13,7 +13,7 @@ export default function Card({
   return (
     <div
       className={clsx(
-        "rounded-3xl border border-border bg-card p-6 shadow-lg transition-all duration-300 hover:border-accent/50 hover:shadow-xl",
+        "glass-panel p-6",
         className
       )}
     >

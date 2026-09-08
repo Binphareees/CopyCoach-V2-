@@ -39,17 +39,15 @@ export default function HowItWorks() {
         <div className="mt-16 grid gap-6 md:grid-cols-3">
 
           {steps.map((step) => (
-            <Card key={step.number}>
+            <Card key={step.number} className="group p-7">
 
-              <div className="mb-6 text-5xl font-bold text-accent">
+              <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-accent/25 bg-accent/10 text-lg font-extrabold text-accent-hover shadow-accent-soft transition-transform duration-300 group-hover:-translate-y-0.5">
                 {step.number}
               </div>
 
-
-              <h3 className="text-2xl font-bold text-text-primary">
+              <h3 className="text-xl font-semibold tracking-tight text-text-primary">
                 {step.title}
               </h3>
-
 
               <p className="mt-4 leading-7 text-text-secondary">
                 {step.description}

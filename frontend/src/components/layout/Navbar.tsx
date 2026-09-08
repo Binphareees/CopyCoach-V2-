@@ -103,7 +103,7 @@ export default function Navbar() {
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-border bg-navbar-bg backdrop-blur-lg">
+    <nav className="glass-nav fixed top-0 z-50 w-full">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group transition-transform hover:scale-105">
@@ -167,8 +167,8 @@ export default function Navbar() {
                 {showDropdown && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowDropdown(false)} />
-                    <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-gray-200 bg-white dark:border-white/15 dark:bg-[#0a0e18] p-2 shadow-2xl z-50 text-text-primary animate-in fade-in zoom-in-95">
-                      <div className="px-3 py-2 border-b border-gray-200 dark:border-white/15 mb-1">
+                    <div className="absolute right-0 mt-2 w-56 glass-popover p-2 z-50 text-text-primary animate-pop">
+                      <div className="px-3 py-2 border-b border-glass-border-subtle mb-1">
                         <p className="text-xs font-bold text-text-primary truncate">{displayName}</p>
                         <p className="text-[11px] text-text-muted truncate">{user.email}</p>
                       </div>
@@ -176,7 +176,7 @@ export default function Navbar() {
                       <Link
                         href="/dashboard"
                         onClick={() => setShowDropdown(false)}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-gray-100 dark:hover:bg-white/15 transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-glass-bg-hover transition-colors"
                       >
                         <LayoutDashboard className="w-4 h-4 text-accent" />
                         <span>Go to Dashboard</span>
@@ -185,7 +185,7 @@ export default function Navbar() {
                       <Link
                         href="/dashboard/profile"
                         onClick={() => setShowDropdown(false)}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-gray-100 dark:hover:bg-white/15 transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-glass-bg-hover transition-colors"
                       >
                         <User className="w-4 h-4 text-accent" />
                         <span>My Profile Settings</span>
@@ -193,7 +193,7 @@ export default function Navbar() {
 
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-danger hover:bg-danger-surface transition-colors mt-1 border-t border-gray-200 dark:border-white/15"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-danger hover:bg-danger-surface transition-colors mt-1 border-t border-glass-border-subtle"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Sign Out</span>

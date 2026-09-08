@@ -2,7 +2,7 @@ import Logo from "../ui/Logo";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border py-12">
+    <footer className="border-t border-glass-border-subtle py-12">
 
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 md:flex-row md:items-center md:justify-between">
 
@@ -71,7 +71,7 @@ export default function Footer() {
       </div>
 
 
-      <div className="mx-auto mt-8 max-w-7xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted border-t border-border pt-6">
+      <div className="mx-auto mt-8 max-w-7xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted border-t border-glass-border-subtle pt-6">
 
         <span>© {new Date().getFullYear()} CopyCoach AI. All rights reserved.</span>
 

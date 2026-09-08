@@ -227,7 +227,7 @@ export default function AppInfoAndSupport() {
         {/* ============================================================ */}
         {/* SECTION 2: MOBILE APP DOWNLOAD (REAL GOOGLE PLAY & APPLE LOGOS) */}
         {/* ============================================================ */}
-        <div id="mobile-app" className="scroll-mt-28 bg-white/[0.03] border border-border rounded-3xl p-8 sm:p-12 shadow-2xl relative">
+        <div id="mobile-app" className="scroll-mt-28 glass-panel-elevated p-8 sm:p-12 relative">
           <div className="max-w-3xl mx-auto text-center mb-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold uppercase tracking-wider mb-4">
               <Smartphone className="w-4 h-4 text-cyan-400" />

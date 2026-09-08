@@ -406,7 +406,7 @@ export default function ProfilePage() {
   return (
     <main className="min-h-screen text-text-primary font-sans pb-16 bg-surface">
       {/* Top Banner & Header */}
-      <div className="border-b border-border bg-navbar-bg backdrop-blur-md sticky top-0 z-30">
+      <div className="glass-nav sticky top-0 z-30">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <button
             onClick={() => router.push("/dashboard")}
@@ -475,7 +475,7 @@ export default function ProfilePage() {
                 )}
               </div>
 
-              <label className="absolute -bottom-2 -right-2 bg-[#1e1a3a] hover:bg-[#2a2550] text-text-primary p-2 rounded-xl shadow-lg cursor-pointer transition-transform hover:scale-105 border border-indigo-800/30">
+              <label className="absolute -bottom-2 -right-2 bg-glass-bg-elevated hover:bg-glass-bg-hover text-text-primary p-2 rounded-xl shadow-glass cursor-pointer transition-transform hover:scale-105 border border-glass-border">
                 <Camera className="w-4 h-4" />
                 <input
                   type="file"
@@ -815,7 +815,7 @@ export default function ProfilePage() {
                 <button
                   onClick={saveProfile}
                   disabled={loading}
-                   className="bg-[#1e1a3a] hover:bg-[#2a2550] text-text-primary font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                   className="bg-accent hover:bg-accent-hover text-white font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-accent-soft flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Brand Voice Settings</span>

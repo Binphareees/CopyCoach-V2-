@@ -1,5 +1,6 @@
 import Card from "../ui/Card";
 import SectionTitle from "../ui/SectionTitle";
+import { Quote } from "lucide-react";
 
 const testimonials = [
   {
@@ -36,22 +37,32 @@ export default function Testimonials() {
         <div className="mt-16 grid gap-6 md:grid-cols-3">
 
           {testimonials.map((testimonial) => (
-            <Card key={testimonial.name}>
+            <Card key={testimonial.name} className="p-7">
+
+              <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent-hover">
+                <Quote className="h-4 w-4" />
+              </div>
 
               <p className="text-lg leading-8 text-text-secondary">
                 &quot;{testimonial.quote}&quot;
               </p>
 
 
-              <div className="mt-6">
+              <div className="mt-6 border-t border-glass-border-subtle pt-4">
 
-                <h3 className="font-bold text-text-primary">
-                  {testimonial.name}
-                </h3>
-
-                <p className="text-sm text-text-muted">
-                  {testimonial.role}
-                </p>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full border border-glass-border bg-glass-bg-elevated text-xs font-bold text-accent-hover">
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-text-primary">
+                      {testimonial.name}
+                    </h3>
+                    <p className="text-xs text-text-muted">
+                      {testimonial.role}
+                    </p>
+                  </div>
+                </div>
 
               </div>
 
