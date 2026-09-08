@@ -13,22 +13,51 @@ export interface HumanWritingResult {
   formulaicPatternRisk: number;
 }
 
-const humanWritingPrompt = `You are the Human Writing Engine inside CopyCoach AI.
+export interface HumanWritingInput {
+  originalCopy: string;
+  pass1Copy: string;
+  copyType: string;
+  tone: string;
+  productName: string;
+  targetAudience: string;
+  cta: string;
+}
 
-Your job is to improve AI-assisted copy so that it reads like natural, specific, context-aware writing from an experienced human copywriter.
+const humanWritingPrompt = `You are the Human Writing Engine inside CopyCoach AI — the SECOND pass of a two-pass pipeline.
+
+You receive:
+- ORIGINAL COPY: what the user actually wrote. Your factual and contextual reference.
+- PASS 1 COPY: the first AI rewrite of that copy. This is the text you evaluate and improve.
+- Context: copy type, tone, product/brand, target audience, and the user's CTA.
+
+Your job: make the PASS 1 COPY read like natural, specific, context-aware writing from an experienced human copywriter, while staying faithful to the ORIGINAL COPY's facts, offer, and intent.
+
+MINIMAL-CHANGE GATE (apply this first):
+Before editing anything, ask: "Is PASS 1 already strong, natural, specific, audience-appropriate, and faithful to the ORIGINAL?"
+- If YES: make only the necessary edits. Do NOT rewrite simply to make the text different. Preserve good wording, useful specificity, and the user's intent.
+- If NO: make meaningful improvements where they are needed.
+Do not assume every input needs substantial rewriting.
 
 RULES:
 - Do NOT intentionally introduce mistakes.
-- Do NOT make unsupported claims.
-- Do NOT fabricate facts.
-- Do NOT blindly remove phrases simply because they sometimes appear in AI-generated text.
-- Treat AI-writing patterns as signals, not rules.
+- Do NOT make unsupported claims or fabricate facts: no invented product capabilities, ingredients, performance claims, guarantees, statistics, testimonials, or certifications.
+- Preserve important concrete details and factual claims from the ORIGINAL COPY.
+- Do NOT replace a specific claim (in PASS 1 or the ORIGINAL) with a vaguer marketing phrase.
+- Do NOT turn concise copy into bloated copy.
+- Do NOT blindly remove phrases simply because they sometimes appear in AI-generated text. Treat AI-writing patterns as signals, not rules.
+- Preserve the strongest useful phrase when appropriate — from PASS 1 or from the ORIGINAL.
+- Use the target audience and copy type as context. Follow the requested tone.
 - Preserve the user's meaning, offer, audience, tone, and persuasive goal.
 
+CTA PRESERVATION:
+- If a CTA is provided, the polished copy must keep its essential meaning and its concrete details EXACTLY: phone numbers, URLs, discount codes, prices, offer terms, product names, dates, and promotional conditions.
+- Only adjust a CTA if there is a genuine formatting problem.
+- If no CTA is provided, do NOT invent one — no fabricated phone number, URL, discount code, offer, price, or urgency.
+
 PREFER:
-- concrete language
+- concrete language over abstract praise
 - natural sentence rhythm
-- varied structure
+- varied sentence openings and varied structure
 - specific benefits
 - direct language
 - authentic voice
@@ -38,7 +67,7 @@ PREFER:
 
 AVOID:
 - generic corporate filler ("transform your business", "unlock your potential")
-- excessive rhetorical symmetry
+- excessive rhetorical symmetry and AI-style template constructions
 - repetitive sentence patterns
 - unnecessary transitions (Moreover, Furthermore, Additionally)
 - excessive em-dashes as structural crutches
@@ -73,9 +102,9 @@ TONE PRESERVATION:
 READ-ALOUD TEST:
 If someone read this copy aloud, would it sound like something a real person would naturally say for this specific audience and situation?
 
-Return ONLY valid JSON with these exact keys:
+Return ONLY valid JSON with these exact keys (all nine, no missing fields):
 {
-  "polishedCopy": "The refined copy that sounds naturally human-written",
+  "polishedCopy": "The refined copy that sounds naturally human-written. If PASS 1 was already strong, this may be nearly identical to it with only necessary edits.",
   "naturalness": <number 0-100>,
   "specificity": <number 0-100>,
   "voice": <number 0-100>,
@@ -85,6 +114,8 @@ Return ONLY valid JSON with these exact keys:
   "repetition": <number 0-100>,
   "formulaicPatternRisk": <number 0-100>
 }
+
+The scores must honestly evaluate the FINAL polishedCopy you return — not the input. Do not inflate scores to look good.
 
 scoring guide:
 - naturalness: How natural and human-like the writing sounds (0=very robotic, 100=perfectly natural)
@@ -116,6 +147,27 @@ export function calculateOverallScore(result: HumanWritingResult): number {
   return Math.round(weighted);
 }
 
+const REQUIRED_SCORE_FIELDS = [
+  "naturalness",
+  "specificity",
+  "voice",
+  "sentenceRhythm",
+  "clarity",
+  "contextualFit",
+  "repetition",
+  "formulaicPatternRisk",
+] as const;
+
+function validScore(value: unknown): number | null {
+  if (typeof value !== "number" || !Number.isFinite(value)) return null;
+  if (value < 0 || value > 100) return null;
+  return Math.round(value);
+}
+
+// Returns a HumanWritingResult ONLY when every required field is present and
+// valid. Anything else (malformed JSON, missing fields, non-numeric or
+// out-of-range scores, empty polishedCopy) is an HWE FAILURE and returns null.
+// No default scores are ever manufactured here.
 function parseHumanWritingResponse(raw: string): HumanWritingResult | null {
   try {
     const cleaned = raw
@@ -125,45 +177,45 @@ function parseHumanWritingResponse(raw: string): HumanWritingResult | null {
       .replace(/```$/, "")
       .trim();
     const parsed = JSON.parse(cleaned);
+    if (!parsed || typeof parsed !== "object") return null;
 
-    const result: HumanWritingResult = {
-      polishedCopy: parsed.polishedCopy || "",
-      naturalness: clamp(parsed.naturalness, 0, 100),
-      specificity: clamp(parsed.specificity, 0, 100),
-      voice: clamp(parsed.voice, 0, 100),
-      sentenceRhythm: clamp(parsed.sentenceRhythm, 0, 100),
-      clarity: clamp(parsed.clarity, 0, 100),
-      contextualFit: clamp(parsed.contextualFit, 0, 100),
-      repetition: clamp(parsed.repetition, 0, 100),
-      formulaicPatternRisk: clamp(parsed.formulaicPatternRisk, 0, 100),
-    };
+    const polishedCopy =
+      typeof parsed.polishedCopy === "string" && parsed.polishedCopy.trim()
+        ? parsed.polishedCopy
+        : null;
+    if (!polishedCopy) return null;
 
-    return result;
+    const result = { polishedCopy } as Record<string, unknown>;
+    for (const field of REQUIRED_SCORE_FIELDS) {
+      const score = validScore(parsed[field]);
+      if (score === null) return null;
+      result[field] = score;
+    }
+
+    return result as unknown as HumanWritingResult;
   } catch {
     return null;
   }
 }
 
-function clamp(value: number, min: number, max: number): number {
-  if (typeof value !== "number" || isNaN(value)) return 70;
-  return Math.max(min, Math.min(max, Math.round(value)));
-}
-
 export async function runHumanWritingEngine(
-  copy: string,
-  copyType: string,
-  tone: string,
-  productName: string,
-  targetAudience: string
-): Promise<HumanWritingResult> {
+  input: HumanWritingInput
+): Promise<HumanWritingResult | null> {
   const contextBlock = [
-    `Copy Type: ${copyType || "General"}`,
-    `Tone: ${tone || "Professional"}`,
-    `Product/Brand: ${productName || "Not provided"}`,
-    `Target Audience: ${targetAudience || "Not provided"}`,
+    `Copy Type: ${input.copyType || "General"}`,
+    `Tone: ${input.tone || "Professional"}`,
+    `Product/Brand: ${input.productName || "Not provided"}`,
+    `Target Audience: ${input.targetAudience || "Not provided"}`,
+    `CTA: ${input.cta || "Not provided"}`,
   ].join("\n");
 
-  const userMessage = `${contextBlock}\n\nCopy to review and polish:\n${copy}`;
+  const userMessage = `${contextBlock}
+
+ORIGINAL COPY (the user's own copy — factual/contextual reference, not automatically better wording):
+${input.originalCopy}
+
+PASS 1 COPY (the AI rewrite you are evaluating and improving — polish THIS text):
+${input.pass1Copy}`;
 
   let raw = "";
 
@@ -207,23 +259,8 @@ export async function runHumanWritingEngine(
     }
   }
 
-  // Parse the response
-  const result = raw ? parseHumanWritingResponse(raw) : null;
-
-  if (result && result.polishedCopy) {
-    return result;
-  }
-
-  // Graceful fallback: return the original copy with moderate scores
-  return {
-    polishedCopy: copy,
-    naturalness: 70,
-    specificity: 70,
-    voice: 70,
-    sentenceRhythm: 70,
-    clarity: 70,
-    contextualFit: 70,
-    repetition: 70,
-    formulaicPatternRisk: 30,
-  };
+  // Parse the response. If no provider returned anything, or the output is
+  // malformed/incomplete/invalid, HWE has FAILED: return null so the caller
+  // can honestly fall back to the Pass 1 result. Never return fake scores.
+  return raw ? parseHumanWritingResponse(raw) : null;
 }
