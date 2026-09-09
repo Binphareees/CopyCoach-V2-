@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import Logo from "@/components/ui/Logo";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { getAccessToken } from "@/lib/supabase";
@@ -11,11 +12,12 @@ import { CheckCircle2, ArrowRight, Loader2, Sparkles, AlertCircle } from "lucide
 export const dynamic = "force-dynamic";
 
 function PaymentSuccessContent() {
+  const { t } = useTranslation("common");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [verifying, setVerifying] = useState(true);
   const [success, setSuccess] = useState(false);
-  const [message, setMessage] = useState("Verifying your transaction with Paystack...");
+  const [message, setMessage] = useState(t("verifyingTransaction"));
 
   useEffect(() => {
     let ignore = false;
@@ -26,7 +28,7 @@ function PaymentSuccessContent() {
         if (!ignore) {
           setVerifying(false);
           setSuccess(false);
-          setMessage("No transaction reference found in URL.");
+          setMessage(t("noReferenceFound"));
         }
         return;
       }
@@ -43,17 +45,17 @@ function PaymentSuccessContent() {
         if (!ignore) {
           if (data.status && data.data?.status === "success") {
             setSuccess(true);
-            setMessage("Payment verified successfully! Your CopyCoach Pro features have been unlocked.");
+            setMessage(t("paymentVerifiedSuccess"));
           } else {
             setSuccess(false);
-            setMessage(data.message || "Payment verification could not be confirmed. Please contact support if debited.");
+            setMessage(data.message || t("paymentUnconfirmed"));
           }
         }
       } catch (err) {
         console.error("Payment verification error:", err);
         if (!ignore) {
           setSuccess(false);
-          setMessage("Unable to verify payment status automatically. Please return to dashboard or contact support.");
+          setMessage(t("paymentVerifyFailed"));
         }
       } finally {
         if (!ignore) {
@@ -67,12 +69,12 @@ function PaymentSuccessContent() {
     return () => {
       ignore = true;
     };
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   return (
     <div className="min-h-screen text-text-primary flex flex-col items-center justify-center p-6 font-sans">
       <div className="w-full max-w-md bg-surface-elevated border border-border rounded-3xl p-8 shadow-2xl backdrop-blur text-center relative overflow-hidden">
-        <div className="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-success/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 end-0 -mt-12 -me-12 w-48 h-48 bg-success/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex justify-center mb-6">
           <Logo theme="dark" size="md" showTagline={false} />
@@ -81,7 +83,7 @@ function PaymentSuccessContent() {
         {verifying ? (
           <div className="py-8 flex flex-col items-center">
             <Loader2 className="w-12 h-12 text-accent animate-spin mb-4" />
-            <h2 className="text-xl font-bold text-text-primary mb-2">Confirming Payment</h2>
+            <h2 className="text-xl font-bold text-text-primary mb-2">{t("confirmingPayment")}</h2>
             <p className="text-xs text-text-muted max-w-xs">{message}</p>
           </div>
         ) : success ? (
@@ -92,20 +94,20 @@ function PaymentSuccessContent() {
 
             <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-bold uppercase tracking-wider mb-3">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>CopyCoach Pro Activated</span>
+              <span>{t("proActivatedBadge")}</span>
             </div>
 
-            <h2 className="text-2xl font-bold text-text-primary mb-2">Payment Successful!</h2>
+            <h2 className="text-2xl font-bold text-text-primary mb-2">{t("paymentSuccessful")}</h2>
             <p className="text-xs text-text-secondary mb-6 leading-relaxed">
-              Thank you for upgrading! You now have full access to 100 monthly AI coaching generations, advanced AIDA &amp; PAS drills, and priority support.
+              {t("paymentSuccessDesc")}
             </p>
 
             <GradientButton
               onClick={() => router.push("/dashboard")}
               className="w-full"
             >
-              <span>Go to Dashboard</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>{t("goToDashboard")}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </GradientButton>
           </div>
         ) : (
@@ -114,7 +116,7 @@ function PaymentSuccessContent() {
               <AlertCircle className="w-10 h-10" />
             </div>
 
-            <h2 className="text-xl font-bold text-text-primary mb-2">Payment Status Notice</h2>
+            <h2 className="text-xl font-bold text-text-primary mb-2">{t("paymentStatusNotice")}</h2>
             <p className="text-xs text-text-muted mb-6 leading-relaxed">{message}</p>
 
             <div className="flex flex-col gap-2 w-full">
@@ -123,14 +125,14 @@ function PaymentSuccessContent() {
                 onClick={() => router.push("/dashboard")}
                 className="w-full inline-flex items-center justify-center gap-2 bg-surface hover:bg-surface-muted text-text-primary font-medium text-xs py-3 rounded-xl transition-colors"
               >
-                <span>Return to Dashboard</span>
+                <span>{t("returnToDashboard")}</span>
               </button>
 
               <Link
                 href="/#support"
                 className="text-xs text-accent hover:underline pt-2"
               >
-                Need help? Contact Customer Support
+                {t("contactSupportLink")}
               </Link>
             </div>
           </div>

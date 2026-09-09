@@ -23,7 +23,9 @@ import {
 import { supabase } from "@/lib/supabase";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useDashboardShell } from "@/components/dashboard/DashboardShell";
+import { useTranslation } from "react-i18next";
 import Logo from "@/components/ui/Logo";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import {
   DashboardNavButton,
   DashboardNavGroup,
@@ -40,6 +42,7 @@ interface SidebarInnerProps {
 function SidebarInner({ onNavigate }: SidebarInnerProps) {
   const router = useRouter();
   const { themeMode, setThemeMode } = useTheme();
+  const { t } = useTranslation("dashboard");
 
   const [credits, setCredits] = useState<number | null>(null);
   const [plan, setPlan] = useState("free");
@@ -90,7 +93,7 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
   }, [themeMode, setThemeMode]);
 
   const themeLabel =
-    themeMode === "light" ? "Light Theme" : themeMode === "system" ? "System Theme" : "Dark Theme";
+    themeMode === "light" ? t("lightTheme") : themeMode === "system" ? t("systemTheme") : t("darkTheme");
   const themeIcon =
     themeMode === "light" ? (
       <Sun className={NAV_ICON_CLASSES} />
@@ -110,85 +113,85 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
         <Logo theme="dark" size="sm" variant="app-icon" />
         <div className="min-w-0 leading-tight">
           <span className="block truncate text-sm font-bold text-text-primary">CopyCoach AI</span>
-          <span className="block text-[11px] text-text-muted">Writing Workspace</span>
+          <span className="block text-[11px] text-text-muted">{t("writingWorkspace")}</span>
         </div>
       </Link>
 
       <div className="mx-3 border-t border-border-subtle" />
 
       <nav className="flex-1 overflow-y-auto px-3 py-2">
-        <DashboardNavGroup label="Workspace">
+        <DashboardNavGroup label={t("workspaceGroup")}>
           <DashboardNavLink
             href="/dashboard"
-            label="Overview"
+            label={t("overview")}
             icon={<LayoutDashboard className={NAV_ICON_CLASSES} />}
             onNavigate={onNavigate}
           />
           <DashboardNavLink
             href="/dashboard#generate"
-            label="New Copy"
+            label={t("newCopy")}
             icon={<SquarePen className={NAV_ICON_CLASSES} />}
             onNavigate={onNavigate}
           />
           <DashboardNavLink
             href="/dashboard#copy-library"
-            label="Copy History"
+            label={t("copyHistory")}
             icon={<History className={NAV_ICON_CLASSES} />}
             onNavigate={onNavigate}
           />
           <DashboardNavLink
             href="/dashboard"
             matchPrefix="/dashboard/projects"
-            label="Projects"
+            label={t("projects")}
             icon={<Folder className={NAV_ICON_CLASSES} />}
             onNavigate={onNavigate}
           />
         </DashboardNavGroup>
 
-        <DashboardNavGroup label="Account">
+        <DashboardNavGroup label={t("accountGroup")}>
           <DashboardNavLink
             href="/dashboard/profile"
-            label="Profile Settings"
+            label={t("profileSettings")}
             icon={<UserRound className={NAV_ICON_CLASSES} />}
-            badge={<span className="text-[10px] text-text-muted">Edit</span>}
+            badge={<span className="text-[10px] text-text-muted">{t("navEdit")}</span>}
             onNavigate={onNavigate}
           />
           <DashboardNavLink
             href="/dashboard/admin/feedback"
-            label="Admin Feedback Triage"
+            label={t("adminFeedbackTriage")}
             icon={<ShieldAlert className={NAV_ICON_CLASSES} />}
             badge={
               <span className="rounded bg-accent/15 px-1.5 py-0.5 text-[10px] font-medium text-accent-bright">
-                Admin
+                {t("admin")}
               </span>
             }
             onNavigate={onNavigate}
           />
           <DashboardNavButton
-            label="Brand Voice & AI Persona"
+            label={t("brandVoice")}
             icon={<Sliders className={NAV_ICON_CLASSES} />}
             badge={
               <span className="rounded bg-accent/15 px-1.5 py-0.5 text-[10px] font-medium text-accent-bright">
-                Custom
+                {t("custom")}
               </span>
             }
             onClick={() => openAccountModal("brand_voice")}
           />
           <DashboardNavButton
-            label="Subscription & Plan"
+            label={t("subscriptionAndPlan")}
             icon={<CreditCard className={NAV_ICON_CLASSES} />}
             badge={
               <span className={`text-[10px] font-bold ${plan === "pro" ? "text-warning" : "text-accent-bright"}`}>
-                {plan === "pro" ? "Pro Active" : "Upgrade"}
+                {plan === "pro" ? t("proActive") : t("upgrade")}
               </span>
             }
             onClick={() => openAccountModal("billing")}
           />
         </DashboardNavGroup>
 
-        <DashboardNavGroup label="Preferences">
+        <DashboardNavGroup label={t("preferencesGroup")}>
           <DashboardNavButton
-            label="Appearance & Theme"
+            label={t("appearanceTheme")}
             icon={themeIcon}
             badge={
               <span className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-0.5 text-[10px] font-medium text-accent-bright">
@@ -196,19 +199,19 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
               </span>
             }
             onClick={cycleTheme}
-            title={`Switch theme (currently ${themeLabel})`}
+            title={t("switchTheme", { theme: themeLabel })}
           />
         </DashboardNavGroup>
 
-        <DashboardNavGroup label="Support & Tools">
+        <DashboardNavGroup label={t("supportTools")}>
           <DashboardNavButton
-            label="Keyboard Shortcuts"
+            label={t("keyboardShortcuts")}
             icon={<Keyboard className={NAV_ICON_CLASSES} />}
             badge={<span className="font-mono text-[10px] text-text-muted">⌘K</span>}
             onClick={() => openAccountModal("shortcuts")}
           />
           <DashboardNavButton
-            label="Help & AI Support"
+            label={t("helpSupport")}
             icon={<HelpCircle className={NAV_ICON_CLASSES} />}
             badge={<span className="text-[10px] text-text-muted">24/7</span>}
             onClick={() => openAccountModal("support")}
@@ -218,13 +221,16 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
         <div className="mt-2 border-t border-border-subtle" />
         <DashboardNavButton
           variant="danger"
-          label="Sign Out"
+          label={t("signOut")}
           icon={<LogOut className={NAV_ICON_CLASSES} />}
           onClick={handleSignOut}
         />
       </nav>
 
       <div className="px-3 pb-3">
+        <div className="mb-2">
+          <LanguageSwitcher direction="up" />
+        </div>
         <div className="rounded-lg border border-border bg-surface px-3 py-2.5">
           <div className="flex items-center justify-between gap-2">
             <span className="flex items-center gap-1.5 text-[11px] font-medium text-text-secondary">
@@ -237,10 +243,10 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
           </div>
           <p className="mt-0.5 text-[10px] text-text-muted">
             {credits === null
-              ? "Syncing…"
+              ? t("syncing")
               : plan === "pro"
-                ? "Pro membership · 100 / month"
-                : "Free plan · 5 / day"}
+                ? t("proMonthly")
+                : t("freeDaily")}
           </p>
         </div>
       </div>
@@ -254,12 +260,12 @@ export default function DashboardSidebar() {
 
   return (
     <>
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-[264px] flex-col border-r border-border-subtle bg-navbar-bg lg:flex">
+      <aside className="fixed inset-y-0 start-0 z-50 hidden w-[264px] flex-col border-e border-border-subtle bg-navbar-bg lg:flex">
         <SidebarInner />
       </aside>
 
       {open && (
-        <aside className="fixed inset-y-0 left-0 z-50 flex w-[264px] flex-col border-r border-border-subtle bg-navbar-bg lg:hidden">
+        <aside className="fixed inset-y-0 start-0 z-50 flex w-[264px] flex-col border-e border-border-subtle bg-navbar-bg lg:hidden">
           <SidebarInner onNavigate={close} />
         </aside>
       )}

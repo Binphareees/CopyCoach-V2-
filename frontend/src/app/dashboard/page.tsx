@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import {
   supabase,
   ensureSupabaseConfig,
@@ -9,7 +9,10 @@ import {
   getIsSupabaseConfigured,
 } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { useTranslation, Trans } from "react-i18next";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+import { formatDate } from "@/i18n/format";
 import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
 import DrillCritiqueFeedback from "@/components/ui/DrillCritiqueFeedback";
 import FeedbackModal from "@/components/ui/FeedbackModal";
@@ -91,19 +94,6 @@ function resultScoreOf(result: CopyResult | string | null): number {
   return typeof result === "object" && result && result.score ? result.score : 70;
 }
 
-function scoreLabel(score: number): string {
-  if (score >= 80) return "Strong";
-  if (score >= 60) return "Fair";
-  return "Needs work";
-}
-
-function riskLevel(risk: number): string {
-  if (risk <= 20) return "Low";
-  if (risk <= 40) return "Moderate";
-  if (risk <= 60) return "Elevated";
-  return "High";
-}
-
 interface HistoryItem {
   id: string;
   project_id?: string;
@@ -121,17 +111,43 @@ interface ProjectItem {
   created_at?: string;
 }
 
-// Frontend-only processing stages shown while the generation request is in flight.
-const PROCESSING_STAGES = [
-  "Analyzing your copy…",
-  "Checking clarity and persuasion…",
-  "Strengthening the conversion flow…",
-  "Applying your brand voice…",
-  "Finalizing your improved copy…",
+const COPY_LANGUAGE_KEY = "copycoach_copy_language";
+const COPY_LANGUAGE_OPTIONS = [
+  { value: "English", label: "English" },
+  { value: "Arabic", label: "العربية" },
+  { value: "French", label: "Français" },
+  { value: "Spanish", label: "Español" },
 ];
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { t } = useTranslation("dashboard");
+  const { locale } = useLanguage();
+
+  // Frontend-only processing stages shown while the generation request is in flight.
+  const PROCESSING_STAGES = useMemo(
+    () => [
+      t("stageAnalyzing"),
+      t("stageClarity"),
+      t("stageConversion"),
+      t("stageBrandVoice"),
+      t("stageFinalizing"),
+    ],
+    [t]
+  );
+
+  const scoreLabel = (score: number): string => {
+    if (score >= 80) return t("scoreStrong");
+    if (score >= 60) return t("scoreFair");
+    return t("scoreNeedsWork");
+  };
+
+  const riskLevel = (risk: number): string => {
+    if (risk <= 20) return t("riskLow");
+    if (risk <= 40) return t("riskModerate");
+    if (risk <= 60) return t("riskElevated");
+    return t("riskHigh");
+  };
 
   // User & Profile State
   const [userId, setUserId] = useState("");
@@ -164,6 +180,7 @@ export default function DashboardPage() {
   const [message, setMessage] = useState("");
   const [copyType, setCopyType] = useState("Advertisement");
   const [tone, setTone] = useState("Professional");
+  const [copyLanguage, setCopyLanguage] = useState("English");
   const [processingStage, setProcessingStage] = useState(0);
 
   // History & Filtering
@@ -211,9 +228,9 @@ export default function DashboardPage() {
 
   const applyTheme = (mode: "dark" | "light" | "system") => {
     setThemeMode(mode);
-    if (mode === "dark") showToast("Dark Theme Activated");
-    else if (mode === "light") showToast("Light Theme Activated");
-    else showToast("System Theme Synchronized");
+    if (mode === "dark") showToast(t("toastThemeDark"));
+    else if (mode === "light") showToast(t("toastThemeLight"));
+    else showToast(t("toastThemeSystem"));
   };
 
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
@@ -240,6 +257,31 @@ export default function DashboardPage() {
     window.addEventListener("copycoach:open-account-modal", handleAccountModal);
     return () => window.removeEventListener("copycoach:open-account-modal", handleAccountModal);
   }, [setShowMenu, setShowProfileModal, setProfileTab, setShowShortcutsModal, setShowSupportModal]);
+
+  // Persist the AI copy language in localStorage (defaults to English)
+  useEffect(() => {
+    const init = () => {
+      try {
+        const stored = window.localStorage.getItem(COPY_LANGUAGE_KEY);
+        if (stored && COPY_LANGUAGE_OPTIONS.some((opt) => opt.value === stored)) {
+          setCopyLanguage(stored);
+        }
+      } catch {
+        /* ignore storage errors */
+      }
+    };
+    const rafId = window.requestAnimationFrame(init);
+    return () => window.cancelAnimationFrame(rafId);
+  }, []);
+
+  const persistCopyLanguage = (value: string) => {
+    setCopyLanguage(value);
+    try {
+      window.localStorage.setItem(COPY_LANGUAGE_KEY, value);
+    } catch {
+      /* ignore storage errors */
+    }
+  };
 
   // Advance the staged processing indicator while the generation request is in flight.
   // Presentation only — the request itself is a single API call. Stage updates and the
@@ -293,19 +335,19 @@ export default function DashboardPage() {
       doc.setTextColor(148, 163, 184);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
-      doc.text("Optimized Copy & Line-by-Line AI Critique", 15, 25);
+      doc.text(t("pdfTitle"), 15, 25);
 
       // Title / Copy Type Metadata
       doc.setTextColor(30, 41, 59);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(14);
-      doc.text(`Document: ${copyType || "Copywriting Drill"}`, 15, 44);
+      doc.text(t("pdfDocumentLabel", { type: copyType || "Copywriting Drill" }), 15, 44);
 
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
       doc.setTextColor(100, 116, 139);
       const scoreVal = typeof result === "object" && result?.score ? result.score : 70;
-      doc.text(`Generated: ${new Date().toLocaleDateString()} | Tone: ${tone} | Score: ${scoreVal}/100`, 15, 51);
+      doc.text(t("pdfGeneratedMeta", { date: formatDate(locale, new Date()), tone, score: scoreVal }), 15, 51);
 
       doc.setDrawColor(226, 232, 240);
       doc.line(15, 55, 195, 55);
@@ -325,10 +367,10 @@ export default function DashboardPage() {
 
       const timestamp = new Date().getTime();
       doc.save(`CopyCoach-Optimized-Copy-${timestamp}.pdf`);
-      showToast("PDF Document Exported Successfully!");
+      showToast(t("toastPdfExported"));
     } catch (err) {
       console.error("PDF Export failed:", err);
-      showToast("PDF Export Failed. Please try again.");
+      showToast(t("toastPdfFailed"));
     }
   };
 
@@ -487,7 +529,7 @@ export default function DashboardPage() {
     }
 
     if (!text.trim()) {
-      setMessage("Please describe your product offer or paste the copy you'd like to improve.");
+      setMessage(t("errors.describeOffer"));
       return;
     }
 
@@ -507,18 +549,19 @@ export default function DashboardPage() {
           productName,
           targetAudience,
           cta,
+          language: copyLanguage,
         })
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setMessage(data.error || "Generation limit reached or request failed.");
+        setMessage(data.error || t("errors.generationLimit"));
         setLoading(false);
         return;
       }
 
-      const improvedResult = data.result || data.error || "No response received";
+      const improvedResult = data.result || data.error || t("errors.noResponse");
       setResult(improvedResult);
 
       await loadUsage();
@@ -540,7 +583,7 @@ export default function DashboardPage() {
       if (!error) {
         loadHistory();
       }
-      showToast("Copy analyzed and optimized successfully!");
+      showToast(t("toastCopyAnalyzed"));
     } catch (err) {
       console.error("Improve copy error:", err);
       setResult(String(err));
@@ -558,7 +601,7 @@ export default function DashboardPage() {
 
     if (!error) {
       loadHistory();
-      showToast(!current ? "Added to favorites" : "Removed from favorites");
+      showToast(!current ? t("toastAddedToFavorites") : t("toastRemovedFromFavorites"));
     }
   }
 
@@ -567,7 +610,7 @@ export default function DashboardPage() {
     const { error } = await supabase.from("history").delete().eq("id", id);
     if (!error) {
       loadHistory();
-      showToast("Item deleted");
+      showToast(t("toastItemDeleted"));
     }
   }
 
@@ -591,7 +634,7 @@ export default function DashboardPage() {
       setShowProjectModal(false);
       setSelectedProject(data.id);
       loadProjects();
-      showToast(`Project "${data.name}" created!`);
+      showToast(t("projectCreated", { name: data.name }));
     }
   }
 
@@ -599,7 +642,7 @@ export default function DashboardPage() {
   function handleCopy(value: string, idKey?: string) {
     navigator.clipboard.writeText(value);
     setCopiedId(idKey || "main");
-    showToast("Copied to clipboard!");
+    showToast(t("toastCopied"));
     setTimeout(() => setCopiedId(null), 2000);
   }
 
@@ -612,7 +655,7 @@ export default function DashboardPage() {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-    showToast("File downloaded!");
+    showToast(t("toastFileDownloaded"));
   }
 
   // Payment upgrade
@@ -636,11 +679,11 @@ export default function DashboardPage() {
       if (data.data?.authorization_url) {
         window.location.href = data.data.authorization_url;
       } else {
-        setMessage(data.error || "Payment gateway unavailable.");
+        setMessage(data.error || t("errors.paymentUnavailable"));
       }
     } catch (e) {
       console.error(e);
-      setMessage("Failed to start payment.");
+      setMessage(t("errors.paymentStartFailed"));
     }
   }
 
@@ -657,21 +700,21 @@ export default function DashboardPage() {
     setText(sampleText);
     setCopyType(sampleType);
     setTone(sampleTone);
-    showToast("Sample loaded into workspace");
+    showToast(t("toastSampleLoaded"));
   };
 
   return (
     <div className="relative min-h-screen font-sans text-brand-100 selection:bg-accent selection:text-text-primary">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-24 right-4 z-[60] flex items-center gap-2 glass-popover px-4 py-3 text-sm font-medium text-brand-100 animate-pop lg:bottom-6 lg:right-6">
+        <div className="fixed bottom-24 end-4 z-[60] flex items-center gap-2 glass-popover px-4 py-3 text-sm font-medium text-brand-100 animate-pop lg:bottom-6 lg:end-6">
           <Check className="h-4 w-4 text-accent-bright" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       <DashboardTopbar
-        title="CopyCoach Workspace"
+        title={t("copycoachWorkspace")}
         right={
           <>
             {/* Desktop workspace controls */}
@@ -679,13 +722,13 @@ export default function DashboardPage() {
             {/* Workspace selector */}
             <div className="flex items-center gap-2 rounded-full border border-glass-border bg-glass-bg-elevated px-3.5 py-1.5 text-xs text-brand-200">
               <Folder className="h-3.5 w-3.5 text-accent-bright" />
-              <span className="hidden lg:inline">Workspace:</span>
+              <span className="hidden lg:inline">{t("workspaceLabel")}:</span>
               <select
                 value={selectedProject}
                 onChange={(e) => setSelectedProject(e.target.value)}
                 className="bg-transparent font-medium text-text-primary focus:outline-none"
               >
-                <option value="" className="bg-ink-800 text-brand-100">Default Workspace</option>
+                <option value="" className="bg-ink-800 text-brand-100">{t("defaultWorkspace")}</option>
                 {projects.map((p) => (
                   <option key={p.id} value={p.id} className="bg-ink-800 text-brand-100">
                     {p.name}
@@ -699,7 +742,7 @@ export default function DashboardPage() {
               className="flex items-center gap-1.5 rounded-full border border-glass-border bg-glass-bg-elevated px-3.5 py-1.5 text-xs font-semibold text-brand-100 transition-colors hover:bg-glass-bg-hover"
             >
               <FolderPlus className="h-3.5 w-3.5 text-accent-bright" />
-              New Project
+              {t("newProject")}
             </button>
           </div>
 
@@ -717,11 +760,11 @@ export default function DashboardPage() {
                   fullName ? fullName.charAt(0).toUpperCase() : "U"
                 )}
               </div>
-              <div className="hidden pr-1 text-left sm:block">
-                <p className="text-xs font-semibold leading-tight text-text-primary">{fullName || "CopyCoach User"}</p>
+              <div className="hidden pe-1 text-start sm:block">
+                <p className="text-xs font-semibold leading-tight text-text-primary">{fullName || t("copycoachUser")}</p>
                 <p className="mt-0.5 flex items-center gap-1 text-[11px] font-medium capitalize text-brand-300">
                   <span className={`h-1.5 w-1.5 rounded-full ${plan === "pro" ? "bg-warning" : "bg-accent-bright"}`} />
-                  {plan === "pro" ? "Pro Plan" : "Free Plan"}
+                  {plan === "pro" ? t("proPlan") : t("freePlan")}
                 </p>
               </div>
               <ChevronDown className="hidden h-4 w-4 text-brand-300 sm:block" />
@@ -734,7 +777,7 @@ export default function DashboardPage() {
                   className="fixed inset-0 z-40 cursor-default"
                   onClick={() => setShowMenu(false)}
                 />
-                <div className="absolute right-0 z-50 mt-2 w-72 glass-popover p-2.5 text-text-primary animate-pop">
+                <div className="absolute end-0 z-50 mt-2 w-72 glass-popover p-2.5 text-text-primary animate-pop">
                   {/* Profile Header */}
                   <div className="mb-2 glass-panel-deep px-3 py-2.5">
                     <div className="flex items-center gap-3">
@@ -747,7 +790,7 @@ export default function DashboardPage() {
                         )}
                       </div>
                       <div className="overflow-hidden">
-                        <p className="truncate text-xs font-bold text-text-primary">{fullName || "CopyCoach User"}</p>
+                        <p className="truncate text-xs font-bold text-text-primary">{fullName || t("copycoachUser")}</p>
                         <p className="mt-0.5 truncate text-[11px] text-text-muted">{userEmail || userId}</p>
                       </div>
                     </div>
@@ -755,9 +798,9 @@ export default function DashboardPage() {
                     <div className="mt-2.5 flex items-center justify-between border-t border-glass-border-subtle pt-2 text-[11px] text-text-muted">
                       <span className="flex items-center gap-1 font-medium">
                         <ShieldCheck className="h-3.5 w-3.5 text-accent-bright" />
-                        <span>{plan === "pro" ? "Pro Membership" : "Starter Free Plan"}</span>
+                        <span>{plan === "pro" ? t("proMembership") : t("starterFreePlan")}</span>
                       </span>
-                      <span className="font-bold text-accent-bright">{credits} Credits Left</span>
+                      <span className="font-bold text-accent-bright">{t("creditsLeft", { count: credits })}</span>
                     </div>
                   </div>
                 </div>
@@ -778,16 +821,16 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-warning">
-                  Supabase Configuration Warning
+                  {t("supabaseConfigWarning")}
                 </p>
                 <p className="mt-0.5 text-xs text-warning/80">
-                  The application is using a placeholder Supabase URL (<code className="rounded bg-black/40 px-1.5 py-0.5 text-warning">{activeSupabaseUrl || "placeholder.supabase.co"}</code>). Please set <code className="rounded bg-black/40 px-1 py-0.5 text-warning">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="rounded bg-black/40 px-1 py-0.5 text-warning">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in project Settings to enable database features.
+                  {t("placeholderUrlMessage", { url: activeSupabaseUrl || "placeholder.supabase.co" })}
                 </p>
               </div>
             </div>
             <div className="shrink-0">
               <span className="rounded-lg border border-warning/40 bg-warning/15 px-3 py-1.5 text-xs font-medium text-warning">
-                Invalid Configuration Detected
+                {t("invalidConfigDetected")}
               </span>
             </div>
           </div>
@@ -800,13 +843,17 @@ export default function DashboardPage() {
         <div className="mb-8 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
           <div>
             <p className="text-[13px] font-semibold text-brand-200">
-              Welcome back, {fullName.split(" ")[0] || "Creator"}
+              {t("welcomeBack", { name: fullName.split(" ")[0] || "Creator" })}
             </p>
             <h1 className="mt-1.5 text-[26px] font-extrabold leading-tight tracking-tight text-text-primary sm:text-[2.1rem]">
-              Create <span className="text-gradient">high-converting copy</span> in seconds
+              <Trans
+                ns="dashboard"
+                i18nKey="headline"
+                components={{ gradient: <span className="text-gradient" /> }}
+              />
             </h1>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-brand-200">
-              Describe your offer, choose a category and tone, then let CopyCoach AI write copy that converts.
+              {t("subheadline")}
             </p>
           </div>
           <span className="flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-[11px] font-bold text-accent-bright shadow-accent-soft">
@@ -814,21 +861,21 @@ export default function DashboardPage() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-bright opacity-60" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-bright" />
             </span>
-            AI Active
+            {t("aiActive")}
           </span>
         </div>
 
         {/* STAT CARDS */}
         <div className="mb-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
           <DashboardStatCard
-            label="AI Generation Credits"
+            label={t("aiGenerationCredits")}
             icon={<Zap className="h-4 w-4" />}
             tone="accent"
             value={
               <div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-extrabold text-text-primary">{credits}</span>
-                  <span className="text-xs text-brand-300">/ {plan === "pro" ? 100 : 5} left {plan === "pro" ? "this month" : "today"}</span>
+                  <span className="text-xs text-brand-300">/ {plan === "pro" ? 100 : 5} {plan === "pro" ? t("leftThisMonth") : t("leftToday")}</span>
                 </div>
                 <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-glass-bg-elevated">
                   <div
@@ -844,39 +891,39 @@ export default function DashboardPage() {
                   onClick={upgradeToPro}
                   className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-accent-bright hover:text-accent"
                 >
-                  Upgrade to Pro (100 monthly)
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform" />
+                  {t("upgradeToProMonthly")}
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform rtl:rotate-180" />
                 </button>
               ) : (
                 <span className="flex items-center gap-1 text-[11px] font-medium text-success">
                   <CheckCircle2 className="h-3.5 w-3.5" />
-                  Unlimited Pro Access Active
+                  {t("unlimitedProAccess")}
                 </span>
               )
             }
           />
 
           <DashboardStatCard
-            label="Total Copy Improvements"
+            label={t("totalCopyImprovements")}
             icon={<FileText className="h-4 w-4" />}
             tone="info"
-            hint="Saved in history library"
+            hint={t("savedInHistoryLibrary")}
             value={
               <div className="text-3xl font-extrabold text-text-primary">{totalCopies}</div>
             }
             footer={
               <span className="flex items-center gap-1 text-[11px] text-brand-300">
                 <TrendingUp className="h-3.5 w-3.5 text-info" />
-                Real-time persistence
+                {t("realtimePersistence")}
               </span>
             }
           />
 
           <DashboardStatCard
-            label="Starred Favorites"
+            label={t("starredFavorites")}
             icon={<Star className="h-4 w-4 fill-warning/20" />}
             tone="warning"
-            hint="High-converting snippets"
+            hint={t("highConvertingSnippets")}
             value={
               <div className="text-3xl font-extrabold text-text-primary">{favoriteCount}</div>
             }
@@ -885,16 +932,16 @@ export default function DashboardPage() {
                 onClick={() => setShowFavorites(!showFavorites)}
                 className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-warning hover:text-warning/80"
               >
-                {showFavorites ? "View All Copies" : "Filter Favorites"}
+                {showFavorites ? t("viewAllCopies") : t("filterFavorites")}
               </button>
             }
           />
 
           <DashboardStatCard
-            label="Active Projects"
+            label={t("activeProjects")}
             icon={<Layers className="h-4 w-4" />}
             tone="success"
-            hint="Organized campaigns"
+            hint={t("organizedCampaigns")}
             value={
               <div className="text-3xl font-extrabold text-text-primary">{projects.length}</div>
             }
@@ -903,7 +950,7 @@ export default function DashboardPage() {
                 onClick={() => setShowProjectModal(true)}
                 className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-accent-bright hover:text-accent"
               >
-                + Create Project
+                + {t("createProject")}
               </button>
             }
           />
@@ -918,10 +965,10 @@ export default function DashboardPage() {
               <div>
                 <h2 className="flex items-center gap-2 text-xl font-bold text-text-primary">
                   <Sparkles className="h-5 w-5 text-accent-bright" />
-                  CopyCoach AI Studio
+                  {t("copycoachAiStudio")}
                 </h2>
                 <p className="mt-1 text-xs text-text-secondary">
-                  Choose your context and tone, then let CopyCoach sharpen your copy into clear, persuasive words.
+                  {t("studioSubtitle")}
                 </p>
               </div>
             </div>
@@ -931,8 +978,8 @@ export default function DashboardPage() {
               <section>
                 <SectionHeading
                   number="01"
-                  title="Choose Copy Type"
-                  subtitle="What type of marketing copy are you creating?"
+                  title={t("chooseCopyType")}
+                  subtitle={t("copyTypeSubtitle")}
                 />
                 <div className="mt-4">
                   <CategorySelector value={copyType} onChange={setCopyType} />
@@ -943,8 +990,8 @@ export default function DashboardPage() {
               <section>
                 <SectionHeading
                   number="02"
-                  title="Your Copy & Context"
-                  subtitle="Paste copy to improve, or describe the offer to write from scratch."
+                  title={t("yourCopyContext")}
+                  subtitle={t("contextSubtitle")}
                 />
                 <div className="mt-4">
                   <ProductDetails
@@ -964,11 +1011,39 @@ export default function DashboardPage() {
               <section>
                 <SectionHeading
                   number="03"
-                  title="Choose Tone of Voice"
-                  subtitle="How should your brand sound?"
+                  title={t("chooseToneVoice")}
+                  subtitle={t("toneSubtitle")}
                 />
                 <div className="mt-4">
                   <ToneSelector value={tone} onChange={setTone} />
+                </div>
+              </section>
+
+              {/* Section 4: Select Copy Language */}
+              <section>
+                <SectionHeading
+                  number="04"
+                  title={t("copyLanguageTitle")}
+                  subtitle={t("copyLanguageSubtitle")}
+                />
+                <div className="mt-4">
+                  <select
+                    value={copyLanguage}
+                    onChange={(e) => persistCopyLanguage(e.target.value)}
+                    className="cc-field w-full cursor-pointer rounded-xl px-3.5 py-2.5 text-sm font-medium"
+                  >
+                    {[
+                      { value: "English", label: t("copyLanguageEnglish") },
+                      { value: "Arabic", label: t("copyLanguageArabic") },
+                      { value: "French", label: t("copyLanguageFrench") },
+                      { value: "Spanish", label: t("copyLanguageSpanish") },
+                    ].map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-2 text-[11px] text-text-muted">{t("copyLanguageHelper")}</p>
                 </div>
               </section>
 
@@ -986,11 +1061,11 @@ export default function DashboardPage() {
 
                 {credits <= 0 && !loading && (
                   <p className="text-center text-xs text-warning">
-                    You&apos;ve used all your free credits.{" "}
+                    {t("outOfCreditsLine1")}{" "}
                     <button onClick={upgradeToPro} className="font-semibold underline underline-offset-2 hover:text-warning">
-                      Upgrade to Pro
+                      {t("upgradeToPro")}
                     </button>{" "}
-                    for 100 monthly generations.
+                    {t("forMonthlyGenerations")}
                   </p>
                 )}
 
@@ -1010,10 +1085,10 @@ export default function DashboardPage() {
                 {/* CopyCoach Review header */}
                 <header className="border-b border-border pb-5">
                   <h2 className="text-lg font-bold tracking-tight text-text-primary">
-                    CopyCoach Review
+                    {t("copycoachReview")}
                   </h2>
                   <p className="mt-1 text-[13px] leading-relaxed text-text-secondary">
-                    What improved, why it works, and where your copy can go further.
+                    {t("reviewSubtitle")}
                   </p>
                 </header>
 
@@ -1021,7 +1096,7 @@ export default function DashboardPage() {
                 <section>
                   <div className="flex items-center justify-between gap-5">
                     <div>
-                      <h3 className="text-sm font-semibold text-text-primary">Conversion Score</h3>
+                      <h3 className="text-sm font-semibold text-text-primary">{t("conversionScore")}</h3>
                       <div className="mt-1.5 flex items-baseline gap-1.5">
                         <span className="text-4xl font-extrabold tracking-tight tabular-nums text-text-primary">
                           {resultScoreOf(result)}
@@ -1047,7 +1122,7 @@ export default function DashboardPage() {
 
                 {/* Improved Copy — the primary content */}
                 <section>
-                  <h3 className="text-sm font-semibold text-text-primary">Improved Copy</h3>
+                  <h3 className="text-sm font-semibold text-text-primary">{t("improvedCopy")}</h3>
                   <div className="mt-3 rounded-xl border border-border bg-surface p-5">
                     <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-text-primary">
                       {resultCopyText(result)}
@@ -1057,17 +1132,17 @@ export default function DashboardPage() {
                     <Button
                       size="sm"
                       onClick={() => handleCopy(resultCopyText(result), "result")}
-                      title="Copy improved copy"
+                      title={t("copyImprovedCopy")}
                     >
                       {copiedId === "result" ? (
                         <>
                           <Check className="h-4 w-4" />
-                          Copied
+                          {t("copied")}
                         </>
                       ) : (
                         <>
                           <Copy className="h-4 w-4" />
-                          Copy
+                          {t("copyAction")}
                         </>
                       )}
                     </Button>
@@ -1075,28 +1150,28 @@ export default function DashboardPage() {
                       size="sm"
                       variant="secondary"
                       onClick={() => handleExportPDF(resultCopyText(result))}
-                      title="Export as PDF"
+                      title={t("exportAsPdf")}
                     >
                       <FileDown className="h-4 w-4" />
-                      Export PDF
+                      {t("exportPdf")}
                     </Button>
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={() => setShowFullOutput(true)}
-                      title="Expand to full view"
+                      title={t("expandToFullView")}
                     >
                       <Maximize2 className="h-4 w-4" />
-                      Show Full
+                      {t("showFull")}
                     </Button>
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={() => handleDownload(resultCopyText(result))}
-                      title="Download as text file"
+                      title={t("downloadAsTextFile")}
                     >
                       <Download className="h-4 w-4" />
-                      Download
+                      {t("downloadAction")}
                     </Button>
                   </div>
                 </section>
@@ -1107,7 +1182,7 @@ export default function DashboardPage() {
                     (result.strengths && result.strengths.length > 0) ||
                     (result.weaknesses && result.weaknesses.length > 0)) && (
                     <section className="rounded-xl border border-border bg-surface p-4">
-                      <h3 className="text-sm font-semibold text-text-primary">Why This Works</h3>
+                      <h3 className="text-sm font-semibold text-text-primary">{t("whyThisWorks")}</h3>
                       {result.coachAdvice && (
                         <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">
                           {result.coachAdvice}
@@ -1116,7 +1191,7 @@ export default function DashboardPage() {
                       {result.strengths && result.strengths.length > 0 && (
                         <div className="mt-3">
                           <p className="text-xs font-semibold text-text-secondary">
-                            What&apos;s working
+                            {t("whatsWorking")}
                           </p>
                           <ul className="mt-1.5 space-y-1.5">
                             {result.strengths.map((strength, idx) => (
@@ -1134,7 +1209,7 @@ export default function DashboardPage() {
                       {result.weaknesses && result.weaknesses.length > 0 && (
                         <div className="mt-3">
                           <p className="text-xs font-semibold text-text-secondary">
-                            Where to go further
+                            {t("whereToGoFurther")}
                           </p>
                           <ul className="mt-1.5 space-y-1.5">
                             {result.weaknesses.map((weakness, idx) => (
@@ -1142,7 +1217,7 @@ export default function DashboardPage() {
                                 key={idx}
                                 className="flex items-start gap-2 text-[13px] leading-relaxed text-text-secondary"
                               >
-                                <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
+                                <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent rtl:rotate-180" />
                                 <span>{weakness}</span>
                               </li>
                             ))}
@@ -1156,7 +1231,7 @@ export default function DashboardPage() {
                 {typeof result === "object" && result.humanWritingScore !== undefined && (
                   <section className="rounded-xl border border-border bg-surface p-4">
                     <div className="flex items-baseline justify-between gap-4">
-                      <h3 className="text-sm font-semibold text-text-primary">Writing Quality</h3>
+                      <h3 className="text-sm font-semibold text-text-primary">{t("writingQuality")}</h3>
                       <div className="flex items-baseline gap-1">
                         <span className="text-2xl font-bold tabular-nums text-text-primary">
                           {result.humanWritingScore}
@@ -1167,13 +1242,13 @@ export default function DashboardPage() {
                     {result.humanWritingAnalysis && (
                       <ul className="mt-4 space-y-2.5">
                         {[
-                          { label: "Naturalness", value: result.humanWritingAnalysis.naturalness },
-                          { label: "Specificity", value: result.humanWritingAnalysis.specificity },
-                          { label: "Clarity", value: result.humanWritingAnalysis.clarity },
-                          { label: "Voice", value: result.humanWritingAnalysis.voice },
-                          { label: "Rhythm", value: result.humanWritingAnalysis.sentenceRhythm },
-                          { label: "Audience Fit", value: result.humanWritingAnalysis.contextualFit },
-                          { label: "Repetition", value: result.humanWritingAnalysis.repetition },
+                          { label: t("naturalness"), value: result.humanWritingAnalysis.naturalness },
+                          { label: t("specificity"), value: result.humanWritingAnalysis.specificity },
+                          { label: t("clarity"), value: result.humanWritingAnalysis.clarity },
+                          { label: t("voice"), value: result.humanWritingAnalysis.voice },
+                          { label: t("rhythm"), value: result.humanWritingAnalysis.sentenceRhythm },
+                          { label: t("audienceFit"), value: result.humanWritingAnalysis.contextualFit },
+                          { label: t("repetition"), value: result.humanWritingAnalysis.repetition },
                         ].map((item) => (
                           <li key={item.label}>
                             <div className="flex items-center justify-between text-xs">
@@ -1202,13 +1277,11 @@ export default function DashboardPage() {
                 {typeof result === "object" && (
                   <section className="rounded-xl border border-border bg-surface p-4">
                     <div className="flex items-center justify-between gap-4">
-                      <h3 className="text-sm font-semibold text-text-primary">AI Pattern Risk</h3>
+                      <h3 className="text-sm font-semibold text-text-primary">{t("aiPatternRisk")}</h3>
                       <Badge variant="neutral">{riskLevel(result.aiPatternRisk ?? 30)}</Badge>
                     </div>
                     <p className="mt-2 text-xs leading-relaxed text-text-secondary">
-                      Writing-style signal:{" "}
-                      {riskLevel(result.aiPatternRisk ?? 30).toLowerCase()}. This is a heuristic
-                      measure, not a definitive detection result.
+                      {t("riskSignal", { risk: riskLevel(result.aiPatternRisk ?? 30) })} {t("riskHeuristicNote")}
                     </p>
                   </section>
                 )}
@@ -1216,16 +1289,16 @@ export default function DashboardPage() {
                 {/* Framework */}
                 {typeof result === "object" && result.framework && (
                   <section className="flex items-center justify-between gap-4 rounded-xl border border-border bg-surface px-4 py-3">
-                    <span className="text-xs font-medium text-text-secondary">Framework</span>
+                    <span className="text-xs font-medium text-text-secondary">{t("framework")}</span>
                     <span className="text-xs font-semibold text-text-primary">{result.framework}</span>
                   </section>
                 )}
 
                 {/* CopyCoach Feedback — continue the coaching */}
                 <section className="border-t border-border pt-5">
-                  <h3 className="text-sm font-semibold text-text-primary">CopyCoach Feedback</h3>
+                  <h3 className="text-sm font-semibold text-text-primary">{t("copycoachFeedback")}</h3>
                   <p className="mt-0.5 text-xs text-text-muted">
-                    Rate this review — your feedback trains CopyCoach to coach better.
+                    {t("feedbackSubtitle")}
                   </p>
                   <div className="mt-3">
                     <DrillCritiqueFeedback
@@ -1243,7 +1316,7 @@ export default function DashboardPage() {
                   <RefreshCw className="h-5 w-5 animate-spin" />
                 </div>
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-300">
-                  CopyCoach is working
+                  {t("copycoachWorking")}
                 </p>
                 <ol key={processingStage} className="mt-4 space-y-1.5 text-[13px] animate-fade">
                   {PROCESSING_STAGES.map((stage, i) => {
@@ -1277,11 +1350,11 @@ export default function DashboardPage() {
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/25 bg-accent/10 text-accent-bright">
                   <Sparkles className="h-8 w-8" />
                 </div>
-                <h3 className="mb-1 text-base font-semibold text-text-primary">Awaiting Copy Analysis</h3>
+                <h3 className="mb-1 text-base font-semibold text-text-primary">{t("awaitingAnalysis")}</h3>
                 <p className="max-w-xs text-xs leading-relaxed text-text-secondary">
-                  Paste or describe your copy on the left and click{" "}
-                  <strong className="font-semibold text-text-primary">Improve your copy</strong> to
-                  get an AI score, focused rewrites, and actionable feedback.
+                  {t("awaitingAnalysisBody1")}{" "}
+                  <strong className="font-semibold text-text-primary">{t("improveYourCopy")}</strong>{" "}
+                  {t("awaitingAnalysisBody2")}
                 </p>
               </div>
             )}
@@ -1292,9 +1365,9 @@ export default function DashboardPage() {
         <section id="dashboard-projects" className="mt-12 scroll-mt-24">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-xl font-bold tracking-tight text-text-primary">Projects</h2>
+              <h2 className="text-xl font-bold tracking-tight text-text-primary">{t("projectsTitle")}</h2>
               <p className="mt-1 text-sm text-text-secondary">
-                Campaigns and client workspaces with their saved copy.
+                {t("projectsSubtitle")}
               </p>
             </div>
           </div>
@@ -1308,16 +1381,16 @@ export default function DashboardPage() {
                 >
                   <div className="h-8 w-8 animate-pulse rounded-lg bg-surface-muted" />
                   <div className="h-3 w-40 animate-pulse rounded bg-surface-muted" />
-                  <div className="ml-auto h-3 w-16 animate-pulse rounded bg-surface-muted" />
+                  <div className="ms-auto h-3 w-16 animate-pulse rounded bg-surface-muted" />
                 </div>
               ))}
             </div>
           ) : projects.length === 0 ? (
             <div className="mt-5 flex flex-col items-center gap-2 rounded-xl border border-dashed border-border px-4 py-10 text-center">
               <Folder className="h-5 w-5 text-text-muted" />
-              <span className="max-w-sm text-xs text-text-secondary">
-                No projects yet. Create one to organize campaigns and the copy you save to them.
-              </span>
+<span className="max-w-sm text-xs text-text-secondary">
+                  {t("noProjectsYet")}
+                </span>
               <button
                 onClick={() => setShowProjectModal(true)}
                 className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-xs font-bold text-accent-foreground transition-colors hover:bg-accent-hover"
@@ -1333,8 +1406,8 @@ export default function DashboardPage() {
                   key={p.id}
                   type="button"
                   onClick={() => router.push(`/dashboard/projects/${p.id}`)}
-                  aria-label={`Open project ${p.name}`}
-                  className={`group flex w-full items-center justify-between gap-4 px-4 py-3.5 text-left transition-colors hover:bg-surface-muted ${
+                  aria-label={t("openProjectAria", { name: p.name })}
+                  className={`group flex w-full items-center justify-between gap-4 px-4 py-3.5 text-start transition-colors hover:bg-surface-muted ${
                     i > 0 ? "border-t border-border" : ""
                   }`}
                 >
@@ -1348,16 +1421,18 @@ export default function DashboardPage() {
                       </span>
                       <span className="block text-[11px] text-text-muted">
                         {p.created_at
-                          ? `Created ${new Date(p.created_at).toLocaleDateString(undefined, {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}`
-                          : "Open project"}
+                          ? t("createdOn", {
+                              date: formatDate(locale, p.created_at, {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              }),
+                            })
+                          : t("openProject")}
                       </span>
                     </span>
                   </div>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-text-muted transition-all group-hover:translate-x-0.5 group-hover:text-accent-bright" />
+                  <ArrowRight className="h-4 w-4 shrink-0 text-text-muted transition-all group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 group-hover:text-accent-bright rtl:rotate-180" />
                 </button>
               ))}
             </div>
@@ -1368,9 +1443,9 @@ export default function DashboardPage() {
         <section id="copy-library" className="mt-12 scroll-mt-24">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-xl font-bold tracking-tight text-text-primary">Copy Library</h2>
+              <h2 className="text-xl font-bold tracking-tight text-text-primary">{t("copyLibrary")}</h2>
               <p className="mt-1 text-sm text-text-secondary">
-                Every saved improvement — search, star, copy, or download.
+                {t("librarySubtitle")}
               </p>
             </div>
 
@@ -1380,25 +1455,25 @@ export default function DashboardPage() {
                   onClick={upgradeToPro}
                   className="flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-xs font-bold text-accent-foreground shadow-accent-soft transition-colors hover:bg-accent-hover"
                 >
-                  Upgrade to Pro
-                  <ArrowRight className="h-3.5 w-3.5" />
+                  {t("upgradeToPro")}
+                  <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
                 </button>
               ) : (
                 <span className="flex items-center gap-1.5 rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-[11px] font-semibold text-success">
                   <CheckCircle2 className="h-3.5 w-3.5" />
-                  Pro Active
+                  {t("proActive")}
                 </span>
               )}
 
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+                <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
                 <input
                   type="text"
-                  placeholder="Search history..."
+                  placeholder={t("searchHistory")}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="cc-field rounded-lg py-2 pl-9 pr-3 text-xs text-text-primary placeholder:text-text-muted sm:w-56"
-                  aria-label="Search copy history"
+                  className="cc-field rounded-lg py-2 ps-9 pe-3 text-xs text-text-primary placeholder:text-text-muted sm:w-56"
+                  aria-label={t("searchHistoryAria")}
                 />
               </div>
 
@@ -1412,7 +1487,7 @@ export default function DashboardPage() {
                 }`}
               >
                 <Star className={`h-3.5 w-3.5 ${showFavorites ? "fill-warning" : ""}`} />
-                {showFavorites ? "Starred Only" : "All Copies"}
+                {showFavorites ? t("starredOnly") : t("allCopies")}
               </button>
             </div>
           </div>
@@ -1457,8 +1532,7 @@ export default function DashboardPage() {
             <div className="mt-6 flex flex-col items-center gap-2 rounded-xl border border-dashed border-border px-4 py-14 text-center">
               <FileText className="h-5 w-5 text-text-muted" />
               <span className="max-w-sm text-xs text-text-secondary">
-                No saved copy history found. Run a copy improvement above to start building your
-                library.
+                {t("noHistoryFound")}
               </span>
             </div>
           )}
@@ -1488,21 +1562,21 @@ export default function DashboardPage() {
           >
             <h3 className="mb-1 flex items-center gap-2 text-lg font-bold text-text-primary">
               <FolderPlus className="h-5 w-5 text-accent-bright" />
-              Create New Project Workspace
+              {t("createNewProjectWorkspace")}
             </h3>
             <p className="mb-5 text-xs text-brand-200">
-              Organize campaigns, clients, or product lines into separate workspaces.
+              {t("organizeWorkspaces")}
             </p>
 
             <div className="mb-5">
               <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                Project Name
+                {t("projectName")}
               </label>
               <input
                 type="text"
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
-                placeholder="e.g. Summer Marketing Campaign"
+                placeholder={t("projectNamePlaceholder")}
                 className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-sm text-brand-100"
                 autoFocus
               />
@@ -1513,13 +1587,13 @@ export default function DashboardPage() {
                 onClick={() => setShowProjectModal(false)}
                 className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 onClick={createProject}
                 className="rounded-xl bg-accent px-5 py-2 text-xs font-bold text-accent-foreground shadow-accent-soft transition-colors hover:bg-accent-hover"
               >
-                Create Project
+                {t("createProject")}
               </button>
             </div>
           </div>
@@ -1543,13 +1617,13 @@ export default function DashboardPage() {
                   <UserCheck className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-text-primary">Profile & Account Settings</h3>
-                  <p className="text-xs text-brand-200">Manage your persona, brand voices, security, and preferences</p>
+                  <h3 className="text-lg font-bold text-text-primary">{t("profileModalTitle")}</h3>
+                  <p className="text-xs text-brand-200">{t("profileModalSubtitle")}</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowProfileModal(false)}
-                aria-label="Close"
+                aria-label={t("close")}
                 className="rounded-xl p-2 text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
@@ -1569,7 +1643,7 @@ export default function DashboardPage() {
                   }`}
                 >
                   <User className="h-4 w-4" />
-                  Personal Profile
+                  {t("personalProfile")}
                 </button>
 
                 <button
@@ -1581,7 +1655,7 @@ export default function DashboardPage() {
                   }`}
                 >
                   <Sliders className="h-4 w-4" />
-                  Brand Voice
+                  {t("brandVoiceTab")}
                 </button>
 
                 <button
@@ -1593,7 +1667,7 @@ export default function DashboardPage() {
                   }`}
                 >
                   <Sun className="h-4 w-4" />
-                  Theme & AI Engine
+                  {t("themeAiEngine")}
                 </button>
 
                 <button
@@ -1605,7 +1679,7 @@ export default function DashboardPage() {
                   }`}
                 >
                   <ShieldCheck className="h-4 w-4" />
-                  Security
+                  {t("securityTab")}
                 </button>
 
                 <button
@@ -1617,7 +1691,7 @@ export default function DashboardPage() {
                   }`}
                 >
                   <CreditCard className="h-4 w-4" />
-                  Subscription
+                  {t("subscriptionTab")}
                 </button>
 
                 <button
@@ -1629,7 +1703,7 @@ export default function DashboardPage() {
                   }`}
                 >
                   <LifeBuoy className="h-4 w-4" />
-                  Support Hub
+                  {t("supportHub")}
                 </button>
               </div>
 
@@ -1639,20 +1713,20 @@ export default function DashboardPage() {
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                       <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                        Full Name
+                        {t("fullName")}
                       </label>
                       <input
                         type="text"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        placeholder="e.g. S_last_born"
+                        placeholder={t("fullNamePlaceholder")}
                         className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
 
                     <div>
                       <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                        Email Address
+                        {t("emailAddress")}
                       </label>
                       <input
                         type="email"
@@ -1664,26 +1738,26 @@ export default function DashboardPage() {
 
                     <div>
                       <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                        Role / Title
+                        {t("roleTitle")}
                       </label>
                       <input
                         type="text"
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
-                        placeholder="e.g. Senior Copywriter"
+                        placeholder={t("rolePlaceholder")}
                         className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
 
                     <div>
                       <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                        Company / Brand Name
+                        {t("companyBrandName")}
                       </label>
                       <input
                         type="text"
                         value={company}
                         onChange={(e) => setCompany(e.target.value)}
-                        placeholder="e.g. CopyCoach Labs"
+                        placeholder={t("companyPlaceholder")}
                         className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                       />
                     </div>
@@ -1691,13 +1765,13 @@ export default function DashboardPage() {
 
                   <div>
                     <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                      Bio & Strategic Copy Goals
+                      {t("bioGoals")}
                     </label>
                     <textarea
                       rows={3}
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
-                      placeholder="Briefly describe your copywriting goals..."
+                      placeholder={t("bioPlaceholder")}
                       className="cc-input w-full resize-none rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs text-brand-100"
                     />
                   </div>
@@ -1710,7 +1784,7 @@ export default function DashboardPage() {
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                       <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                        Target Audience
+                        {t("targetAudience")}
                       </label>
                       <input
                         type="text"
@@ -1722,7 +1796,7 @@ export default function DashboardPage() {
 
                     <div>
                       <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                        Brand Niche
+                        {t("brandNiche")}
                       </label>
                       <input
                         type="text"
@@ -1735,7 +1809,7 @@ export default function DashboardPage() {
 
                   <div>
                     <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                      Custom Brand Guidelines
+                      {t("customBrandGuidelines")}
                     </label>
                     <textarea
                       rows={4}
@@ -1752,7 +1826,7 @@ export default function DashboardPage() {
                 <div className="space-y-5">
                   <div>
                     <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                      Theme Mode
+                      {t("themeMode")}
                     </label>
                     <div className="grid grid-cols-3 gap-3">
                       <button
@@ -1765,7 +1839,7 @@ export default function DashboardPage() {
                         }`}
                       >
                         <Moon className="h-4 w-4" />
-                        Dark Mode
+                        {t("darkMode")}
                       </button>
 
                       <button
@@ -1778,7 +1852,7 @@ export default function DashboardPage() {
                         }`}
                       >
                         <Sun className="h-4 w-4" />
-                        Light Mode
+                        {t("lightMode")}
                       </button>
 
                       <button
@@ -1791,22 +1865,22 @@ export default function DashboardPage() {
                         }`}
                       >
                         <Laptop className="h-4 w-4" />
-                        System Sync
+                        {t("systemSync")}
                       </button>
                     </div>
                   </div>
 
                   <div>
                     <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                      Default AI Engine
+                      {t("defaultAiEngine")}
                     </label>
                     <select
                       value={preferredModel}
                       onChange={(e) => setPreferredModel(e.target.value)}
                       className="cc-input w-full cursor-pointer rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                     >
-                      <option value="Gemini 2.5 Flash (Recommended)">Gemini 2.5 Flash (Recommended - Super Fast)</option>
-                      <option value="Gemini 2.5 Pro (Deep Copywriting Reasoning)">Gemini 2.5 Pro (Deep Strategy)</option>
+                      <option value="Gemini 2.5 Flash (Recommended)">{t("geminiFlash")}</option>
+                      <option value="Gemini 2.5 Pro (Deep Copywriting Reasoning)">{t("geminiPro")}</option>
                     </select>
                   </div>
                 </div>
@@ -1818,7 +1892,7 @@ export default function DashboardPage() {
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                       <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                        New Password
+                        {t("newPassword")}
                       </label>
                       <input
                         type={showPassword ? "text" : "password"}
@@ -1831,7 +1905,7 @@ export default function DashboardPage() {
 
                     <div>
                       <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                        Confirm Password
+                        {t("confirmPassword")}
                       </label>
                       <input
                         type={showPassword ? "text" : "password"}
@@ -1845,20 +1919,20 @@ export default function DashboardPage() {
 
                   <div className="flex items-center justify-between rounded-xl border border-glass-input-border bg-glass-input-bg p-3">
                     <div>
-                      <p className="text-xs font-semibold text-text-primary">Two-Factor Authentication (2FA)</p>
-                      <p className="text-[11px] text-brand-300">Add an extra layer of security to your CopyCoach account</p>
+                      <p className="text-xs font-semibold text-text-primary">{t("twoFactor")}</p>
+                      <p className="text-[11px] text-brand-300">{t("twoFactorDesc")}</p>
                     </div>
                     <button
                       type="button"
                       onClick={() => {
                         setTwoFactorEnabled(!twoFactorEnabled);
-                        showToast(!twoFactorEnabled ? "2FA Enabled" : "2FA Disabled");
+                        showToast(!twoFactorEnabled ? t("toast2faEnabled") : t("toast2faDisabled"));
                       }}
                       className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
                         twoFactorEnabled ? "bg-success text-ink-950" : "bg-glass-bg-elevated text-brand-200"
                       }`}
                     >
-                      {twoFactorEnabled ? "Enabled" : "Enable"}
+                      {twoFactorEnabled ? t("enabled") : t("enable")}
                     </button>
                   </div>
                 </div>
@@ -1869,10 +1943,10 @@ export default function DashboardPage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between rounded-2xl border border-accent/25 bg-gradient-to-r from-accent/10 via-accent/10 to-accent/10 p-4">
                     <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-accent-bright">Current Plan</span>
-                      <h4 className="text-lg font-bold capitalize text-text-primary">{plan} Plan</h4>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-accent-bright">{t("currentPlan")}</span>
+                      <h4 className="text-lg font-bold capitalize text-text-primary">{plan} {t("plan")}</h4>
                       <p className="mt-0.5 text-xs text-brand-200">
-                        {plan === "pro" ? "100 AI Generations Daily" : "5 Free Generations Daily"}
+                        {plan === "pro" ? t("proDaily") : t("freeDaily")}
                       </p>
                     </div>
 
@@ -1882,7 +1956,7 @@ export default function DashboardPage() {
                         onClick={upgradeToPro}
                         className="rounded-xl bg-accent px-4 py-2 text-xs font-bold text-accent-foreground shadow-accent-soft transition-colors hover:bg-accent-hover"
                       >
-                        Upgrade to Pro
+                        {t("upgradeToPro")}
                       </button>
                     )}
                   </div>
@@ -1894,23 +1968,23 @@ export default function DashboardPage() {
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 rounded-xl border border-success/30 bg-success-surface p-3 text-xs font-medium text-success">
                     <Activity className="h-4 w-4 animate-pulse text-success" />
-                    CopyCoach AI Status: All Systems Operational (100% Uptime)
+                    {t("aiStatusAllOperational")}
                   </div>
 
                   <div>
                     <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                      Submit Support Ticket
+                      {t("submitSupportTicket")}
                     </label>
                     <input
                       type="text"
-                      placeholder="Subject line..."
+                      placeholder={t("subjectLinePlaceholder")}
                       value={supportSubject}
                       onChange={(e) => setSupportSubject(e.target.value)}
                       className="cc-input mb-3 w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
                     />
                     <textarea
                       rows={3}
-                      placeholder="Describe your issue or question..."
+                      placeholder={t("describeIssuePlaceholder")}
                       value={supportMessage}
                       onChange={(e) => setSupportMessage(e.target.value)}
                       className="cc-input w-full resize-none rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs text-brand-100"
@@ -1927,20 +2001,20 @@ export default function DashboardPage() {
                   onClick={() => setShowProfileModal(false)}
                   className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
                 >
-                  Close
+                  {t("close")}
                 </button>
                 <button
                   onClick={() => {
                     localStorage.setItem("copycoach_user_settings", JSON.stringify({
                       role, company, bio, targetAudience, brandNiche, preferredLanguage, brandGuidelines, preferredModel
                     }));
-                    showToast("Profile Settings Saved Successfully!");
+                    showToast(t("toastProfileSaved"));
                     setShowProfileModal(false);
                   }}
                   className="flex items-center gap-1.5 rounded-xl bg-accent px-6 py-2 text-xs font-bold text-accent-foreground shadow-accent-soft transition-colors hover:bg-accent-hover"
                 >
                   <Save className="h-3.5 w-3.5" />
-                  Save Changes
+                  {t("saveChanges")}
                 </button>
               </div>
             </div>
@@ -1961,11 +2035,11 @@ export default function DashboardPage() {
             <div className="mb-4 flex items-center justify-between border-b border-glass-border pb-3">
               <h3 className="flex items-center gap-2 text-lg font-bold text-text-primary">
                 <Keyboard className="h-5 w-5 text-accent-bright" />
-                Keyboard Shortcuts & Productivity
+                {t("shortcutsTitle")}
               </h3>
               <button
                 onClick={() => setShowShortcutsModal(false)}
-                aria-label="Close"
+                aria-label={t("close")}
                 className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
@@ -1974,7 +2048,7 @@ export default function DashboardPage() {
 
             <div className="mb-6 space-y-3">
               <div className="flex items-center justify-between rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs">
-                <span className="text-brand-200">Run Copy Optimization</span>
+                <span className="text-brand-200">{t("shortcutRunOptimization")}</span>
                 <div className="flex items-center gap-1 font-mono">
                   <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">⌘</kbd>
                   <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">Enter</kbd>
@@ -1982,7 +2056,7 @@ export default function DashboardPage() {
               </div>
 
               <div className="flex items-center justify-between rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs">
-                <span className="text-brand-200">Toggle Star Favorite</span>
+                <span className="text-brand-200">{t("shortcutToggleFavorite")}</span>
                 <div className="flex items-center gap-1 font-mono">
                   <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">⌘</kbd>
                   <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">F</kbd>
@@ -1990,7 +2064,7 @@ export default function DashboardPage() {
               </div>
 
               <div className="flex items-center justify-between rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs">
-                <span className="text-brand-200">Copy Improved Text</span>
+                <span className="text-brand-200">{t("shortcutCopyImproved")}</span>
                 <div className="flex items-center gap-1 font-mono">
                   <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">⌘</kbd>
                   <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">C</kbd>
@@ -1998,7 +2072,7 @@ export default function DashboardPage() {
               </div>
 
               <div className="flex items-center justify-between rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs">
-                <span className="text-brand-200">Create New Project</span>
+                <span className="text-brand-200">{t("shortcutNewProject")}</span>
                 <div className="flex items-center gap-1 font-mono">
                   <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">⌘</kbd>
                   <kbd className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-1 text-accent-bright">P</kbd>
@@ -2011,7 +2085,7 @@ export default function DashboardPage() {
                 onClick={() => setShowShortcutsModal(false)}
                 className="rounded-xl bg-glass-bg-elevated px-5 py-2 text-xs font-medium text-text-primary transition-colors hover:bg-glass-bg-hover"
               >
-                Close
+                {t("close")}
               </button>
             </div>
           </div>
@@ -2025,11 +2099,11 @@ export default function DashboardPage() {
             <div className="mb-4 flex items-center justify-between border-b border-glass-border pb-3">
               <h3 className="flex items-center gap-2 text-lg font-bold text-text-primary">
                 <HelpCircle className="h-5 w-5 text-accent-bright" />
-                CopyCoach AI Support & Feedback
+                {t("supportModalTitle")}
               </h3>
               <button
                 onClick={() => setShowSupportModal(false)}
-                aria-label="Close"
+                aria-label={t("close")}
                 className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
@@ -2037,17 +2111,17 @@ export default function DashboardPage() {
             </div>
 
             <p className="mb-4 text-xs leading-relaxed text-brand-200">
-              Have a question about your copy analysis or need help setting up custom brand voices? Send us a message and our team will assist you shortly.
+              {t("supportModalDesc")}
             </p>
 
             <div className="mb-6 space-y-4">
               <div>
                 <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                  Topic / Subject
+                  {t("topicSubject")}
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g., Custom Brand Tone Request"
+                  placeholder={t("topicSubjectPlaceholder")}
                   value={supportSubject}
                   onChange={(e) => setSupportSubject(e.target.value)}
                   className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg px-4 py-2.5 text-xs text-brand-100"
@@ -2056,11 +2130,11 @@ export default function DashboardPage() {
 
               <div>
                 <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-300">
-                  Message
+                  {t("message")}
                 </label>
                 <textarea
                   rows={4}
-                  placeholder="Describe your question or feedback..."
+                  placeholder={t("messagePlaceholder")}
                   value={supportMessage}
                   onChange={(e) => setSupportMessage(e.target.value)}
                   className="cc-input w-full resize-none rounded-xl border border-glass-input-border bg-glass-input-bg p-3 text-xs text-brand-100"
@@ -2073,18 +2147,18 @@ export default function DashboardPage() {
                 onClick={() => setShowSupportModal(false)}
                 className="rounded-xl px-4 py-2 text-xs font-medium text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 onClick={() => {
                   setShowSupportModal(false);
                   setSupportSubject("");
                   setSupportMessage("");
-                  showToast("Support ticket submitted! We'll reply via email.");
+                  showToast(t("toastTicketSubmitted"));
                 }}
                 className="rounded-xl bg-accent px-5 py-2 text-xs font-bold text-accent-foreground shadow-accent-soft transition-colors hover:bg-accent-hover"
               >
-                Send Message
+                {t("sendMessage")}
               </button>
             </div>
           </div>

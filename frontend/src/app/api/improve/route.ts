@@ -7,7 +7,7 @@ import { getRateLimiter } from "@/lib/rate-limit";
 import { trackServerEvent } from "@/lib/analytics";
 import { runHumanWritingEngine, calculateOverallScore } from "@/lib/human-writing";
 
-const systemPrompt = `
+const baseSystemPrompt = `
 You are CopyCoach AI: an expert senior direct-response copywriter and marketing coach.
 
 You do two jobs in one response:
@@ -121,7 +121,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { text, copyType, tone, productName, targetAudience, cta } = await request.json();
+    const { text, copyType, tone, productName, targetAudience, cta, language } = await request.json();
 
     if (!text || typeof text !== "string" || !text.trim()) {
       return NextResponse.json(
@@ -136,14 +136,22 @@ export async function POST(request: Request) {
       );
     }
 
+    const copyLanguage = typeof language === "string" && language.trim() ? language.trim() : "English";
+    const localized = copyLanguage.toLowerCase() !== "english";
+
     const userPrompt = `
 Copy Type: ${typeof copyType === "string" ? copyType.slice(0, 80) : "General"}
 Desired Tone: ${typeof tone === "string" ? tone.slice(0, 80) : "Professional"}
+Output Language: ${copyLanguage}
 Product / Brand Name: ${typeof productName === "string" ? productName.slice(0, 120) : "Not provided"}
 Target Audience: ${typeof targetAudience === "string" ? targetAudience.slice(0, 120) : "Not provided"}
 Call To Action (CTA): ${typeof cta === "string" ? cta.slice(0, 120) : "Not provided"}
 Original Copy / Product Description: ${text}
 `;
+
+    const systemPrompt = localized
+      ? `${baseSystemPrompt}\n\nCRITICAL OUTPUT LANGUAGE RULE: The user selected "${copyLanguage}". Write "improvedCopy", "strengths", "weaknesses", "coachAdvice", and "framework" ALL in ${copyLanguage}. Fall back to English only if you genuinely cannot express a specific sales term in that language. Never mix languages within a single field.`
+      : baseSystemPrompt;
 
     let raw = "";
 
@@ -218,19 +226,21 @@ Original Copy / Product Description: ${text}
     // the PASS 1 rewrite as the text to evaluate/improve, and the CTA.
     const improvedCopyText = parsed.improvedCopy || text;
     let humanWriting;
-    try {
-      humanWriting = await runHumanWritingEngine({
-        originalCopy: text,
-        pass1Copy: improvedCopyText,
-        copyType: typeof copyType === "string" ? copyType : "General",
-        tone: typeof tone === "string" ? tone : "Professional",
-        productName: typeof productName === "string" ? productName : "",
-        targetAudience: typeof targetAudience === "string" ? targetAudience : "",
-        cta: typeof cta === "string" ? cta : "",
-      });
-    } catch (hweErr) {
-      console.error("Human Writing Engine error:", hweErr);
-      humanWriting = null;
+    if (!localized) {
+      try {
+        humanWriting = await runHumanWritingEngine({
+          originalCopy: text,
+          pass1Copy: improvedCopyText,
+          copyType: typeof copyType === "string" ? copyType : "General",
+          tone: typeof tone === "string" ? tone : "Professional",
+          productName: typeof productName === "string" ? productName : "",
+          targetAudience: typeof targetAudience === "string" ? targetAudience : "",
+          cta: typeof cta === "string" ? cta : "",
+        });
+      } catch (hweErr) {
+        console.error("Human Writing Engine error:", hweErr);
+        humanWriting = null;
+      }
     }
 
     if (humanWriting?.polishedCopy) {
@@ -259,8 +269,8 @@ Original Copy / Product Description: ${text}
       }),
     };
 
-    // Only consume credit if both passes succeeded
-    if (humanWriting) {
+    // Only consume credit if both passes succeeded (localized generations also consume a credit)
+    if (humanWriting || localized) {
       try {
         await consumeCredit(user.id);
       } catch (e) {
@@ -280,7 +290,7 @@ Original Copy / Product Description: ${text}
 
     return NextResponse.json({
       result: finalResult,
-      creditsRemaining: humanWriting
+      creditsRemaining: humanWriting || localized
         ? Math.max(0, check.remaining - 1)
         : check.remaining,
     });

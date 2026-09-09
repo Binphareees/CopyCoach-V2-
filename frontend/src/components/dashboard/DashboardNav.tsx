@@ -94,7 +94,7 @@ export function DashboardNavButton({
       >
         {icon}
       </span>
-      <span className="min-w-0 flex-1 truncate text-left">{label}</span>
+      <span className="min-w-0 flex-1 truncate text-start">{label}</span>
       {badge}
     </button>
   );

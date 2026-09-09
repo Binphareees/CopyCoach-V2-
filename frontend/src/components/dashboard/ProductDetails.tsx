@@ -1,6 +1,9 @@
 "use client";
 
 import React from "react";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+import { formatNumber } from "@/i18n/format";
 
 interface ProductDetailsProps {
   productName: string;
@@ -27,6 +30,10 @@ export default function ProductDetails({
   cta,
   onCtaChange,
 }: ProductDetailsProps) {
+  const { t } = useTranslation("dashboard");
+  const { locale } = useLanguage();
+  const charactersLabel = t("charactersCount", { count: formatNumber(locale, description.length) });
+
   return (
     <div className="space-y-6">
       <div>
@@ -35,10 +42,10 @@ export default function ProductDetails({
             htmlFor="product-description"
             className="text-sm font-semibold text-text-primary"
           >
-            Your copy to improve
+            {t("yourCopyToImprove")}
           </label>
           <span className="text-[11px] tabular-nums text-text-muted">
-            {description.length.toLocaleString()} characters
+            {charactersLabel}
           </span>
         </div>
         <textarea
@@ -46,21 +53,21 @@ export default function ProductDetails({
           rows={6}
           value={description}
           onChange={(e) => onDescriptionChange(e.target.value)}
-          placeholder="Paste the copy you want to improve, or describe the offer you want CopyCoach to write from scratch."
+          placeholder={t("pasteCopyPlaceholder")}
           className="cc-field min-h-[180px] rounded-2xl border-border p-5 text-[15px] leading-relaxed placeholder:text-text-muted"
         />
       </div>
 
       <div>
         <label htmlFor="product-name" className={labelClass}>
-          Product / Brand Name
+          {t("productBrandName")}
         </label>
         <input
           id="product-name"
           type="text"
           value={productName}
           onChange={(e) => onProductNameChange(e.target.value)}
-          placeholder="Product / Brand Name"
+          placeholder={t("productBrandName")}
           className={fieldClass}
         />
       </div>
@@ -68,28 +75,28 @@ export default function ProductDetails({
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="target-audience" className={labelClass}>
-            Target Audience
+            {t("targetAudienceLabel")}
           </label>
           <input
             id="target-audience"
             type="text"
             value={targetAudience}
             onChange={(e) => onTargetAudienceChange(e.target.value)}
-            placeholder="e.g. Busy professionals, founders"
+            placeholder={t("targetAudiencePlaceholder")}
             className={fieldClass}
           />
         </div>
 
         <div>
           <label htmlFor="cta" className={labelClass}>
-            Call To Action (CTA)
+            {t("callToAction")}
           </label>
           <input
             id="cta"
             type="text"
             value={cta}
             onChange={(e) => onCtaChange(e.target.value)}
-            placeholder="e.g. Get Started Free"
+            placeholder={t("ctaPlaceholder")}
             className={fieldClass}
           />
         </div>

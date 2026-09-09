@@ -2,66 +2,69 @@ import Link from "next/link";
 import { GradientButton } from "../ui/gradient-button";
 import Card from "../ui/Card";
 import SectionTitle from "../ui/SectionTitle";
+import { getServerT } from "@/i18n/server";
 
-const plans = [
-  {
-    name: "The Spark",
-    subtitle: "(Free)",
-    price: "$0",
-    quota: "3 drills / mo",
-    description: "Start learning the fundamentals of copywriting.",
-    features: [
-      "3 drills per month",
-      "Basic 1-10 overall score",
-      "Standard AIDA / PAS frameworks",
-      "General improvement suggestions",
-    ],
-  },
-  {
-    name: "The Apprentice",
-    subtitle: "(Starter)",
-    price: "$19",
-    quota: "25 drills / mo",
-    description: "For developing copywriters aiming for structured practice.",
-    features: [
-      "25 drills per month",
-      "Hook / Clarity / CTA breakdown",
-      "Line-by-line red-pen annotations",
-      "50+ static client brief library",
-    ],
-  },
-  {
-    name: "The Pro",
-    subtitle: "(Popular)",
-    price: "$39",
-    quota: "Unlimited drills",
-    description: "For serious copywriters wanting accelerated mastery.",
-    features: [
-      "Unlimited AI drills & reviews",
-      "Real-time rewrite engine",
-      "Dynamic client brief generator",
-      "Niche angle simulator",
-      "Verified portfolio badge",
-    ],
-    popular: true,
-  },
-  {
-    name: "The Studio",
-    subtitle: "(Agency)",
-    price: "$119",
-    quota: "Unlimited (5 seats)",
-    description: "For teams, agencies, and high-volume copy teams.",
-    features: [
-      "Unlimited drills (5 seats included)",
-      "Team progress dashboard",
-      "Custom brief uploader",
-      "Agency brand voice calibration",
-      "Priority ticket handling",
-    ],
-  },
-];
+export default async function Pricing() {
+  const { t } = await getServerT("landing");
 
-export default function Pricing() {
+  const plans = [
+    {
+      name: t("pricingName1"),
+      subtitle: t("pricingSub1"),
+      price: "$0",
+      quota: t("pricingQuotaDrills", { count: 3 }),
+      description: t("pricingDesc1"),
+      features: [
+        t("pricingFeatureCount", { count: 3 }),
+        t("pricingBasicScore"),
+        t("pricingStandardFrameworks"),
+        t("pricingGeneralSuggestions"),
+      ],
+    },
+    {
+      name: t("pricingName2"),
+      subtitle: t("pricingSub2"),
+      price: "$19",
+      quota: t("pricingQuotaDrills", { count: 25 }),
+      description: t("pricingDesc2"),
+      features: [
+        t("pricingFeatureCount", { count: 25 }),
+        t("pricingBreakdown"),
+        t("pricingRedPenAnnotations"),
+        t("pricingBriefLibrary"),
+      ],
+    },
+    {
+      name: t("pricingName3"),
+      subtitle: t("pricingSub3"),
+      price: "$39",
+      quota: t("pricingUnlimitedDrills"),
+      description: t("pricingDesc3"),
+      features: [
+        t("pricingUnlimitedReviews"),
+        t("pricingRewriteEngine"),
+        t("pricingBriefGenerator"),
+        t("pricingNicheSimulator"),
+        t("pricingPortfolioBadge"),
+      ],
+      popular: true,
+    },
+    {
+      name: t("pricingName4"),
+      subtitle: t("pricingSub4"),
+      price: "$119",
+      quota: t("pricingUnlimitedSeats", { count: 5 }),
+      description: t("pricingDesc4"),
+      features: [
+        t("pricingUnlimitedSeatsIncluded"),
+        t("pricingTeamDashboard"),
+        t("pricingCustomUploader"),
+        t("pricingAgencyVoice"),
+        t("pricingPriorityTickets"),
+      ],
+    },
+  ];
+
   return (
     <section
       id="pricing"
@@ -70,10 +73,9 @@ export default function Pricing() {
       <div className="mx-auto max-w-7xl px-6">
 
         <SectionTitle
-          title="Subscription Tiers & Pricing"
-          description="Strategic plans centered on drill quotas, critique depth, and agency capabilities."
+          title={t("pricingTitle")}
+          description={t("pricingSubtitle")}
         />
-
 
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 
@@ -90,7 +92,7 @@ export default function Pricing() {
               {plan.popular && (
                 <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-accent">
                   <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                  Most Popular
+                  {t("pricingMostPopular")}
                 </div>
               )}
 
@@ -104,7 +106,7 @@ export default function Pricing() {
               <div className="mt-4 text-3xl font-black text-text-primary">
                 {plan.price}
                 <span className="text-sm font-normal text-text-muted">
-                  /month
+                  {t("pricingPerMonth")}
                 </span>
               </div>
 
@@ -137,7 +139,7 @@ export default function Pricing() {
                   className="w-full text-xs"
                 >
                   <Link href="/auth/signup">
-                    {plan.price === "$0" ? "Start Free" : "Subscribe Tier"}
+                    {plan.price === "$0" ? t("pricingStartFree") : t("pricingSubscribeTier")}
                   </Link>
                 </GradientButton>
               </div>

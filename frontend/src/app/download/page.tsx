@@ -2,11 +2,13 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import Logo from "@/components/ui/Logo";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { Smartphone, Download, CheckCircle2, Shield, Zap, ArrowLeft, Layers } from "lucide-react";
 
 export default function DownloadLandingPage() {
+  const { t } = useTranslation("landing");
   const [downloading, setDownloading] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
 
@@ -32,8 +34,8 @@ export default function DownloadLandingPage() {
             href="/dashboard"
             className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-text-primary transition-colors bg-surface px-3.5 py-2 rounded-xl border border-border"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Dashboard</span>
+            <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
+            <span>{t("dlReturnToDashboard")}</span>
           </Link>
         </div>
       </header>
@@ -42,15 +44,15 @@ export default function DownloadLandingPage() {
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col items-center text-center">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-bold uppercase tracking-wider mb-6">
           <Smartphone className="w-4 h-4 text-accent" />
-          <span>CopyCoach AI Mobile Application</span>
+          <span>{t("mobileAppBadge")}</span>
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-black text-text-primary tracking-tight max-w-3xl leading-tight mb-4">
-          Master Copywriting On The Go With <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-bright via-accent to-accent-deep">CopyCoach AI Mobile</span>
+          {t("downloadHeroTitlePart1")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-bright via-accent to-accent-deep">{t("downloadHeroTitleBrand")}</span>
         </h1>
 
         <p className="text-sm sm:text-base text-text-muted max-w-2xl mb-10 leading-relaxed">
-          Practice copywriting drills, receive line-by-line red-pen critiques, analyze AIDA/PAS frameworks, and manage client briefs anywhere from your Android or iOS device.
+          {t("downloadHeroDesc")}
         </p>
 
         {/* STORE BUTTONS */}
@@ -59,7 +61,7 @@ export default function DownloadLandingPage() {
           <button
             type="button"
             onClick={handleDownloadApk}
-            className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-accent/40 hover:bg-surface-muted transition-all shadow-xl cursor-pointer text-left"
+            className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-accent/40 hover:bg-surface-muted transition-all shadow-xl cursor-pointer text-start"
           >
             <div className="p-3 rounded-xl bg-surface border border-border text-accent group-hover:scale-105 transition-transform">
               <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
@@ -68,13 +70,13 @@ export default function DownloadLandingPage() {
             </div>
             <div>
               <span className="text-[10px] uppercase font-bold text-text-muted block tracking-wider">
-                GET IT ON
+                {t("appGetItOn")}
               </span>
               <span className="text-base font-bold text-text-primary group-hover:text-accent transition-colors">
-                Google Play Store
+                {t("dlGooglePlayStore")}
               </span>
               <span className="text-xs text-accent block mt-0.5 font-medium">
-                Download APK Version 1.0.0
+                {t("apkVersionTwo")}
               </span>
             </div>
           </button>
@@ -84,7 +86,7 @@ export default function DownloadLandingPage() {
             href="https://apps.apple.com/app/copycoach-ai/id640000000"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-accent/40 hover:bg-surface-muted transition-all shadow-xl cursor-pointer text-left"
+            className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-accent/40 hover:bg-surface-muted transition-all shadow-xl cursor-pointer text-start"
           >
             <div className="p-3 rounded-xl bg-surface border border-border text-text-primary group-hover:scale-105 transition-transform">
               <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
@@ -93,13 +95,13 @@ export default function DownloadLandingPage() {
             </div>
             <div>
               <span className="text-[10px] uppercase font-bold text-text-muted block tracking-wider">
-                Download on the
+                {t("appDownloadOnThe")}
               </span>
               <span className="text-base font-bold text-text-primary group-hover:text-accent transition-colors">
-                Apple App Store
+                {t("dlAppleAppStore")}
               </span>
               <span className="text-xs text-accent block mt-0.5 font-medium">
-                iOS TestFlight & App Store
+                {t("appIosTestFlight")}
               </span>
             </div>
           </a>
@@ -107,9 +109,9 @@ export default function DownloadLandingPage() {
 
         {/* DIRECT APK DOWNLOAD BOX */}
         <div className="w-full max-w-xl bg-surface-elevated border border-border rounded-2xl p-5 mb-12 flex items-center justify-between">
-          <div className="text-left">
-            <h3 className="text-sm font-bold text-text-primary">Direct Android APK Package</h3>
-            <p className="text-xs text-text-muted">CopyCoach-AI-v1.0.apk (Clean & Verified Build)</p>
+          <div className="text-start">
+            <h3 className="text-sm font-bold text-text-primary">{t("dlDirectApkPackage")}</h3>
+            <p className="text-xs text-text-muted">{t("apkBuildInfo")}</p>
           </div>
 
           <GradientButton
@@ -118,30 +120,30 @@ export default function DownloadLandingPage() {
             className="w-full sm:w-auto"
           >
             {downloading ? (
-              <span>Preparing Download...</span>
+              <span>{t("preparingDownload")}</span>
             ) : downloadSuccess ? (
               <>
                 <CheckCircle2 className="w-4 h-4 text-white" />
-                <span>APK Downloaded!</span>
+                <span>{t("appApkDownloaded")}</span>
               </>
             ) : (
               <>
                 <Download className="w-4 h-4 text-white" />
-                <span>Download APK</span>
+                <span>{t("dlDownloadApk")}</span>
               </>
             )}
           </GradientButton>
         </div>
 
         {/* FEATURES GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-left">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-start">
           <div className="bg-surface-elevated border border-border rounded-2xl p-6">
             <div className="p-3 rounded-xl bg-accent/10 text-accent-bright w-fit mb-4">
               <Zap className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-text-primary mb-2">Instant AI Feedback</h3>
+            <h3 className="text-base font-bold text-text-primary mb-2">{t("featureInstantFeedbackTitle")}</h3>
             <p className="text-xs text-text-muted leading-relaxed">
-              Score your headlines, email drafts, and ad copy from 0 to 100 with line-by-line red-pen annotations.
+              {t("featureInstantFeedbackDesc")}
             </p>
           </div>
 
@@ -149,9 +151,9 @@ export default function DownloadLandingPage() {
             <div className="p-3 rounded-xl bg-accent/10 text-accent-bright w-fit mb-4">
               <Layers className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-text-primary mb-2">Framework Drills</h3>
+            <h3 className="text-base font-bold text-text-primary mb-2">{t("featureFrameworkDrillsTitle")}</h3>
             <p className="text-xs text-text-muted leading-relaxed">
-              Practice AIDA, PAS, BAB, FAB, and 4Ps frameworks with real-time AI guidance and dynamic client briefs.
+              {t("featureFrameworkDrillsDesc")}
             </p>
           </div>
 
@@ -159,9 +161,9 @@ export default function DownloadLandingPage() {
             <div className="p-3 rounded-xl bg-accent/10 text-accent-bright w-fit mb-4">
               <Shield className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-text-primary mb-2">Offline Sync</h3>
+            <h3 className="text-base font-bold text-text-primary mb-2">{t("featureOfflineSyncTitle")}</h3>
             <p className="text-xs text-text-muted leading-relaxed">
-              Save your favorite copy rewrites and practice drills locally or sync across your desktop workspace.
+              {t("featureOfflineSyncDesc")}
             </p>
           </div>
         </div>

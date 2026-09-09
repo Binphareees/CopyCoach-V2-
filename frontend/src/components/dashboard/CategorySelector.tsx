@@ -2,20 +2,23 @@
 
 import React from "react";
 import { Share2, Megaphone, Mail, MousePointerClick, Package, PenLine } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import type { DashboardKey } from "@/i18n/keys";
 
 export interface CategoryOption {
   value: string;
   label: string;
+  labelKey: DashboardKey;
   icon: React.ComponentType<{ className?: string }>;
 }
 
 export const CATEGORY_OPTIONS: CategoryOption[] = [
-  { value: "Social Media", label: "Social Media", icon: Share2 },
-  { value: "Advertisement", label: "Ad Campaign", icon: Megaphone },
-  { value: "Email", label: "Email Marketing", icon: Mail },
-  { value: "Landing Page", label: "Landing Page", icon: MousePointerClick },
-  { value: "Product Description", label: "Product Copy", icon: Package },
-  { value: "Blog", label: "Blog Content", icon: PenLine },
+  { value: "Social Media", label: "Social Media", labelKey: "catSocialMedia", icon: Share2 },
+  { value: "Advertisement", label: "Ad Campaign", labelKey: "catAdCampaign", icon: Megaphone },
+  { value: "Email", label: "Email Marketing", labelKey: "catEmailMarketing", icon: Mail },
+  { value: "Landing Page", label: "Landing Page", labelKey: "catLandingPage", icon: MousePointerClick },
+  { value: "Product Description", label: "Product Copy", labelKey: "catProductCopy", icon: Package },
+  { value: "Blog", label: "Blog Content", labelKey: "catBlogContent", icon: PenLine },
 ];
 
 interface CategorySelectorProps {
@@ -24,6 +27,8 @@ interface CategorySelectorProps {
 }
 
 export default function CategorySelector({ value, onChange }: CategorySelectorProps) {
+  const { t } = useTranslation("dashboard");
+
   return (
     <div className="flex flex-wrap gap-2">
       {CATEGORY_OPTIONS.map((cat) => {
@@ -44,7 +49,7 @@ export default function CategorySelector({ value, onChange }: CategorySelectorPr
             <Icon
               className={`h-3.5 w-3.5 ${isActive ? "text-accent-foreground" : "text-text-muted"}`}
             />
-            {cat.label}
+            {t(cat.labelKey)}
           </button>
         );
       })}

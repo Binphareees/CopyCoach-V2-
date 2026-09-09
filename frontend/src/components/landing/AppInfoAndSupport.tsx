@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { GradientButton } from "../ui/gradient-button";
 import {
   Smartphone,
@@ -20,7 +21,11 @@ import {
   Users,
 } from "lucide-react";
 
+const apkFileName = "CopyCoach-AI-v1.0.apk";
+
 export default function AppInfoAndSupport() {
+  const { t } = useTranslation("landing");
+
   // Support Form State
   const [supportCategory, setSupportCategory] = useState("Copywriting Advice");
   const [supportSubject, setSupportSubject] = useState("");
@@ -36,6 +41,14 @@ export default function AppInfoAndSupport() {
 
   // Accordion FAQ State
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
+
+  const supportCategories = [
+    { value: "Copywriting Advice", label: t("appCatCopywriting") },
+    { value: "Mobile App Support", label: t("appCatMobile") },
+    { value: "Account & Billing", label: t("appCatBilling") },
+    { value: "Feature Request", label: t("appCatFeature") },
+    { value: "Bug Report", label: t("appCatBug") },
+  ];
 
   const handleDownloadApk = () => {
     setDownloadingApk(true);
@@ -81,20 +94,20 @@ export default function AppInfoAndSupport() {
 
   const supportFaqs = [
     {
-      q: "How does the CopyCoach AI scoring algorithm evaluate copy?",
-      a: "CopyCoach AI analyzes your text against core copywriting frameworks (AIDA, PAS, BAB, FAB, 4Ps). It checks emotional trigger intensity, hook strength, clarity, readability, target audience resonance, and call-to-action urgency to assign a score from 0 to 100.",
+      q: t("appFaqQ1"),
+      a: t("appFaqA1"),
     },
     {
-      q: "How do I install the mobile app on Android or iOS?",
-      a: "For Android, click the 'Google Play Store' badge or direct 'Download APK' button below. For iOS, scan the QR code with your iPhone camera to open the web app in Safari, then tap Share -> 'Add to Home Screen' for native full-screen app access.",
+      q: t("appFaqQ2"),
+      a: t("appFaqA2"),
     },
     {
-      q: "Can I practice with custom client briefs and specific brand tones?",
-      a: "Yes! In the dashboard, you can create custom Project Folders, define target personas, select brand tones (Bold & Punchy, Empathetic & Warm, Authoritative, Casual), and upload custom client briefs to simulate real client scenarios.",
+      q: t("appFaqQ3"),
+      a: t("appFaqA3"),
     },
     {
-      q: "What support is included in free vs pro accounts?",
-      a: "All accounts receive 24/7 AI-assisted support. Pro and Studio members receive priority human engineering review with escalated ticket response times.",
+      q: t("appFaqQ4"),
+      a: t("appFaqA4"),
     },
   ];
 
@@ -109,13 +122,13 @@ export default function AppInfoAndSupport() {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-elevated border border-border text-text-secondary text-xs font-bold uppercase tracking-wider mb-4">
               <BookOpen className="w-4 h-4 text-accent" />
-              <span>About CopyCoach AI</span>
+              <span>{t("appAboutBadge")}</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-bold text-text-primary tracking-tight leading-tight">
-              Master high-converting copywriting through <span className="text-accent">intelligent practice</span>
+              {t("appAboutTitle")} <span className="text-accent">{t("appAboutTitleAccent")}</span>
             </h2>
             <p className="mt-4 text-text-secondary text-base sm:text-lg leading-relaxed">
-              CopyCoach AI is an interactive copywriting mentor designed for marketers, entrepreneurs, copywriters, agency owners, and content creators who want to write copy that converts.
+              {t("appAboutDesc")}
             </p>
           </div>
 
@@ -125,60 +138,64 @@ export default function AppInfoAndSupport() {
             <div className="lg:col-span-7 bg-surface border border-border rounded-3xl p-8 sm:p-10 space-y-6">
               <div className="flex items-center gap-3 text-accent font-bold text-sm">
                 <Sparkles className="w-5 h-5 text-accent" />
-                <span>The Personal Copywriting Coach Engine</span>
+                <span>{t("appCoachEngine")}</span>
               </div>
 
               <p className="text-text-secondary text-sm sm:text-base leading-relaxed">
-                Unlike static text generators that simply output generic templates, <strong className="text-text-primary">CopyCoach AI acts as an interactive red-pen mentor</strong>. You input your headline drafts, sales emails, Facebook ads, or landing page copy, and the system evaluates your work using battle-tested direct response marketing principles.
+                <Trans
+                  ns="landing"
+                  i18nKey="appCoachEngineDesc"
+                  components={{ strong: <strong className="text-text-primary" /> }}
+                />
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <div className="p-4 rounded-2xl bg-surface-elevated border border-border">
                   <div className="flex items-center gap-2 text-text-primary font-bold text-xs uppercase mb-1">
                     <Target className="w-4 h-4 text-accent" />
-                    <span>0–100 Quality Score</span>
+                    <span>{t("appScoreTitle")}</span>
                   </div>
                   <p className="text-xs text-text-muted leading-normal">
-                    Objective scoring based on hook strength, clarity, emotional resonance, and call-to-action drive.
+                    {t("appScoreDesc")}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-surface-elevated border border-border">
                   <div className="flex items-center gap-2 text-text-primary font-bold text-xs uppercase mb-1">
                     <FileText className="w-4 h-4 text-accent" />
-                    <span>Line-by-Line Red Pen</span>
+                    <span>{t("appRedPenTitle")}</span>
                   </div>
                   <p className="text-xs text-text-muted leading-normal">
-                    Detailed annotations pointing out exact word choice improvements and weak transitions.
+                    {t("appRedPenDesc")}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-surface-elevated border border-border">
                   <div className="flex items-center gap-2 text-text-primary font-bold text-xs uppercase mb-1">
                     <BookOpen className="w-4 h-4 text-accent" />
-                    <span>5 Core Frameworks</span>
+                    <span>{t("appFrameworksTitle")}</span>
                   </div>
                   <p className="text-xs text-text-muted leading-normal">
-                    Practice AIDA, PAS (Problem-Agitate-Solution), BAB, FAB, and 4Ps with instant guided rewrites.
+                    {t("appFrameworksDesc")}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-surface-elevated border border-border">
                   <div className="flex items-center gap-2 text-text-primary font-bold text-xs uppercase mb-1">
                     <Users className="w-4 h-4 text-accent" />
-                    <span>Client Brief Simulator</span>
+                    <span>{t("appBriefTitle")}</span>
                   </div>
                   <p className="text-xs text-text-muted leading-normal">
-                    Simulate real marketing assignments across SaaS, E-commerce, Finance, and Fitness niches.
+                    {t("appBriefDesc")}
                   </p>
                 </div>
               </div>
 
               <div className="border-t border-border pt-4 flex flex-wrap items-center justify-between text-xs text-text-muted gap-2">
                 <span className="flex items-center gap-1 text-success font-medium">
-                  <CheckCircle2 className="w-4 h-4" /> Built for real-world conversion goals
+                  <CheckCircle2 className="w-4 h-4" /> {t("appBuiltFor")}
                 </span>
-                <span>Practice across SaaS, e-commerce, finance, and fitness</span>
+                <span>{t("appPracticeAcross")}</span>
               </div>
             </div>
 
@@ -187,30 +204,30 @@ export default function AppInfoAndSupport() {
               <div className="p-6 rounded-2xl bg-surface border border-border transition-colors hover:border-border-strong">
                 <h4 className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2">
                   <span className="px-2 py-0.5 rounded bg-surface-elevated border border-border text-text-secondary text-xs">AIDA</span>
-                  <span>Attention, Interest, Desire, Action</span>
+                  <span>{t("appAidaTitle")}</span>
                 </h4>
                 <p className="text-xs text-text-muted leading-relaxed">
-                  The gold standard sales formula for landing pages, Facebook ads, and sales letters designed to turn casual readers into buyers.
+                  {t("appAidaDesc")}
                 </p>
               </div>
 
               <div className="p-6 rounded-2xl bg-surface border border-border transition-colors hover:border-border-strong">
                 <h4 className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2">
                   <span className="px-2 py-0.5 rounded bg-surface-elevated border border-border text-text-secondary text-xs">PAS</span>
-                  <span>Problem, Agitate, Solution</span>
+                  <span>{t("appPasTitle")}</span>
                 </h4>
                 <p className="text-xs text-text-muted leading-relaxed">
-                  Ideal for cold emails, pain-point marketing, and problem-solving product pitches that demand urgent reader attention.
+                  {t("appPasDesc")}
                 </p>
               </div>
 
               <div className="p-6 rounded-2xl bg-surface border border-border transition-colors hover:border-border-strong">
                 <h4 className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2">
                   <span className="px-2 py-0.5 rounded bg-surface-elevated border border-border text-text-secondary text-xs">BAB & FAB</span>
-                  <span>Before-After-Bridge & Features</span>
+                  <span>{t("appBabFabTitle")}</span>
                 </h4>
                 <p className="text-xs text-text-muted leading-relaxed">
-                  Showcase transformative value propositions and feature-to-benefit translations for SaaS products and online courses.
+                  {t("appBabFabDesc")}
                 </p>
               </div>
             </div>
@@ -224,15 +241,15 @@ export default function AppInfoAndSupport() {
           <div className="max-w-3xl mx-auto text-center mb-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-elevated border border-border text-text-secondary text-xs font-bold uppercase tracking-wider mb-4">
               <Smartphone className="w-4 h-4 text-accent" />
-              <span>Mobile Application</span>
+              <span>{t("appMobileBadge")}</span>
             </div>
 
             <h3 className="text-2xl sm:text-4xl font-bold text-text-primary tracking-tight">
-              Take your practice on the go
+              {t("appMobileTitle")}
             </h3>
 
             <p className="mt-3 text-text-secondary text-sm leading-relaxed max-w-xl mx-auto">
-              Download our mobile application to open CopyCoach AI on your phone, or install the Android APK directly.
+              {t("appMobileDesc")}
             </p>
           </div>
 
@@ -246,7 +263,7 @@ export default function AppInfoAndSupport() {
                 e.preventDefault();
                 handleDownloadApk();
               }}
-              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-border-strong transition-colors cursor-pointer text-left"
+              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-border-strong transition-colors cursor-pointer text-start"
             >
               <div className="p-3 rounded-xl bg-surface border border-border shrink-0">
                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
@@ -259,13 +276,13 @@ export default function AppInfoAndSupport() {
 
               <div>
                 <span className="text-[10px] uppercase font-extrabold text-text-muted block tracking-widest">
-                  GET IT ON
+                  {t("appGetItOn")}
                 </span>
                 <span className="text-base font-black text-text-primary">
-                  Google Play
+                  {t("appGooglePlay")}
                 </span>
                 <span className="text-[11px] text-success block mt-0.5 font-medium flex items-center gap-1">
-                  <Download className="w-3 h-3" /> Android APK Package Included
+                  <Download className="w-3 h-3" /> {t("appApkIncluded")}
                 </span>
               </div>
             </a>
@@ -275,7 +292,7 @@ export default function AppInfoAndSupport() {
               href="https://apps.apple.com/app/copycoach-ai/id640000000"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-border-strong transition-colors cursor-pointer text-left"
+              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-border-strong transition-colors cursor-pointer text-start"
             >
               <div className="p-3 rounded-xl bg-surface border border-border text-text-secondary shrink-0">
                 <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
@@ -285,13 +302,13 @@ export default function AppInfoAndSupport() {
 
               <div>
                 <span className="text-[10px] uppercase font-extrabold text-text-muted block tracking-widest">
-                  Download on the
+                  {t("appDownloadOnThe")}
                 </span>
                 <span className="text-base font-black text-text-primary">
-                  App Store
+                  {t("appAppStore")}
                 </span>
                 <span className="text-[11px] text-text-muted block mt-0.5 font-medium">
-                  iOS TestFlight & App Store
+                  {t("appIosTestFlight")}
                 </span>
               </div>
             </a>
@@ -303,9 +320,11 @@ export default function AppInfoAndSupport() {
               <div className="p-2.5 rounded-xl bg-surface border border-border text-accent shrink-0">
                 <Download className="w-5 h-5" />
               </div>
-              <div className="text-left">
-                <h4 className="text-xs font-bold text-text-primary">Direct Android APK File (v1.0.0)</h4>
-                <p className="text-[11px] text-text-muted">CopyCoach-AI-v1.0.apk • Clean & Verified Build</p>
+              <div className="text-start">
+                <h4 className="text-xs font-bold text-text-primary">{t("appApkFileTitle", { version: "v1.0.0" })}</h4>
+                <p className="text-[11px] text-text-muted">
+                  <span className="font-mono">{apkFileName}</span> • {t("appCleanVerified")}
+                </p>
               </div>
             </div>
 
@@ -315,16 +334,16 @@ export default function AppInfoAndSupport() {
               className="w-full sm:w-auto"
             >
               {downloadingApk ? (
-                <span>Downloading APK...</span>
+                <span>{t("appDownloadingApk")}</span>
               ) : downloadSuccess ? (
                 <>
                   <CheckCircle2 className="w-4 h-4 text-white" />
-                  <span>APK Downloaded!</span>
+                  <span>{t("appApkDownloaded")}</span>
                 </>
               ) : (
                 <>
                   <Download className="w-4 h-4 text-white" />
-                  <span>Download APK Now</span>
+                  <span>{t("appDownloadApk")}</span>
                 </>
               )}
             </GradientButton>
@@ -355,18 +374,18 @@ export default function AppInfoAndSupport() {
                 </svg>
               </div>
 
-              <div className="text-left text-xs text-text-secondary">
+              <div className="text-start text-xs text-text-secondary">
                 <p className="font-bold text-text-primary flex items-center gap-1">
-                  <QrCode className="w-3.5 h-3.5 text-accent" /> Instant Phone Scan
+                  <QrCode className="w-3.5 h-3.5 text-accent" /> {t("appInstantScan")}
                 </p>
-                <p className="text-[11px] text-text-muted mt-0.5">Scan with iPhone or Android camera</p>
-                <p className="text-[11px] text-text-muted font-medium mt-0.5">Open link to install mobile PWA</p>
+                <p className="text-[11px] text-text-muted mt-0.5">{t("appScanCamera")}</p>
+                <p className="text-[11px] text-text-muted font-medium mt-0.5">{t("appInstallPwa")}</p>
               </div>
             </div>
 
             <div className="text-xs text-text-muted flex items-center gap-2">
               <Shield className="w-4 h-4 text-success" />
-              <span>Safe & Malware-Free Verified Application</span>
+              <span>{t("appSafeVerified")}</span>
             </div>
           </div>
         </div>
@@ -378,15 +397,15 @@ export default function AppInfoAndSupport() {
           <div className="text-center max-w-3xl mx-auto mb-12">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-elevated border border-border text-text-secondary text-xs font-bold uppercase tracking-wider mb-4">
               <HelpCircle className="w-4 h-4 text-accent" />
-              <span>Help & Support Hub</span>
+              <span>{t("appSupportHub")}</span>
             </div>
 
             <h2 className="text-3xl sm:text-5xl font-bold text-text-primary tracking-tight">
-              Have questions? We&apos;re here to help.
+              {t("appSupportTitle")}
             </h2>
 
             <p className="mt-3 text-text-secondary text-base leading-relaxed">
-              Submit a support ticket, ask our AI assistant a question, or browse common help guides below.
+              {t("appSupportDesc")}
             </p>
           </div>
 
@@ -397,12 +416,12 @@ export default function AppInfoAndSupport() {
               <div className="flex items-center justify-between pb-4 mb-6 border-b border-border">
                 <div className="flex items-center gap-2">
                   <MessageSquare className="w-5 h-5 text-accent" />
-                  <h3 className="text-lg font-bold text-text-primary">Ask AI Support or Submit Ticket</h3>
+                  <h3 className="text-lg font-bold text-text-primary">{t("appSupportFormTitle")}</h3>
                 </div>
 
                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-elevated border border-border text-text-muted text-[11px] font-medium">
                   <Shield className="w-3.5 h-3.5 text-accent" />
-                  <span>24/7 AI-assisted support</span>
+                  <span>{t("appSupport247")}</span>
                 </div>
               </div>
 
@@ -410,20 +429,20 @@ export default function AppInfoAndSupport() {
                 <div className="bg-surface-elevated border border-border rounded-2xl p-6 space-y-4">
                   <div className="flex items-center gap-3 text-success font-bold text-sm">
                     <CheckCircle2 className="w-6 h-6 text-success shrink-0" />
-                    <span>Support Ticket Received!</span>
+                    <span>{t("appTicketReceived")}</span>
                   </div>
 
                   {aiAnswer && (
                     <div className="bg-surface border border-border rounded-xl p-4 text-xs text-text-secondary leading-relaxed space-y-2">
                       <p className="font-bold text-accent flex items-center gap-1.5">
-                        <Sparkles className="w-4 h-4" /> Instant AI Assistant Answer:
+                        <Sparkles className="w-4 h-4" /> {t("appInstantAnswer")}
                       </p>
                       <div className="whitespace-pre-line text-text-primary">{aiAnswer}</div>
                     </div>
                   )}
 
                   <p className="text-xs text-text-muted leading-relaxed">
-                    A developer email notification has also been dispatched to our engineering desk. You will receive further follow-up if required.
+                    {t("appTicketReceivedDesc")}
                   </p>
 
                   <button
@@ -434,7 +453,7 @@ export default function AppInfoAndSupport() {
                     }}
                     className="mt-2 text-xs font-bold text-accent hover:underline cursor-pointer"
                   >
-                    ← Submit Another Support Ticket
+                    {t("appSubmitAnother")}
                   </button>
                 </div>
               ) : (
@@ -442,28 +461,28 @@ export default function AppInfoAndSupport() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
-                        Category
+                        {t("appFormCategory")}
                       </label>
                       <select
                         value={supportCategory}
                         onChange={(e) => setSupportCategory(e.target.value)}
                         className="cc-field text-xs rounded-xl px-3.5 py-2.5 cursor-pointer"
                       >
-                        <option value="Copywriting Advice">Copywriting & Framework Advice</option>
-                        <option value="Mobile App Support">Mobile App & APK Download Support</option>
-                        <option value="Account & Billing">Account & Subscription Billing</option>
-                        <option value="Feature Request">Feature Request</option>
-                        <option value="Bug Report">Technical Bug Report</option>
+                        {supportCategories.map((cat) => (
+                          <option key={cat.value} value={cat.value}>
+                            {cat.label}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
                     <div>
                       <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
-                        Your Email (Optional)
+                        {t("appFormEmail")}
                       </label>
                       <input
                         type="email"
-                        placeholder="you@example.com"
+                        placeholder={t("appEmailPlaceholder")}
                         value={supportEmail}
                         onChange={(e) => setSupportEmail(e.target.value)}
                         className="cc-field text-xs rounded-xl px-3.5 py-2.5"
@@ -473,11 +492,11 @@ export default function AppInfoAndSupport() {
 
                   <div>
                     <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
-                      Subject
+                      {t("appFormSubject")}
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g., How to improve my headline score?"
+                      placeholder={t("appFormSubjectPlaceholder")}
                       value={supportSubject}
                       onChange={(e) => setSupportSubject(e.target.value)}
                       className="cc-field text-xs rounded-xl px-3.5 py-2.5"
@@ -486,12 +505,12 @@ export default function AppInfoAndSupport() {
 
                   <div>
                     <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
-                      Describe Your Question or Issue *
+                      {t("appFormMessage")}
                     </label>
                     <textarea
                       rows={4}
                       required
-                      placeholder="Type your question or detail your support request here..."
+                      placeholder={t("appFormMessagePlaceholder")}
                       value={supportMessage}
                       onChange={(e) => setSupportMessage(e.target.value)}
                       className="cc-field text-xs rounded-xl p-3.5 resize-none"
@@ -500,7 +519,7 @@ export default function AppInfoAndSupport() {
 
                   <div className="flex items-center justify-between pt-2">
                     <span className="text-[11px] text-text-muted">
-                      Replies are AI-assisted and reviewed by our engineering team.
+                      {t("appFormNote")}
                     </span>
 
                     <GradientButton
@@ -508,11 +527,11 @@ export default function AppInfoAndSupport() {
                       disabled={isSubmitting || !supportMessage.trim()}
                     >
                       {isSubmitting ? (
-                        <span>Processing...</span>
+                        <span>{t("appProcessing")}</span>
                       ) : (
                         <>
                           <Send className="w-3.5 h-3.5" />
-                          <span>Submit Ticket</span>
+                          <span>{t("appSubmitTicket")}</span>
                         </>
                       )}
                     </GradientButton>
@@ -525,7 +544,7 @@ export default function AppInfoAndSupport() {
             <div className="lg:col-span-5 space-y-4">
               <h3 className="text-base font-bold text-text-primary mb-2 flex items-center gap-2">
                 <HelpCircle className="w-4 h-4 text-accent" />
-                <span>Frequently Asked Questions</span>
+                <span>{t("appSupportFaqTitle")}</span>
               </h3>
 
               <div className="space-y-3">
@@ -539,7 +558,7 @@ export default function AppInfoAndSupport() {
                       <button
                         type="button"
                         onClick={() => setExpandedFaq(isOpen ? null : idx)}
-                        className="w-full p-4 text-left flex items-center justify-between gap-3 text-xs font-bold text-text-primary hover:text-text-primary cursor-pointer"
+                        className="w-full p-4 text-start flex items-center justify-between gap-3 text-xs font-bold text-text-primary hover:text-text-primary cursor-pointer"
                       >
                         <span>{faq.q}</span>
                         {isOpen ? (
@@ -562,10 +581,10 @@ export default function AppInfoAndSupport() {
               {/* DIRECT HELP CONTACT CARD */}
               <div className="p-5 rounded-2xl bg-surface border border-border mt-6 text-xs text-text-secondary space-y-2">
                 <p className="font-bold text-text-primary flex items-center gap-1.5">
-                  <Shield className="w-4 h-4 text-accent" /> Need priority assistance?
+                  <Shield className="w-4 h-4 text-accent" /> {t("appPriorityAssistance")}
                 </p>
                 <p className="text-xs text-text-muted leading-relaxed">
-                  Our dedicated engineering support team monitors incoming submissions directly. You can also reach out via email or check platform updates anytime.
+                  {t("appPriorityDesc")}
                 </p>
               </div>
             </div>

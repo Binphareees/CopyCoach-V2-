@@ -1,34 +1,32 @@
 import SectionTitle from "../ui/SectionTitle";
+import { getServerT } from "@/i18n/server";
 
-const questions = [
-  {
-    question: "Is CopyCoach AI a writing generator?",
-    answer:
-      "No. CopyCoach AI is designed to teach you copywriting skills through feedback, explanations, and practice.",
-  },
-  {
-    question: "Can beginners use CopyCoach AI?",
-    answer:
-      "Yes. The platform is designed for complete beginners and also helps experienced writers improve.",
-  },
-  {
-    question: "What type of copy can I practice?",
-    answer:
-      "You can practice emails, advertisements, landing pages, headlines, sales copy, and more.",
-  },
-  {
-    question: "How does the AI feedback work?",
-    answer:
-      "The AI analyzes your copy based on clarity, persuasion, structure, emotional impact, and proven copywriting principles.",
-  },
-  {
-    question: "Will the AI write my copy for me?",
-    answer:
-      "The AI focuses on coaching you. It provides guidance and suggestions so you develop your own writing ability.",
-  },
-];
+export default async function FAQ() {
+  const { t } = await getServerT("landing");
 
-export default function FAQ() {
+  const questions = [
+    {
+      question: t("faqQ1"),
+      answer: t("faqA1"),
+    },
+    {
+      question: t("faqQ2"),
+      answer: t("faqA2"),
+    },
+    {
+      question: t("faqQ3"),
+      answer: t("faqA3"),
+    },
+    {
+      question: t("faqQ4"),
+      answer: t("faqA4"),
+    },
+    {
+      question: t("faqQ5"),
+      answer: t("faqA5"),
+    },
+  ];
+
   return (
     <section
       id="faq"
@@ -37,10 +35,9 @@ export default function FAQ() {
       <div className="mx-auto max-w-5xl px-6">
 
         <SectionTitle
-          title="Frequently Asked Questions"
-          description="Everything you need to know about learning copywriting with CopyCoach AI."
+          title={t("faqTitle")}
+          description={t("faqSubtitle")}
         />
-
 
         <div className="mt-16 max-w-3xl mx-auto divide-y divide-border rounded-2xl border border-border bg-surface">
 

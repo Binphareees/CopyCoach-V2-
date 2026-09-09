@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 // Route Segment Error Boundary for Next.js App Router
 export default function ErrorBoundary({
@@ -10,6 +11,8 @@ export default function ErrorBoundary({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { t } = useTranslation("common");
+
   useEffect(() => {
     console.error("App error caught:", error);
   }, [error]);
@@ -32,15 +35,15 @@ export default function ErrorBoundary({
             />
           </svg>
         </div>
-        <h2 className="text-xl font-semibold mb-2">An error occurred</h2>
+        <h2 className="text-xl font-semibold mb-2">{t("errorOccurred")}</h2>
         <p className="text-text-muted text-sm mb-6">
-          {error.message || "Something went wrong while rendering this section."}
+          {error.message || t("errorRenderFailed")}
         </p>
         <button
           onClick={() => reset()}
            className="px-5 py-2.5 bg-accent hover:bg-accent-hover text-accent-foreground font-medium text-sm rounded-xl transition-colors shadow-accent-soft"
         >
-          Try Again
+          {t("tryAgain")}
         </button>
       </div>
     </div>

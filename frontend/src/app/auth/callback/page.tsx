@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Logo from "@/components/ui/Logo";
 
 export default function CallbackPage() {
   const router = useRouter();
-  const [status, setStatus] = useState("Authenticating...");
+  const { t } = useTranslation("auth");
+  const [status, setStatus] = useState(t("callbackAuthenticating"));
 
   useEffect(() => {
     let isSubscribed = true;
@@ -21,7 +23,7 @@ export default function CallbackPage() {
         const code = urlParams.get("code");
 
         if (code) {
-          setStatus("Exchanging authentication code...");
+          setStatus(t("callbackExchanging"));
           const { error } = await activeClient.auth.exchangeCodeForSession(code);
           if (error) {
             console.error("Code exchange error:", error.message);
@@ -45,14 +47,14 @@ export default function CallbackPage() {
 
         if (!session) {
           if (isSubscribed) {
-            setStatus("Authentication failed. Redirecting to login...");
+            setStatus(t("callbackFailed"));
             setTimeout(() => router.push("/auth/login"), 1500);
           }
           return;
         }
 
         if (isSubscribed) {
-          setStatus("Creating your profile...");
+          setStatus(t("callbackCreatingProfile"));
         }
 
         // Sync profile via server endpoint (identity is derived from the token)
@@ -70,7 +72,7 @@ export default function CallbackPage() {
         }
 
         if (isSubscribed) {
-          setStatus("Success! Redirecting...");
+          setStatus(t("callbackSuccess"));
         }
 
         if (window.opener && !window.opener.closed) {
@@ -82,7 +84,7 @@ export default function CallbackPage() {
       } catch (err) {
         console.error("Callback error:", err);
         if (isSubscribed) {
-          setStatus("An unexpected error occurred. Redirecting to login...");
+          setStatus(t("callbackUnexpectedError"));
           setTimeout(() => router.push("/auth/login"), 2000);
         }
       }
@@ -93,7 +95,7 @@ export default function CallbackPage() {
     return () => {
       isSubscribed = false;
     };
-  }, [router]);
+  }, [router, t]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12 text-text-primary">
