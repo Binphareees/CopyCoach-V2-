@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ThumbsUp, ThumbsDown, Check, Send } from "lucide-react";
 import { getAccessToken } from "@/lib/supabase";
 
@@ -27,6 +28,7 @@ export default function DrillCritiqueFeedback({
   userTier = "Spark",
   className = "",
 }: DrillCritiqueFeedbackProps) {
+  const { t } = useTranslation("common");
   const [rating, setRating] = useState<"up" | "down" | null>(null);
   const [showTagSelector, setShowTagSelector] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string>("");
@@ -34,10 +36,20 @@ export default function DrillCritiqueFeedback({
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const tags =
+  const tags: { value: string; label: string }[] =
     rating === "down"
-      ? ["Too Harsh", "Inaccurate Framework", "Generic Suggestion", "Bug"]
-      : ["Spot-On Advice", "Great Formatting", "Actionable Tips", "Accurate Framework"];
+      ? [
+          { value: "Too Harsh", label: t("tagTooHarsh") },
+          { value: "Inaccurate Framework", label: t("tagInaccurateFramework") },
+          { value: "Generic Suggestion", label: t("tagGenericSuggestion") },
+          { value: "Bug", label: t("tagBug") },
+        ]
+      : [
+          { value: "Spot-On Advice", label: t("tagSpotOn") },
+          { value: "Great Formatting", label: t("tagGreatFormatting") },
+          { value: "Actionable Tips", label: t("tagActionableTips") },
+          { value: "Accurate Framework", label: t("tagAccurateFramework") },
+        ];
 
   const handleRatingClick = async (type: "up" | "down") => {
     setRating(type);
@@ -73,7 +85,7 @@ export default function DrillCritiqueFeedback({
     return (
       <div className={`flex items-center gap-2 text-xs text-success bg-success/15 border border-success/30 rounded-lg px-3 py-1.5 ${className}`}>
         <Check className="w-3.5 h-3.5" />
-        <span>Feedback received! Thank you for training CopyCoach AI.</span>
+        <span>{t("feedbackReceived")}</span>
       </div>
     );
   }
@@ -81,7 +93,7 @@ export default function DrillCritiqueFeedback({
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
       <div className="flex items-center gap-3 text-xs text-text-muted">
-        <span>Was this AI critique helpful?</span>
+        <span>{t("wasCritiqueHelpful")}</span>
         <div className="flex items-center gap-1.5">
           <button
             type="button"
@@ -91,7 +103,7 @@ export default function DrillCritiqueFeedback({
                 ? "bg-success/20 text-success border border-success/40"
                 : "hover:bg-surface-muted text-text-muted hover:text-text-primary"
             }`}
-            title="Helpful critique"
+            title={t("helpfulCritique")}
           >
             <ThumbsUp className="w-3.5 h-3.5" />
           </button>
@@ -103,7 +115,7 @@ export default function DrillCritiqueFeedback({
                 ? "bg-danger/20 text-danger border border-danger/40"
                 : "hover:bg-surface-muted text-text-muted hover:text-text-primary"
             }`}
-            title="Needs improvement"
+            title={t("needsImprovement")}
           >
             <ThumbsDown className="w-3.5 h-3.5" />
           </button>
@@ -113,21 +125,21 @@ export default function DrillCritiqueFeedback({
       {showTagSelector && (
         <div className="mt-1 p-3 bg-surface-elevated border border-border rounded-xl space-y-2 animate-fade-up">
           <p className="text-[11px] font-medium text-text-secondary">
-            {rating === "down" ? "What went wrong with this critique?" : "What was most helpful?"}
+            {rating === "down" ? t("whatWentWrong") : t("whatWasMostHelpful")}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {tags.map((tag) => (
               <button
-                key={tag}
+                key={tag.value}
                 type="button"
-                onClick={() => setSelectedTag(tag)}
+                onClick={() => setSelectedTag(tag.value)}
                 className={`text-[10px] px-2.5 py-1 rounded-full border transition-all ${
-                  selectedTag === tag
+                  selectedTag === tag.value
                     ? "bg-accent/20 border-accent-bright text-accent-bright"
                     : "bg-surface border-border text-text-muted hover:text-text-primary"
                 }`}
               >
-                {tag}
+                {tag.label}
               </button>
             ))}
           </div>
@@ -137,7 +149,7 @@ export default function DrillCritiqueFeedback({
               type="text"
               value={customComment}
               onChange={(e) => setCustomComment(e.target.value)}
-              placeholder="Additional details (optional)..."
+              placeholder={t("additionalDetails")}
               className="cc-field flex-1 text-xs rounded-lg px-2.5 py-1.5"
             />
             <button
@@ -147,7 +159,7 @@ export default function DrillCritiqueFeedback({
               className="inline-flex items-center gap-1 text-xs bg-accent text-accent-foreground font-medium px-3 py-1.5 rounded-lg transition-colors hover:bg-accent-hover disabled:opacity-50"
             >
               <Send className="w-3 h-3" />
-              <span>{loading ? "Sending..." : "Submit"}</span>
+              <span>{loading ? t("sending") : t("submit")}</span>
             </button>
           </div>
         </div>

@@ -2,18 +2,33 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { CleanMinimalSignUp } from "@/components/ui/clean-minimal-sign-up";
 import { getIsSupabaseConfigured, getActiveSupabaseUrl, ensureSupabaseConfig } from "@/lib/supabase";
+
+const TIMEOUT_ERROR = "Connection timed out.";
 
 export default function SignupPage() {
 
   const router = useRouter();
+  const { t } = useTranslation("auth");
 
   const [message, setMessage] = useState("");
+  const [messageTone, setMessageTone] = useState<"success" | "error">("error");
   const [loading, setLoading] = useState(false);
   const [checkingConfig, setCheckingConfig] = useState(true);
   const [configured, setConfigured] = useState(true);
   const [activeUrl, setActiveUrl] = useState("");
+
+  const showError = (msg: string) => {
+    setMessageTone("error");
+    setMessage(msg);
+  };
+
+  const showSuccess = (msg: string) => {
+    setMessageTone("success");
+    setMessage(msg);
+  };
 
   // Real-time Password Rules Validation
   const hasMinLength = (pwd: string) => pwd.length >= 6;
@@ -30,39 +45,39 @@ export default function SignupPage() {
 
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "OAUTH_AUTH_SUCCESS") {
-        setMessage("Google sign-up successful! Redirecting to dashboard...");
+        showSuccess(t("signupGoogleSuccess"));
         window.location.href = "/dashboard";
       }
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [router]);
+  }, [router, t]);
 
 
   async function handleSignup(name: string, email: string, password: string) {
     if (!name || !email || !password) {
-      setMessage("Please fill in all fields.");
+      showError(t("signupMissingFields"));
       return;
     }
 
     if (!isPasswordValid(password)) {
-      setMessage("Password must be at least 6 characters, contain an uppercase letter (A-Z), and a special character.");
+      showError(t("signupPasswordRules"));
       return;
     }
 
     setLoading(true);
-    setMessage("Connecting...");
+    showError(t("connecting"));
 
     try {
       const activeClient = await ensureSupabaseConfig();
 
       if (!getIsSupabaseConfigured()) {
         setLoading(false);
-        setMessage("Supabase credentials are missing or set to placeholder. Please check your NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
+        showError(t("supabaseConfigMissing"));
         return;
       }
 
-      setMessage("Creating account...");
+      showError(t("creatingAccountAction"));
 
       let apiSuccess = false;
       try {
@@ -76,10 +91,10 @@ export default function SignupPage() {
         if (apiRes.ok && apiData.success) {
           apiSuccess = true;
         } else if (apiRes.status === 409) {
-          setMessage(apiData.error || "User already exists. Attempting to log in...");
+          showError(apiData.error || t("userAlreadyExists"));
           apiSuccess = true;
         } else if (!apiRes.ok && apiData.error) {
-          setMessage(apiData.error);
+          showError(apiData.error);
           setLoading(false);
           return;
         }
@@ -89,7 +104,7 @@ export default function SignupPage() {
 
       if (!apiSuccess) {
         const timeoutPromise = new Promise<{ data: { user: null; session: null }; error: { message: string } }>((_, reject) =>
-          setTimeout(() => reject(new Error("Connection timed out. Please check your Supabase URL and network connection.")), 10000)
+          setTimeout(() => reject(new Error(TIMEOUT_ERROR)), 10000)
         );
 
         const authPromise = activeClient.auth.signUp({
@@ -104,13 +119,13 @@ export default function SignupPage() {
 
         const res = await Promise.race([authPromise, timeoutPromise]);
         if (res.error) {
-          setMessage(res.error.message);
+          showError(res.error.message);
           setLoading(false);
           return;
         }
       }
 
-      setMessage("Signing in...");
+      showError(t("signingInAction"));
       const { data: signInData, error: signInError } = await activeClient.auth.signInWithPassword({
         email,
         password,
@@ -119,7 +134,7 @@ export default function SignupPage() {
       setLoading(false);
 
       if (signInError) {
-        setMessage(`Account created successfully! ${signInError.message}. Please try logging in on the Login page.`);
+        showSuccess(t("accountCreatedCheckLogin", { message: signInError.message }));
         setTimeout(() => {
           router.push("/auth/login");
         }, 2000);
@@ -127,32 +142,36 @@ export default function SignupPage() {
       }
 
       if (signInData?.session) {
-        setMessage("Account created and signed in! Redirecting to dashboard...");
+        showSuccess(t("signupSuccess"));
         window.location.href = "/dashboard";
       } else {
-        setMessage("Account created! Please log in on the Login page.");
+        showSuccess(t("accountCreatedLogin"));
         setTimeout(() => {
           router.push("/auth/login");
         }, 2000);
       }
     } catch (err: unknown) {
       setLoading(false);
-      const errorMsg = err instanceof Error ? err.message : "An unexpected error occurred during sign up.";
-      setMessage(errorMsg);
+      if (err instanceof Error && err.message === TIMEOUT_ERROR) {
+        showError(t("connectionTimedOut"));
+      } else {
+        const errorMsg = err instanceof Error ? err.message : t("signupGenericError");
+        showError(errorMsg);
+      }
     }
   }
 
 
   async function signInWithGoogle() {
     setLoading(true);
-    setMessage("Connecting to Google...");
+    showError(t("connectingGoogle"));
 
     try {
       const activeClient = await ensureSupabaseConfig();
 
       if (!getIsSupabaseConfigured()) {
         setLoading(false);
-        setMessage("Supabase credentials are missing or set to placeholder. Please check your NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
+        showError(t("supabaseConfigMissing"));
         return;
       }
 
@@ -172,9 +191,9 @@ export default function SignupPage() {
       if (error) {
         console.error("Google Auth error:", error);
         if (error.message.toLowerCase().includes("provider is not enabled") || error.message.toLowerCase().includes("unsupported provider")) {
-          setMessage("Google provider is disabled in Supabase. Please enable Google under Supabase Dashboard -> Authentication -> Providers.");
+          showError(t("googleProviderDisabled"));
         } else {
-          setMessage(`Google sign-up error: ${error.message}`);
+          showError(t("googleSignupError", { message: error.message }));
         }
         setLoading(false);
         return;
@@ -182,37 +201,35 @@ export default function SignupPage() {
 
       if (data?.url) {
         if (data.url.includes("placeholder.supabase.co")) {
-          setMessage(
-            "Supabase URL is using placeholder values. Please configure NEXT_PUBLIC_SUPABASE_URL in Settings."
-          );
+          showError(t("supabasePlaceholderUrl"));
           setLoading(false);
           return;
         }
 
-        setMessage("Redirecting to Google Sign-In...");
+        showError(t("redirectingGoogle"));
         window.location.href = data.url;
       } else {
-        setMessage("Could not generate Google sign-up link.");
+        showError(t("googleSignupLinkError"));
         setLoading(false);
       }
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to initiate Google sign up";
+      const errorMsg = err instanceof Error ? err.message : t("googleSignupInitError");
       console.error("Google sign up exception:", err);
-      setMessage(errorMsg);
+      showError(errorMsg);
       setLoading(false);
     }
   }
 
   async function signInWithGitHub() {
     setLoading(true);
-    setMessage("Connecting to GitHub...");
+    showError(t("connectingGithub"));
 
     try {
       const activeClient = await ensureSupabaseConfig();
 
       if (!getIsSupabaseConfigured()) {
         setLoading(false);
-        setMessage("Supabase credentials are missing or set to placeholder. Please check your NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Settings.");
+        showError(t("supabaseConfigMissing"));
         return;
       }
 
@@ -232,9 +249,9 @@ export default function SignupPage() {
       if (error) {
         console.error("GitHub Auth error:", error);
         if (error.message.toLowerCase().includes("provider is not enabled") || error.message.toLowerCase().includes("unsupported provider")) {
-          setMessage("GitHub provider is disabled in Supabase. Please enable GitHub under Supabase Dashboard -> Authentication -> Providers.");
+          showError(t("githubProviderDisabled"));
         } else {
-          setMessage(`GitHub sign-up error: ${error.message}`);
+          showError(t("githubSignupError", { message: error.message }));
         }
         setLoading(false);
         return;
@@ -242,23 +259,21 @@ export default function SignupPage() {
 
       if (data?.url) {
         if (data.url.includes("placeholder.supabase.co")) {
-          setMessage(
-            "Supabase URL is using placeholder values. Please configure NEXT_PUBLIC_SUPABASE_URL in Settings."
-          );
+          showError(t("supabasePlaceholderUrl"));
           setLoading(false);
           return;
         }
 
-        setMessage("Redirecting to GitHub Sign-In...");
+        showError(t("redirectingGithub"));
         window.location.href = data.url;
       } else {
-        setMessage("Could not generate GitHub sign-up link.");
+        showError(t("githubSignupLinkError"));
         setLoading(false);
       }
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to initiate GitHub sign up";
+      const errorMsg = err instanceof Error ? err.message : t("githubSignupInitError");
       console.error("GitHub sign up exception:", err);
-      setMessage(errorMsg);
+      showError(errorMsg);
       setLoading(false);
     }
   }
@@ -266,8 +281,8 @@ export default function SignupPage() {
   return (
     <>
       {!checkingConfig && !configured && (
-        <div className="fixed top-4 left-4 right-4 z-50 mx-auto max-w-md rounded-lg border border-warning/30 bg-warning/10 p-3 text-xs text-warning backdrop-blur">
-          <strong>Notice:</strong> Supabase environment variables are currently missing or set to placeholder (`{activeUrl || "placeholder.supabase.co"}`).
+        <div className="fixed top-4 start-4 end-4 z-50 mx-auto max-w-md rounded-lg border border-warning/30 bg-warning/10 p-3 text-xs text-warning backdrop-blur">
+          <strong>{t("notice")}:</strong> {t("supabaseConfigBanner")} (`{activeUrl || "placeholder.supabase.co"}`).
         </div>
       )}
       <CleanMinimalSignUp
@@ -277,6 +292,7 @@ export default function SignupPage() {
         onSignIn={() => router.push("/auth/login")}
         loading={loading}
         error={message}
+        tone={messageTone}
       />
     </>
   );

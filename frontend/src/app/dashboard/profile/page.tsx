@@ -4,6 +4,9 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+import { formatDate } from "@/i18n/format";
+import { useTranslation } from "react-i18next";
 import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
 import {
   User,
@@ -43,6 +46,8 @@ import {
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { t } = useTranslation("profile");
+  const { locale } = useLanguage();
 
   // Active Tab State
   const [activeTab, setActiveTab] = useState<
@@ -158,7 +163,7 @@ export default function ProfilePage() {
       setName(data.full_name || "");
       setAvatar(data.avatar_url ? data.avatar_url + "?t=" + Date.now() : "");
       if (data.created_at) {
-        setCreatedAt(new Date(data.created_at).toLocaleDateString("en-US", {
+        setCreatedAt(formatDate(locale, data.created_at, {
           year: "numeric",
           month: "long",
           day: "numeric"
@@ -180,7 +185,7 @@ export default function ProfilePage() {
     }
 
     loadLocalSettings();
-  }, [router, loadLocalSettings]);
+  }, [router, loadLocalSettings, locale]);
 
   useEffect(() => {
     let isMounted = true;
@@ -201,7 +206,7 @@ export default function ProfilePage() {
       if (!file) return;
 
       if (file.size > 2 * 1024 * 1024) {
-        showNotification("Image must be smaller than 2MB", "error");
+        showNotification(t("imgTooLarge"), "error");
         return;
       }
 
@@ -243,10 +248,10 @@ export default function ProfilePage() {
       }
 
       setAvatar(publicUrl + "?t=" + Date.now());
-      showNotification("Profile picture updated successfully!");
+      showNotification(t("profilePicUpdated"));
     } catch (err) {
       console.error(err);
-      showNotification("Failed to upload avatar", "error");
+      showNotification(t("failedUploadAvatar"), "error");
     } finally {
       setUploading(false);
     }
@@ -263,10 +268,10 @@ export default function ProfilePage() {
       setUploading(true);
       await supabase.from("profiles").update({ avatar_url: null }).eq("id", user.id);
       setAvatar("");
-      showNotification("Profile picture removed");
+      showNotification(t("profilePicRemoved"));
     } catch (err) {
       console.error(err);
-      showNotification("Failed to remove avatar", "error");
+      showNotification(t("failedRemoveAvatar"), "error");
     } finally {
       setUploading(false);
     }
@@ -317,10 +322,10 @@ export default function ProfilePage() {
       localStorage.setItem("copycoach_user_settings", JSON.stringify(settingsToSave));
       localStorage.setItem("copycoach_theme", themeMode);
 
-      showNotification("Settings saved successfully!");
+      showNotification(t("settingsSaved"));
     } catch (err) {
       console.error("Save error:", err);
-      showNotification("Failed to save changes", "error");
+      showNotification(t("failedSaveChanges"), "error");
     } finally {
       setLoading(false);
     }
@@ -331,12 +336,12 @@ export default function ProfilePage() {
     e.preventDefault();
 
     if (!newPassword || newPassword.length < 6) {
-      showNotification("Password must be at least 6 characters long", "error");
+      showNotification(t("passwordTooShort"), "error");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      showNotification("Passwords do not match", "error");
+      showNotification(t("passwordsMismatch"), "error");
       return;
     }
 
@@ -350,12 +355,12 @@ export default function ProfilePage() {
       if (error) {
         showNotification(error.message, "error");
       } else {
-        showNotification("Password updated successfully!");
+        showNotification(t("passwordUpdated"));
         setNewPassword("");
         setConfirmPassword("");
       }
     } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : "Failed to update password";
+      const errMsg = err instanceof Error ? err.message : t("failedUpdatePassword");
       showNotification(errMsg, "error");
     } finally {
       setPasswordLoading(false);
@@ -366,13 +371,13 @@ export default function ProfilePage() {
   async function handleSupportSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!supportSubject.trim() || !supportMessage.trim()) {
-      showNotification("Please fill in both subject and message", "error");
+      showNotification(t("supportFillFields"), "error");
       return;
     }
     setSupportLoading(true);
     await new Promise((r) => setTimeout(r, 800));
     setSupportLoading(false);
-    showNotification("Support ticket submitted! Ticket ID: #TK-" + Math.floor(100000 + Math.random() * 900000));
+    showNotification(t("supportTicketId", { id: Math.floor(100000 + Math.random() * 900000) }));
     setSupportSubject("");
     setSupportMessage("");
   }
@@ -387,8 +392,8 @@ export default function ProfilePage() {
     <main className="min-h-screen text-text-primary font-sans pb-16">
       {/* Top Banner & Header */}
       <DashboardTopbar
-        title="Profile Settings"
-        back={{ href: "/dashboard", label: "Back to Dashboard" }}
+        title={t("profileTitle")}
+        back={{ href: "/dashboard", label: t("backToDashboard") }}
         right={
           <button
             onClick={saveProfile}
@@ -396,7 +401,7 @@ export default function ProfilePage() {
             className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:cursor-pointer disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            <span>{loading ? "Saving..." : "Save All Changes"}</span>
+            <span>{loading ? t("saving") : t("saveAllChanges")}</span>
           </button>
         }
       />
@@ -406,7 +411,7 @@ export default function ProfilePage() {
         {/* Floating Toast Notification */}
         {message && (
           <div
-            className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl border text-sm font-medium animate-fade-up ${
+            className={`fixed bottom-6 end-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl border text-sm font-medium animate-fade-up ${
               message.type === "success"
                 ? "bg-success/20 border-success/40 text-success"
                 : "bg-danger/20 border-danger/40 text-danger"
@@ -423,7 +428,7 @@ export default function ProfilePage() {
 
         {/* User Hero Summary Header */}
         <div className="bg-surface-elevated border border-border rounded-3xl p-6 sm:p-8 mb-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 end-0 -mt-8 -me-8 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10">
             {/* Avatar with Camera Overlay */}
             <div className="relative group shrink-0">
@@ -432,7 +437,7 @@ export default function ProfilePage() {
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={avatar}
-                    alt={name || "User Avatar"}
+                    alt={name || t("userAvatarAlt")}
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -442,12 +447,12 @@ export default function ProfilePage() {
                 )}
                 {uploading && (
                   <div className="absolute inset-0 bg-surface/80 flex items-center justify-center text-xs text-accent-bright font-medium">
-                    Uploading...
+                    {t("uploading")}
                   </div>
                 )}
               </div>
 
-              <label className="absolute -bottom-2 -right-2 bg-glass-bg-elevated hover:bg-glass-bg-hover text-text-primary p-2 rounded-xl shadow-glass cursor-pointer transition-transform hover:scale-105 border border-glass-border">
+              <label className="absolute -bottom-2 -end-2 bg-glass-bg-elevated hover:bg-glass-bg-hover text-text-primary p-2 rounded-xl shadow-glass cursor-pointer transition-transform hover:scale-105 border border-glass-border">
                 <Camera className="w-4 h-4" />
                 <input
                   type="file"
@@ -460,10 +465,10 @@ export default function ProfilePage() {
             </div>
 
             {/* Profile Info Summary */}
-            <div className="flex-1 text-center sm:text-left">
+            <div className="flex-1 text-center sm:text-start">
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mb-2">
                 <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">
-                  {name || "CopyCoach User"}
+                  {name || t("copycoachUser")}
                 </h1>
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
@@ -472,7 +477,7 @@ export default function ProfilePage() {
                       : "bg-surface border border-border text-text-secondary"
                   }`}
                 >
-                  {plan === "pro" ? "⚡ Pro Plan" : "Free Member"}
+                  {plan === "pro" ? t("proPlan") : t("freeMember")}
                 </span>
               </div>
 
@@ -482,8 +487,8 @@ export default function ProfilePage() {
                 {createdAt && (
                   <>
                     <span className="text-text-muted">•</span>
-                    <Calendar className="w-4 h-4 text-text-muted ml-1" />
-                    <span>Member since {createdAt}</span>
+                    <Calendar className="w-4 h-4 text-text-muted ms-1" />
+                    <span>{t("memberSince", { date: createdAt })}</span>
                   </>
                 )}
               </p>
@@ -496,15 +501,15 @@ export default function ProfilePage() {
                     className="text-xs text-danger hover:text-danger flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-danger/30 hover:bg-danger/10 transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
-                    <span>Remove Photo</span>
+                    <span>{t("removePhoto")}</span>
                   </button>
                 )}
                 <span className="text-xs text-text-muted bg-surface/80 px-3 py-1.5 rounded-lg border border-border/60">
-                  Role: <strong className="text-text-primary font-medium">{role}</strong>
+                  {t("roleLabel")} <strong className="text-text-primary font-medium">{role}</strong>
                 </span>
                 {company && (
                   <span className="text-xs text-text-muted bg-surface/80 px-3 py-1.5 rounded-lg border border-border/60">
-                    Company: <strong className="text-text-primary font-medium">{company}</strong>
+                    {t("companyLabel")} <strong className="text-text-primary font-medium">{company}</strong>
                   </span>
                 )}
               </div>
@@ -523,7 +528,7 @@ export default function ProfilePage() {
             }`}
           >
             <User className="w-4 h-4" />
-            <span>Personal Profile</span>
+            <span>{t("personalProfile")}</span>
           </button>
 
           <button
@@ -535,7 +540,7 @@ export default function ProfilePage() {
             }`}
           >
             <Sparkles className="w-4 h-4" />
-            <span>Brand Voice & AI Persona</span>
+            <span>{t("brandVoiceTitle")}</span>
           </button>
 
           <button
@@ -547,7 +552,7 @@ export default function ProfilePage() {
             }`}
           >
             <ShieldCheck className="w-4 h-4" />
-            <span>Security & Auth</span>
+            <span>{t("securityTitle")}</span>
           </button>
 
           <button
@@ -559,7 +564,7 @@ export default function ProfilePage() {
             }`}
           >
             <Sliders className="w-4 h-4" />
-            <span>App Preferences</span>
+            <span>{t("appPreferences")}</span>
           </button>
 
           <button
@@ -571,7 +576,7 @@ export default function ProfilePage() {
             }`}
           >
             <CreditCard className="w-4 h-4" />
-            <span>Subscription & Usage</span>
+            <span>{t("subscriptionUsage")}</span>
           </button>
 
           <button
@@ -583,7 +588,7 @@ export default function ProfilePage() {
             }`}
           >
             <LifeBuoy className="w-4 h-4" />
-            <span>Support & Help Center</span>
+            <span>{t("supportHelpCenter")}</span>
           </button>
         </div>
 
@@ -593,82 +598,82 @@ export default function ProfilePage() {
             <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
               <h2 className="text-xl font-semibold text-text-primary mb-6 flex items-center gap-2">
                 <User className="w-5 h-5 text-accent-bright" />
-                <span>Personal Information</span>
+                <span>{t("personalInfo")}</span>
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Full Name
+                    {t("fullName")}
                   </label>
                   <div className="relative">
-                    <User className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
+                    <User className="w-4 h-4 text-text-muted absolute start-3.5 top-3.5" />
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. Sarah Jenkins"
-                      className="cc-field text-sm rounded-xl pl-10 pr-4 py-2.5"
+                      placeholder={t("namePlaceholder")}
+                      className="cc-field text-sm rounded-xl ps-10 pe-4 py-2.5"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Email Address <span className="text-text-muted lowercase">(Primary)</span>
+                    {t("emailAddress")} <span className="text-text-muted lowercase">{t("primary")}</span>
                   </label>
                   <div className="relative">
-                    <Mail className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
+                    <Mail className="w-4 h-4 text-text-muted absolute start-3.5 top-3.5" />
                     <input
                       type="email"
                       value={email}
                       disabled
-                      className="w-full bg-surface/60 border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-muted text-sm cursor-not-allowed"
+                      className="w-full bg-surface/60 border border-border rounded-xl ps-10 pe-4 py-2.5 text-text-muted text-sm cursor-not-allowed"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Professional Role / Job Title
+                    {t("professionalRole")}
                   </label>
                   <div className="relative">
-                    <Briefcase className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
+                    <Briefcase className="w-4 h-4 text-text-muted absolute start-3.5 top-3.5" />
                     <input
                       type="text"
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
-                      placeholder="e.g. Senior Conversion Copywriter"
-                      className="cc-field text-sm rounded-xl pl-10 pr-4 py-2.5"
+                      placeholder={t("rolePlaceholder")}
+                      className="cc-field text-sm rounded-xl ps-10 pe-4 py-2.5"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Company or Organization
+                    {t("companyOrg")}
                   </label>
                   <div className="relative">
-                    <Building className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
+                    <Building className="w-4 h-4 text-text-muted absolute start-3.5 top-3.5" />
                     <input
                       type="text"
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
-                      placeholder="e.g. Apex Copy Studio"
-                      className="cc-field text-sm rounded-xl pl-10 pr-4 py-2.5"
+                      placeholder={t("companyPlaceholder")}
+                      className="cc-field text-sm rounded-xl ps-10 pe-4 py-2.5"
                     />
                   </div>
                 </div>
 
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Short Bio / Profile Summary
+                    {t("shortBio")}
                   </label>
                   <textarea
                     rows={3}
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    placeholder="Tell us a little bit about your copywriting focus or business goals..."
+                    placeholder={t("bioPlaceholder")}
                     className="cc-field text-sm rounded-xl p-3.5"
                   />
                 </div>
@@ -681,7 +686,7 @@ export default function ProfilePage() {
                   className="bg-accent hover:bg-accent-hover text-accent-foreground font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-soft flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
-                  <span>{loading ? "Saving..." : "Save Profile Details"}</span>
+                  <span>{loading ? t("saving") : t("saveProfileDetails")}</span>
                 </button>
               </div>
             </div>
@@ -695,89 +700,89 @@ export default function ProfilePage() {
               <div className="mb-6">
                 <h2 className="text-xl font-semibold text-text-primary flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-accent-bright" />
-                  <span>Default Copywriting Brand Voice</span>
+                  <span>{t("defaultBrandVoice")}</span>
                 </h2>
                 <p className="text-text-muted text-sm mt-1">
-                  Configure default tone, audience, and niche guidelines used when CopyCoach AI creates or refines copy for you.
+                  {t("brandVoiceDesc")}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Default Tone of Voice
+                    {t("defaultTone")}
                   </label>
                   <select
                     value={defaultTone}
                     onChange={(e) => setDefaultTone(e.target.value)}
                     className="cc-field text-sm rounded-xl px-4 py-2.5 cursor-pointer"
                   >
-                    <option value="Professional & Direct">Professional & Direct</option>
-                    <option value="Conversational & Friendly">Conversational & Friendly</option>
-                    <option value="Persuasive & High Energy">Persuasive & High Energy</option>
-                    <option value="Bold & Punchy">Bold & Punchy</option>
-                    <option value="Witty & Engaging">Witty & Engaging</option>
-                    <option value="Empathic & Warm">Empathic & Warm</option>
-                    <option value="Academic & Authoritative">Academic & Authoritative</option>
+                    <option value="Professional & Direct">{t("toneProfessionalDirect")}</option>
+                    <option value="Conversational & Friendly">{t("toneConversational")}</option>
+                    <option value="Persuasive & High Energy">{t("tonePersuasiveHighEnergy")}</option>
+                    <option value="Bold & Punchy">{t("toneBoldPunchy")}</option>
+                    <option value="Witty & Engaging">{t("toneWittyEngaging")}</option>
+                    <option value="Empathic & Warm">{t("toneEmpathicWarm")}</option>
+                    <option value="Academic & Authoritative">{t("toneAcademic")}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Preferred Output Language
+                    {t("preferredOutputLanguage")}
                   </label>
                   <div className="relative">
-                    <Globe className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
+                    <Globe className="w-4 h-4 text-text-muted absolute start-3.5 top-3.5" />
                     <select
                       value={preferredLanguage}
                       onChange={(e) => setPreferredLanguage(e.target.value)}
-                      className="cc-field text-sm rounded-xl pl-10 pr-4 py-2.5 cursor-pointer"
+                      className="cc-field text-sm rounded-xl ps-10 pe-4 py-2.5 cursor-pointer"
                     >
-                      <option value="English (US)">English (US)</option>
-                      <option value="English (UK)">English (UK)</option>
-                      <option value="Spanish">Spanish</option>
-                      <option value="French">French</option>
-                      <option value="German">German</option>
-                      <option value="Portuguese">Portuguese</option>
+                      <option value="English (US)">{t("langEnglishUS")}</option>
+                      <option value="English (UK)">{t("langEnglishUK")}</option>
+                      <option value="Spanish">{t("langSpanish")}</option>
+                      <option value="French">{t("langFrench")}</option>
+                      <option value="German">{t("langGerman")}</option>
+                      <option value="Portuguese">{t("langPortuguese")}</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Primary Target Audience
+                    {t("primaryTargetAudience")}
                   </label>
                   <input
                     type="text"
                     value={targetAudience}
                     onChange={(e) => setTargetAudience(e.target.value)}
-                    placeholder="e.g. B2B Founders, Marketing Directors"
+                    placeholder={t("audiencePlaceholder")}
                     className="cc-field text-sm rounded-xl px-4 py-2.5"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Brand Niche / Industry
+                    {t("brandNicheIndustry")}
                   </label>
                   <input
                     type="text"
                     value={brandNiche}
                     onChange={(e) => setBrandNiche(e.target.value)}
-                    placeholder="e.g. E-commerce, SaaS, Fitness, Finance"
+                    placeholder={t("nichePlaceholder")}
                     className="cc-field text-sm rounded-xl px-4 py-2.5"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Brand Voice Guidelines & Special Instructions
+                    {t("brandGuidelines")}
                   </label>
                   <textarea
                     rows={4}
                     value={brandGuidelines}
                     onChange={(e) => setBrandGuidelines(e.target.value)}
-                    placeholder="Enter specific rules, key selling points, words to avoid, or brand guidelines..."
+                    placeholder={t("guidelinesPlaceholder")}
                     className="cc-field text-sm rounded-xl p-3.5"
                   />
                 </div>
@@ -790,7 +795,7 @@ export default function ProfilePage() {
                    className="bg-accent hover:bg-accent-hover text-accent-foreground font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-accent-soft flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
-                  <span>Save Brand Voice Settings</span>
+                  <span>{t("saveBrandVoiceSettings")}</span>
                 </button>
               </div>
             </div>
@@ -804,30 +809,30 @@ export default function ProfilePage() {
             <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
               <h2 className="text-xl font-semibold text-text-primary mb-2 flex items-center gap-2">
                 <Lock className="w-5 h-5 text-success" />
-                <span>Password & Authentication</span>
+                <span>{t("passwordAuth")}</span>
               </h2>
               <p className="text-text-muted text-sm mb-6">
-                Update your login password to ensure your account remains protected.
+                {t("passwordAuthDesc")}
               </p>
 
               <form onSubmit={handleUpdatePassword} className="space-y-5 max-w-lg">
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    New Password
+                    {t("newPassword")}
                   </label>
                   <div className="relative">
-                    <Key className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
+                    <Key className="w-4 h-4 text-text-muted absolute start-3.5 top-3.5" />
                     <input
                       type={showPassword ? "text" : "password"}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Minimum 6 characters"
-                      className="cc-field text-sm rounded-xl pl-10 pr-10 py-2.5"
+                      placeholder={t("newPasswordPlaceholder")}
+                      className="cc-field text-sm rounded-xl ps-10 pe-10 py-2.5"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-3 text-text-muted hover:text-text-secondary"
+                      className="absolute end-3.5 top-3 text-text-muted hover:text-text-secondary"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -836,16 +841,16 @@ export default function ProfilePage() {
 
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Confirm New Password
+                    {t("confirmNewPassword")}
                   </label>
                   <div className="relative">
-                    <Key className="w-4 h-4 text-text-muted absolute left-3.5 top-3.5" />
+                    <Key className="w-4 h-4 text-text-muted absolute start-3.5 top-3.5" />
                     <input
                       type={showPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Re-enter new password"
-                      className="cc-field text-sm rounded-xl pl-10 pr-4 py-2.5"
+                      placeholder={t("confirmPasswordPlaceholder")}
+                      className="cc-field text-sm rounded-xl ps-10 pe-4 py-2.5"
                     />
                   </div>
                 </div>
@@ -856,21 +861,21 @@ export default function ProfilePage() {
                   className="bg-success hover:bg-success/85 text-white font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-soft flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Key className="w-4 h-4" />
-                  <span>{passwordLoading ? "Updating..." : "Update Password"}</span>
+                  <span>{passwordLoading ? t("updating") : t("updatePassword")}</span>
                 </button>
               </form>
             </div>
 
             {/* Two-Factor & Sessions Card */}
             <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
-              <h3 className="text-lg font-semibold text-text-primary mb-4">Account Security Features</h3>
+              <h3 className="text-lg font-semibold text-text-primary mb-4">{t("accountSecurityFeatures")}</h3>
 
               <div className="divide-y divide-border">
                 <div className="py-4 flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-medium text-text-primary">Two-Factor Authentication (2FA)</div>
+                    <div className="text-sm font-medium text-text-primary">{t("twoFactor")}</div>
                     <div className="text-xs text-text-muted mt-0.5">
-                      Add an additional layer of protection using authenticator apps
+                      {t("twoFactorDesc")}
                     </div>
                   </div>
                   <button
@@ -878,7 +883,7 @@ export default function ProfilePage() {
                     onClick={() => {
                       setTwoFactorEnabled(!twoFactorEnabled);
                       showNotification(
-                        !twoFactorEnabled ? "Two-Factor Auth Enabled" : "Two-Factor Auth Disabled"
+                        !twoFactorEnabled ? t("twoFactorEnabledToast") : t("twoFactorDisabledToast")
                       );
                     }}
                     className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
@@ -894,18 +899,18 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="pt-4">
-                  <div className="text-sm font-medium text-text-primary mb-3">Active Login Sessions</div>
+                  <div className="text-sm font-medium text-text-primary mb-3">{t("activeLoginSessions")}</div>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 rounded-xl bg-surface border border-border/80 text-xs">
                       <div className="flex items-center gap-3">
                         <Laptop className="w-4 h-4 text-success" />
                         <div>
-                          <div className="font-medium text-text-primary">Current Web Browser Session</div>
-                          <div className="text-text-muted">Active Now • Cloud Run Container</div>
+                          <div className="font-medium text-text-primary">{t("currentBrowserSession")}</div>
+                          <div className="text-text-muted">{t("activeNowCloudRun")}</div>
                         </div>
                       </div>
                       <span className="text-success font-medium bg-success/10 px-2 py-0.5 rounded border border-success/30">
-                        Active
+                        {t("active")}
                       </span>
                     </div>
 
@@ -913,15 +918,15 @@ export default function ProfilePage() {
                       <div className="flex items-center gap-3">
                         <Smartphone className="w-4 h-4 text-text-muted" />
                         <div>
-                          <div className="font-medium text-text-secondary">Mobile Companion Web App</div>
-                          <div className="text-text-muted">Last seen 2 days ago</div>
+                          <div className="font-medium text-text-secondary">{t("mobileCompanionApp")}</div>
+                          <div className="text-text-muted">{t("lastSeen2days")}</div>
                         </div>
                       </div>
                       <button
-                        onClick={() => showNotification("Session revoked")}
+                        onClick={() => showNotification(t("sessionRevoked"))}
                         className="text-text-muted hover:text-danger"
                       >
-                        Revoke
+                        {t("revoke")}
                       </button>
                     </div>
                   </div>
@@ -937,21 +942,21 @@ export default function ProfilePage() {
             <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
               <h2 className="text-xl font-semibold text-text-primary mb-6 flex items-center gap-2">
                 <Sliders className="w-5 h-5 text-accent-bright" />
-                <span>Application & Engine Settings</span>
+                <span>{t("appEngineSettings")}</span>
               </h2>
 
               <div className="space-y-6">
                 {/* Theme & Appearance Selector */}
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-3">
-                    Theme & Visual Appearance
+                    {t("themeAppearance")}
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <button
                       type="button"
                       onClick={() => {
                         setThemeMode("dark");
-                        showNotification("Dark Theme Selected");
+                        showNotification(t("darkThemeSelected"));
                       }}
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                         themeMode === "dark"
@@ -960,14 +965,14 @@ export default function ProfilePage() {
                       }`}
                     >
                       <Moon className="w-4 h-4 text-accent-bright" />
-                      <span>Dark Mode</span>
+                      <span>{t("darkMode")}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => {
                         setThemeMode("light");
-                        showNotification("Light Theme Selected");
+                        showNotification(t("lightThemeSelected"));
                       }}
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                         themeMode === "light"
@@ -976,14 +981,14 @@ export default function ProfilePage() {
                       }`}
                     >
                       <Sun className="w-4 h-4 text-warning" />
-                      <span>Light Mode</span>
+                      <span>{t("lightMode")}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => {
                         setThemeMode("system");
-                        showNotification("System Preference Theme Selected");
+                        showNotification(t("systemThemeSelected"));
                       }}
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                         themeMode === "system"
@@ -992,14 +997,14 @@ export default function ProfilePage() {
                       }`}
                     >
                       <Laptop className="w-4 h-4 text-accent-bright" />
-                      <span>System Sync</span>
+                      <span>{t("systemSync")}</span>
                     </button>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2">
-                    Default Copywriting AI Engine
+                    {t("defaultAiEngine")}
                   </label>
                   <select
                     value={preferredModel}
@@ -1007,19 +1012,19 @@ export default function ProfilePage() {
                     className="cc-field text-sm sm:w-1/2 rounded-xl px-4 py-2.5 cursor-pointer"
                   >
                     <option value="Gemini 2.5 Flash (Recommended)">
-                      Gemini 2.5 Flash (Fast & High Intelligence)
+                      {t("modelGeminiFlash")}
                     </option>
-                    <option value="GPT-4o (Standard)">GPT-4o (Standard Copywriting)</option>
-                    <option value="Groq Llama 3 (Ultra Fast)">Groq Llama 3 (Ultra Low Latency)</option>
+                    <option value="GPT-4o (Standard)">{t("modelGpt4o")}</option>
+                    <option value="Groq Llama 3 (Ultra Fast)">{t("modelGroqLlama")}</option>
                   </select>
                 </div>
 
                 <div className="pt-4 border-t border-border divide-y divide-border">
                   <div className="py-4 flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-text-primary">Auto-Save Copy Generation History</div>
+                      <div className="text-sm font-medium text-text-primary">{t("autoSaveHistory")}</div>
                       <div className="text-xs text-text-muted mt-0.5">
-                        Automatically record improved copy generations to your history workspace
+                        {t("autoSaveHistoryDesc")}
                       </div>
                     </div>
                     <button
@@ -1039,9 +1044,9 @@ export default function ProfilePage() {
 
                   <div className="py-4 flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-text-primary">Email Marketing & Strategy Updates</div>
+                      <div className="text-sm font-medium text-text-primary">{t("emailUpdates")}</div>
                       <div className="text-xs text-text-muted mt-0.5">
-                        Receive weekly copywriting frameworks and feature releases
+                        {t("emailUpdatesDesc")}
                       </div>
                     </div>
                     <button
@@ -1061,9 +1066,9 @@ export default function ProfilePage() {
 
                   <div className="py-4 flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-text-primary">Usage Limit Notifications</div>
+                      <div className="text-sm font-medium text-text-primary">{t("usageAlerts")}</div>
                       <div className="text-xs text-text-muted mt-0.5">
-                        Alert when monthly generation credits reach 80% threshold
+                        {t("usageAlertsDesc")}
                       </div>
                     </div>
                     <button
@@ -1090,7 +1095,7 @@ export default function ProfilePage() {
                   className="bg-accent hover:bg-accent-hover text-accent-foreground font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-soft flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
-                  <span>Save Preferences</span>
+                  <span>{t("savePreferences")}</span>
                 </button>
               </div>
             </div>
@@ -1105,18 +1110,16 @@ export default function ProfilePage() {
               <div className="bg-surface-elevated border border-border rounded-2xl p-6 relative overflow-hidden md:col-span-2">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-semibold uppercase tracking-wider text-accent-bright bg-accent/10 px-3 py-1 rounded-full border border-accent/25">
-                    Current Active Subscription
+                    {t("currentSubscription")}
                   </span>
                   <Zap className="w-6 h-6 text-warning" />
                 </div>
 
                 <h3 className="text-2xl font-bold text-text-primary mb-2">
-                  {plan === "pro" ? "Pro Copywriter Tier" : "Free Starter Tier"}
+                  {plan === "pro" ? t("proTier") : t("freeTier")}
                 </h3>
                 <p className="text-text-secondary text-sm mb-6 max-w-md">
-                  {plan === "pro"
-                    ? "Unlimited access to all copywriting frameworks, AI tone customization, and priority AI model execution."
-                    : "Basic access to standard copy improvement algorithms with limited monthly generations."}
+                  {plan === "pro" ? t("proPlanDesc") : t("freePlanDesc")}
                 </p>
 
                 <div className="flex items-center gap-4">
@@ -1124,7 +1127,7 @@ export default function ProfilePage() {
                     onClick={() => router.push("/dashboard")}
                     className="bg-accent text-accent-foreground hover:bg-accent-hover font-semibold px-5 py-2.5 rounded-xl text-sm transition-all shadow-accent-soft cursor-pointer"
                   >
-                    {plan === "pro" ? "Manage Subscription" : "Upgrade to Pro"}
+                    {plan === "pro" ? t("manageSubscription") : t("upgradeToPro")}
                   </button>
                 </div>
               </div>
@@ -1133,12 +1136,12 @@ export default function ProfilePage() {
               <div className="bg-surface-elevated border border-border rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                   <h4 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-2">
-                    Monthly Credits Used
+                    {t("monthlyCreditsUsed")}
                   </h4>
                   <div className="text-3xl font-extrabold text-text-primary mb-1">
                     {monthlyUsed} <span className="text-text-muted text-lg font-normal">/ {totalCredits}</span>
                   </div>
-                  <p className="text-xs text-text-muted">Generations reset on the 1st of every month.</p>
+                  <p className="text-xs text-text-muted">{t("generationsResetMonthly")}</p>
                 </div>
 
                 <div className="mt-6">
@@ -1148,8 +1151,8 @@ export default function ProfilePage() {
                       style={{ width: `${Math.min(100, (monthlyUsed / totalCredits) * 100)}%` }}
                     />
                   </div>
-                  <div className="text-right text-xs text-text-muted mt-2">
-                    {Math.max(0, totalCredits - monthlyUsed)} generations remaining
+                  <div className="text-end text-xs text-text-muted mt-2">
+                    {t("generationsRemaining", { count: Math.max(0, totalCredits - monthlyUsed) })}
                   </div>
                 </div>
               </div>
@@ -1157,9 +1160,9 @@ export default function ProfilePage() {
 
             {/* Invoices & History placeholder */}
             <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
-              <h3 className="text-lg font-semibold text-text-primary mb-4">Billing History & Receipts</h3>
+              <h3 className="text-lg font-semibold text-text-primary mb-4">{t("billingHistory")}</h3>
               <div className="text-sm text-text-muted py-6 text-center border border-dashed border-border rounded-xl">
-                No previous manual invoices found. Billing is managed automatically via Supabase/Paystack.
+                {t("noInvoicesFound")}
               </div>
             </div>
           </div>
@@ -1174,16 +1177,16 @@ export default function ProfilePage() {
                 <div>
                   <h2 className="text-xl font-semibold text-text-primary flex items-center gap-2">
                     <LifeBuoy className="w-5 h-5 text-accent-bright" />
-                    <span>CopyCoach Help & Support Hub</span>
+                    <span>{t("supportHubTitle")}</span>
                   </h2>
                   <p className="text-text-muted text-sm mt-1">
-                    Get instant assistance, submit support tickets, or review platform health metrics.
+                    {t("supportHubDesc")}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2 bg-success/10 border border-success/30 text-success px-3.5 py-1.5 rounded-full text-xs font-medium">
                   <Activity className="w-3.5 h-3.5 text-success animate-pulse" />
-                  <span>All AI Systems Operational</span>
+                  <span>{t("allSystemsOperational")}</span>
                 </div>
               </div>
 
@@ -1191,34 +1194,34 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 <div className="bg-surface p-4 rounded-xl border border-border">
                   <div className="flex items-center justify-between text-xs text-text-muted mb-1">
-                    <span>Copy Engine API</span>
+                    <span>{t("copyEngineApi")}</span>
                     <span className="text-success font-medium">99.98%</span>
                   </div>
                   <div className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-success" />
-                    <span>Gemini 2.5 Flash</span>
+                    <span>{t("geminiFlash")}</span>
                   </div>
                 </div>
 
                 <div className="bg-surface p-4 rounded-xl border border-border">
                   <div className="flex items-center justify-between text-xs text-text-muted mb-1">
-                    <span>Database & Auth</span>
-                    <span className="text-success font-medium">100% Uptime</span>
+                    <span>{t("databaseAuth")}</span>
+                    <span className="text-success font-medium">{t("uptime100")}</span>
                   </div>
                   <div className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-success" />
-                    <span>Supabase Cloud</span>
+                    <span>{t("supabaseCloud")}</span>
                   </div>
                 </div>
 
                 <div className="bg-surface p-4 rounded-xl border border-border">
                   <div className="flex items-center justify-between text-xs text-text-muted mb-1">
-                    <span>Platform Build</span>
+                    <span>{t("platformBuild")}</span>
                     <span className="text-accent-bright font-medium">v2.5.0-pro</span>
                   </div>
                   <div className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-success" />
-                    <span>Production Build</span>
+                    <span>{t("productionBuild")}</span>
                   </div>
                 </div>
               </div>
@@ -1229,39 +1232,39 @@ export default function ProfilePage() {
                 <div className="lg:col-span-2 bg-surface/80 p-6 rounded-2xl border border-border/80">
                   <h3 className="text-lg font-semibold text-text-primary mb-2 flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-accent-bright" />
-                    <span>Submit Support Ticket</span>
+                    <span>{t("submitSupportTicket")}</span>
                   </h3>
                   <p className="text-xs text-text-muted mb-6">
-                    Our copywriting engineering team typical response time is under 15 minutes for Pro subscribers.
+                    {t("supportResponseTime")}
                   </p>
 
                   <form onSubmit={handleSupportSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-medium text-text-muted mb-1.5">
-                          Category
+                          {t("category")}
                         </label>
                         <select
                           value={supportCategory}
                           onChange={(e) => setSupportCategory(e.target.value)}
                           className="cc-field text-sm rounded-xl px-3.5 py-2.5 cursor-pointer"
                         >
-                          <option value="Technical & AI Generation">Technical & AI Generation</option>
-                          <option value="Account & Subscription">Account & Subscription</option>
-                          <option value="Feature Request">Feature Request</option>
-                          <option value="Copywriting Consultation">Copywriting Advice</option>
+                          <option value="Technical & AI Generation">{t("catTechnical")}</option>
+                          <option value="Account & Subscription">{t("catAccount")}</option>
+                          <option value="Feature Request">{t("catFeature")}</option>
+                          <option value="Copywriting Consultation">{t("catAdvice")}</option>
                         </select>
                       </div>
 
                       <div>
                         <label className="block text-xs font-medium text-text-muted mb-1.5">
-                          Subject Line
+                          {t("subjectLine")}
                         </label>
                         <input
                           type="text"
                           value={supportSubject}
                           onChange={(e) => setSupportSubject(e.target.value)}
-                          placeholder="e.g. Issue with tone customizer"
+                          placeholder={t("subjectPlaceholder")}
                           className="cc-field text-sm rounded-xl px-3.5 py-2.5"
                         />
                       </div>
@@ -1269,13 +1272,13 @@ export default function ProfilePage() {
 
                     <div>
                       <label className="block text-xs font-medium text-text-muted mb-1.5">
-                        Detailed Message
+                        {t("detailedMessage")}
                       </label>
                       <textarea
                         rows={4}
                         value={supportMessage}
                         onChange={(e) => setSupportMessage(e.target.value)}
-                        placeholder="Describe your request or bug in detail..."
+                        placeholder={t("messagePlaceholder")}
                         className="cc-field text-sm rounded-xl px-3.5 py-2.5 resize-none"
                       />
                     </div>
@@ -1286,7 +1289,7 @@ export default function ProfilePage() {
                       className="bg-accent hover:bg-accent-hover text-accent-foreground font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-soft flex items-center gap-2 cursor-pointer disabled:opacity-50"
                     >
                       <Send className="w-4 h-4" />
-                      <span>{supportLoading ? "Submitting..." : "Send Ticket"}</span>
+                      <span>{supportLoading ? t("submitting") : t("sendTicket")}</span>
                     </button>
                   </form>
                 </div>
@@ -1296,10 +1299,10 @@ export default function ProfilePage() {
                   <div className="bg-surface/80 p-5 rounded-2xl border border-border/80">
                     <h4 className="text-sm font-semibold text-text-primary mb-2 flex items-center gap-2">
                       <Mail className="w-4 h-4 text-accent-bright" />
-                      <span>Direct Email Support</span>
+                      <span>{t("directEmailSupport")}</span>
                     </h4>
                     <p className="text-xs text-text-muted mb-3">
-                      Prefer email? Contact our technical team directly anytime.
+                      {t("emailSupportDesc")}
                     </p>
                     <a
                       href="mailto:support@copycoach.ai"
@@ -1313,17 +1316,17 @@ export default function ProfilePage() {
                   <div className="bg-surface/80 p-5 rounded-2xl border border-border/80">
                     <h4 className="text-sm font-semibold text-text-primary mb-2 flex items-center gap-2">
                       <BookOpen className="w-4 h-4 text-warning" />
-                      <span>Copywriting Playbooks</span>
+                      <span>{t("copywritingPlaybooks")}</span>
                     </h4>
                     <p className="text-xs text-text-muted mb-3">
-                      Master AIDA, PAS, and FAB copywriting frameworks with our guides.
+                      {t("playbooksDesc")}
                     </p>
                     <button
-                      onClick={() => showNotification("Opening Copywriting Guides...")}
+                      onClick={() => showNotification(t("openingGuides"))}
                       className="text-xs text-warning hover:text-warning font-medium flex items-center gap-1.5 cursor-pointer"
                     >
-                      <span>Browse Framework Guides</span>
-                      <ArrowRight className="w-3 h-3" />
+                      <span>{t("browseGuides")}</span>
+                      <ArrowRight className="w-3 h-3 rtl:rotate-180" />
                     </button>
                   </div>
                 </div>
@@ -1337,10 +1340,10 @@ export default function ProfilePage() {
           <div>
             <h3 className="text-base font-semibold text-danger flex items-center gap-2">
               <LogOut className="w-4 h-4" />
-              <span>Session & Account Controls</span>
+              <span>{t("sessionControls")}</span>
             </h3>
             <p className="text-xs text-text-muted mt-0.5">
-              Sign out from this device or manage account deletion requests.
+              {t("sessionControlsDesc")}
             </p>
           </div>
 
@@ -1350,7 +1353,7 @@ export default function ProfilePage() {
               className="bg-danger hover:bg-danger/85 text-white font-medium px-5 py-2.5 rounded-xl text-sm transition-all shadow-soft flex items-center gap-2 cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
-              <span>Sign Out</span>
+              <span>{t("signOut")}</span>
             </button>
           </div>
         </div>

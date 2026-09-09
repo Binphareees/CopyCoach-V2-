@@ -1,36 +1,36 @@
 import Card from "../ui/Card";
 import SectionTitle from "../ui/SectionTitle";
 import { GraduationCap, Gauge, Library } from "lucide-react";
+import { getServerT } from "@/i18n/server";
 
-const points = [
-  {
-    icon: GraduationCap,
-    title: "Teaches, never replaces",
-    description:
-      "You write the copy. The AI explains what works, why, and how to improve — so the skill stays with you.",
-  },
-  {
-    icon: Gauge,
-    title: "Feedback you can act on",
-    description:
-      "Every drill returns a 0–100 score with strengths, weaknesses, and line-by-line notes grounded in proven frameworks.",
-  },
-  {
-    icon: Library,
-    title: "Built for how you practice",
-    description:
-      "Keep drills, briefs, and client projects in a library of your own work, so every session builds on the last.",
-  },
-];
+export default async function Testimonials() {
+  const { t } = await getServerT("landing");
 
-export default function Testimonials() {
+  const points = [
+    {
+      icon: GraduationCap,
+      title: t("testiTeachesTitle"),
+      description: t("testiTeachesDesc"),
+    },
+    {
+      icon: Gauge,
+      title: t("testiFeedbackTitle"),
+      description: t("testiFeedbackDesc"),
+    },
+    {
+      icon: Library,
+      title: t("testiPracticeTitle"),
+      description: t("testiPracticeDesc"),
+    },
+  ];
+
   return (
     <section className="py-24">
       <div className="mx-auto max-w-7xl px-6">
 
         <SectionTitle
-          title="Why CopyCoach Is Different"
-          description="Not a writing tool that generates for you — a coach that teaches you to write better."
+          title={t("testiTitle")}
+          description={t("testiSubtitle")}
         />
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">

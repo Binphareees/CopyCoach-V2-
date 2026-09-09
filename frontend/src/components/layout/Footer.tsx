@@ -1,6 +1,9 @@
 import Logo from "../ui/Logo";
+import { getServerT } from "@/i18n/server";
 
-export default function Footer() {
+export default async function Footer() {
+  const { t } = await getServerT("landing");
+
   return (
     <footer className="border-t border-glass-border-subtle py-12">
 
@@ -14,8 +17,7 @@ export default function Footer() {
           </div>
 
           <p className="mt-2 max-w-sm text-sm text-text-muted">
-            Your AI-powered coach for mastering copywriting through interactive drills,
-            real-time red-pen feedback, and framework mastery.
+            {t("footerTagline")}
           </p>
 
         </div>
@@ -28,42 +30,42 @@ export default function Footer() {
             href="#features"
             className="transition hover:text-text-primary"
           >
-            Features
+            {t("footerFeatures")}
           </a>
 
           <a
             href="#about-app"
             className="transition hover:text-text-primary"
           >
-            About App
+            {t("footerAboutApp")}
           </a>
 
           <a
             href="#pricing"
             className="transition hover:text-text-primary"
           >
-            Pricing
+            {t("footerPricing")}
           </a>
 
           <a
             href="#mobile-app"
             className="transition hover:text-accent text-accent font-medium"
           >
-            Mobile App (Android/iOS)
+            {t("footerMobileApp")}
           </a>
 
           <a
             href="#support"
             className="transition hover:text-text-primary"
           >
-            Help & Support
+            {t("footerHelpSupport")}
           </a>
 
           <a
             href="#faq"
             className="transition hover:text-text-primary"
           >
-            FAQ
+            {t("footerFaq")}
           </a>
 
         </div>
@@ -73,14 +75,14 @@ export default function Footer() {
 
       <div className="mx-auto mt-8 max-w-7xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted border-t border-glass-border-subtle pt-6">
 
-        <span>© {new Date().getFullYear()} CopyCoach AI. All rights reserved.</span>
+        <span>{t("footerCopyright", { year: new Date().getFullYear() })}</span>
 
         <div className="flex items-center gap-4 text-text-muted">
-          <a href="#about-app" className="hover:text-text-primary transition">About</a>
+          <a href="#about-app" className="hover:text-text-primary transition">{t("footerAbout")}</a>
           <span>•</span>
-          <a href="#mobile-app" className="hover:text-accent transition">Download Mobile App</a>
+          <a href="#mobile-app" className="hover:text-accent transition">{t("footerDownloadMobileApp")}</a>
           <span>•</span>
-          <a href="#support" className="hover:text-text-primary transition">24/7 Support Hub</a>
+          <a href="#support" className="hover:text-text-primary transition">{t("footerSupportHub247")}</a>
         </div>
 
       </div>

@@ -1,0 +1,17 @@
+import common from "./common.json";
+import landing from "./landing.json";
+import auth from "./auth.json";
+import dashboard from "./dashboard.json";
+import profile from "./profile.json";
+import legal from "./legal.json";
+
+const ar = {
+  common,
+  landing,
+  auth,
+  dashboard,
+  profile,
+  legal,
+};
+
+export default ar;

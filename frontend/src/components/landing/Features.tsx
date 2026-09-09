@@ -9,47 +9,44 @@ import {
   Trophy,
   type LucideIcon,
 } from "lucide-react";
+import { getServerT } from "@/i18n/server";
 
-const features: { icon: LucideIcon; title: string; description: string }[] = [
-  {
-    icon: PenLine,
-    title: "Practice Real Copywriting",
-    description:
-      "Write emails, ads, landing pages, headlines, and sales copy through realistic challenges.",
-  },
-  {
-    icon: Bot,
-    title: "AI Coaching Feedback",
-    description:
-      "Understand your mistakes with detailed explanations instead of simply receiving rewritten copy.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Track Your Growth",
-    description:
-      "Monitor your progress, improve your scores, and build your copywriting skills over time.",
-  },
-  {
-    icon: Target,
-    title: "Learn Proven Frameworks",
-    description:
-      "Master AIDA, PAS, FAB, storytelling, and other professional copywriting methods.",
-  },
-  {
-    icon: Flame,
-    title: "Build Daily Habits",
-    description:
-      "Practice consistently with challenges, streaks, and personalized recommendations.",
-  },
-  {
-    icon: Trophy,
-    title: "Become Job Ready",
-    description:
-      "Develop practical skills you can use for freelance work, business, or marketing roles.",
-  },
-];
+export default async function Features() {
+  const { t } = await getServerT("landing");
 
-export default function Features() {
+  const features: { icon: LucideIcon; title: string; description: string }[] = [
+    {
+      icon: PenLine,
+      title: t("featuresPracticeTitle"),
+      description: t("featuresPracticeDesc"),
+    },
+    {
+      icon: Bot,
+      title: t("featuresAiFeedbackTitle"),
+      description: t("featuresAiFeedbackDesc"),
+    },
+    {
+      icon: TrendingUp,
+      title: t("featuresTrackTitle"),
+      description: t("featuresTrackDesc"),
+    },
+    {
+      icon: Target,
+      title: t("featuresProvenTitle"),
+      description: t("featuresProvenDesc"),
+    },
+    {
+      icon: Flame,
+      title: t("featuresHabitsTitle"),
+      description: t("featuresHabitsDesc"),
+    },
+    {
+      icon: Trophy,
+      title: t("featuresJobTitle"),
+      description: t("featuresJobDesc"),
+    },
+  ];
+
   return (
     <section
       id="features"
@@ -58,8 +55,8 @@ export default function Features() {
       <div className="mx-auto max-w-7xl px-6">
 
         <SectionTitle
-          title="Everything You Need To Master Copywriting"
-          description="A complete training system that helps you learn, practice, and improve like a professional copywriter."
+          title={t("featuresTitle")}
+          description={t("featuresSubtitle")}
         />
 
         <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

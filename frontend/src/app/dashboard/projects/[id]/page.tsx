@@ -4,7 +4,12 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+import { formatDate } from "@/i18n/format";
 import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
+import { TONE_OPTIONS } from "@/components/dashboard/ToneSelector";
+import type { DashboardKey } from "@/i18n/keys";
 import {
   Folder,
   ArrowLeft,
@@ -45,6 +50,15 @@ export default function ProjectPage() {
   const router = useRouter();
   const params = useParams();
   const projectId = params.id as string;
+  const { t } = useTranslation("dashboard");
+  const { locale } = useLanguage();
+  const toneKeyByValue = TONE_OPTIONS.reduce<Record<string, DashboardKey>>(
+    (acc, o) => {
+      acc[o.value] = o.labelKey;
+      return acc;
+    },
+    {}
+  );
 
   const [project, setProject] = useState<ProjectData | null>(null);
   const [history, setHistory] = useState<CopyHistoryItem[]>([]);
@@ -189,14 +203,14 @@ export default function ProjectPage() {
   return (
     <div className="min-h-screen text-text-primary flex flex-col font-sans pb-16">
       <DashboardTopbar
-        title="Project View"
+        title={t("projectView")}
         right={
           <Link
             href="/dashboard"
             className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Dashboard</span>
+            <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
+            <span>{t("returnToDashboard")}</span>
           </Link>
         }
       />
@@ -226,7 +240,7 @@ export default function ProjectPage() {
                       onClick={renameProject}
                       className="rounded-lg bg-accent px-3.5 py-2 text-xs font-bold text-accent-foreground transition-colors hover:bg-accent-hover"
                     >
-                      Save
+                      {t("save")}
                     </button>
                     <button
                       type="button"
@@ -236,18 +250,18 @@ export default function ProjectPage() {
                       }}
                       className="px-3 py-2 text-xs text-text-muted transition-colors hover:text-text-primary"
                     >
-                      Cancel
+                      {t("cancel")}
                     </button>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
                     <h1 className="text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
-                      {project?.name || "Project Workspace"}
+                      {project?.name || t("projectWorkspace")}
                     </h1>
                     <button
                       type="button"
                       onClick={() => setEditing(true)}
-                      title="Rename Project"
+                      title={t("renameProject")}
                       className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-surface-muted hover:text-text-primary"
                     >
                       <Edit2 className="h-4 w-4" />
@@ -259,12 +273,14 @@ export default function ProjectPage() {
                   <span className="inline-flex items-center gap-1.5">
                     <FileText className="h-3.5 w-3.5" />
                     <strong className="font-semibold text-text-secondary">{history.length}</strong>
-                    {history.length === 1 ? "saved copy" : "saved copies"}
+                    {t("savedCopy", { count: history.length })}
                   </span>
                   {project?.created_at && (
                     <span className="inline-flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5" />
-                      Created {new Date(project.created_at).toLocaleDateString()}
+                      {t("createdOn", {
+                        date: formatDate(locale, project.created_at),
+                      })}
                     </span>
                   )}
                 </div>
@@ -277,7 +293,7 @@ export default function ProjectPage() {
               className="inline-flex w-fit items-center gap-1.5 rounded-lg border border-danger/30 bg-danger/10 px-3.5 py-2 text-xs font-semibold text-danger transition-colors hover:bg-danger/20"
             >
               <Trash2 className="h-3.5 w-3.5" />
-              <span>Delete Project</span>
+              <span>{t("deleteProject")}</span>
             </button>
           </div>
         </div>
@@ -285,19 +301,19 @@ export default function ProjectPage() {
         {/* SEARCH & FILTERS */}
         <div className="mt-6 flex items-center justify-between gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+            <Search className="absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search copies by text, framework, tone, or type..."
-              className="cc-field rounded-lg pl-10 pr-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted"
-              aria-label="Search copies in this project"
+              placeholder={t("searchCopiesPlaceholder")}
+              className="cc-field rounded-lg ps-10 pe-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted"
+              aria-label={t("searchCopiesAria")}
             />
           </div>
 
           <span className="hidden whitespace-nowrap text-xs text-text-muted sm:block">
-            Showing {filteredHistory.length} of {history.length}
+            {t("showingXOfY", { shown: filteredHistory.length, total: history.length })}
           </span>
         </div>
 
@@ -318,19 +334,17 @@ export default function ProjectPage() {
           <div className="mt-6 flex flex-col items-center rounded-xl border border-dashed border-border px-4 py-16 text-center">
             <FileText className="mb-3 h-8 w-8 text-text-muted" />
             <h3 className="text-base font-bold text-text-primary">
-              {search.trim() ? "No matching copy found" : "No copies in this project yet"}
+              {search.trim() ? t("noMatchingCopy") : t("noCopiesInProject")}
             </h3>
             <p className="mt-1 max-w-sm text-xs text-text-muted">
-              {search.trim()
-                ? "Try searching for a different keyword or clearing your filter."
-                : "Head back to the CopyCoach AI Dashboard to generate and save your high-converting copy here."}
+              {search.trim() ? t("noMatchingCopyBody") : t("emptyProjectBody")}
             </p>
             <Link
               href="/dashboard"
               className="mt-5 inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-xs font-bold text-accent-foreground transition-colors hover:bg-accent-hover"
             >
               <Sparkles className="h-4 w-4" />
-              <span>Create New Copy</span>
+              <span>{t("createNewCopy")}</span>
             </Link>
           </div>
         ) : (
@@ -341,11 +355,11 @@ export default function ProjectPage() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center rounded-md border border-border bg-surface px-2 py-0.5 text-[11px] font-medium text-text-secondary">
-                      {item.copy_type || "Copywriting"}
+                      {item.copy_type || t("copywritingDefault")}
                     </span>
                     {item.tone && (
                       <span className="inline-flex items-center rounded-md border border-border bg-surface px-2 py-0.5 text-[11px] text-text-muted">
-                        {item.tone}
+                        {t(toneKeyByValue[item.tone] ?? "toneFallback")}
                       </span>
                     )}
                     {item.framework && item.framework !== "None" && (
@@ -356,7 +370,7 @@ export default function ProjectPage() {
                     )}
                     {item.created_at && (
                       <span className="inline-flex items-center text-[11px] text-text-muted">
-                        {new Date(item.created_at).toLocaleDateString()}
+                        {formatDate(locale, item.created_at)}
                       </span>
                     )}
                   </div>
@@ -365,7 +379,7 @@ export default function ProjectPage() {
                     <button
                       type="button"
                       onClick={() => toggleFavorite(item.id, !!item.favorite)}
-                      title={item.favorite ? "Favorited" : "Add to favorites"}
+                      title={item.favorite ? t("favorited") : t("addToFavorites")}
                       className={`rounded-lg border p-1.5 transition-colors ${
                         item.favorite
                           ? "border-warning/40 bg-warning/10 text-warning"
@@ -383,12 +397,12 @@ export default function ProjectPage() {
                       {copiedId === item.id ? (
                         <>
                           <Check className="h-3.5 w-3.5 text-success" />
-                          <span className="font-medium text-success">Copied!</span>
+                          <span className="font-medium text-success">{t("copiedExclaim")}</span>
                         </>
                       ) : (
                         <>
                           <Copy className="h-3.5 w-3.5" />
-                          <span>Copy</span>
+                          <span>{t("copy")}</span>
                         </>
                       )}
                     </button>
@@ -400,21 +414,21 @@ export default function ProjectPage() {
                           onClick={() => deleteCopy(item.id)}
                           className="rounded-lg bg-danger px-2.5 py-1.5 text-xs font-bold text-white transition-colors hover:bg-danger/85"
                         >
-                          Confirm
+                          {t("confirm")}
                         </button>
                         <button
                           type="button"
                           onClick={() => setDeleteConfirmId(null)}
                           className="px-2 py-1.5 text-xs text-text-muted transition-colors hover:text-text-primary"
                         >
-                          Cancel
+                          {t("cancel")}
                         </button>
                       </div>
                     ) : (
                       <button
                         type="button"
                         onClick={() => setDeleteConfirmId(item.id)}
-                        title="Delete Copy"
+                        title={t("deleteCopy")}
                         className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-danger/10 hover:text-danger"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -425,7 +439,7 @@ export default function ProjectPage() {
 
                 {/* COPY CONTENT */}
                 <div className="mt-3 rounded-lg border border-border bg-surface px-4 py-3 text-[13px] leading-relaxed text-text-secondary whitespace-pre-wrap">
-                  {item.improved_text || item.original_text || "No copy text available."}
+                  {item.improved_text || item.original_text || t("noCopyText")}
                 </div>
               </div>
             ))}
@@ -439,10 +453,11 @@ export default function ProjectPage() {
           <div className="glass-modal max-w-md w-full p-6 animate-pop">
             <div className="flex items-center gap-3 text-danger mb-3">
               <AlertCircle className="w-6 h-6 shrink-0" />
-              <h3 className="text-lg font-bold text-text-primary">Delete Project?</h3>
+              <h3 className="text-lg font-bold text-text-primary">{t("deleteProjectTitle")}</h3>
             </div>
             <p className="text-xs text-text-secondary mb-6 leading-relaxed">
-              Are you sure you want to permanently delete <strong>&ldquo;{project?.name}&rdquo;</strong> and all associated saved copy records? This action cannot be undone.
+              {t("deleteProjectBody1")} <strong>&ldquo;{project?.name}&rdquo;</strong>{" "}
+              {t("deleteProjectBody2")}
             </p>
             <div className="flex items-center justify-end gap-3">
               <button
@@ -450,14 +465,14 @@ export default function ProjectPage() {
                 onClick={() => setShowDeleteProjectModal(false)}
                 className="text-xs text-text-secondary hover:text-text-primary px-4 py-2 rounded-xl bg-surface border border-border hover:bg-surface-muted transition-colors"
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 type="button"
                 onClick={deleteProject}
                 className="text-xs text-white font-bold px-4 py-2 rounded-xl bg-danger hover:bg-danger/85 transition-colors shadow-soft cursor-pointer"
               >
-                Yes, Delete Project
+                {t("yesDeleteProject")}
               </button>
             </div>
           </div>

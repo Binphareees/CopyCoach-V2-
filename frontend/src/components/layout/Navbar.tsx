@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { GradientButton } from "../ui/gradient-button";
 import Logo from "../ui/Logo";
 import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
@@ -14,6 +15,7 @@ interface ProfileData {
 }
 
 export default function Navbar() {
+  const { t } = useTranslation("landing");
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -99,7 +101,7 @@ export default function Navbar() {
     setShowDropdown(false);
   }
 
-  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
+  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split("@")[0] || t("genericUser");
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture || "";
 
   return (
@@ -113,19 +115,19 @@ export default function Navbar() {
         {/* Navigation Links */}
         <div className="hidden items-center gap-8 text-sm text-text-secondary md:flex">
           <Link href="#features" className="transition hover:text-text-primary">
-            Features
+            {t("navFeatures")}
           </Link>
 
           <Link href="#how-it-works" className="transition hover:text-text-primary">
-            How It Works
+            {t("navHowItWorks")}
           </Link>
 
           <Link href="#pricing" className="transition hover:text-text-primary">
-            Pricing
+            {t("navPricing")}
           </Link>
 
           <Link href="#about-app" className="transition hover:text-text-primary">
-            About App
+            {t("navAboutApp")}
           </Link>
         </div>
 
@@ -141,7 +143,7 @@ export default function Navbar() {
                 className="inline-flex items-center gap-2 bg-accent hover:bg-accent-hover text-accent-foreground font-medium text-xs sm:text-sm px-4 py-2 rounded-xl transition-all shadow-md"
               >
                 <LayoutDashboard className="w-4 h-4" />
-                <span>Dashboard</span>
+                <span>{t("navDashboard")}</span>
               </Link>
 
               {/* User Dropdown */}
@@ -167,7 +169,7 @@ export default function Navbar() {
                 {showDropdown && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowDropdown(false)} />
-                    <div className="absolute right-0 mt-2 w-56 glass-popover p-2 z-50 text-text-primary animate-pop">
+                    <div className="absolute end-0 mt-2 w-56 glass-popover p-2 z-50 text-text-primary animate-pop">
                       <div className="px-3 py-2 border-b border-glass-border-subtle mb-1">
                         <p className="text-xs font-bold text-text-primary truncate">{displayName}</p>
                         <p className="text-[11px] text-text-muted truncate">{user.email}</p>
@@ -179,7 +181,7 @@ export default function Navbar() {
                         className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-glass-bg-hover transition-colors"
                       >
                         <LayoutDashboard className="w-4 h-4 text-accent" />
-                        <span>Go to Dashboard</span>
+                        <span>{t("navGoToDashboard")}</span>
                       </Link>
 
                       <Link
@@ -188,7 +190,7 @@ export default function Navbar() {
                         className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium hover:bg-glass-bg-hover transition-colors"
                       >
                         <User className="w-4 h-4 text-accent" />
-                        <span>My Profile Settings</span>
+                        <span>{t("navMyProfileSettings")}</span>
                       </Link>
 
                       <button
@@ -196,7 +198,7 @@ export default function Navbar() {
                         className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-danger hover:bg-danger-surface transition-colors mt-1 border-t border-glass-border-subtle"
                       >
                         <LogOut className="w-4 h-4" />
-                        <span>Sign Out</span>
+                        <span>{t("navSignOut")}</span>
                       </button>
                     </div>
                   </>
@@ -210,11 +212,11 @@ export default function Navbar() {
                 href="/auth/login"
                 className="text-sm text-text-secondary transition hover:text-text-primary"
               >
-                Login
+                {t("navLogin")}
               </Link>
 
               <GradientButton asChild className="!min-w-0 !px-5 !py-2.5 !text-sm !rounded-lg">
-                <Link href="/auth/signup">Get Started</Link>
+                <Link href="/auth/signup">{t("navGetStarted")}</Link>
               </GradientButton>
             </>
           )}

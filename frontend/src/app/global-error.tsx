@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 // Global Error Boundary for Next.js App Router
 export default function GlobalError({
@@ -10,12 +11,14 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { t, i18n } = useTranslation("common");
+
   useEffect(() => {
     console.error("Global error caught:", error);
   }, [error]);
 
   return (
-    <html lang="en">
+    <html lang={i18n.language} dir={i18n.dir()}>
       <body className="min-h-screen bg-surface-elevated text-text-primary flex flex-col items-center justify-center p-6">
         <div className="max-w-md w-full bg-surface-elevated border border-border rounded-2xl p-8 text-center shadow-2xl backdrop-blur-sm">
           <div className="w-12 h-12 bg-red-500/10 text-red-400 rounded-xl flex items-center justify-center mx-auto mb-4 border border-red-500/20">
@@ -33,22 +36,22 @@ export default function GlobalError({
               />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
+          <h2 className="text-xl font-semibold mb-2">{t("globalErrorTitle")}</h2>
           <p className="text-text-muted text-sm mb-6">
-            An unexpected application error occurred. You can attempt to refresh or reset the view.
+            {t("globalErrorDesc")}
           </p>
           <div className="flex gap-3 justify-center">
             <button
               onClick={() => reset()}
                className="px-5 py-2.5 bg-accent hover:bg-accent-hover text-accent-foreground font-medium text-sm rounded-xl transition-colors shadow-accent-soft"
             >
-              Try Again
+              {t("tryAgain")}
             </button>
             <button
               onClick={() => (window.location.href = "/")}
               className="px-5 py-2.5 bg-surface hover:bg-surface-muted text-text-secondary font-medium text-sm rounded-xl transition-colors"
             >
-              Go to Home
+              {t("goToHome")}
             </button>
           </div>
         </div>

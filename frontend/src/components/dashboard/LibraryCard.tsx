@@ -3,6 +3,9 @@
 import React from "react";
 import clsx from "clsx";
 import { Star, Copy, Download, Trash2, Check, FileText, Clock } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+import { formatDate } from "@/i18n/format";
 
 interface LibraryCardProps {
   copyType?: string;
@@ -31,6 +34,8 @@ export default function LibraryCard({
   onDownload,
   onDelete,
 }: LibraryCardProps) {
+  const { t } = useTranslation("dashboard");
+  const { locale } = useLanguage();
   const showTone = tone && tone !== "Default";
 
   return (
@@ -42,7 +47,7 @@ export default function LibraryCard({
               <FileText className="h-3 w-3" />
               {copyType}
             </span>
-            {showTone && <span className="text-[11px] text-text-muted">Tone · {tone}</span>}
+            {showTone && <span className="text-[11px] text-text-muted">{t("tonePrefix", { tone })}</span>}
           </div>
 
           {createdAt && (
@@ -51,7 +56,7 @@ export default function LibraryCard({
               className="inline-flex items-center gap-1 text-[11px] text-text-muted"
             >
               <Clock className="h-3 w-3" />
-              {new Date(createdAt).toLocaleDateString(undefined, {
+              {formatDate(locale, createdAt, {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
@@ -67,7 +72,9 @@ export default function LibraryCard({
 
       <div className="mt-auto flex items-center justify-between gap-3 border-t border-border px-4 py-2.5">
         <span className="min-w-0 truncate text-[11px] text-text-muted">
-          {originalText ? `Original: "${originalText}"` : "Generated copy"}
+          {originalText
+            ? t("originalPrefix", { text: originalText })
+            : t("generatedCopy")}
         </span>
 
         <div className="flex shrink-0 items-center gap-1">
@@ -79,18 +86,18 @@ export default function LibraryCard({
                 ? "border-success/30 bg-success/10 text-success"
                 : "border-border bg-surface-muted text-text-secondary hover:bg-surface-overlay hover:text-text-primary"
             )}
-            title={copied ? "Copied to clipboard" : "Copy text"}
-            aria-label={copied ? "Copy text (copied)" : "Copy text"}
+            title={copied ? t("copiedToClipboard") : t("copyText")}
+            aria-label={copied ? t("copyTextAriaCopied") : t("copyText")}
           >
             {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-            <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
+            <span className="hidden sm:inline">{copied ? t("copied") : t("copy")}</span>
           </button>
 
           <button
             onClick={onFavorite}
             aria-pressed={favorite}
-            title={favorite ? "Remove from favorites" : "Star favorite"}
-            aria-label={favorite ? "Remove from favorites" : "Star favorite"}
+            title={favorite ? t("removeFromFavorites") : t("starFavorite")}
+            aria-label={favorite ? t("removeFromFavorites") : t("starFavorite")}
             className={clsx(
               "rounded-lg p-1.5 transition-colors",
               favorite
@@ -103,8 +110,8 @@ export default function LibraryCard({
 
           <button
             onClick={onDownload}
-            title="Download text"
-            aria-label="Download text"
+            title={t("downloadText")}
+            aria-label={t("downloadText")}
             className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-surface-muted hover:text-text-primary"
           >
             <Download className="h-3.5 w-3.5" />
@@ -112,8 +119,8 @@ export default function LibraryCard({
 
           <button
             onClick={onDelete}
-            title="Delete"
-            aria-label="Delete entry"
+            title={t("delete")}
+            aria-label={t("deleteEntry")}
             className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-danger/10 hover:text-danger"
           >
             <Trash2 className="h-3.5 w-3.5" />

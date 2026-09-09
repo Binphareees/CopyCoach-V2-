@@ -3,9 +3,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
 import DashboardStatCard from "@/components/dashboard/DashboardStatCard";
 import GlassCard from "@/components/dashboard/GlassCard";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+import { formatDate } from "@/i18n/format";
 import { getAccessToken } from "@/lib/supabase";
 import {
   Inbox,
@@ -44,6 +47,8 @@ interface FeedbackItem {
 
 export default function AdminFeedbackPage() {
   const router = useRouter();
+  const { t } = useTranslation("dashboard");
+  const { locale } = useLanguage();
   const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [checkingAccess, setCheckingAccess] = useState(true);
@@ -162,7 +167,7 @@ export default function AdminFeedbackPage() {
     return (
       <div className="min-h-screen text-text-primary flex flex-col items-center justify-center gap-3">
         <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs text-text-muted">Verifying admin access...</p>
+        <p className="text-xs text-text-muted">{t("verifyingAdminAccess")}</p>
       </div>
     );
   }
@@ -171,7 +176,7 @@ export default function AdminFeedbackPage() {
     return (
       <div className="min-h-screen text-text-primary flex flex-col items-center justify-center gap-3">
         <ShieldAlert className="w-10 h-10 text-danger" />
-        <p className="text-xs text-text-muted">Unauthorized. Redirecting...</p>
+        <p className="text-xs text-text-muted">{t("unauthorizedRedirecting")}</p>
       </div>
     );
   }
@@ -179,11 +184,11 @@ export default function AdminFeedbackPage() {
   return (
     <div className="min-h-screen text-text-primary flex flex-col font-sans">
       <DashboardTopbar
-        title="Admin Feedback"
+        title={t("adminFeedbackTitle")}
         right={
           <>
             <span className="hidden rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-accent sm:inline">
-              Admin Triage Panel
+              {t("adminTriagePanel")}
             </span>
             <button
               type="button"
@@ -191,14 +196,14 @@ export default function AdminFeedbackPage() {
               className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-              <span>Refresh</span>
+              <span>{t("refresh")}</span>
             </button>
             <Link
               href="/dashboard"
               className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-text-primary transition-colors"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Dashboard</span>
+              <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
+              <span>{t("returnToDashboard")}</span>
             </Link>
           </>
         }
@@ -209,7 +214,7 @@ export default function AdminFeedbackPage() {
         {/* STATS BAR */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <DashboardStatCard
-            label="Total Feedback"
+            label={t("totalFeedback")}
             icon={<Inbox className="w-5 h-5" />}
             tone="info"
             value={
@@ -218,7 +223,7 @@ export default function AdminFeedbackPage() {
           />
 
           <DashboardStatCard
-            label="High Priority (Pro/Studio)"
+            label={t("highPriorityStat")}
             icon={<ShieldAlert className="w-5 h-5" />}
             tone="warning"
             value={
@@ -229,7 +234,7 @@ export default function AdminFeedbackPage() {
           />
 
           <DashboardStatCard
-            label="Open Tickets"
+            label={t("openTickets")}
             icon={<AlertTriangle className="w-5 h-5" />}
             tone="danger"
             value={
@@ -240,7 +245,7 @@ export default function AdminFeedbackPage() {
           />
 
           <DashboardStatCard
-            label="Resolved"
+            label={t("resolved")}
             icon={<CheckCircle2 className="w-5 h-5" />}
             tone="success"
             value={
@@ -254,13 +259,13 @@ export default function AdminFeedbackPage() {
         {/* FILTERS AND SEARCH BAR */}
         <div className="bg-surface-elevated border border-border rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative flex-1 w-full">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Search className="w-4 h-4 absolute start-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search feedback comments, categories, or user IDs..."
-              className="cc-field text-xs rounded-xl pl-9 pr-3 py-2"
+              placeholder={t("searchFeedbackPlaceholder")}
+              className="cc-field text-xs rounded-xl ps-9 pe-3 py-2"
             />
           </div>
 
@@ -271,9 +276,9 @@ export default function AdminFeedbackPage() {
               onChange={(e) => setFilterPriority(e.target.value as "ALL" | "HIGH" | "NORMAL")}
               className="cc-field text-xs rounded-xl px-3 py-2"
             >
-              <option value="ALL">All Priorities</option>
-              <option value="HIGH">⚡ High Priority Only</option>
-              <option value="NORMAL">Normal Priority</option>
+              <option value="ALL">{t("allPriorities")}</option>
+              <option value="HIGH">{t("highPriorityOnly")}</option>
+              <option value="NORMAL">{t("normalPriority")}</option>
             </select>
 
             <select
@@ -281,9 +286,9 @@ export default function AdminFeedbackPage() {
               onChange={(e) => setFilterStatus(e.target.value as "ALL" | "open" | "resolved")}
               className="cc-field text-xs rounded-xl px-3 py-2"
             >
-              <option value="ALL">All Statuses</option>
-              <option value="open">Open Tickets</option>
-              <option value="resolved">Resolved</option>
+              <option value="ALL">{t("allStatuses")}</option>
+              <option value="open">{t("statusOpen")}</option>
+              <option value="resolved">{t("statusResolved")}</option>
             </select>
           </div>
         </div>
@@ -293,12 +298,12 @@ export default function AdminFeedbackPage() {
           {/* TICKET LIST PANEL */}
           <GlassCard level="elevated" className="lg:col-span-5 p-4 flex flex-col gap-3 max-h-[650px] overflow-y-auto">
             <h3 className="text-xs font-bold uppercase tracking-wider text-text-muted px-1">
-              Feedback Tickets ({filteredItems.length})
+              {t("feedbackTickets", { count: filteredItems.length })}
             </h3>
 
             {filteredItems.length === 0 ? (
               <div className="p-8 text-center text-text-muted text-xs">
-                No feedback tickets found matching criteria.
+                {t("noTicketsFound")}
               </div>
             ) : (
               filteredItems.map((item) => (
@@ -306,7 +311,7 @@ export default function AdminFeedbackPage() {
                   key={item.id}
                   type="button"
                   onClick={() => setSelectedTicket(item)}
-                  className={`text-left p-3.5 rounded-xl border transition-all ${
+                  className={`text-start p-3.5 rounded-xl border transition-all ${
                     selectedTicket?.id === item.id
                       ? "bg-surface border-accent/40 shadow-soft"
                       : "bg-surface/60 border-border hover:bg-surface-muted"
@@ -320,26 +325,28 @@ export default function AdminFeedbackPage() {
                           : "bg-surface text-text-muted border-border"
                       }`}
                     >
-                      {item.priority === "HIGH" ? "⚡ High Priority" : "Normal"}
+                      {item.priority === "HIGH" ? `⚡ ${t("highPriorityBadge")}` : t("normalBadge")}
                     </span>
 
                     <span className="text-[10px] text-text-muted">
-                      {new Date(item.created_at).toLocaleDateString()}
+                      {formatDate(locale, item.created_at)}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-xs font-semibold text-text-primary line-clamp-1">
-                      {item.category}: {item.comment || "No comment provided"}
+                      {item.category}: {item.comment || t("noCommentProvided")}
                     </p>
-                    <ChevronRight className="w-4 h-4 text-text-muted shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-text-muted shrink-0 rtl:rotate-180" />
                   </div>
 
                   <div className="flex items-center gap-2 mt-2 text-[11px] text-text-muted">
-                    <span className="text-accent uppercase font-medium">{item.user_tier} Tier</span>
+                    <span className="text-accent uppercase font-medium">
+                      {t("tierFormat", { tier: item.user_tier })}
+                    </span>
                     <span>•</span>
                     <span className={item.status === "resolved" ? "text-success" : "text-warning"}>
-                      {item.status}
+                      {item.status === "resolved" ? t("statusResolved") : t("statusOpen")}
                     </span>
                   </div>
                 </button>
@@ -362,15 +369,17 @@ export default function AdminFeedbackPage() {
                             : "bg-surface text-text-muted border-border"
                         }`}
                       >
-                        {selectedTicket.priority} Priority
+                        {selectedTicket.priority === "HIGH"
+                          ? `⚡ ${t("highPriorityBadge")}`
+                          : t("normalBadge")}
                       </span>
                       <span className="text-xs text-accent uppercase font-semibold">
-                        {selectedTicket.user_tier} Tier User
+                        {t("tierUser", { tier: selectedTicket.user_tier })}
                       </span>
                     </div>
                     <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
                       <MessageSquare className="w-5 h-5 text-accent" />
-                      <span>{selectedTicket.category} Ticket</span>
+                      <span>{t("ticketTitle", { category: selectedTicket.category })}</span>
                     </h2>
                   </div>
 
@@ -386,12 +395,12 @@ export default function AdminFeedbackPage() {
                     {selectedTicket.status === "resolved" ? (
                       <>
                         <Clock className="w-3.5 h-3.5" />
-                        <span>Reopen Ticket</span>
+                        <span>{t("reopenTicket")}</span>
                       </>
                     ) : (
                       <>
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Mark as Resolved</span>
+                        <span>{t("markAsResolved")}</span>
                       </>
                     )}
                   </button>
@@ -400,42 +409,48 @@ export default function AdminFeedbackPage() {
                 {/* METADATA INFO */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-surface p-3 rounded-xl border border-border text-xs">
                   <div>
-                    <span className="text-text-muted block text-[10px]">USER ID</span>
+                    <span className="text-text-muted block text-[10px]">{t("userIdLabel")}</span>
                     <span className="font-mono text-text-secondary flex items-center gap-1">
                       <User className="w-3 h-3 text-text-muted" />
                       {selectedTicket.user_id}
                     </span>
                   </div>
                   <div>
-                    <span className="text-text-muted block text-[10px]">DRILL ID</span>
+                    <span className="text-text-muted block text-[10px]">{t("drillIdLabel")}</span>
                     <span className="font-mono text-text-secondary">
-                      {selectedTicket.drill_id || "General"}
+                      {selectedTicket.drill_id || t("generalDrill")}
                     </span>
                   </div>
                   <div>
-                    <span className="text-text-muted block text-[10px]">STATUS</span>
+                    <span className="text-text-muted block text-[10px]">{t("statusLabel")}</span>
                     <span
                       className={`font-bold ${
                         selectedTicket.status === "resolved" ? "text-success" : "text-warning"
                       }`}
                     >
-                      {selectedTicket.status.toUpperCase()}
+                      {selectedTicket.status === "resolved"
+                        ? t("statusResolved")
+                        : t("statusOpen")}
                     </span>
                   </div>
                 </div>
 
                 {/* USER COMMENT */}
                 <div>
-                  <h4 className="text-xs font-semibold text-text-muted mb-1.5">User Feedback Comment</h4>
+                  <h4 className="text-xs font-semibold text-text-muted mb-1.5">
+                    {t("userFeedbackComment")}
+                  </h4>
                   <div className="p-3.5 rounded-xl bg-surface border border-border text-xs text-text-secondary leading-relaxed">
-                    {selectedTicket.comment || "No detailed comment provided."}
+                    {selectedTicket.comment || t("noDetailedComment")}
                   </div>
                 </div>
 
                 {/* USER COPY INPUT & AI RESPONSE IF ATTACHED */}
                 {selectedTicket.user_copy_input && (
                   <div>
-                    <h4 className="text-xs font-semibold text-text-muted mb-1.5">User Original Copy</h4>
+                    <h4 className="text-xs font-semibold text-text-muted mb-1.5">
+                      {t("userOriginalCopy")}
+                    </h4>
                     <div className="p-3 rounded-xl bg-surface border border-border text-xs text-text-secondary font-mono">
                       {selectedTicket.user_copy_input}
                     </div>
@@ -444,7 +459,9 @@ export default function AdminFeedbackPage() {
 
                 {selectedTicket.ai_output_string && (
                   <div>
-                    <h4 className="text-xs font-semibold text-text-muted mb-1.5">AI Output Evaluated</h4>
+                    <h4 className="text-xs font-semibold text-text-muted mb-1.5">
+                      {t("aiOutputEvaluated")}
+                    </h4>
                     <div className="p-3 rounded-xl bg-surface border border-border text-xs text-text-secondary font-mono line-clamp-4">
                       {selectedTicket.ai_output_string}
                     </div>
@@ -454,7 +471,7 @@ export default function AdminFeedbackPage() {
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-text-muted">
                 <Inbox className="w-10 h-10 mb-2 opacity-50" />
-                <p className="text-xs">Select a feedback ticket on the left to view details.</p>
+                <p className="text-xs">{t("selectTicketHint")}</p>
               </div>
             )}
           </GlassCard>
