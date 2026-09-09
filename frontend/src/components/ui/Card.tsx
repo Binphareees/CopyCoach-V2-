@@ -13,7 +13,7 @@ export default function Card({
   return (
     <div
       className={clsx(
-        "glass-panel p-6",
+        "rounded-xl border border-border bg-surface p-6",
         className
       )}
     >

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import Logo from "@/components/ui/Logo";
 
 export default function CallbackPage() {
   const router = useRouter();
@@ -95,9 +96,16 @@ export default function CallbackPage() {
   }, [router]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-surface-elevated text-text-primary p-4">
-      <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-      <p className="text-lg font-medium text-text-secondary">{status}</p>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12 text-text-primary">
+      <div className="flex flex-col items-center text-center">
+        <Logo variant="app-icon" size="md" />
+        <div
+          role="status"
+          aria-live="polite"
+          className="mt-8 h-8 w-8 rounded-full border-2 border-border border-t-accent animate-spin"
+        />
+        <p className="mt-4 max-w-xs text-sm text-text-secondary">{status}</p>
+      </div>
     </div>
   );
 }

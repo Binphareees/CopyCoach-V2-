@@ -3,7 +3,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Logo from "@/components/ui/Logo";
+import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
+import DashboardStatCard from "@/components/dashboard/DashboardStatCard";
+import GlassCard from "@/components/dashboard/GlassCard";
 import { getAccessToken } from "@/lib/supabase";
 import {
   Inbox,
@@ -159,7 +161,7 @@ export default function AdminFeedbackPage() {
   if (checkingAccess) {
     return (
       <div className="min-h-screen text-text-primary flex flex-col items-center justify-center gap-3">
-        <div className="w-10 h-10 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin" />
         <p className="text-xs text-text-muted">Verifying admin access...</p>
       </div>
     );
@@ -168,7 +170,7 @@ export default function AdminFeedbackPage() {
   if (forbidden) {
     return (
       <div className="min-h-screen text-text-primary flex flex-col items-center justify-center gap-3">
-        <ShieldAlert className="w-10 h-10 text-rose-500" />
+        <ShieldAlert className="w-10 h-10 text-danger" />
         <p className="text-xs text-text-muted">Unauthorized. Redirecting...</p>
       </div>
     );
@@ -176,24 +178,17 @@ export default function AdminFeedbackPage() {
 
   return (
     <div className="min-h-screen text-text-primary flex flex-col font-sans">
-      {/* HEADER */}
-      <header className="glass-nav sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Logo theme="dark" size="sm" showTagline={false} />
-            </Link>
-            <span className="text-text-muted">/</span>
-            <span className="text-xs font-bold text-cyan-400 bg-cyan-950/80 border border-cyan-800/60 px-2.5 py-1 rounded-full uppercase tracking-wider">
+      <DashboardTopbar
+        title="Admin Feedback"
+        right={
+          <>
+            <span className="hidden rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-accent sm:inline">
               Admin Triage Panel
             </span>
-          </div>
-
-          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={fetchFeedback}
-              className="inline-flex items-center gap-1.5 text-xs bg-surface hover:bg-surface-muted text-text-secondary px-3 py-1.5 rounded-lg border border-border transition-all"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
               <span>Refresh</span>
@@ -205,59 +200,55 @@ export default function AdminFeedbackPage() {
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Dashboard</span>
             </Link>
-          </div>
-        </div>
-      </header>
+          </>
+        }
+      />
 
       {/* MAIN CONTAINER */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
         {/* STATS BAR */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-surface-elevated border border-border rounded-2xl p-4 flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
-              <Inbox className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs text-text-muted">Total Feedback</p>
-              <p className="text-xl font-bold text-text-primary">{feedbackList.length}</p>
-            </div>
-          </div>
+          <DashboardStatCard
+            label="Total Feedback"
+            icon={<Inbox className="w-5 h-5" />}
+            tone="info"
+            value={
+              <p className="text-3xl font-extrabold text-text-primary">{feedbackList.length}</p>
+            }
+          />
 
-          <div className="bg-surface-elevated border border-border rounded-2xl p-4 flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-              <ShieldAlert className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs text-text-muted">High Priority (Pro/Studio)</p>
-              <p className="text-xl font-bold text-amber-400">
+          <DashboardStatCard
+            label="High Priority (Pro/Studio)"
+            icon={<ShieldAlert className="w-5 h-5" />}
+            tone="warning"
+            value={
+              <p className="text-3xl font-extrabold text-warning">
                 {feedbackList.filter((f) => f.priority === "HIGH").length}
               </p>
-            </div>
-          </div>
+            }
+          />
 
-          <div className="bg-surface-elevated border border-border rounded-2xl p-4 flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400">
-              <AlertTriangle className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs text-text-muted">Open Tickets</p>
-              <p className="text-xl font-bold text-rose-400">
+          <DashboardStatCard
+            label="Open Tickets"
+            icon={<AlertTriangle className="w-5 h-5" />}
+            tone="danger"
+            value={
+              <p className="text-3xl font-extrabold text-danger">
                 {feedbackList.filter((f) => f.status === "open").length}
               </p>
-            </div>
-          </div>
+            }
+          />
 
-          <div className="bg-surface-elevated border border-border rounded-2xl p-4 flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-              <CheckCircle2 className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs text-text-muted">Resolved</p>
-              <p className="text-xl font-bold text-emerald-400">
+          <DashboardStatCard
+            label="Resolved"
+            icon={<CheckCircle2 className="w-5 h-5" />}
+            tone="success"
+            value={
+              <p className="text-3xl font-extrabold text-success">
                 {feedbackList.filter((f) => f.status === "resolved").length}
               </p>
-            </div>
-          </div>
+            }
+          />
         </div>
 
         {/* FILTERS AND SEARCH BAR */}
@@ -269,7 +260,7 @@ export default function AdminFeedbackPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search feedback comments, categories, or user IDs..."
-              className="w-full text-xs bg-surface border border-border rounded-xl pl-9 pr-3 py-2 text-text-primary placeholder-text-muted focus:outline-none focus:border-cyan-500"
+              className="cc-field text-xs rounded-xl pl-9 pr-3 py-2"
             />
           </div>
 
@@ -278,7 +269,7 @@ export default function AdminFeedbackPage() {
             <select
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value as "ALL" | "HIGH" | "NORMAL")}
-              className="text-xs bg-surface border border-border rounded-xl px-3 py-2 text-text-primary focus:outline-none focus:border-cyan-500"
+              className="cc-field text-xs rounded-xl px-3 py-2"
             >
               <option value="ALL">All Priorities</option>
               <option value="HIGH">⚡ High Priority Only</option>
@@ -288,7 +279,7 @@ export default function AdminFeedbackPage() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as "ALL" | "open" | "resolved")}
-              className="text-xs bg-surface border border-border rounded-xl px-3 py-2 text-text-primary focus:outline-none focus:border-cyan-500"
+              className="cc-field text-xs rounded-xl px-3 py-2"
             >
               <option value="ALL">All Statuses</option>
               <option value="open">Open Tickets</option>
@@ -300,7 +291,7 @@ export default function AdminFeedbackPage() {
         {/* WORKSPACE PANELS: LIST + INSPECTOR */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[500px]">
           {/* TICKET LIST PANEL */}
-          <div className="lg:col-span-5 bg-surface-elevated border border-border rounded-2xl p-4 flex flex-col gap-3 max-h-[650px] overflow-y-auto">
+          <GlassCard level="elevated" className="lg:col-span-5 p-4 flex flex-col gap-3 max-h-[650px] overflow-y-auto">
             <h3 className="text-xs font-bold uppercase tracking-wider text-text-muted px-1">
               Feedback Tickets ({filteredItems.length})
             </h3>
@@ -317,7 +308,7 @@ export default function AdminFeedbackPage() {
                   onClick={() => setSelectedTicket(item)}
                   className={`text-left p-3.5 rounded-xl border transition-all ${
                     selectedTicket?.id === item.id
-                      ? "bg-surface border-cyan-500/50 shadow-lg"
+                      ? "bg-surface border-accent/40 shadow-soft"
                       : "bg-surface/60 border-border hover:bg-surface-muted"
                   }`}
                 >
@@ -325,7 +316,7 @@ export default function AdminFeedbackPage() {
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase ${
                         item.priority === "HIGH"
-                          ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                          ? "bg-warning/15 text-warning border-warning/40"
                           : "bg-surface text-text-muted border-border"
                       }`}
                     >
@@ -345,19 +336,19 @@ export default function AdminFeedbackPage() {
                   </div>
 
                   <div className="flex items-center gap-2 mt-2 text-[11px] text-text-muted">
-                    <span className="text-cyan-400 uppercase font-medium">{item.user_tier} Tier</span>
+                    <span className="text-accent uppercase font-medium">{item.user_tier} Tier</span>
                     <span>•</span>
-                    <span className={item.status === "resolved" ? "text-emerald-400" : "text-amber-400"}>
+                    <span className={item.status === "resolved" ? "text-success" : "text-warning"}>
                       {item.status}
                     </span>
                   </div>
                 </button>
               ))
             )}
-          </div>
+          </GlassCard>
 
           {/* TICKET INSPECTOR DETAILS PANEL */}
-          <div className="lg:col-span-7 bg-surface-elevated border border-border rounded-2xl p-6 flex flex-col justify-between">
+          <GlassCard level="elevated" className="lg:col-span-7 p-6 flex flex-col justify-between">
             {selectedTicket ? (
               <div className="space-y-5">
                 {/* TOP HEADER */}
@@ -367,18 +358,18 @@ export default function AdminFeedbackPage() {
                       <span
                         className={`text-xs font-bold px-2.5 py-0.5 rounded-full border uppercase ${
                           selectedTicket.priority === "HIGH"
-                            ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                            ? "bg-warning/15 text-warning border-warning/40"
                             : "bg-surface text-text-muted border-border"
                         }`}
                       >
                         {selectedTicket.priority} Priority
                       </span>
-                      <span className="text-xs text-cyan-400 uppercase font-semibold">
+                      <span className="text-xs text-accent uppercase font-semibold">
                         {selectedTicket.user_tier} Tier User
                       </span>
                     </div>
                     <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
-                      <MessageSquare className="w-5 h-5 text-cyan-400" />
+                      <MessageSquare className="w-5 h-5 text-accent" />
                       <span>{selectedTicket.category} Ticket</span>
                     </h2>
                   </div>
@@ -388,8 +379,8 @@ export default function AdminFeedbackPage() {
                     onClick={() => toggleStatus(selectedTicket)}
                     className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl border transition-all ${
                       selectedTicket.status === "resolved"
-                        ? "bg-amber-500/10 text-amber-300 border-amber-500/30 hover:bg-amber-500/20"
-                        : "bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20"
+                        ? "bg-warning/10 text-warning border-warning/30 hover:bg-warning/20"
+                        : "bg-success/10 text-success border-success/30 hover:bg-success/20"
                     }`}
                   >
                     {selectedTicket.status === "resolved" ? (
@@ -425,7 +416,7 @@ export default function AdminFeedbackPage() {
                     <span className="text-text-muted block text-[10px]">STATUS</span>
                     <span
                       className={`font-bold ${
-                        selectedTicket.status === "resolved" ? "text-emerald-400" : "text-amber-400"
+                        selectedTicket.status === "resolved" ? "text-success" : "text-warning"
                       }`}
                     >
                       {selectedTicket.status.toUpperCase()}
@@ -454,7 +445,7 @@ export default function AdminFeedbackPage() {
                 {selectedTicket.ai_output_string && (
                   <div>
                     <h4 className="text-xs font-semibold text-text-muted mb-1.5">AI Output Evaluated</h4>
-                    <div className="p-3 rounded-xl bg-surface border border-border text-xs text-cyan-200 font-mono line-clamp-4">
+                    <div className="p-3 rounded-xl bg-surface border border-border text-xs text-text-secondary font-mono line-clamp-4">
                       {selectedTicket.ai_output_string}
                     </div>
                   </div>
@@ -466,7 +457,7 @@ export default function AdminFeedbackPage() {
                 <p className="text-xs">Select a feedback ticket on the left to view details.</p>
               </div>
             )}
-          </div>
+          </GlassCard>
         </div>
       </main>
     </div>

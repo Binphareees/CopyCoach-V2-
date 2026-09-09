@@ -71,7 +71,7 @@ export default function DrillCritiqueFeedback({
 
   if (submitted) {
     return (
-      <div className={`flex items-center gap-2 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/50 rounded-lg px-3 py-1.5 ${className}`}>
+      <div className={`flex items-center gap-2 text-xs text-success bg-success/15 border border-success/30 rounded-lg px-3 py-1.5 ${className}`}>
         <Check className="w-3.5 h-3.5" />
         <span>Feedback received! Thank you for training CopyCoach AI.</span>
       </div>
@@ -88,7 +88,7 @@ export default function DrillCritiqueFeedback({
             onClick={() => handleRatingClick("up")}
             className={`p-1.5 rounded-md transition-all ${
               rating === "up"
-                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+                ? "bg-success/20 text-success border border-success/40"
                 : "hover:bg-surface-muted text-text-muted hover:text-text-primary"
             }`}
             title="Helpful critique"
@@ -100,7 +100,7 @@ export default function DrillCritiqueFeedback({
             onClick={() => handleRatingClick("down")}
             className={`p-1.5 rounded-md transition-all ${
               rating === "down"
-                ? "bg-rose-500/20 text-rose-400 border border-rose-500/40"
+                ? "bg-danger/20 text-danger border border-danger/40"
                 : "hover:bg-surface-muted text-text-muted hover:text-text-primary"
             }`}
             title="Needs improvement"
@@ -111,7 +111,7 @@ export default function DrillCritiqueFeedback({
       </div>
 
       {showTagSelector && (
-        <div className="mt-1 p-3 bg-surface-elevated border border-border rounded-xl space-y-2 animate-fadeIn">
+        <div className="mt-1 p-3 bg-surface-elevated border border-border rounded-xl space-y-2 animate-fade-up">
           <p className="text-[11px] font-medium text-text-secondary">
             {rating === "down" ? "What went wrong with this critique?" : "What was most helpful?"}
           </p>
@@ -123,7 +123,7 @@ export default function DrillCritiqueFeedback({
                 onClick={() => setSelectedTag(tag)}
                 className={`text-[10px] px-2.5 py-1 rounded-full border transition-all ${
                   selectedTag === tag
-                    ? "bg-cyan-500/20 border-cyan-400 text-cyan-300"
+                    ? "bg-accent/20 border-accent-bright text-accent-bright"
                     : "bg-surface border-border text-text-muted hover:text-text-primary"
                 }`}
               >
@@ -138,13 +138,13 @@ export default function DrillCritiqueFeedback({
               value={customComment}
               onChange={(e) => setCustomComment(e.target.value)}
               placeholder="Additional details (optional)..."
-              className="flex-1 text-xs bg-surface border border-border rounded-lg px-2.5 py-1.5 text-text-primary placeholder-text-muted focus:outline-none focus:border-cyan-500"
+              className="cc-field flex-1 text-xs rounded-lg px-2.5 py-1.5"
             />
             <button
               type="button"
               onClick={handleSubmit}
               disabled={loading}
-              className="inline-flex items-center gap-1 text-xs bg-gradient-to-r from-[#1e1a3a] to-[#2a2550] hover:from-[#2a2550] hover:to-[#352e60] text-text-primary font-medium px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-1 text-xs bg-accent text-accent-foreground font-medium px-3 py-1.5 rounded-lg transition-colors hover:bg-accent-hover disabled:opacity-50"
             >
               <Send className="w-3 h-3" />
               <span>{loading ? "Sending..." : "Submit"}</span>

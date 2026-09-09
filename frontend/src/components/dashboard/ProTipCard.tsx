@@ -6,19 +6,15 @@ interface ProTipCardProps {
 }
 
 const DEFAULT_TIP =
-  "Fill in your product details above, pick a category and tone of voice, then tap Generate to create high-converting marketing copy.";
+  "Fill in your context, choose a copy type and tone, then press Improve your copy for a sharper, higher-converting version.";
 
 export default function ProTipCard({ text = DEFAULT_TIP }: ProTipCardProps) {
   return (
-    <div className="flex items-start gap-3.5 rounded-2xl border border-glass-border bg-glass-bg backdrop-blur-sm p-4.5">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent-bright">
-        <Lightbulb className="h-5 w-5" />
-      </div>
+    <div className="flex items-start gap-2.5 rounded-xl border border-border bg-surface px-4 py-3">
+      <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-accent-bright" />
       <div>
-        <p className="text-[14px] font-bold text-text-primary">
-          Pro Tip
-        </p>
-        <p className="mt-0.5 text-[13px] leading-relaxed text-brand-200">{text}</p>
+        <p className="text-xs font-bold text-text-secondary">Pro Tip</p>
+        <p className="mt-0.5 text-[13px] leading-relaxed text-text-secondary">{text}</p>
       </div>
     </div>
   );

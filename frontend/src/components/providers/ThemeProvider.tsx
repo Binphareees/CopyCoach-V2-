@@ -51,14 +51,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [applyTheme]);
 
   useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem("copycoach_theme") as ThemeMode | null;
-    if (saved === "light" || saved === "dark" || saved === "system") {
-      setThemeModeState(saved);
-      applyTheme(saved);
-    } else {
-      applyTheme("dark");
-    }
+    const init = () => {
+      setMounted(true);
+      const saved = localStorage.getItem("copycoach_theme") as ThemeMode | null;
+      if (saved === "light" || saved === "dark" || saved === "system") {
+        setThemeModeState(saved);
+        applyTheme(saved);
+      } else {
+        applyTheme("dark");
+      }
+    };
+    const rafId = requestAnimationFrame(init);
+    return () => cancelAnimationFrame(rafId);
   }, [applyTheme]);
 
   useEffect(() => {

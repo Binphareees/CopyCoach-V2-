@@ -4,13 +4,13 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
 import {
   User,
   Sparkles,
   ShieldCheck,
   Sliders,
   CreditCard,
-  ArrowLeft,
   Camera,
   Trash2,
   Key,
@@ -384,46 +384,38 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen text-text-primary font-sans pb-16 bg-surface">
+    <main className="min-h-screen text-text-primary font-sans pb-16">
       {/* Top Banner & Header */}
-      <div className="glass-nav sticky top-0 z-30">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <DashboardTopbar
+        title="Profile Settings"
+        back={{ href: "/dashboard", label: "Back to Dashboard" }}
+        right={
           <button
-            onClick={() => router.push("/dashboard")}
-            className="flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors py-1 px-3 rounded-lg hover:bg-surface-muted"
+            onClick={saveProfile}
+            disabled={loading}
+            className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:cursor-pointer disabled:opacity-50"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Dashboard</span>
+            <Save className="w-4 h-4" />
+            <span>{loading ? "Saving..." : "Save All Changes"}</span>
           </button>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={saveProfile}
-              disabled={loading}
-              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-text-primary font-medium px-4 py-2 rounded-xl text-sm shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50 cursor-pointer"
-            >
-              <Save className="w-4 h-4" />
-              <span>{loading ? "Saving..." : "Save All Changes"}</span>
-            </button>
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Main Container */}
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8">
         {/* Floating Toast Notification */}
         {message && (
           <div
-            className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl border text-sm font-medium animate-in fade-in slide-in-from-bottom-5 ${
+            className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl border text-sm font-medium animate-fade-up ${
               message.type === "success"
-                ? "bg-emerald-950/90 border-emerald-500/40 text-emerald-200"
-                : "bg-rose-950/90 border-rose-500/40 text-rose-200"
+                ? "bg-success/20 border-success/40 text-success"
+                : "bg-danger/20 border-danger/40 text-danger"
             }`}
           >
             {message.type === "success" ? (
-              <Check className="w-5 h-5 text-emerald-400 shrink-0" />
+              <Check className="w-5 h-5 text-success shrink-0" />
             ) : (
-              <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+              <AlertCircle className="w-5 h-5 text-danger shrink-0" />
             )}
             <span>{message.text}</span>
           </div>
@@ -431,11 +423,11 @@ export default function ProfilePage() {
 
         {/* User Hero Summary Header */}
         <div className="bg-surface-elevated border border-border rounded-3xl p-6 sm:p-8 mb-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10">
             {/* Avatar with Camera Overlay */}
             <div className="relative group shrink-0">
-              <div className="h-28 w-28 rounded-2xl overflow-hidden bg-surface border-2 border-indigo-500/30 shadow-xl relative">
+              <div className="h-28 w-28 rounded-2xl overflow-hidden bg-surface border-2 border-accent/25 shadow-xl relative">
                 {avatar ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
@@ -444,12 +436,12 @@ export default function ProfilePage() {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 text-text-primary font-bold text-3xl">
+                  <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-accent-deep to-accent text-text-primary font-bold text-3xl">
                     {name ? name.charAt(0).toUpperCase() : email ? email.charAt(0).toUpperCase() : "U"}
                   </div>
                 )}
                 {uploading && (
-                  <div className="absolute inset-0 bg-surface/80 flex items-center justify-center text-xs text-indigo-300 font-medium">
+                  <div className="absolute inset-0 bg-surface/80 flex items-center justify-center text-xs text-accent-bright font-medium">
                     Uploading...
                   </div>
                 )}
@@ -476,7 +468,7 @@ export default function ProfilePage() {
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
                     plan === "pro"
-                      ? "bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/30 text-amber-300"
+                      ? "border-warning/30 bg-warning-surface text-warning"
                       : "bg-surface border border-border text-text-secondary"
                   }`}
                 >
@@ -501,7 +493,7 @@ export default function ProfilePage() {
                   <button
                     onClick={removeAvatar}
                     disabled={uploading}
-                    className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-900/50 hover:bg-rose-950/40 transition-colors"
+                    className="text-xs text-danger hover:text-danger flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-danger/30 hover:bg-danger/10 transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     <span>Remove Photo</span>
@@ -521,12 +513,12 @@ export default function ProfilePage() {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-border pb-4 mb-8 overflow-x-auto scrollbar-none">
+        <div className="flex flex-wrap items-center gap-2 border-b border-border pb-4 mb-8 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab("profile")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "profile"
-                ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
+                ? "bg-accent text-accent-foreground shadow-accent-soft"
                 : "bg-surface-elevated text-text-muted hover:text-text-primary hover:bg-surface-muted border border-border"
             }`}
           >
@@ -538,7 +530,7 @@ export default function ProfilePage() {
             onClick={() => setActiveTab("brand_voice")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "brand_voice"
-                ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
+                ? "bg-accent text-accent-foreground shadow-accent-soft"
                 : "bg-surface-elevated text-text-muted hover:text-text-primary hover:bg-surface-muted border border-border"
             }`}
           >
@@ -550,7 +542,7 @@ export default function ProfilePage() {
             onClick={() => setActiveTab("security")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "security"
-                ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
+                ? "bg-accent text-accent-foreground shadow-accent-soft"
                 : "bg-surface-elevated text-text-muted hover:text-text-primary hover:bg-surface-muted border border-border"
             }`}
           >
@@ -562,7 +554,7 @@ export default function ProfilePage() {
             onClick={() => setActiveTab("preferences")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "preferences"
-                ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
+                ? "bg-accent text-accent-foreground shadow-accent-soft"
                 : "bg-surface-elevated text-text-muted hover:text-text-primary hover:bg-surface-muted border border-border"
             }`}
           >
@@ -574,7 +566,7 @@ export default function ProfilePage() {
             onClick={() => setActiveTab("billing")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "billing"
-                ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
+                ? "bg-accent text-accent-foreground shadow-accent-soft"
                 : "bg-surface-elevated text-text-muted hover:text-text-primary hover:bg-surface-muted border border-border"
             }`}
           >
@@ -586,7 +578,7 @@ export default function ProfilePage() {
             onClick={() => setActiveTab("support")}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               activeTab === "support"
-                ? "bg-blue-600 text-text-primary shadow-lg shadow-blue-600/25"
+                ? "bg-accent text-accent-foreground shadow-accent-soft"
                 : "bg-surface-elevated text-text-muted hover:text-text-primary hover:bg-surface-muted border border-border"
             }`}
           >
@@ -600,7 +592,7 @@ export default function ProfilePage() {
           <div className="space-y-6">
             <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
               <h2 className="text-xl font-semibold text-text-primary mb-6 flex items-center gap-2">
-                <User className="w-5 h-5 text-blue-400" />
+                <User className="w-5 h-5 text-accent-bright" />
                 <span>Personal Information</span>
               </h2>
 
@@ -616,7 +608,7 @@ export default function ProfilePage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Sarah Jenkins"
-                      className="w-full bg-surface border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                      className="cc-field text-sm rounded-xl pl-10 pr-4 py-2.5"
                     />
                   </div>
                 </div>
@@ -647,7 +639,7 @@ export default function ProfilePage() {
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
                       placeholder="e.g. Senior Conversion Copywriter"
-                      className="w-full bg-surface border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                      className="cc-field text-sm rounded-xl pl-10 pr-4 py-2.5"
                     />
                   </div>
                 </div>
@@ -663,7 +655,7 @@ export default function ProfilePage() {
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
                       placeholder="e.g. Apex Copy Studio"
-                      className="w-full bg-surface border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                      className="cc-field text-sm rounded-xl pl-10 pr-4 py-2.5"
                     />
                   </div>
                 </div>
@@ -677,7 +669,7 @@ export default function ProfilePage() {
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
                     placeholder="Tell us a little bit about your copywriting focus or business goals..."
-                    className="w-full bg-surface border border-border rounded-xl p-3.5 text-text-primary text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                    className="cc-field text-sm rounded-xl p-3.5"
                   />
                 </div>
               </div>
@@ -686,7 +678,7 @@ export default function ProfilePage() {
                 <button
                   onClick={saveProfile}
                   disabled={loading}
-                  className="bg-blue-600 hover:bg-blue-500 text-text-primary font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                  className="bg-accent hover:bg-accent-hover text-accent-foreground font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-soft flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>{loading ? "Saving..." : "Save Profile Details"}</span>
@@ -702,7 +694,7 @@ export default function ProfilePage() {
             <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
               <div className="mb-6">
                 <h2 className="text-xl font-semibold text-text-primary flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-indigo-400" />
+                  <Sparkles className="w-5 h-5 text-accent-bright" />
                   <span>Default Copywriting Brand Voice</span>
                 </h2>
                 <p className="text-text-muted text-sm mt-1">
@@ -718,7 +710,7 @@ export default function ProfilePage() {
                   <select
                     value={defaultTone}
                     onChange={(e) => setDefaultTone(e.target.value)}
-                    className="w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer"
+                    className="cc-field text-sm rounded-xl px-4 py-2.5 cursor-pointer"
                   >
                     <option value="Professional & Direct">Professional & Direct</option>
                     <option value="Conversational & Friendly">Conversational & Friendly</option>
@@ -739,7 +731,7 @@ export default function ProfilePage() {
                     <select
                       value={preferredLanguage}
                       onChange={(e) => setPreferredLanguage(e.target.value)}
-                      className="w-full bg-surface border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer"
+                      className="cc-field text-sm rounded-xl pl-10 pr-4 py-2.5 cursor-pointer"
                     >
                       <option value="English (US)">English (US)</option>
                       <option value="English (UK)">English (UK)</option>
@@ -760,7 +752,7 @@ export default function ProfilePage() {
                     value={targetAudience}
                     onChange={(e) => setTargetAudience(e.target.value)}
                     placeholder="e.g. B2B Founders, Marketing Directors"
-                    className="w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                    className="cc-field text-sm rounded-xl px-4 py-2.5"
                   />
                 </div>
 
@@ -773,7 +765,7 @@ export default function ProfilePage() {
                     value={brandNiche}
                     onChange={(e) => setBrandNiche(e.target.value)}
                     placeholder="e.g. E-commerce, SaaS, Fitness, Finance"
-                    className="w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                    className="cc-field text-sm rounded-xl px-4 py-2.5"
                   />
                 </div>
 
@@ -786,7 +778,7 @@ export default function ProfilePage() {
                     value={brandGuidelines}
                     onChange={(e) => setBrandGuidelines(e.target.value)}
                     placeholder="Enter specific rules, key selling points, words to avoid, or brand guidelines..."
-                    className="w-full bg-surface border border-border rounded-xl p-3.5 text-text-primary text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                    className="cc-field text-sm rounded-xl p-3.5"
                   />
                 </div>
               </div>
@@ -795,7 +787,7 @@ export default function ProfilePage() {
                 <button
                   onClick={saveProfile}
                   disabled={loading}
-                   className="bg-accent hover:bg-accent-hover text-white font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-accent-soft flex items-center gap-2 cursor-pointer"
+                   className="bg-accent hover:bg-accent-hover text-accent-foreground font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-accent-soft flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Brand Voice Settings</span>
@@ -811,7 +803,7 @@ export default function ProfilePage() {
             {/* Password Update Card */}
             <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
               <h2 className="text-xl font-semibold text-text-primary mb-2 flex items-center gap-2">
-                <Lock className="w-5 h-5 text-emerald-400" />
+                <Lock className="w-5 h-5 text-success" />
                 <span>Password & Authentication</span>
               </h2>
               <p className="text-text-muted text-sm mb-6">
@@ -830,7 +822,7 @@ export default function ProfilePage() {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="Minimum 6 characters"
-                      className="w-full bg-surface border border-border rounded-xl pl-10 pr-10 py-2.5 text-text-primary text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                      className="cc-field text-sm rounded-xl pl-10 pr-10 py-2.5"
                     />
                     <button
                       type="button"
@@ -853,7 +845,7 @@ export default function ProfilePage() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Re-enter new password"
-                      className="w-full bg-surface border border-border rounded-xl pl-10 pr-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                      className="cc-field text-sm rounded-xl pl-10 pr-4 py-2.5"
                     />
                   </div>
                 </div>
@@ -861,7 +853,7 @@ export default function ProfilePage() {
                 <button
                   type="submit"
                   disabled={passwordLoading}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-text-primary font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="bg-success hover:bg-success/85 text-white font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-soft flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Key className="w-4 h-4" />
                   <span>{passwordLoading ? "Updating..." : "Update Password"}</span>
@@ -873,7 +865,7 @@ export default function ProfilePage() {
             <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
               <h3 className="text-lg font-semibold text-text-primary mb-4">Account Security Features</h3>
 
-              <div className="divide-y divide-slate-800">
+              <div className="divide-y divide-border">
                 <div className="py-4 flex items-center justify-between">
                   <div>
                     <div className="text-sm font-medium text-text-primary">Two-Factor Authentication (2FA)</div>
@@ -890,7 +882,7 @@ export default function ProfilePage() {
                       );
                     }}
                     className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      twoFactorEnabled ? "bg-emerald-500" : "bg-surface"
+                      twoFactorEnabled ? "bg-success" : "bg-surface"
                     }`}
                   >
                     <span
@@ -906,13 +898,13 @@ export default function ProfilePage() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 rounded-xl bg-surface border border-border/80 text-xs">
                       <div className="flex items-center gap-3">
-                        <Laptop className="w-4 h-4 text-emerald-400" />
+                        <Laptop className="w-4 h-4 text-success" />
                         <div>
                           <div className="font-medium text-text-primary">Current Web Browser Session</div>
                           <div className="text-text-muted">Active Now • Cloud Run Container</div>
                         </div>
                       </div>
-                      <span className="text-emerald-400 font-medium bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/50">
+                      <span className="text-success font-medium bg-success/10 px-2 py-0.5 rounded border border-success/30">
                         Active
                       </span>
                     </div>
@@ -927,7 +919,7 @@ export default function ProfilePage() {
                       </div>
                       <button
                         onClick={() => showNotification("Session revoked")}
-                        className="text-text-muted hover:text-rose-400"
+                        className="text-text-muted hover:text-danger"
                       >
                         Revoke
                       </button>
@@ -944,7 +936,7 @@ export default function ProfilePage() {
           <div className="space-y-6">
             <div className="bg-surface-elevated border border-border rounded-2xl p-6 sm:p-8">
               <h2 className="text-xl font-semibold text-text-primary mb-6 flex items-center gap-2">
-                <Sliders className="w-5 h-5 text-purple-400" />
+                <Sliders className="w-5 h-5 text-accent-bright" />
                 <span>Application & Engine Settings</span>
               </h2>
 
@@ -963,11 +955,11 @@ export default function ProfilePage() {
                       }}
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                         themeMode === "dark"
-                          ? "bg-indigo-600/20 border-indigo-500 text-indigo-200 ring-2 ring-indigo-500/30"
+                          ? "border-transparent bg-accent text-accent-foreground ring-2 ring-accent/30"
                           : "bg-surface border-border text-text-muted hover:text-text-primary hover:bg-surface-elevated"
                       }`}
                     >
-                      <Moon className="w-4 h-4 text-indigo-400" />
+                      <Moon className="w-4 h-4 text-accent-bright" />
                       <span>Dark Mode</span>
                     </button>
 
@@ -979,11 +971,11 @@ export default function ProfilePage() {
                       }}
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                         themeMode === "light"
-                          ? "bg-amber-500/20 border-amber-500 text-amber-200 ring-2 ring-amber-500/30"
+                          ? "border-transparent bg-accent text-accent-foreground ring-2 ring-accent/30"
                           : "bg-surface border-border text-text-muted hover:text-text-primary hover:bg-surface-elevated"
                       }`}
                     >
-                      <Sun className="w-4 h-4 text-amber-400" />
+                      <Sun className="w-4 h-4 text-warning" />
                       <span>Light Mode</span>
                     </button>
 
@@ -995,11 +987,11 @@ export default function ProfilePage() {
                       }}
                       className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                         themeMode === "system"
-                          ? "bg-purple-600/20 border-purple-500 text-purple-200 ring-2 ring-purple-500/30"
+                          ? "border-transparent bg-accent text-accent-foreground ring-2 ring-accent/30"
                           : "bg-surface border-border text-text-muted hover:text-text-primary hover:bg-surface-elevated"
                       }`}
                     >
-                      <Laptop className="w-4 h-4 text-purple-400" />
+                      <Laptop className="w-4 h-4 text-accent-bright" />
                       <span>System Sync</span>
                     </button>
                   </div>
@@ -1012,7 +1004,7 @@ export default function ProfilePage() {
                   <select
                     value={preferredModel}
                     onChange={(e) => setPreferredModel(e.target.value)}
-                    className="w-full sm:w-1/2 bg-surface border border-border rounded-xl px-4 py-2.5 text-text-primary text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all cursor-pointer"
+                    className="cc-field text-sm sm:w-1/2 rounded-xl px-4 py-2.5 cursor-pointer"
                   >
                     <option value="Gemini 2.5 Flash (Recommended)">
                       Gemini 2.5 Flash (Fast & High Intelligence)
@@ -1022,7 +1014,7 @@ export default function ProfilePage() {
                   </select>
                 </div>
 
-                <div className="pt-4 border-t border-border divide-y divide-slate-800">
+                <div className="pt-4 border-t border-border divide-y divide-border">
                   <div className="py-4 flex items-center justify-between">
                     <div>
                       <div className="text-sm font-medium text-text-primary">Auto-Save Copy Generation History</div>
@@ -1034,7 +1026,7 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => setAutoSaveHistory(!autoSaveHistory)}
                       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        autoSaveHistory ? "bg-purple-600" : "bg-surface"
+                        autoSaveHistory ? "bg-accent" : "bg-surface"
                       }`}
                     >
                       <span
@@ -1056,7 +1048,7 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => setEmailUpdates(!emailUpdates)}
                       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        emailUpdates ? "bg-purple-600" : "bg-surface"
+                        emailUpdates ? "bg-accent" : "bg-surface"
                       }`}
                     >
                       <span
@@ -1078,7 +1070,7 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => setUsageAlerts(!usageAlerts)}
                       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        usageAlerts ? "bg-purple-600" : "bg-surface"
+                        usageAlerts ? "bg-accent" : "bg-surface"
                       }`}
                     >
                       <span
@@ -1095,7 +1087,7 @@ export default function ProfilePage() {
                 <button
                   onClick={saveProfile}
                   disabled={loading}
-                  className="bg-purple-600 hover:bg-purple-500 text-text-primary font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                  className="bg-accent hover:bg-accent-hover text-accent-foreground font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-soft flex items-center gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Preferences</span>
@@ -1110,12 +1102,12 @@ export default function ProfilePage() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Plan Card */}
-              <div className="bg-gradient-to-br from-slate-900 to-indigo-950 border border-indigo-500/30 rounded-2xl p-6 relative overflow-hidden md:col-span-2">
+              <div className="bg-surface-elevated border border-border rounded-2xl p-6 relative overflow-hidden md:col-span-2">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400 bg-indigo-950/80 px-3 py-1 rounded-full border border-indigo-800/60">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-accent-bright bg-accent/10 px-3 py-1 rounded-full border border-accent/25">
                     Current Active Subscription
                   </span>
-                  <Zap className="w-6 h-6 text-amber-400" />
+                  <Zap className="w-6 h-6 text-warning" />
                 </div>
 
                 <h3 className="text-2xl font-bold text-text-primary mb-2">
@@ -1130,7 +1122,7 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => router.push("/dashboard")}
-                    className="bg-gradient-to-r from-[#1e1a3a] to-[#2a2550] hover:from-[#2a2550] hover:to-[#352e60] text-text-primary font-semibold px-5 py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-900/20 cursor-pointer"
+                    className="bg-accent text-accent-foreground hover:bg-accent-hover font-semibold px-5 py-2.5 rounded-xl text-sm transition-all shadow-accent-soft cursor-pointer"
                   >
                     {plan === "pro" ? "Manage Subscription" : "Upgrade to Pro"}
                   </button>
@@ -1152,7 +1144,7 @@ export default function ProfilePage() {
                 <div className="mt-6">
                   <div className="w-full bg-surface rounded-full h-3 overflow-hidden">
                     <div
-                      className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full transition-all duration-500"
+                      className="bg-gradient-to-r from-accent-deep to-accent-bright h-full rounded-full transition-all duration-500"
                       style={{ width: `${Math.min(100, (monthlyUsed / totalCredits) * 100)}%` }}
                     />
                   </div>
@@ -1181,7 +1173,7 @@ export default function ProfilePage() {
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 pb-6 border-b border-border">
                 <div>
                   <h2 className="text-xl font-semibold text-text-primary flex items-center gap-2">
-                    <LifeBuoy className="w-5 h-5 text-blue-400" />
+                    <LifeBuoy className="w-5 h-5 text-accent-bright" />
                     <span>CopyCoach Help & Support Hub</span>
                   </h2>
                   <p className="text-text-muted text-sm mt-1">
@@ -1189,8 +1181,8 @@ export default function ProfilePage() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 bg-emerald-950/60 border border-emerald-800/60 text-emerald-300 px-3.5 py-1.5 rounded-full text-xs font-medium">
-                  <Activity className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                <div className="flex items-center gap-2 bg-success/10 border border-success/30 text-success px-3.5 py-1.5 rounded-full text-xs font-medium">
+                  <Activity className="w-3.5 h-3.5 text-success animate-pulse" />
                   <span>All AI Systems Operational</span>
                 </div>
               </div>
@@ -1200,10 +1192,10 @@ export default function ProfilePage() {
                 <div className="bg-surface p-4 rounded-xl border border-border">
                   <div className="flex items-center justify-between text-xs text-text-muted mb-1">
                     <span>Copy Engine API</span>
-                    <span className="text-emerald-400 font-medium">99.98%</span>
+                    <span className="text-success font-medium">99.98%</span>
                   </div>
                   <div className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle2 className="w-4 h-4 text-success" />
                     <span>Gemini 2.5 Flash</span>
                   </div>
                 </div>
@@ -1211,10 +1203,10 @@ export default function ProfilePage() {
                 <div className="bg-surface p-4 rounded-xl border border-border">
                   <div className="flex items-center justify-between text-xs text-text-muted mb-1">
                     <span>Database & Auth</span>
-                    <span className="text-emerald-400 font-medium">100% Uptime</span>
+                    <span className="text-success font-medium">100% Uptime</span>
                   </div>
                   <div className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle2 className="w-4 h-4 text-success" />
                     <span>Supabase Cloud</span>
                   </div>
                 </div>
@@ -1222,10 +1214,10 @@ export default function ProfilePage() {
                 <div className="bg-surface p-4 rounded-xl border border-border">
                   <div className="flex items-center justify-between text-xs text-text-muted mb-1">
                     <span>Platform Build</span>
-                    <span className="text-indigo-400 font-medium">v2.5.0-pro</span>
+                    <span className="text-accent-bright font-medium">v2.5.0-pro</span>
                   </div>
                   <div className="text-sm font-semibold text-text-primary flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle2 className="w-4 h-4 text-success" />
                     <span>Production Build</span>
                   </div>
                 </div>
@@ -1236,7 +1228,7 @@ export default function ProfilePage() {
                 {/* Submit Ticket */}
                 <div className="lg:col-span-2 bg-surface/80 p-6 rounded-2xl border border-border/80">
                   <h3 className="text-lg font-semibold text-text-primary mb-2 flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-blue-400" />
+                    <MessageSquare className="w-4 h-4 text-accent-bright" />
                     <span>Submit Support Ticket</span>
                   </h3>
                   <p className="text-xs text-text-muted mb-6">
@@ -1252,7 +1244,7 @@ export default function ProfilePage() {
                         <select
                           value={supportCategory}
                           onChange={(e) => setSupportCategory(e.target.value)}
-                          className="w-full bg-surface-elevated border border-border rounded-xl px-3.5 py-2.5 text-text-primary text-sm focus:outline-none focus:border-blue-500 cursor-pointer"
+                          className="cc-field text-sm rounded-xl px-3.5 py-2.5 cursor-pointer"
                         >
                           <option value="Technical & AI Generation">Technical & AI Generation</option>
                           <option value="Account & Subscription">Account & Subscription</option>
@@ -1270,7 +1262,7 @@ export default function ProfilePage() {
                           value={supportSubject}
                           onChange={(e) => setSupportSubject(e.target.value)}
                           placeholder="e.g. Issue with tone customizer"
-                          className="w-full bg-surface-elevated border border-border rounded-xl px-3.5 py-2.5 text-text-primary text-sm focus:outline-none focus:border-blue-500"
+                          className="cc-field text-sm rounded-xl px-3.5 py-2.5"
                         />
                       </div>
                     </div>
@@ -1284,14 +1276,14 @@ export default function ProfilePage() {
                         value={supportMessage}
                         onChange={(e) => setSupportMessage(e.target.value)}
                         placeholder="Describe your request or bug in detail..."
-                        className="w-full bg-surface-elevated border border-border rounded-xl px-3.5 py-2.5 text-text-primary text-sm focus:outline-none focus:border-blue-500 resize-none"
+                        className="cc-field text-sm rounded-xl px-3.5 py-2.5 resize-none"
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={supportLoading}
-                      className="bg-blue-600 hover:bg-blue-500 text-text-primary font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                      className="bg-accent hover:bg-accent-hover text-accent-foreground font-medium px-6 py-2.5 rounded-xl text-sm transition-all shadow-soft flex items-center gap-2 cursor-pointer disabled:opacity-50"
                     >
                       <Send className="w-4 h-4" />
                       <span>{supportLoading ? "Submitting..." : "Send Ticket"}</span>
@@ -1303,7 +1295,7 @@ export default function ProfilePage() {
                 <div className="space-y-4">
                   <div className="bg-surface/80 p-5 rounded-2xl border border-border/80">
                     <h4 className="text-sm font-semibold text-text-primary mb-2 flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-indigo-400" />
+                      <Mail className="w-4 h-4 text-accent-bright" />
                       <span>Direct Email Support</span>
                     </h4>
                     <p className="text-xs text-text-muted mb-3">
@@ -1311,7 +1303,7 @@ export default function ProfilePage() {
                     </p>
                     <a
                       href="mailto:support@copycoach.ai"
-                      className="inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 font-medium"
+                      className="inline-flex items-center gap-1.5 text-xs text-accent-bright hover:text-accent font-medium"
                     >
                       <span>support@copycoach.ai</span>
                       <ExternalLink className="w-3 h-3" />
@@ -1320,7 +1312,7 @@ export default function ProfilePage() {
 
                   <div className="bg-surface/80 p-5 rounded-2xl border border-border/80">
                     <h4 className="text-sm font-semibold text-text-primary mb-2 flex items-center gap-2">
-                      <BookOpen className="w-4 h-4 text-amber-400" />
+                      <BookOpen className="w-4 h-4 text-warning" />
                       <span>Copywriting Playbooks</span>
                     </h4>
                     <p className="text-xs text-text-muted mb-3">
@@ -1328,7 +1320,7 @@ export default function ProfilePage() {
                     </p>
                     <button
                       onClick={() => showNotification("Opening Copywriting Guides...")}
-                      className="text-xs text-amber-400 hover:text-amber-300 font-medium flex items-center gap-1.5 cursor-pointer"
+                      className="text-xs text-warning hover:text-warning font-medium flex items-center gap-1.5 cursor-pointer"
                     >
                       <span>Browse Framework Guides</span>
                       <ArrowRight className="w-3 h-3" />
@@ -1341,9 +1333,9 @@ export default function ProfilePage() {
         )}
 
         {/* DANGER ZONE (Always accessible at the bottom) */}
-        <div className="mt-12 bg-rose-950/20 border border-rose-900/40 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-12 bg-danger/10 border border-danger/30 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <h3 className="text-base font-semibold text-rose-300 flex items-center gap-2">
+            <h3 className="text-base font-semibold text-danger flex items-center gap-2">
               <LogOut className="w-4 h-4" />
               <span>Session & Account Controls</span>
             </h3>
@@ -1355,7 +1347,7 @@ export default function ProfilePage() {
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={handleLogout}
-              className="bg-rose-600 hover:bg-rose-500 text-text-primary font-medium px-5 py-2.5 rounded-xl text-sm transition-all shadow-md flex items-center gap-2 cursor-pointer"
+              className="bg-danger hover:bg-danger/85 text-white font-medium px-5 py-2.5 rounded-xl text-sm transition-all shadow-soft flex items-center gap-2 cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               <span>Sign Out</span>

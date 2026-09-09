@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useTheme } from "@/components/providers/ThemeProvider";
 
 interface LogoProps {
   className?: string;
@@ -16,14 +15,8 @@ export default function Logo({
   className = "",
   iconOnly = false,
   size = "md",
-  theme = "auto",
-  showTagline = true,
   variant = "standard",
 }: LogoProps) {
-  const { isDarkMode } = useTheme();
-
-  const isDarkTarget = theme === "dark" || (theme === "auto" && isDarkMode);
-
   // Bigger size metrics for app icon — more noticeable
   const iconSizes = {
     sm: "w-10 h-10",

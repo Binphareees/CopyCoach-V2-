@@ -16,17 +16,17 @@ export default function GenerateButton({ loading, disabled, onClick }: GenerateB
       onClick={onClick}
       disabled={disabled || loading}
       aria-busy={loading}
-      className="w-full sm:w-auto sm:min-w-[320px]"
+      className="w-full"
     >
       {loading ? (
         <>
-          <RefreshCw className="h-5 w-5 animate-spin" />
-          Generating your marketing copy...
+          <RefreshCw className="h-4 w-4 animate-spin" />
+          Improving your copy…
         </>
       ) : (
         <>
-          <Sparkles className="h-5 w-5" />
-          Generate AI Marketing Copy
+          <Sparkles className="h-4 w-4" />
+          Improve your copy
         </>
       )}
     </GradientButton>

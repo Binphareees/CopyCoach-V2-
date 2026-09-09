@@ -19,27 +19,27 @@ const buttonStyles = (
   size: ButtonProps["size"] = "md"
 ) =>
   clsx(
-    "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium",
-    "transition-all duration-200 ease-out",
+    "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium",
+    "transition-colors duration-200 ease-out",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background",
     "disabled:pointer-events-none disabled:opacity-45",
     {
-      "bg-accent text-accent-foreground shadow-accent-soft hover:bg-accent-hover hover:shadow-accent-glow":
+      "bg-accent text-accent-foreground hover:bg-accent-hover":
         variant === "primary",
 
-      "border border-glass-border bg-glass-bg-elevated text-text-primary backdrop-blur-glass hover:bg-glass-bg-hover":
+      "border border-border bg-surface-elevated text-text-primary hover:bg-surface-overlay":
         variant === "secondary",
 
-      "border border-glass-border bg-transparent text-text-primary hover:bg-glass-bg-elevated":
+      "border border-border bg-transparent text-text-primary hover:bg-surface":
         variant === "outline",
 
-      "text-text-secondary hover:bg-glass-bg-elevated hover:text-text-primary":
+      "text-text-secondary hover:bg-surface hover:text-text-primary":
         variant === "ghost",
 
-      "bg-danger text-white hover:bg-danger/90":
+      "bg-danger text-white hover:bg-danger/85":
         variant === "destructive",
 
-      "bg-success text-white hover:bg-success/90":
+      "bg-success text-white hover:bg-success/85":
         variant === "success",
 
       "px-3.5 py-1.5 text-sm":

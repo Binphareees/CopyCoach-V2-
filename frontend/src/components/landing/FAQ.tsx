@@ -1,4 +1,3 @@
-import Card from "../ui/Card";
 import SectionTitle from "../ui/SectionTitle";
 
 const questions = [
@@ -43,20 +42,20 @@ export default function FAQ() {
         />
 
 
-        <div className="mt-16 space-y-5">
+        <div className="mt-16 max-w-3xl mx-auto divide-y divide-border rounded-2xl border border-border bg-surface">
 
           {questions.map((item) => (
-            <Card key={item.question}>
+            <div key={item.question} className="px-6 py-6 sm:px-8">
 
-              <h3 className="text-xl font-bold text-text-primary">
+              <h3 className="text-lg font-semibold tracking-tight text-text-primary">
                 {item.question}
               </h3>
 
-              <p className="mt-3 leading-7 text-text-secondary">
+              <p className="mt-2 leading-7 text-text-secondary">
                 {item.answer}
               </p>
 
-            </Card>
+            </div>
           ))}
 
         </div>

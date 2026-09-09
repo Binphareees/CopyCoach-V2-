@@ -44,20 +44,20 @@ export default function DownloadAppModal({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl border border-cyan-500/30 bg-gradient-to-r from-cyan-500/20 to-blue-600/20 text-cyan-300 hover:from-cyan-500/30 hover:to-blue-600/30 transition-all cursor-pointer shadow-sm ${triggerClassName}`}
+        className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl border border-accent/30 bg-accent/10 text-accent hover:bg-accent/15 transition-all cursor-pointer shadow-sm ${triggerClassName}`}
       >
-        <Smartphone className="w-3.5 h-3.5 text-cyan-400" />
+        <Smartphone className="w-3.5 h-3.5 text-accent" />
         <span>{triggerText}</span>
       </button>
 
       {/* MODAL OVERLAY */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-modal-backdrop backdrop-blur-md animate-fadeIn cursor-pointer"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-modal-backdrop backdrop-blur-md animate-fade cursor-pointer"
           onClick={() => setIsOpen(false)}
         >
           <div
-            className="relative w-full max-w-xl bg-modal-surface border border-border rounded-3xl p-6 sm:p-8 shadow-2xl text-text-primary flex flex-col max-h-[90vh] overflow-y-auto cursor-default animate-slideInRight"
+            className="relative w-full max-w-xl bg-modal-surface border border-border rounded-3xl p-6 sm:p-8 shadow-2xl text-text-primary flex flex-col max-h-[90vh] overflow-y-auto cursor-default animate-pop"
             onClick={(e) => e.stopPropagation()}
           >
             {/* CLOSE BUTTON */}
@@ -72,11 +72,11 @@ export default function DownloadAppModal({
 
             {/* HEADER */}
             <div className="flex items-center gap-3.5 mb-6 pr-8">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 text-cyan-400 shrink-0">
+              <div className="p-3 rounded-2xl bg-accent/15 border border-accent/25 text-accent shrink-0">
                 <Smartphone className="w-7 h-7" />
               </div>
               <div>
-                <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider bg-cyan-950/60 border border-cyan-800/60 px-2.5 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold text-accent uppercase tracking-wider bg-accent/10 border border-accent/30 px-2.5 py-0.5 rounded-full">
                   Mobile Application
                 </span>
                 <h3 className="text-xl font-bold text-text-primary mt-1">Download CopyCoach AI Mobile</h3>
@@ -97,9 +97,9 @@ export default function DownloadAppModal({
                   e.preventDefault();
                   handleDownloadApk();
                 }}
-                className="group relative flex items-center gap-3.5 p-4 rounded-2xl bg-surface border-border hover:border-cyan-500/50 hover:bg-surface-muted transition-all shadow-md cursor-pointer"
+                className="group relative flex items-center gap-3.5 p-4 rounded-2xl bg-surface border-border hover:border-accent/40 hover:bg-surface-muted transition-all shadow-md cursor-pointer"
               >
-                <div className="p-2.5 rounded-xl bg-surface-elevated border border-border text-cyan-400 group-hover:scale-105 transition-transform">
+                <div className="p-2.5 rounded-xl bg-surface-elevated border border-border text-accent group-hover:scale-105 transition-transform">
                   <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
                     <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L18.81,13.12C19.46,12.47 19.46,11.53 18.81,10.88L16.81,8.88L14.75,10.94L16.81,15.12M4.6,2.7L12.97,11.07L15.1,8.94L5.65,2.15C5.32,1.91 4.9,2.12 4.6,2.7M4.6,21.3C4.9,21.88 5.32,22.09 5.65,21.85L15.1,15.06L12.97,12.93L4.6,21.3Z" />
                   </svg>
@@ -108,10 +108,10 @@ export default function DownloadAppModal({
                   <span className="text-[10px] uppercase font-semibold text-text-muted block tracking-wider">
                     GET IT ON
                   </span>
-                  <span className="text-sm font-bold text-text-primary group-hover:text-cyan-300 transition-colors">
+                  <span className="text-sm font-bold text-text-primary group-hover:text-accent transition-colors">
                     Google Play Store
                   </span>
-                  <span className="text-[10px] text-emerald-400 block mt-0.5 font-medium">
+                  <span className="text-[10px] text-accent block mt-0.5 font-medium">
                     Android APK Package Included
                   </span>
                 </div>
@@ -122,7 +122,7 @@ export default function DownloadAppModal({
                 href="https://apps.apple.com/app/copycoach-ai/id640000000"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative flex items-center gap-3.5 p-4 rounded-2xl bg-surface border-border hover:border-cyan-500/50 hover:bg-surface-muted transition-all shadow-md cursor-pointer"
+                className="group relative flex items-center gap-3.5 p-4 rounded-2xl bg-surface border-border hover:border-accent/40 hover:bg-surface-muted transition-all shadow-md cursor-pointer"
               >
                 <div className="p-2.5 rounded-xl bg-surface-elevated border border-border text-text-primary group-hover:scale-105 transition-transform">
                   <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
@@ -133,10 +133,10 @@ export default function DownloadAppModal({
                   <span className="text-[10px] uppercase font-semibold text-text-muted block tracking-wider">
                     Download on the
                   </span>
-                  <span className="text-sm font-bold text-text-primary group-hover:text-cyan-300 transition-colors">
+                  <span className="text-sm font-bold text-text-primary group-hover:text-accent transition-colors">
                     Apple App Store
                   </span>
-                  <span className="text-[10px] text-cyan-400 block mt-0.5 font-medium">
+                  <span className="text-[10px] text-accent block mt-0.5 font-medium">
                     iOS TestFlight & App Store
                   </span>
                 </div>
@@ -146,7 +146,7 @@ export default function DownloadAppModal({
             {/* DIRECT APK DOWNLOAD ACTION */}
             <div className="bg-surface p-4 rounded-2xl border border-border mb-6 flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
+                <div className="p-2 rounded-xl bg-accent/10 text-accent-bright">
                   <Download className="w-5 h-5" />
                 </div>
                 <div>
@@ -180,11 +180,11 @@ export default function DownloadAppModal({
             <div className="border-t border-border pt-5 space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-text-primary flex items-center gap-2">
-                  <QrCode className="w-4 h-4 text-cyan-400" />
+                  <QrCode className="w-4 h-4 text-accent" />
                   <span>Scan QR Code to Install on Phone Immediately</span>
                 </h4>
                 <span className="text-[10px] text-text-muted flex items-center gap-1">
-                  <Zap className="w-3 h-3 text-amber-400" />
+                  <Zap className="w-3 h-3 text-warning" />
                   <span>Zero Storage Required</span>
                 </span>
               </div>
@@ -217,7 +217,7 @@ export default function DownloadAppModal({
                   <p className="font-semibold text-text-primary">How to Install as Mobile App:</p>
                   <p className="text-[11px] text-text-muted">1. Open Camera on iPhone or Android</p>
                   <p className="text-[11px] text-text-muted">2. Scan QR Code & open link in Safari / Chrome</p>
-                  <p className="text-[11px] text-cyan-400 font-medium">3. Tap &quot;Add to Home Screen&quot; to install full app</p>
+                  <p className="text-[11px] text-accent font-medium">3. Tap &quot;Add to Home Screen&quot; to install full app</p>
                 </div>
               </div>
             </div>
@@ -230,7 +230,7 @@ export default function DownloadAppModal({
               </span>
               <a
                 href="/download"
-                className="text-cyan-400 hover:underline flex items-center gap-1 font-semibold"
+                className="text-accent hover:underline flex items-center gap-1 font-semibold"
               >
                 <span>Full Download Landing Page</span>
                 <ExternalLink className="w-3 h-3" />

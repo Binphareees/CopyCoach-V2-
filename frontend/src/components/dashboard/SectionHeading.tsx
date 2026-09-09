@@ -15,15 +15,15 @@ export default function SectionHeading({
 }: SectionHeadingProps) {
   return (
     <div className={`flex items-start gap-3 ${className}`}>
-      <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent/15 text-sm font-bold text-accent-bright">
+      <span className="mt-0.5 text-[11px] font-bold tracking-wide text-accent-bright">
         {number}
       </span>
-      <div>
-        <h2 className="text-[21px] font-bold leading-tight tracking-tight text-brand-100 sm:text-[23px]">
+      <div className="min-w-0">
+        <h2 className="text-lg font-bold leading-snug tracking-tight text-text-primary">
           {title}
         </h2>
         {subtitle && (
-          <p className="mt-1 text-[13px] leading-relaxed text-brand-200">
+          <p className="mt-0.5 text-[13px] leading-relaxed text-text-secondary">
             {subtitle}
           </p>
         )}

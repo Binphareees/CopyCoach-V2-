@@ -266,7 +266,7 @@ export default function SignupPage() {
   return (
     <>
       {!checkingConfig && !configured && (
-        <div className="fixed top-4 left-4 right-4 z-50 mx-auto max-w-md rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200 backdrop-blur">
+        <div className="fixed top-4 left-4 right-4 z-50 mx-auto max-w-md rounded-lg border border-warning/30 bg-warning/10 p-3 text-xs text-warning backdrop-blur">
           <strong>Notice:</strong> Supabase environment variables are currently missing or set to placeholder (`{activeUrl || "placeholder.supabase.co"}`).
         </div>
       )}

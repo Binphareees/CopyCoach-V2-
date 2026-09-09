@@ -9,18 +9,15 @@ import {
   MessageSquare,
   CheckCircle2,
   Shield,
-  Zap,
   Sparkles,
   BookOpen,
   Send,
   ChevronDown,
   ChevronUp,
-  Activity,
   QrCode,
   FileText,
   Target,
-  Award,
-  Users
+  Users,
 } from "lucide-react";
 
 export default function AppInfoAndSupport() {
@@ -102,11 +99,7 @@ export default function AppInfoAndSupport() {
   ];
 
   return (
-    <section className="relative py-20 border-t border-border text-text-primary overflow-hidden">
-      {/* Background Glow Highlights */}
-      <div className="absolute left-1/4 top-1/4 -z-10 h-96 w-96 rounded-full bg-cyan-600/10 blur-[120px]" />
-      <div className="absolute right-1/4 bottom-1/4 -z-10 h-96 w-96 rounded-full bg-blue-600/10 blur-[120px]" />
-
+    <section className="relative py-20 border-t border-border text-text-primary">
       <div className="mx-auto max-w-7xl px-6 space-y-24">
 
         {/* ============================================================ */}
@@ -114,12 +107,12 @@ export default function AppInfoAndSupport() {
         {/* ============================================================ */}
         <div id="about-app" className="scroll-mt-28">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-bold uppercase tracking-wider mb-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-elevated border border-border text-text-secondary text-xs font-bold uppercase tracking-wider mb-4">
               <BookOpen className="w-4 h-4 text-accent" />
               <span>About CopyCoach AI</span>
             </div>
-            <h2 className="text-3xl sm:text-5xl font-black text-text-primary tracking-tight leading-tight">
-              Master High-Converting Copywriting Through <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400">Intelligent Practice</span>
+            <h2 className="text-3xl sm:text-5xl font-bold text-text-primary tracking-tight leading-tight">
+              Master high-converting copywriting through <span className="text-accent">intelligent practice</span>
             </h2>
             <p className="mt-4 text-text-secondary text-base sm:text-lg leading-relaxed">
               CopyCoach AI is an interactive copywriting mentor designed for marketers, entrepreneurs, copywriters, agency owners, and content creators who want to write copy that converts.
@@ -129,7 +122,7 @@ export default function AppInfoAndSupport() {
           {/* DETAILED APP DESCRIPTION GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Narrative Box */}
-            <div className="lg:col-span-7 bg-surface-elevated border border-border rounded-3xl p-8 sm:p-10 shadow-2xl relative space-y-6">
+            <div className="lg:col-span-7 bg-surface border border-border rounded-3xl p-8 sm:p-10 space-y-6">
               <div className="flex items-center gap-3 text-accent font-bold text-sm">
                 <Sparkles className="w-5 h-5 text-accent" />
                 <span>The Personal Copywriting Coach Engine</span>
@@ -140,8 +133,8 @@ export default function AppInfoAndSupport() {
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="p-4 rounded-2xl bg-surface border border-border">
-                  <div className="flex items-center gap-2 text-accent font-bold text-xs uppercase mb-1">
+                <div className="p-4 rounded-2xl bg-surface-elevated border border-border">
+                  <div className="flex items-center gap-2 text-text-primary font-bold text-xs uppercase mb-1">
                     <Target className="w-4 h-4 text-accent" />
                     <span>0–100 Quality Score</span>
                   </div>
@@ -150,9 +143,9 @@ export default function AppInfoAndSupport() {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-surface/80 border border-border">
-                  <div className="flex items-center gap-2 text-blue-300 font-bold text-xs uppercase mb-1">
-                    <FileText className="w-4 h-4 text-blue-400" />
+                <div className="p-4 rounded-2xl bg-surface-elevated border border-border">
+                  <div className="flex items-center gap-2 text-text-primary font-bold text-xs uppercase mb-1">
+                    <FileText className="w-4 h-4 text-accent" />
                     <span>Line-by-Line Red Pen</span>
                   </div>
                   <p className="text-xs text-text-muted leading-normal">
@@ -160,9 +153,9 @@ export default function AppInfoAndSupport() {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-surface/80 border border-border">
-                  <div className="flex items-center gap-2 text-indigo-300 font-bold text-xs uppercase mb-1">
-                    <Award className="w-4 h-4 text-indigo-400" />
+                <div className="p-4 rounded-2xl bg-surface-elevated border border-border">
+                  <div className="flex items-center gap-2 text-text-primary font-bold text-xs uppercase mb-1">
+                    <BookOpen className="w-4 h-4 text-accent" />
                     <span>5 Core Frameworks</span>
                   </div>
                   <p className="text-xs text-text-muted leading-normal">
@@ -170,9 +163,9 @@ export default function AppInfoAndSupport() {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-surface/80 border border-border">
-                  <div className="flex items-center gap-2 text-emerald-300 font-bold text-xs uppercase mb-1">
-                    <Users className="w-4 h-4 text-emerald-400" />
+                <div className="p-4 rounded-2xl bg-surface-elevated border border-border">
+                  <div className="flex items-center gap-2 text-text-primary font-bold text-xs uppercase mb-1">
+                    <Users className="w-4 h-4 text-accent" />
                     <span>Client Brief Simulator</span>
                   </div>
                   <p className="text-xs text-text-muted leading-normal">
@@ -182,18 +175,18 @@ export default function AppInfoAndSupport() {
               </div>
 
               <div className="border-t border-border pt-4 flex flex-wrap items-center justify-between text-xs text-text-muted gap-2">
-                <span className="flex items-center gap-1 text-emerald-400 font-medium">
+                <span className="flex items-center gap-1 text-success font-medium">
                   <CheckCircle2 className="w-4 h-4" /> Built for real-world conversion goals
                 </span>
-                <span>Trusted by over 10,000+ marketers</span>
+                <span>Practice across SaaS, e-commerce, finance, and fitness</span>
               </div>
             </div>
 
             {/* Right Framework Cards */}
             <div className="lg:col-span-5 space-y-4">
-              <div className="p-6 rounded-2xl bg-surface-elevated border border-border hover:border-cyan-500/40 transition-all">
+              <div className="p-6 rounded-2xl bg-surface border border-border transition-colors hover:border-border-strong">
                 <h4 className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 rounded bg-cyan-950 border border-cyan-800 text-cyan-300 text-xs">AIDA</span>
+                  <span className="px-2 py-0.5 rounded bg-surface-elevated border border-border text-text-secondary text-xs">AIDA</span>
                   <span>Attention, Interest, Desire, Action</span>
                 </h4>
                 <p className="text-xs text-text-muted leading-relaxed">
@@ -201,9 +194,9 @@ export default function AppInfoAndSupport() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-surface-elevated border border-border hover:border-blue-500/40 transition-all">
+              <div className="p-6 rounded-2xl bg-surface border border-border transition-colors hover:border-border-strong">
                 <h4 className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 rounded bg-blue-950 border border-blue-800 text-blue-300 text-xs">PAS</span>
+                  <span className="px-2 py-0.5 rounded bg-surface-elevated border border-border text-text-secondary text-xs">PAS</span>
                   <span>Problem, Agitate, Solution</span>
                 </h4>
                 <p className="text-xs text-text-muted leading-relaxed">
@@ -211,9 +204,9 @@ export default function AppInfoAndSupport() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-surface-elevated border border-border hover:border-indigo-500/40 transition-all">
+              <div className="p-6 rounded-2xl bg-surface border border-border transition-colors hover:border-border-strong">
                 <h4 className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 rounded bg-indigo-950 border border-indigo-800 text-indigo-300 text-xs">BAB & FAB</span>
+                  <span className="px-2 py-0.5 rounded bg-surface-elevated border border-border text-text-secondary text-xs">BAB & FAB</span>
                   <span>Before-After-Bridge & Features</span>
                 </h4>
                 <p className="text-xs text-text-muted leading-relaxed">
@@ -227,36 +220,35 @@ export default function AppInfoAndSupport() {
         {/* ============================================================ */}
         {/* SECTION 2: MOBILE APP DOWNLOAD (REAL GOOGLE PLAY & APPLE LOGOS) */}
         {/* ============================================================ */}
-        <div id="mobile-app" className="scroll-mt-28 glass-panel-elevated p-8 sm:p-12 relative">
+        <div id="mobile-app" className="scroll-mt-28 rounded-3xl border border-border bg-surface p-8 sm:p-12">
           <div className="max-w-3xl mx-auto text-center mb-10">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold uppercase tracking-wider mb-4">
-              <Smartphone className="w-4 h-4 text-cyan-400" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-elevated border border-border text-text-secondary text-xs font-bold uppercase tracking-wider mb-4">
+              <Smartphone className="w-4 h-4 text-accent" />
               <span>Mobile Application</span>
             </div>
 
-            <h3 className="text-2xl sm:text-4xl font-extrabold text-text-primary tracking-tight">
-              Get CopyCoach AI On Google Play & Apple App Store
+            <h3 className="text-2xl sm:text-4xl font-bold text-text-primary tracking-tight">
+              Take your practice on the go
             </h3>
 
-            <p className="mt-3 text-text-secondary text-xs sm:text-sm leading-relaxed max-w-xl mx-auto">
-              Take your copywriting drills on the go. Download our native mobile application or install the Android APK directly to practice anywhere, anytime.
+            <p className="mt-3 text-text-secondary text-sm leading-relaxed max-w-xl mx-auto">
+              Download our mobile application to open CopyCoach AI on your phone, or install the Android APK directly.
             </p>
           </div>
 
-          {/* REAL STORE BADGES GRID */}
+          {/* STORE BADGES GRID */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto mb-10">
 
-            {/* REAL GOOGLE PLAY STORE LOGO BADGE */}
+            {/* GOOGLE PLAY STORE BADGE */}
             <a
               href="#download-apk"
               onClick={(e) => {
                 e.preventDefault();
                 handleDownloadApk();
               }}
-              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface border-border border-border hover:border-cyan-500/60 hover:bg-surface-elevated transition-all shadow-xl cursor-pointer text-left"
+              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-border-strong transition-colors cursor-pointer text-left"
             >
-              {/* AUTHENTIC MULTICOLOR GOOGLE PLAY TRIANGLE SVG */}
-              <div className="p-3 rounded-xl bg-surface-elevated border-border border-border shrink-0 group-hover:scale-105 transition-transform">
+              <div className="p-3 rounded-xl bg-surface border border-border shrink-0">
                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
                   <path d="M3.609 1.814L13.793 12 3.61 22.186C3.23 21.83 3 21.282 3 20.638V3.362c0-.644.23-1.192.609-1.548z" fill="#00D2FF"/>
                   <path d="M17.207 8.586L13.793 12l3.414 3.414 3.896-2.227c1.171-.67 1.171-1.761 0-2.431l-3.896-2.17z" fill="#FFC700"/>
@@ -269,25 +261,24 @@ export default function AppInfoAndSupport() {
                 <span className="text-[10px] uppercase font-extrabold text-text-muted block tracking-widest">
                   GET IT ON
                 </span>
-                <span className="text-base font-black text-text-primary group-hover:text-cyan-300 transition-colors">
+                <span className="text-base font-black text-text-primary">
                   Google Play
                 </span>
-                <span className="text-[11px] text-emerald-400 block mt-0.5 font-medium flex items-center gap-1">
+                <span className="text-[11px] text-success block mt-0.5 font-medium flex items-center gap-1">
                   <Download className="w-3 h-3" /> Android APK Package Included
                 </span>
               </div>
             </a>
 
-            {/* REAL APPLE APP STORE LOGO BADGE */}
+            {/* APPLE APP STORE BADGE */}
             <a
               href="https://apps.apple.com/app/copycoach-ai/id640000000"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface border-border border-border hover:border-cyan-500/60 hover:bg-surface-elevated transition-all shadow-xl cursor-pointer text-left"
+              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-border-strong transition-colors cursor-pointer text-left"
             >
-              {/* AUTHENTIC APPLE LOGO SVG */}
-              <div className="p-3 rounded-xl bg-surface-elevated border-border border-border text-text-primary shrink-0 group-hover:scale-105 transition-transform">
-                <svg className="w-8 h-8 fill-current text-text-primary" viewBox="0 0 24 24">
+              <div className="p-3 rounded-xl bg-surface border border-border text-text-secondary shrink-0">
+                <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.28.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                 </svg>
               </div>
@@ -296,10 +287,10 @@ export default function AppInfoAndSupport() {
                 <span className="text-[10px] uppercase font-extrabold text-text-muted block tracking-widest">
                   Download on the
                 </span>
-                <span className="text-base font-black text-text-primary group-hover:text-cyan-300 transition-colors">
+                <span className="text-base font-black text-text-primary">
                   App Store
                 </span>
-                <span className="text-[11px] text-cyan-400 block mt-0.5 font-medium">
+                <span className="text-[11px] text-text-muted block mt-0.5 font-medium">
                   iOS TestFlight & App Store
                 </span>
               </div>
@@ -307,9 +298,9 @@ export default function AppInfoAndSupport() {
           </div>
 
           {/* DIRECT APK DOWNLOAD BOX & SCANNER */}
-          <div className="max-w-2xl mx-auto bg-surface p-5 rounded-2xl border border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="max-w-2xl mx-auto bg-surface-elevated p-5 rounded-2xl border border-border flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 shrink-0">
+              <div className="p-2.5 rounded-xl bg-surface border border-border text-accent shrink-0">
                 <Download className="w-5 h-5" />
               </div>
               <div className="text-left">
@@ -340,8 +331,8 @@ export default function AppInfoAndSupport() {
           </div>
 
           {/* QR CODE INSTANT MOBILE INSTALL */}
-          <div className="max-w-2xl mx-auto mt-6 pt-6 border-t border-border/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4 bg-surface/80 p-3.5 rounded-2xl border border-border w-full sm:w-auto">
+          <div className="max-w-2xl mx-auto mt-6 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4 bg-surface-elevated p-3.5 rounded-2xl border border-border w-full sm:w-auto">
               <div className="bg-white p-2 rounded-xl shrink-0">
                 <svg className="w-14 h-14" viewBox="0 0 100 100" fill="none">
                   <rect width="100" height="100" fill="white" />
@@ -366,15 +357,15 @@ export default function AppInfoAndSupport() {
 
               <div className="text-left text-xs text-text-secondary">
                 <p className="font-bold text-text-primary flex items-center gap-1">
-                  <QrCode className="w-3.5 h-3.5 text-cyan-400" /> Instant Phone Scan
+                  <QrCode className="w-3.5 h-3.5 text-accent" /> Instant Phone Scan
                 </p>
                 <p className="text-[11px] text-text-muted mt-0.5">Scan with iPhone or Android camera</p>
-                <p className="text-[11px] text-cyan-400 font-medium mt-0.5">Open link to install mobile PWA</p>
+                <p className="text-[11px] text-text-muted font-medium mt-0.5">Open link to install mobile PWA</p>
               </div>
             </div>
 
             <div className="text-xs text-text-muted flex items-center gap-2">
-              <Shield className="w-4 h-4 text-emerald-400" />
+              <Shield className="w-4 h-4 text-success" />
               <span>Safe & Malware-Free Verified Application</span>
             </div>
           </div>
@@ -385,13 +376,13 @@ export default function AppInfoAndSupport() {
         {/* ============================================================ */}
         <div id="support" className="scroll-mt-28">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-4">
-              <HelpCircle className="w-4 h-4 text-indigo-400" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-elevated border border-border text-text-secondary text-xs font-bold uppercase tracking-wider mb-4">
+              <HelpCircle className="w-4 h-4 text-accent" />
               <span>Help & Support Hub</span>
             </div>
 
-            <h2 className="text-3xl sm:text-5xl font-black text-text-primary tracking-tight">
-              Have Questions? We&apos;re Here To Help 24/7
+            <h2 className="text-3xl sm:text-5xl font-bold text-text-primary tracking-tight">
+              Have questions? We&apos;re here to help.
             </h2>
 
             <p className="mt-3 text-text-secondary text-base leading-relaxed">
@@ -402,29 +393,29 @@ export default function AppInfoAndSupport() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
             {/* LEFT: INTERACTIVE SUPPORT FORM */}
-            <div className="lg:col-span-7 bg-surface-elevated/90 border border-border rounded-3xl p-6 sm:p-8 shadow-2xl">
+            <div className="lg:col-span-7 bg-surface border border-border rounded-3xl p-6 sm:p-8">
               <div className="flex items-center justify-between pb-4 mb-6 border-b border-border">
                 <div className="flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-cyan-400" />
+                  <MessageSquare className="w-5 h-5 text-accent" />
                   <h3 className="text-lg font-bold text-text-primary">Ask AI Support or Submit Ticket</h3>
                 </div>
 
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-800/60 text-emerald-300 text-[11px] font-medium">
-                  <Activity className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-                  <span>24/7 Live</span>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-elevated border border-border text-text-muted text-[11px] font-medium">
+                  <Shield className="w-3.5 h-3.5 text-accent" />
+                  <span>24/7 AI-assisted support</span>
                 </div>
               </div>
 
               {supportSuccess ? (
-                <div className="bg-surface border-border border-cyan-500/30 rounded-2xl p-6 space-y-4">
-                  <div className="flex items-center gap-3 text-emerald-400 font-bold text-sm">
-                    <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" />
+                <div className="bg-surface-elevated border border-border rounded-2xl p-6 space-y-4">
+                  <div className="flex items-center gap-3 text-success font-bold text-sm">
+                    <CheckCircle2 className="w-6 h-6 text-success shrink-0" />
                     <span>Support Ticket Received!</span>
                   </div>
 
                   {aiAnswer && (
-                    <div className="bg-surface-elevated border-border border-border rounded-xl p-4 text-xs text-text-secondary leading-relaxed space-y-2">
-                      <p className="font-bold text-cyan-300 flex items-center gap-1.5">
+                    <div className="bg-surface border border-border rounded-xl p-4 text-xs text-text-secondary leading-relaxed space-y-2">
+                      <p className="font-bold text-accent flex items-center gap-1.5">
                         <Sparkles className="w-4 h-4" /> Instant AI Assistant Answer:
                       </p>
                       <div className="whitespace-pre-line text-text-primary">{aiAnswer}</div>
@@ -441,7 +432,7 @@ export default function AppInfoAndSupport() {
                       setSupportSuccess(false);
                       setAiAnswer(null);
                     }}
-                    className="mt-2 text-xs font-bold text-cyan-400 hover:underline cursor-pointer"
+                    className="mt-2 text-xs font-bold text-accent hover:underline cursor-pointer"
                   >
                     ← Submit Another Support Ticket
                   </button>
@@ -450,13 +441,13 @@ export default function AppInfoAndSupport() {
                 <form onSubmit={handleSupportSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
                         Category
                       </label>
                       <select
                         value={supportCategory}
                         onChange={(e) => setSupportCategory(e.target.value)}
-                        className="w-full bg-surface border-border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-primary focus:outline-none focus:border-cyan-500 cursor-pointer"
+                        className="cc-field text-xs rounded-xl px-3.5 py-2.5 cursor-pointer"
                       >
                         <option value="Copywriting Advice">Copywriting & Framework Advice</option>
                         <option value="Mobile App Support">Mobile App & APK Download Support</option>
@@ -467,7 +458,7 @@ export default function AppInfoAndSupport() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
                         Your Email (Optional)
                       </label>
                       <input
@@ -475,13 +466,13 @@ export default function AppInfoAndSupport() {
                         placeholder="you@example.com"
                         value={supportEmail}
                         onChange={(e) => setSupportEmail(e.target.value)}
-                        className="w-full bg-surface border-border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-primary focus:outline-none focus:border-cyan-500"
+                        className="cc-field text-xs rounded-xl px-3.5 py-2.5"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
                       Subject
                     </label>
                     <input
@@ -489,12 +480,12 @@ export default function AppInfoAndSupport() {
                       placeholder="e.g., How to improve my headline score?"
                       value={supportSubject}
                       onChange={(e) => setSupportSubject(e.target.value)}
-                      className="w-full bg-surface border-border border-border rounded-xl px-3.5 py-2.5 text-xs text-text-primary focus:outline-none focus:border-cyan-500"
+                      className="cc-field text-xs rounded-xl px-3.5 py-2.5"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
                       Describe Your Question or Issue *
                     </label>
                     <textarea
@@ -503,13 +494,13 @@ export default function AppInfoAndSupport() {
                       placeholder="Type your question or detail your support request here..."
                       value={supportMessage}
                       onChange={(e) => setSupportMessage(e.target.value)}
-                      className="w-full bg-surface border-border border-border rounded-xl p-3.5 text-xs text-text-primary focus:outline-none focus:border-cyan-500 resize-none"
+                      className="cc-field text-xs rounded-xl p-3.5 resize-none"
                     />
                   </div>
 
                   <div className="flex items-center justify-between pt-2">
-                    <span className="text-[11px] text-text-muted flex items-center gap-1">
-                      <Zap className="w-3.5 h-3.5 text-amber-400" /> Instant AI Answer + Dev Dispatch
+                    <span className="text-[11px] text-text-muted">
+                      Replies are AI-assisted and reviewed by our engineering team.
                     </span>
 
                     <GradientButton
@@ -533,7 +524,7 @@ export default function AppInfoAndSupport() {
             {/* RIGHT: ACCORDION FAQ SUPPORT GUIDES */}
             <div className="lg:col-span-5 space-y-4">
               <h3 className="text-base font-bold text-text-primary mb-2 flex items-center gap-2">
-                <HelpCircle className="w-4 h-4 text-cyan-400" />
+                <HelpCircle className="w-4 h-4 text-accent" />
                 <span>Frequently Asked Questions</span>
               </h3>
 
@@ -543,7 +534,7 @@ export default function AppInfoAndSupport() {
                   return (
                     <div
                       key={idx}
-                      className="bg-surface-elevated/80 border border-border rounded-2xl overflow-hidden transition-all"
+                      className="bg-surface border border-border rounded-2xl overflow-hidden transition-colors"
                     >
                       <button
                         type="button"
@@ -552,14 +543,14 @@ export default function AppInfoAndSupport() {
                       >
                         <span>{faq.q}</span>
                         {isOpen ? (
-                          <ChevronUp className="w-4 h-4 text-cyan-400 shrink-0" />
+                          <ChevronUp className="w-4 h-4 text-accent shrink-0" />
                         ) : (
                           <ChevronDown className="w-4 h-4 text-text-muted shrink-0" />
                         )}
                       </button>
 
                       {isOpen && (
-                        <div className="px-4 pb-4 pt-1 text-xs text-text-muted leading-relaxed border-t border-border/60 bg-surface/40">
+                        <div className="px-4 pb-4 pt-1 text-xs text-text-muted leading-relaxed border-t border-border bg-surface-elevated">
                           {faq.a}
                         </div>
                       )}
@@ -569,11 +560,11 @@ export default function AppInfoAndSupport() {
               </div>
 
               {/* DIRECT HELP CONTACT CARD */}
-              <div className="p-5 rounded-2xl bg-cyan-950/30 border border-cyan-800/50 mt-6 text-xs text-text-secondary space-y-2">
-                <p className="font-bold text-cyan-300 flex items-center gap-1.5">
-                  <Shield className="w-4 h-4 text-cyan-400" /> Need Priority Assistance?
+              <div className="p-5 rounded-2xl bg-surface border border-border mt-6 text-xs text-text-secondary space-y-2">
+                <p className="font-bold text-text-primary flex items-center gap-1.5">
+                  <Shield className="w-4 h-4 text-accent" /> Need priority assistance?
                 </p>
-                <p className="text-[11px] text-text-muted leading-relaxed">
+                <p className="text-xs text-text-muted leading-relaxed">
                   Our dedicated engineering support team monitors incoming submissions directly. You can also reach out via email or check platform updates anytime.
                 </p>
               </div>

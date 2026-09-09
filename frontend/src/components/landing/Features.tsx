@@ -65,10 +65,13 @@ export default function Features() {
         <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
           {features.map((feature) => (
-            <Card key={feature.title} className="group p-7">
+            <Card
+              key={feature.title}
+              className="group p-7 transition-colors hover:border-border-strong"
+            >
 
-              <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent-hover shadow-accent-soft transition-transform duration-300 group-hover:-translate-y-0.5">
-                <feature.icon className="h-6 w-6" />
+              <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface-elevated text-accent">
+                <feature.icon className="h-5 w-5" />
               </div>
 
               <h3 className="text-lg font-semibold tracking-tight text-text-primary">

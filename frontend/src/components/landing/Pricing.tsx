@@ -82,14 +82,14 @@ export default function Pricing() {
               key={plan.name}
               className={
                 plan.popular
-                  ? "border-accent/40 ring-1 ring-accent/30 shadow-elevated"
+                  ? "border-accent/60 ring-1 ring-accent/30"
                   : ""
               }
             >
 
               {plan.popular && (
-                <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-accent-hover shadow-accent-soft">
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent-hover" />
+                <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-accent">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" />
                   Most Popular
                 </div>
               )}

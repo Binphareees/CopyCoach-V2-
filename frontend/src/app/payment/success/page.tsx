@@ -72,7 +72,7 @@ function PaymentSuccessContent() {
   return (
     <div className="min-h-screen text-text-primary flex flex-col items-center justify-center p-6 font-sans">
       <div className="w-full max-w-md bg-surface-elevated border border-border rounded-3xl p-8 shadow-2xl backdrop-blur text-center relative overflow-hidden">
-        <div className="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-success/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex justify-center mb-6">
           <Logo theme="dark" size="md" showTagline={false} />
@@ -80,17 +80,17 @@ function PaymentSuccessContent() {
 
         {verifying ? (
           <div className="py-8 flex flex-col items-center">
-            <Loader2 className="w-12 h-12 text-cyan-400 animate-spin mb-4" />
+            <Loader2 className="w-12 h-12 text-accent animate-spin mb-4" />
             <h2 className="text-xl font-bold text-text-primary mb-2">Confirming Payment</h2>
             <p className="text-xs text-text-muted max-w-xs">{message}</p>
           </div>
         ) : success ? (
           <div className="py-4 flex flex-col items-center">
-            <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mb-4 animate-in zoom-in-90">
+            <div className="p-3 rounded-2xl bg-success/10 border border-success/30 text-success mb-4 animate-pop">
               <CheckCircle2 className="w-10 h-10" />
             </div>
 
-            <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold uppercase tracking-wider mb-3">
+            <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-bold uppercase tracking-wider mb-3">
               <Sparkles className="w-3.5 h-3.5" />
               <span>CopyCoach Pro Activated</span>
             </div>
@@ -110,7 +110,7 @@ function PaymentSuccessContent() {
           </div>
         ) : (
           <div className="py-4 flex flex-col items-center">
-            <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 mb-4">
+            <div className="p-3 rounded-2xl bg-danger/10 border border-danger/30 text-danger mb-4">
               <AlertCircle className="w-10 h-10" />
             </div>
 
@@ -128,7 +128,7 @@ function PaymentSuccessContent() {
 
               <Link
                 href="/#support"
-                className="text-xs text-cyan-400 hover:underline pt-2"
+                className="text-xs text-accent hover:underline pt-2"
               >
                 Need help? Contact Customer Support
               </Link>
@@ -145,7 +145,7 @@ export default function PaymentSuccessPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center text-text-secondary">
-          <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
+          <Loader2 className="w-8 h-8 animate-spin text-accent" />
         </div>
       }
     >

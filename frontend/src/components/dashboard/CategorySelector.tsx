@@ -25,7 +25,7 @@ interface CategorySelectorProps {
 
 export default function CategorySelector({ value, onChange }: CategorySelectorProps) {
   return (
-    <div className="no-scrollbar -mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1">
+    <div className="flex flex-wrap gap-2">
       {CATEGORY_OPTIONS.map((cat) => {
         const Icon = cat.icon;
         const isActive = value === cat.value;
@@ -35,13 +35,15 @@ export default function CategorySelector({ value, onChange }: CategorySelectorPr
             type="button"
             onClick={() => onChange(cat.value)}
             aria-pressed={isActive}
-            className={`flex shrink-0 items-center gap-2 rounded-2xl border px-4 py-3 text-[13px] font-semibold transition-all duration-200 active:scale-[0.97] ${
+            className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
               isActive
-                ? "border-transparent bg-accent text-white shadow-accent-soft"
-                : "border-glass-border bg-glass-bg-elevated text-brand-200 hover:border-glass-border hover:bg-glass-bg-hover hover:text-white"
+                ? "border-transparent bg-accent text-accent-foreground"
+                : "border-border bg-surface text-text-muted hover:bg-surface-muted hover:text-text-primary"
             }`}
           >
-            <Icon className={`h-4 w-4 ${isActive ? "text-white" : "text-brand-300"}`} />
+            <Icon
+              className={`h-3.5 w-3.5 ${isActive ? "text-accent-foreground" : "text-text-muted"}`}
+            />
             {cat.label}
           </button>
         );

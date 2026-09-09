@@ -9,25 +9,25 @@ type BadgeProps = {
 
 export default function Badge({
   children,
-  variant = "primary",
+  variant = "neutral",
   className,
 }: BadgeProps) {
   return (
     <span
       className={clsx(
-        "inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm font-medium",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium",
         {
-          "border-accent/25 bg-accent-glow/20 text-accent-hover":
+          "border-accent/30 bg-accent/10 text-accent":
             variant === "primary",
-          "border-success/25 bg-success-surface text-success":
+          "border-success/30 bg-success-surface text-success":
             variant === "success",
-          "border-warning/25 bg-warning-surface text-warning":
+          "border-warning/30 bg-warning-surface text-warning":
             variant === "warning",
-          "border-danger/25 bg-danger-surface text-danger":
+          "border-danger/30 bg-danger-surface text-danger":
             variant === "danger",
-          "border-info/25 bg-info-surface text-info":
+          "border-info/30 bg-info-surface text-info":
             variant === "info",
-          "border-glass-border bg-glass-bg-elevated text-text-secondary":
+          "border-border bg-surface text-text-secondary":
             variant === "neutral",
         },
         className

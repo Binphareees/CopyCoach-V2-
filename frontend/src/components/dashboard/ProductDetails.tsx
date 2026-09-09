@@ -13,10 +13,9 @@ interface ProductDetailsProps {
   onCtaChange: (value: string) => void;
 }
 
-const labelClass =
-  "mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-300";
-const inputClass =
-  "cc-input w-full rounded-2xl border border-glass-input-border bg-glass-input-bg px-4 py-3.5 text-[15px] font-medium text-brand-100";
+const labelClass = "mb-1.5 block text-xs font-semibold text-text-secondary";
+const fieldClass =
+  "cc-field rounded-lg px-3.5 py-2.5 text-sm font-medium placeholder:text-text-muted";
 
 export default function ProductDetails({
   productName,
@@ -29,7 +28,29 @@ export default function ProductDetails({
   onCtaChange,
 }: ProductDetailsProps) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
+      <div>
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <label
+            htmlFor="product-description"
+            className="text-sm font-semibold text-text-primary"
+          >
+            Your copy to improve
+          </label>
+          <span className="text-[11px] tabular-nums text-text-muted">
+            {description.length.toLocaleString()} characters
+          </span>
+        </div>
+        <textarea
+          id="product-description"
+          rows={6}
+          value={description}
+          onChange={(e) => onDescriptionChange(e.target.value)}
+          placeholder="Paste the copy you want to improve, or describe the offer you want CopyCoach to write from scratch."
+          className="cc-field min-h-[180px] rounded-2xl border-border p-5 text-[15px] leading-relaxed placeholder:text-text-muted"
+        />
+      </div>
+
       <div>
         <label htmlFor="product-name" className={labelClass}>
           Product / Brand Name
@@ -40,21 +61,7 @@ export default function ProductDetails({
           value={productName}
           onChange={(e) => onProductNameChange(e.target.value)}
           placeholder="Product / Brand Name"
-          className={inputClass}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="product-description" className={labelClass}>
-          Product Description / Core Offer
-        </label>
-        <textarea
-          id="product-description"
-          rows={6}
-          value={description}
-          onChange={(e) => onDescriptionChange(e.target.value)}
-          placeholder="Product Description / Core Offer"
-          className={`${inputClass} resize-none leading-relaxed`}
+          className={fieldClass}
         />
       </div>
 
@@ -69,7 +76,7 @@ export default function ProductDetails({
             value={targetAudience}
             onChange={(e) => onTargetAudienceChange(e.target.value)}
             placeholder="e.g. Busy professionals, founders"
-            className={inputClass}
+            className={fieldClass}
           />
         </div>
 
@@ -83,7 +90,7 @@ export default function ProductDetails({
             value={cta}
             onChange={(e) => onCtaChange(e.target.value)}
             placeholder="e.g. Get Started Free"
-            className={inputClass}
+            className={fieldClass}
           />
         </div>
       </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import type { CSSProperties } from "react";
 import {
   supabase,
   ensureSupabaseConfig,
@@ -11,16 +10,21 @@ import {
 } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/components/providers/ThemeProvider";
-import Link from "next/link";
-import Logo from "@/components/ui/Logo";
+import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
 import DrillCritiqueFeedback from "@/components/ui/DrillCritiqueFeedback";
 import FeedbackModal from "@/components/ui/FeedbackModal";
+import Button from "@/components/ui/Button";
+import Badge from "@/components/ui/Badge";
 import CategorySelector from "@/components/dashboard/CategorySelector";
 import ProductDetails from "@/components/dashboard/ProductDetails";
 import ToneSelector from "@/components/dashboard/ToneSelector";
 import GenerateButton from "@/components/dashboard/GenerateButton";
 import ProTipCard from "@/components/dashboard/ProTipCard";
 import SectionHeading from "@/components/dashboard/SectionHeading";
+import DashboardStatCard from "@/components/dashboard/DashboardStatCard";
+import ScoreRing from "@/components/dashboard/ScoreRing";
+import LibraryCard from "@/components/dashboard/LibraryCard";
+import MobileGetStarted from "@/components/dashboard/MobileGetStarted";
 import {
   Sparkles,
   Zap,
@@ -28,21 +32,16 @@ import {
   Search,
   Star,
   Copy,
-  Trash2,
   Download,
   Check,
   ChevronDown,
-  LogOut,
   Sliders,
-  Award,
   Layers,
   ArrowRight,
   TrendingUp,
   AlertTriangle,
   Folder,
   FileText,
-  BarChart3,
-  Lightbulb,
   CheckCircle2,
   Sun,
   Moon,
@@ -59,6 +58,7 @@ import {
   Laptop,
   Maximize2,
   Minimize2,
+  RefreshCw,
   FileDown,
 } from "lucide-react";
 
@@ -83,6 +83,27 @@ interface CopyResult {
   };
 }
 
+function resultCopyText(result: CopyResult | string | null): string {
+  return typeof result === "object" && result ? result.improvedCopy || "" : String(result ?? "");
+}
+
+function resultScoreOf(result: CopyResult | string | null): number {
+  return typeof result === "object" && result && result.score ? result.score : 70;
+}
+
+function scoreLabel(score: number): string {
+  if (score >= 80) return "Strong";
+  if (score >= 60) return "Fair";
+  return "Needs work";
+}
+
+function riskLevel(risk: number): string {
+  if (risk <= 20) return "Low";
+  if (risk <= 40) return "Moderate";
+  if (risk <= 60) return "Elevated";
+  return "High";
+}
+
 interface HistoryItem {
   id: string;
   project_id?: string;
@@ -99,6 +120,15 @@ interface ProjectItem {
   name: string;
   created_at?: string;
 }
+
+// Frontend-only processing stages shown while the generation request is in flight.
+const PROCESSING_STAGES = [
+  "Analyzing your copy…",
+  "Checking clarity and persuasion…",
+  "Strengthening the conversion flow…",
+  "Applying your brand voice…",
+  "Finalizing your improved copy…",
+];
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -134,15 +164,18 @@ export default function DashboardPage() {
   const [message, setMessage] = useState("");
   const [copyType, setCopyType] = useState("Advertisement");
   const [tone, setTone] = useState("Professional");
+  const [processingStage, setProcessingStage] = useState(0);
 
   // History & Filtering
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showFavorites, setShowFavorites] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Projects State
   const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [projectsLoading, setProjectsLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState("");
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [projectName, setProjectName] = useState("");
@@ -174,7 +207,7 @@ export default function DashboardPage() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
   // Appearance & Theme State (single source of truth: global ThemeProvider)
-  const { themeMode, isDarkMode, setThemeMode } = useTheme();
+  const { themeMode, setThemeMode } = useTheme();
 
   const applyTheme = (mode: "dark" | "light" | "system") => {
     setThemeMode(mode);
@@ -188,6 +221,52 @@ export default function DashboardPage() {
   const [showFullOutput, setShowFullOutput] = useState(false);
   const [supportSubject, setSupportSubject] = useState("");
   const [supportMessage, setSupportMessage] = useState("");
+
+  // Open account modals from the sidebar Account section (event bridge)
+  useEffect(() => {
+    function handleAccountModal(event: Event) {
+      const detail = (event as CustomEvent<{ modal: "brand_voice" | "billing" | "shortcuts" | "support" }>).detail;
+      if (!detail) return;
+      setShowMenu(false);
+      if (detail.modal === "shortcuts") {
+        setShowShortcutsModal(true);
+      } else if (detail.modal === "support") {
+        setShowSupportModal(true);
+      } else {
+        setProfileTab(detail.modal === "billing" ? "billing" : "brand_voice");
+        setShowProfileModal(true);
+      }
+    }
+    window.addEventListener("copycoach:open-account-modal", handleAccountModal);
+    return () => window.removeEventListener("copycoach:open-account-modal", handleAccountModal);
+  }, [setShowMenu, setShowProfileModal, setProfileTab, setShowShortcutsModal, setShowSupportModal]);
+
+  // Advance the staged processing indicator while the generation request is in flight.
+  // Presentation only — the request itself is a single API call. Stage updates and the
+  // reset happen in deferred callbacks (allowed), never synchronously in the effect.
+  const processingStarted = useRef(false);
+  useEffect(() => {
+    if (!loading) {
+      processingStarted.current = false;
+      return;
+    }
+    const resetId = window.setTimeout(() => {
+      processingStarted.current = true;
+      setProcessingStage(0);
+    }, 0);
+    const id = window.setInterval(() => {
+      if (!processingStarted.current) {
+        processingStarted.current = true;
+        setProcessingStage(0);
+        return;
+      }
+      setProcessingStage((stage) => Math.min(stage + 1, PROCESSING_STAGES.length - 1));
+    }, 1750);
+    return () => {
+      window.clearTimeout(resetId);
+      window.clearInterval(id);
+    };
+  }, [loading]);
 
   // EXPORT OPTIMIZED COPY AS STYLED PDF USING JSPDF
   const handleExportPDF = async (textToExport?: string) => {
@@ -329,8 +408,12 @@ export default function DashboardPage() {
 
   // 3. Load Projects
   const loadProjects = useCallback(async () => {
+    setProjectsLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) {
+      setProjectsLoading(false);
+      return;
+    }
 
     const { data, error } = await supabase
       .from("projects")
@@ -341,10 +424,12 @@ export default function DashboardPage() {
     if (!error) {
       setProjects(data || []);
     }
+    setProjectsLoading(false);
   }, []);
 
   // 4. Load Copy History
   const loadHistory = useCallback(async () => {
+    setHistoryLoading(true);
     const { data, error } = await supabase
       .from("history")
       .select("*")
@@ -355,6 +440,7 @@ export default function DashboardPage() {
       setTotalCopies(data.length);
       setFavoriteCount(data.filter((i) => i.favorite).length);
     }
+    setHistoryLoading(false);
   }, []);
 
   // Initialization Effect
@@ -558,12 +644,6 @@ export default function DashboardPage() {
     }
   }
 
-  // Logout
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    router.push("/auth/login");
-  }
-
   // Filtered History
   const filteredHistory = history.filter((item) => {
     const matchesSearch = item.improved_text?.toLowerCase().includes(search.toLowerCase()) ||
@@ -582,14 +662,6 @@ export default function DashboardPage() {
 
   return (
     <div className="relative min-h-screen font-sans text-brand-100 selection:bg-accent selection:text-text-primary">
-      {/* Ambient Liquid Glass backdrop */}
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-1/2 top-0 h-[32rem] w-[60rem] max-w-none -translate-x-1/2 rounded-full bg-accent/20 blur-[120px]" />
-        <div className="absolute -right-24 top-32 h-[26rem] w-[26rem] rounded-full bg-accent-deep/12 blur-[110px]" />
-        <div className="absolute -left-32 top-72 h-96 w-96 rounded-full bg-[#6d5eff]/12 blur-[110px]" />
-        <div className="absolute bottom-0 left-1/2 h-64 w-[44rem] max-w-none -translate-x-1/2 rounded-full bg-accent/15 blur-[110px]" />
-      </div>
-
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-24 right-4 z-[60] flex items-center gap-2 glass-popover px-4 py-3 text-sm font-medium text-brand-100 animate-pop lg:bottom-6 lg:right-6">
@@ -598,16 +670,12 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Top Professional Header */}
-      <header className="glass-nav sticky top-0 z-40">
-        <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Branding */}
-          <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
-            <Logo theme="dark" size="sm" showTagline={false} />
-          </Link>
-
-          {/* Desktop workspace controls */}
-          <div className="hidden items-center gap-3 md:flex">
+      <DashboardTopbar
+        title="CopyCoach Workspace"
+        right={
+          <>
+            {/* Desktop workspace controls */}
+            <div className="hidden items-center gap-3 md:flex">
             {/* Workspace selector */}
             <div className="flex items-center gap-2 rounded-full border border-glass-border bg-glass-bg-elevated px-3.5 py-1.5 text-xs text-brand-200">
               <Folder className="h-3.5 w-3.5 text-accent-bright" />
@@ -639,7 +707,7 @@ export default function DashboardPage() {
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="flex items-center gap-3 rounded-2xl border border-transparent p-1.5 transition-colors hover:bg-glass-bg-hover"
+              className="flex items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-surface-muted"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-glass-border bg-glass-bg-elevated text-sm font-bold text-accent-bright">
                 {avatar ? (
@@ -652,7 +720,7 @@ export default function DashboardPage() {
               <div className="hidden pr-1 text-left sm:block">
                 <p className="text-xs font-semibold leading-tight text-text-primary">{fullName || "CopyCoach User"}</p>
                 <p className="mt-0.5 flex items-center gap-1 text-[11px] font-medium capitalize text-brand-300">
-                  <span className={`h-1.5 w-1.5 rounded-full ${plan === "pro" ? "bg-amber-400" : "bg-accent-bright"}`} />
+                  <span className={`h-1.5 w-1.5 rounded-full ${plan === "pro" ? "bg-warning" : "bg-accent-bright"}`} />
                   {plan === "pro" ? "Pro Plan" : "Free Plan"}
                 </p>
               </div>
@@ -692,168 +760,33 @@ export default function DashboardPage() {
                       <span className="font-bold text-accent-bright">{credits} Credits Left</span>
                     </div>
                   </div>
-
-                  {/* Account & Settings Group */}
-                  <div className="mb-2 space-y-0.5">
-                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
-                      Account & Workspace
-                    </span>
-
-                    <Link
-                      href="/dashboard/admin/feedback"
-                      onClick={() => setShowMenu(false)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <ShieldCheck className="h-4 w-4 text-amber-400" />
-                        <span>Admin Feedback Triage</span>
-                      </div>
-                      <span className="rounded border border-amber-500/30 bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-bold text-amber-400">Admin</span>
-                    </Link>
-
-                    <Link
-                      href="/dashboard/profile"
-                      onClick={() => setShowMenu(false)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <UserCheck className="h-4 w-4 text-accent-bright" />
-                        <span>Profile Settings</span>
-                      </div>
-                      <span className="text-[10px] text-text-muted">Edit</span>
-                    </Link>
-
-                    <button
-                      onClick={() => {
-                        setShowMenu(false);
-                        setProfileTab("brand_voice");
-                        setShowProfileModal(true);
-                      }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <Sliders className="h-4 w-4 text-accent-bright" />
-                        <span>Brand Voice & AI Persona</span>
-                      </div>
-                      <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[10px] text-accent-bright">Custom</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setShowMenu(false);
-                        setProfileTab("billing");
-                        setShowProfileModal(true);
-                      }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <CreditCard className="h-4 w-4 text-amber-400" />
-                        <span>Subscription & Plan</span>
-                      </div>
-                      <span className={`text-[10px] font-bold ${plan === "pro" ? "text-amber-400" : "text-accent-bright"}`}>
-                        {plan === "pro" ? "Pro Active" : "Upgrade"}
-                      </span>
-                    </button>
-                  </div>
-
-                  {/* Preferences Group */}
-                  <div className="mb-2 space-y-0.5 border-t border-glass-border-subtle pt-2">
-                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
-                      Preferences
-                    </span>
-
-                    <button
-                      onClick={() => {
-                        setShowMenu(false);
-                        setProfileTab("preferences");
-                        setShowProfileModal(true);
-                      }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        {isDarkMode ? <Moon className="h-4 w-4 text-accent-bright" /> : <Sun className="h-4 w-4 text-amber-400" />}
-                        <span>Appearance & Theme</span>
-                      </div>
-                      <span className="rounded border border-glass-border bg-glass-bg-elevated px-2 py-0.5 text-[10px] font-medium text-accent-bright">
-                        {themeMode === "system" ? "System Sync" : isDarkMode ? "Dark Theme" : "Light Theme"}
-                      </span>
-                    </button>
-                  </div>
-
-                  {/* Resources & Help Group */}
-                  <div className="mb-2 space-y-0.5 border-t border-glass-border-subtle pt-2">
-                    <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
-                      Support & Tools
-                    </span>
-
-                    <button
-                      onClick={() => {
-                        setShowMenu(false);
-                        setShowShortcutsModal(true);
-                      }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <Keyboard className="h-4 w-4 text-accent-bright" />
-                        <span>Keyboard Shortcuts</span>
-                      </div>
-                      <span className="font-mono text-[10px] text-text-muted">⌘K</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setShowMenu(false);
-                        setShowSupportModal(true);
-                      }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-muted hover:text-text-primary"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <HelpCircle className="h-4 w-4 text-accent-bright" />
-                        <span>Help & AI Support</span>
-                      </div>
-                      <span className="text-[10px] text-text-muted">24/7</span>
-                    </button>
-                  </div>
-
-                  {/* Sign Out Button */}
-                  <div className="border-t border-glass-border-subtle pt-2">
-                    <button
-                      onClick={handleLogout}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-rose-400 transition-colors hover:bg-rose-500/15 hover:text-rose-300"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <LogOut className="h-4 w-4" />
-                        <span>Sign Out</span>
-                      </div>
-                      <span className="text-[10px] text-text-muted">Exit</span>
-                    </button>
-                  </div>
                 </div>
               </>
             )}
           </div>
-        </div>
-      </header>
+          </>
+        }
+      />
 
       {/* Prominent Persistent Banner Warning for Placeholder Supabase Config */}
       {showConfigBanner && (
-        <div className="relative z-30 border-b border-amber-500/30 bg-amber-500/10 px-4 py-3.5 text-amber-200 sm:px-6">
+        <div className="relative z-30 border-b border-warning/30 bg-warning/10 px-4 py-3.5 text-warning sm:px-6">
           <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
             <div className="flex items-center gap-3">
-              <div className="shrink-0 rounded-lg bg-amber-500/20 p-2 text-amber-400">
+              <div className="shrink-0 rounded-lg bg-warning/15 p-2 text-warning">
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-amber-300">
+                <p className="text-sm font-semibold text-warning">
                   Supabase Configuration Warning
                 </p>
-                <p className="mt-0.5 text-xs text-amber-200/80">
-                  The application is using a placeholder Supabase URL (<code className="rounded bg-black/40 px-1.5 py-0.5 text-amber-300">{activeSupabaseUrl || "placeholder.supabase.co"}</code>). Please set <code className="rounded bg-black/40 px-1 py-0.5 text-amber-300">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="rounded bg-black/40 px-1 py-0.5 text-amber-300">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in project Settings to enable database features.
+                <p className="mt-0.5 text-xs text-warning/80">
+                  The application is using a placeholder Supabase URL (<code className="rounded bg-black/40 px-1.5 py-0.5 text-warning">{activeSupabaseUrl || "placeholder.supabase.co"}</code>). Please set <code className="rounded bg-black/40 px-1 py-0.5 text-warning">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="rounded bg-black/40 px-1 py-0.5 text-warning">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in project Settings to enable database features.
                 </p>
               </div>
             </div>
             <div className="shrink-0">
-              <span className="rounded-lg border border-amber-500/40 bg-amber-500/20 px-3 py-1.5 text-xs font-medium text-amber-300">
+              <span className="rounded-lg border border-warning/40 bg-warning/15 px-3 py-1.5 text-xs font-medium text-warning">
                 Invalid Configuration Detected
               </span>
             </div>
@@ -866,14 +799,14 @@ export default function DashboardPage() {
         {/* WELCOME & ANALYTICS BANNER */}
         <div className="mb-8 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
           <div>
-            <p className="text-[13px] font-medium text-brand-300">
+            <p className="text-[13px] font-semibold text-brand-200">
               Welcome back, {fullName.split(" ")[0] || "Creator"}
             </p>
-            <h1 className="mt-1 bg-gradient-to-br from-sky-500 via-indigo-500 to-violet-600 bg-clip-text text-[26px] font-bold leading-tight tracking-tight text-transparent sm:text-[2.35rem]">
-              Create high-converting copy in seconds
+            <h1 className="mt-1.5 text-[26px] font-extrabold leading-tight tracking-tight text-text-primary sm:text-[2.1rem]">
+              Create <span className="text-gradient">high-converting copy</span> in seconds
             </h1>
-            <p className="mt-2 text-sm text-brand-200">
-              Describe your offer, choose a category and tone, then let CopyCoach AI do the writing.
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-brand-200">
+              Describe your offer, choose a category and tone, then let CopyCoach AI write copy that converts.
             </p>
           </div>
           <span className="flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-[11px] font-bold text-accent-bright shadow-accent-soft">
@@ -887,128 +820,118 @@ export default function DashboardPage() {
 
         {/* STAT CARDS */}
         <div className="mb-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
-          {/* Credits & Plan */}
-          <div className="glass-stat">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">AI Generation Credits</span>
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent-bright ring-1 ring-inset ring-accent/25">
-                <Zap className="h-4 w-4" />
-              </span>
-            </div>
-            <div className="my-3">
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-extrabold text-text-primary">{credits}</span>
-                <span className="text-xs text-brand-300">/ {plan === "pro" ? 100 : 5} left {plan === "pro" ? "this month" : "today"}</span>
+          <DashboardStatCard
+            label="AI Generation Credits"
+            icon={<Zap className="h-4 w-4" />}
+            tone="accent"
+            value={
+              <div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-extrabold text-text-primary">{credits}</span>
+                  <span className="text-xs text-brand-300">/ {plan === "pro" ? 100 : 5} left {plan === "pro" ? "this month" : "today"}</span>
+                </div>
+                <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-glass-bg-elevated">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-accent-deep to-accent-bright transition-all duration-500"
+                    style={{ width: `${Math.min(100, (credits / (plan === "pro" ? 100 : 5)) * 100)}%` }}
+                  />
+                </div>
               </div>
-              <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-glass-bg-elevated">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-accent-deep to-accent-bright transition-all duration-500"
-                  style={{ width: `${Math.min(100, (credits / (plan === "pro" ? 100 : 5)) * 100)}%` }}
-                />
-              </div>
-            </div>
-            {plan === "free" ? (
-              <button
-                onClick={upgradeToPro}
-                className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-accent-bright hover:text-[#7C7CF7]"
-              >
-                Upgrade to Pro (100 monthly)
-                <ArrowRight className="h-3.5 w-3.5 transition-transform" />
-              </button>
-            ) : (
-              <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-400">
-                <CheckCircle2 className="h-3.5 w-3.5" />
-                Unlimited Pro Access Active
-              </span>
-            )}
-          </div>
+            }
+            footer={
+              plan === "free" ? (
+                <button
+                  onClick={upgradeToPro}
+                  className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-accent-bright hover:text-accent"
+                >
+                  Upgrade to Pro (100 monthly)
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform" />
+                </button>
+              ) : (
+                <span className="flex items-center gap-1 text-[11px] font-medium text-success">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Unlimited Pro Access Active
+                </span>
+              )
+            }
+          />
 
-          {/* Total Generations */}
-          <div className="glass-stat">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Total Copy Improvements</span>
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent-bright ring-1 ring-inset ring-accent/25">
-                <FileText className="h-4 w-4" />
-              </span>
-            </div>
-            <div className="my-3">
+          <DashboardStatCard
+            label="Total Copy Improvements"
+            icon={<FileText className="h-4 w-4" />}
+            tone="info"
+            hint="Saved in history library"
+            value={
               <div className="text-3xl font-extrabold text-text-primary">{totalCopies}</div>
-              <p className="mt-1 text-xs text-brand-300">Saved in history library</p>
-            </div>
-            <span className="flex items-center gap-1 text-[11px] text-brand-300">
-              <TrendingUp className="h-3.5 w-3.5 text-accent-bright" />
-              Real-time persistence
-            </span>
-          </div>
-
-          {/* Favorites */}
-          <div className="glass-stat">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Starred Favorites</span>
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-400 ring-1 ring-inset ring-amber-500/25">
-                <Star className="h-4 w-4 fill-amber-500/20" />
+            }
+            footer={
+              <span className="flex items-center gap-1 text-[11px] text-brand-300">
+                <TrendingUp className="h-3.5 w-3.5 text-info" />
+                Real-time persistence
               </span>
-            </div>
-            <div className="my-3">
+            }
+          />
+
+          <DashboardStatCard
+            label="Starred Favorites"
+            icon={<Star className="h-4 w-4 fill-warning/20" />}
+            tone="warning"
+            hint="High-converting snippets"
+            value={
               <div className="text-3xl font-extrabold text-text-primary">{favoriteCount}</div>
-              <p className="mt-1 text-xs text-brand-300">High-converting snippets</p>
-            </div>
-            <button
-              onClick={() => setShowFavorites(!showFavorites)}
-              className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-amber-400 hover:text-amber-300"
-            >
-              {showFavorites ? "View All Copies" : "Filter Favorites"}
-            </button>
-          </div>
+            }
+            footer={
+              <button
+                onClick={() => setShowFavorites(!showFavorites)}
+                className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-warning hover:text-warning/80"
+              >
+                {showFavorites ? "View All Copies" : "Filter Favorites"}
+              </button>
+            }
+          />
 
-          {/* Projects */}
-          <div className="glass-stat">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-brand-300">Active Projects</span>
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent-bright ring-1 ring-inset ring-accent/25">
-                <Layers className="h-4 w-4" />
-              </span>
-            </div>
-            <div className="my-3">
+          <DashboardStatCard
+            label="Active Projects"
+            icon={<Layers className="h-4 w-4" />}
+            tone="success"
+            hint="Organized campaigns"
+            value={
               <div className="text-3xl font-extrabold text-text-primary">{projects.length}</div>
-              <p className="mt-1 text-xs text-brand-300">Organized campaigns</p>
-            </div>
-            <button
-              onClick={() => setShowProjectModal(true)}
-              className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-accent-bright hover:text-[#7C7CF7]"
-            >
-              + Create Project
-            </button>
-          </div>
+            }
+            footer={
+              <button
+                onClick={() => setShowProjectModal(true)}
+                className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-accent-bright hover:text-accent"
+              >
+                + Create Project
+              </button>
+            }
+          />
         </div>
 
         {/* WORKSPACE GRID: LEFT INPUT & RIGHT OUTPUT */}
-        <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <div id="generate" className="mb-12 scroll-mt-24 grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* LEFT PANEL: GENERATOR FORM */}
-          <div className="flex flex-col justify-between glass-panel-elevated md:col-span-7">
+          <div className="flex flex-col justify-between rounded-2xl border border-border bg-surface-elevated md:col-span-7">
             {/* Panel Header */}
-            <div className="flex items-center justify-between border-b border-glass-border p-6">
+            <div className="flex items-center justify-between border-b border-border p-6">
               <div>
                 <h2 className="flex items-center gap-2 text-xl font-bold text-text-primary">
                   <Sparkles className="h-5 w-5 text-accent-bright" />
                   CopyCoach AI Studio
                 </h2>
-                <p className="mt-1 text-xs text-brand-300">
-                  Build your product offer, category, and tone — then let CopyCoach AI write copy that converts.
+                <p className="mt-1 text-xs text-text-secondary">
+                  Choose your context and tone, then let CopyCoach sharpen your copy into clear, persuasive words.
                 </p>
               </div>
-              <span className="hidden items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent-bright sm:flex">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-bright" />
-                AI Ready
-              </span>
             </div>
 
-            <div className="flex flex-1 flex-col gap-8 p-6">
+            <div className="flex flex-1 flex-col gap-8 p-6 sm:p-7">
               {/* Section 1: Select Category */}
               <section>
                 <SectionHeading
-                  number="1"
-                  title="Select Category"
+                  number="01"
+                  title="Choose Copy Type"
                   subtitle="What type of marketing copy are you creating?"
                 />
                 <div className="mt-4">
@@ -1016,14 +939,14 @@ export default function DashboardPage() {
                 </div>
               </section>
 
-              {/* Section 2: Offer & Product Details */}
+              {/* Section 2: Your Copy & Context (writing canvas first) */}
               <section>
                 <SectionHeading
-                  number="2"
-                  title="Offer & Product Details"
-                  subtitle="Tell CopyCoach about your offer so it can write copy that converts."
+                  number="02"
+                  title="Your Copy & Context"
+                  subtitle="Paste copy to improve, or describe the offer to write from scratch."
                 />
-                <div className="mt-5 rounded-2xl border border-glass-border-subtle bg-glass-bg-deep p-5">
+                <div className="mt-4">
                   <ProductDetails
                     productName={productName}
                     onProductNameChange={setProductName}
@@ -1040,8 +963,8 @@ export default function DashboardPage() {
               {/* Section 3: Select Tone of Voice */}
               <section>
                 <SectionHeading
-                  number="3"
-                  title="Select Tone of Voice"
+                  number="03"
+                  title="Choose Tone of Voice"
                   subtitle="How should your brand sound?"
                 />
                 <div className="mt-4">
@@ -1051,439 +974,506 @@ export default function DashboardPage() {
 
               {/* Inline error message */}
               {message && (
-                <div className="flex items-start gap-2.5 rounded-2xl border border-rose-800/60 bg-rose-950/60 p-3.5 text-xs text-rose-300">
-                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
+                <div className="flex items-start gap-2.5 rounded-xl border border-danger/30 bg-danger-surface p-3.5 text-xs text-danger">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
                   <span>{message}</span>
                 </div>
               )}
 
               {/* Generate CTA */}
-              <div className="mt-auto pt-2">
-                <GenerateButton
-                  loading={loading}
-                  disabled={loading || credits <= 0}
-                  onClick={improveCopy}
-                />
+              <div className="mt-auto space-y-3 pt-2">
+                <ProTipCard />
 
                 {credits <= 0 && !loading && (
-                  <p className="mt-2 text-center text-xs text-amber-400">
+                  <p className="text-center text-xs text-warning">
                     You&apos;ve used all your free credits.{" "}
-                    <button onClick={upgradeToPro} className="font-semibold underline underline-offset-2 hover:text-amber-300">
+                    <button onClick={upgradeToPro} className="font-semibold underline underline-offset-2 hover:text-warning">
                       Upgrade to Pro
                     </button>{" "}
                     for 100 monthly generations.
                   </p>
                 )}
 
-                <div className="mt-5">
-                  <ProTipCard />
-                </div>
+                <GenerateButton
+                  loading={loading}
+                  disabled={loading || credits <= 0}
+                  onClick={improveCopy}
+                />
               </div>
             </div>
           </div>
 
           {/* RIGHT PANEL: AI COACHING OUTPUT */}
-          <div className="flex min-h-[480px] flex-col glass-panel-elevated md:col-span-5">
+          <div className="flex min-h-[480px] flex-col rounded-2xl border border-border bg-surface-elevated md:col-span-5">
             {result ? (
-              <div className="flex flex-1 flex-col gap-5 p-6">
-                {/* Score header */}
-                <div className="flex items-center justify-between border-b border-glass-border pb-4">
-                  <div>
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-brand-300">AI Copy Evaluation</span>
-                    <h3 className="mt-0.5 flex items-center gap-2 text-lg font-bold text-text-primary">
-                      <BarChart3 className="h-5 w-5 text-accent-bright" />
-                      Optimization Score
-                    </h3>
-                  </div>
+              <div className="flex flex-1 flex-col gap-7 p-6 animate-fade sm:p-7">
+                {/* CopyCoach Review header */}
+                <header className="border-b border-border pb-5">
+                  <h2 className="text-lg font-bold tracking-tight text-text-primary">
+                    CopyCoach Review
+                  </h2>
+                  <p className="mt-1 text-[13px] leading-relaxed text-text-secondary">
+                    What improved, why it works, and where your copy can go further.
+                  </p>
+                </header>
 
-                  <div className="flex flex-col items-end gap-1.5">
-                    {(() => {
-                      const scoreVal =
-                        typeof result === "object" && result.score ? result.score : 70;
-                      const ringColor =
-                        scoreVal >= 80
-                          ? "var(--success)"
-                          : scoreVal >= 60
-                          ? "var(--warning)"
-                          : "var(--accent)";
-                      const valColor =
-                        scoreVal >= 80
-                          ? "text-success"
-                          : scoreVal >= 60
-                          ? "text-warning"
-                          : "text-accent-hover";
-                      return (
-                        <>
-                          <div className="score-ring" style={{ "--ring": ringColor, "--score": `${Math.min(100, scoreVal)}%` } as CSSProperties}>
-                            <div className="z-10 flex flex-col items-center leading-none">
-                              <span className={`score-ring-value ${valColor}`}>{scoreVal}</span>
-                              <span className="score-ring-unit">/ 100</span>
-                            </div>
-                          </div>
-                          <p className="text-[10px] font-medium uppercase tracking-wider text-brand-300">Conversion Ready</p>
-                        </>
-                      );
-                    })()}
-                  </div>
-                </div>
-
-                {/* Human Writing Score */}
-                {typeof result === "object" && result.humanWritingScore !== undefined && (
-                  <div className="rounded-xl border border-glass-border-subtle bg-glass-bg-deep p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-accent-bright" />
-                        <span className="text-xs font-semibold text-text-primary">Human Writing Score</span>
+                {/* Conversion Score */}
+                <section>
+                  <div className="flex items-center justify-between gap-5">
+                    <div>
+                      <h3 className="text-sm font-semibold text-text-primary">Conversion Score</h3>
+                      <div className="mt-1.5 flex items-baseline gap-1.5">
+                        <span className="text-4xl font-extrabold tracking-tight tabular-nums text-text-primary">
+                          {resultScoreOf(result)}
+                        </span>
+                        <span className="text-sm font-medium text-text-muted">/ 100</span>
                       </div>
-                      <span
-                        className={`text-lg font-extrabold ${
-                          (result.humanWritingScore >= 80)
-                            ? "text-emerald-400"
-                            : (result.humanWritingScore >= 60)
-                            ? "text-amber-400"
-                            : "text-rose-400"
-                        }`}
-                      >
-                        {result.humanWritingScore}/100
-                      </span>
+                      <p className="mt-1 text-xs font-medium text-text-secondary">
+                        {scoreLabel(resultScoreOf(result))}
+                      </p>
                     </div>
+                    <ScoreRing score={resultScoreOf(result)} />
+                  </div>
+                  <div
+                    className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-surface-muted"
+                    aria-hidden="true"
+                  >
+                    <div
+                      className="h-full rounded-full bg-accent transition-all duration-500"
+                      style={{ width: `${resultScoreOf(result)}%` }}
+                    />
+                  </div>
+                </section>
 
-                    {/* AI Pattern Risk Badge */}
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-[10px] uppercase tracking-wider text-brand-300">AI Pattern Risk</span>
-                      <span
-                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                          (result.aiPatternRisk ?? 30) <= 20
-                            ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                            : (result.aiPatternRisk ?? 30) <= 40
-                            ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
-                            : (result.aiPatternRisk ?? 30) <= 60
-                            ? "bg-orange-500/15 text-orange-400 border border-orange-500/30"
-                            : "bg-rose-500/15 text-rose-400 border border-rose-500/30"
-                        }`}
-                      >
-                        {(result.aiPatternRisk ?? 30) <= 20
-                          ? "LOW"
-                          : (result.aiPatternRisk ?? 30) <= 40
-                          ? "MODERATE"
-                          : (result.aiPatternRisk ?? 30) <= 60
-                          ? "ELEVATED"
-                          : "HIGH"}
-                      </span>
+                {/* Improved Copy — the primary content */}
+                <section>
+                  <h3 className="text-sm font-semibold text-text-primary">Improved Copy</h3>
+                  <div className="mt-3 rounded-xl border border-border bg-surface p-5">
+                    <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-text-primary">
+                      {resultCopyText(result)}
+                    </p>
+                  </div>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => handleCopy(resultCopyText(result), "result")}
+                      title="Copy improved copy"
+                    >
+                      {copiedId === "result" ? (
+                        <>
+                          <Check className="h-4 w-4" />
+                          Copied
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-4 w-4" />
+                          Copy
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => handleExportPDF(resultCopyText(result))}
+                      title="Export as PDF"
+                    >
+                      <FileDown className="h-4 w-4" />
+                      Export PDF
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setShowFullOutput(true)}
+                      title="Expand to full view"
+                    >
+                      <Maximize2 className="h-4 w-4" />
+                      Show Full
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleDownload(resultCopyText(result))}
+                      title="Download as text file"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download
+                    </Button>
+                  </div>
+                </section>
+
+                {/* Why This Works */}
+                {typeof result === "object" &&
+                  (result.coachAdvice ||
+                    (result.strengths && result.strengths.length > 0) ||
+                    (result.weaknesses && result.weaknesses.length > 0)) && (
+                    <section className="rounded-xl border border-border bg-surface p-4">
+                      <h3 className="text-sm font-semibold text-text-primary">Why This Works</h3>
+                      {result.coachAdvice && (
+                        <p className="mt-2 text-[13px] leading-relaxed text-text-secondary">
+                          {result.coachAdvice}
+                        </p>
+                      )}
+                      {result.strengths && result.strengths.length > 0 && (
+                        <div className="mt-3">
+                          <p className="text-xs font-semibold text-text-secondary">
+                            What&apos;s working
+                          </p>
+                          <ul className="mt-1.5 space-y-1.5">
+                            {result.strengths.map((strength, idx) => (
+                              <li
+                                key={idx}
+                                className="flex items-start gap-2 text-[13px] leading-relaxed text-text-secondary"
+                              >
+                                <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
+                                <span>{strength}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {result.weaknesses && result.weaknesses.length > 0 && (
+                        <div className="mt-3">
+                          <p className="text-xs font-semibold text-text-secondary">
+                            Where to go further
+                          </p>
+                          <ul className="mt-1.5 space-y-1.5">
+                            {result.weaknesses.map((weakness, idx) => (
+                              <li
+                                key={idx}
+                                className="flex items-start gap-2 text-[13px] leading-relaxed text-text-secondary"
+                              >
+                                <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
+                                <span>{weakness}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </section>
+                  )}
+
+                {/* Writing Quality & Human Writing Score */}
+                {typeof result === "object" && result.humanWritingScore !== undefined && (
+                  <section className="rounded-xl border border-border bg-surface p-4">
+                    <div className="flex items-baseline justify-between gap-4">
+                      <h3 className="text-sm font-semibold text-text-primary">Writing Quality</h3>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-bold tabular-nums text-text-primary">
+                          {result.humanWritingScore}
+                        </span>
+                        <span className="text-xs font-medium text-text-muted">/ 100</span>
+                      </div>
                     </div>
-
-                    {/* Detailed Breakdown */}
                     {result.humanWritingAnalysis && (
-                      <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px]">
+                      <ul className="mt-4 space-y-2.5">
                         {[
                           { label: "Naturalness", value: result.humanWritingAnalysis.naturalness },
                           { label: "Specificity", value: result.humanWritingAnalysis.specificity },
+                          { label: "Clarity", value: result.humanWritingAnalysis.clarity },
                           { label: "Voice", value: result.humanWritingAnalysis.voice },
                           { label: "Rhythm", value: result.humanWritingAnalysis.sentenceRhythm },
-                          { label: "Clarity", value: result.humanWritingAnalysis.clarity },
                           { label: "Audience Fit", value: result.humanWritingAnalysis.contextualFit },
+                          { label: "Repetition", value: result.humanWritingAnalysis.repetition },
                         ].map((item) => (
-                          <div key={item.label} className="flex items-center justify-between">
-                            <span className="text-brand-300">{item.label}</span>
-                            <div className="flex items-center gap-2">
-                              <div className="h-1.5 w-16 overflow-hidden rounded-full bg-glass-bg-elevated">
-                                <div
-                                  className={`h-full rounded-full transition-all duration-500 ${
-                                    (item.value ?? 70) >= 80
-                                      ? "bg-emerald-400"
-                                      : (item.value ?? 70) >= 60
-                                      ? "bg-amber-400"
-                                      : "bg-rose-400"
-                                  }`}
-                                  style={{ width: `${item.value ?? 70}%` }}
-                                />
-                              </div>
-                              <span className="w-6 text-right font-semibold text-brand-200">{item.value ?? 70}</span>
+                          <li key={item.label}>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-text-secondary">{item.label}</span>
+                              <span className="tabular-nums text-text-secondary">
+                                {item.value ?? 70}
+                              </span>
                             </div>
-                          </div>
+                            <div
+                              className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-surface-muted"
+                              aria-hidden="true"
+                            >
+                              <div
+                                className="h-full rounded-full bg-accent/70 transition-all duration-500"
+                                style={{ width: `${item.value ?? 70}%` }}
+                              />
+                            </div>
+                          </li>
                         ))}
-                      </div>
+                      </ul>
                     )}
-                  </div>
+                  </section>
                 )}
 
-                {/* Framework & Strengths */}
+                {/* AI Pattern Risk — writing-style signal */}
                 {typeof result === "object" && (
-                  <div className="space-y-3">
-                    {result.framework && (
-                      <div className="flex items-center justify-between rounded-xl border border-glass-border-subtle bg-glass-bg-deep p-3 text-xs text-brand-200">
-                        <span className="text-brand-300">Framework Applied:</span>
-                        <span className="rounded bg-accent/15 px-2.5 py-0.5 font-semibold text-accent-bright">
-                          {result.framework}
-                        </span>
-                      </div>
-                    )}
-
-                    {result.weaknesses && result.weaknesses.length > 0 && (
-                      <div className="space-y-1.5 rounded-xl border border-glass-border-subtle bg-glass-bg-deep p-3.5 text-xs">
-                        <div className="mb-1 flex items-center gap-1.5 font-semibold text-rose-400">
-                          <AlertTriangle className="h-3.5 w-3.5" />
-                          Areas to Improve
-                        </div>
-                        <ul className="space-y-1 text-brand-200">
-                          {result.weaknesses.map((w, idx) => (
-                            <li key={idx} className="flex items-start gap-1.5">
-                              <span className="font-bold text-rose-400">•</span>
-                              <span>{w}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {result.strengths && result.strengths.length > 0 && (
-                      <div className="space-y-1.5 rounded-xl border border-glass-border-subtle bg-glass-bg-deep p-3.5 text-xs">
-                        <div className="mb-1 flex items-center gap-1.5 font-semibold text-emerald-400">
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                          Key Strengths Identified
-                        </div>
-                        <ul className="space-y-1 text-brand-200">
-                          {result.strengths.map((str, idx) => (
-                            <li key={idx} className="flex items-start gap-1.5">
-                              <span className="font-bold text-emerald-400">•</span>
-                              <span>{str}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {result.coachAdvice && (
-                      <div className="space-y-1 rounded-xl border border-glass-border-subtle bg-glass-bg-deep p-3.5 text-xs">
-                        <div className="mb-1 flex items-center gap-1.5 font-semibold text-amber-400">
-                          <Lightbulb className="h-3.5 w-3.5" />
-                          Coach Advice
-                        </div>
-                        <p className="leading-relaxed text-brand-200">{result.coachAdvice}</p>
-                      </div>
-                    )}
-                  </div>
+                  <section className="rounded-xl border border-border bg-surface p-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <h3 className="text-sm font-semibold text-text-primary">AI Pattern Risk</h3>
+                      <Badge variant="neutral">{riskLevel(result.aiPatternRisk ?? 30)}</Badge>
+                    </div>
+                    <p className="mt-2 text-xs leading-relaxed text-text-secondary">
+                      Writing-style signal:{" "}
+                      {riskLevel(result.aiPatternRisk ?? 30).toLowerCase()}. This is a heuristic
+                      measure, not a definitive detection result.
+                    </p>
+                  </section>
                 )}
 
-                {/* Improved Copy Output Box */}
-                <div className="relative rounded-2xl border border-accent/30 bg-glass-bg-deep p-4">
-                  <div className="mb-3 flex items-center justify-between">
-                    <span className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-accent-bright">
-                      <Award className="h-3.5 w-3.5" />
-                      Optimized Copy Version
-                    </span>
+                {/* Framework */}
+                {typeof result === "object" && result.framework && (
+                  <section className="flex items-center justify-between gap-4 rounded-xl border border-border bg-surface px-4 py-3">
+                    <span className="text-xs font-medium text-text-secondary">Framework</span>
+                    <span className="text-xs font-semibold text-text-primary">{result.framework}</span>
+                  </section>
+                )}
 
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleExportPDF(typeof result === "object" ? result.improvedCopy || "" : String(result))}
-                        className="inline-flex items-center gap-1 rounded-lg border border-glass-border bg-glass-bg-elevated px-2.5 py-1 text-[11px] font-semibold text-accent-bright transition-colors hover:bg-glass-bg-hover"
-                        title="Export as PDF"
-                      >
-                        <FileDown className="h-3.5 w-3.5" />
-                        Export PDF
-                      </button>
-
-                      <button
-                        onClick={() => setShowFullOutput(true)}
-                        className="inline-flex items-center gap-1 rounded-lg border border-glass-border bg-glass-bg-elevated px-2.5 py-1 text-[11px] font-semibold text-brand-200 transition-colors hover:bg-glass-bg-hover"
-                        title="Expand to Full View"
-                      >
-                        <Maximize2 className="h-3.5 w-3.5 text-accent-bright" />
-                        Show Full
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          handleCopy(
-                            typeof result === "object" ? result.improvedCopy || "" : String(result),
-                            "result"
-                          )
-                        }
-                        className="rounded-lg bg-glass-bg-elevated p-1.5 text-brand-200 transition-colors hover:bg-glass-bg-hover"
-                        title="Copy text"
-                      >
-                        {copiedId === "result" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          handleDownload(
-                            typeof result === "object" ? result.improvedCopy || "" : String(result)
-                          )
-                        }
-                        className="rounded-lg bg-glass-bg-elevated p-1.5 text-brand-200 transition-colors hover:bg-glass-bg-hover"
-                        title="Download text"
-                      >
-                        <Download className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <p className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-brand-100">
-                    {typeof result === "object" ? result.improvedCopy : String(result)}
+                {/* CopyCoach Feedback — continue the coaching */}
+                <section className="border-t border-border pt-5">
+                  <h3 className="text-sm font-semibold text-text-primary">CopyCoach Feedback</h3>
+                  <p className="mt-0.5 text-xs text-text-muted">
+                    Rate this review — your feedback trains CopyCoach to coach better.
                   </p>
-
-                  {/* Inline Drill Critique Feedback */}
-                  <div className="mt-4 border-t border-glass-border pt-3">
+                  <div className="mt-3">
                     <DrillCritiqueFeedback
                       userCopyInput={text}
-                      aiOutputString={typeof result === "object" ? result.improvedCopy : String(result)}
+                      aiOutputString={resultCopyText(result)}
                       userTier={plan === "pro" ? "Pro" : "Spark"}
                     />
                   </div>
+                </section>
+              </div>
+            ) : loading ? (
+              /* Staged Processing State (frontend-only presentation) */
+              <div className="flex min-h-[440px] flex-col items-center justify-center p-6 text-center" role="status" aria-live="polite">
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border border-accent/25 bg-accent/10 text-accent-bright">
+                  <RefreshCw className="h-5 w-5 animate-spin" />
                 </div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-300">
+                  CopyCoach is working
+                </p>
+                <ol key={processingStage} className="mt-4 space-y-1.5 text-[13px] animate-fade">
+                  {PROCESSING_STAGES.map((stage, i) => {
+                    const isCurrent = i === processingStage;
+                    const isComplete = i < processingStage;
+                    return (
+                      <li
+                        key={stage}
+                        className={`flex items-center justify-center gap-2 ${
+                          isCurrent
+                            ? "font-semibold text-text-primary"
+                            : isComplete
+                            ? "text-text-muted"
+                            : "opacity-60 text-text-muted"
+                        }`}
+                      >
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            isCurrent ? "bg-accent-bright" : isComplete ? "bg-accent/40" : "bg-border"
+                          }`}
+                        />
+                        <span>{stage}</span>
+                      </li>
+                    );
+                  })}
+                </ol>
               </div>
             ) : (
               /* Empty Placeholder State */
               <div className="flex h-full flex-col items-center justify-center p-6 text-center">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl border border-accent/30 bg-glass-bg-deep text-accent-bright">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/25 bg-accent/10 text-accent-bright">
                   <Sparkles className="h-8 w-8" />
                 </div>
                 <h3 className="mb-1 text-base font-semibold text-text-primary">Awaiting Copy Analysis</h3>
-                <p className="max-w-xs text-xs leading-relaxed text-brand-300">
-                  Enter your offer on the left and click <strong className="text-brand-100">Generate AI Marketing Copy</strong> to receive AI scoring, strategic recommendations, and high-converting rewrites.
+                <p className="max-w-xs text-xs leading-relaxed text-text-secondary">
+                  Paste or describe your copy on the left and click{" "}
+                  <strong className="font-semibold text-text-primary">Improve your copy</strong> to
+                  get an AI score, focused rewrites, and actionable feedback.
                 </p>
               </div>
             )}
           </div>
         </div>
 
-        {/* LIBRARY / COPY HISTORY */}
-        <section id="copy-library" className="mt-4 scroll-mt-24">
-          <div className="glass-panel-elevated p-5 sm:p-7">
-            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-              <div>
-                <h2 className="flex items-center gap-2 text-xl font-bold text-text-primary">
-                  <FileText className="h-5 w-5 text-accent-bright" />
-                  Copy History & Saved Library
-                </h2>
-                <p className="mt-0.5 text-xs text-brand-200">
-                  Manage, filter, copy, or export your past optimized copy generations.
-                </p>
-              </div>
+        {/* PROJECTS */}
+        <section id="dashboard-projects" className="mt-12 scroll-mt-24">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-xl font-bold tracking-tight text-text-primary">Projects</h2>
+              <p className="mt-1 text-sm text-text-secondary">
+                Campaigns and client workspaces with their saved copy.
+              </p>
+            </div>
+          </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                {plan === "free" ? (
-                  <button
-                    onClick={upgradeToPro}
-                    className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-accent-deep to-accent-bright px-3.5 py-2 text-xs font-bold text-text-primary shadow-accent-soft transition-colors hover:opacity-90"
-                  >
-                    Upgrade to Pro
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </button>
-                ) : (
-                  <span className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-semibold text-emerald-400">
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    Pro Active
-                  </span>
-                )}
-
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-brand-300" />
-                    <input
-                      type="text"
-                      placeholder="Search history..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      className="cc-input w-full rounded-xl border border-glass-input-border bg-glass-input-bg py-2 pl-9 pr-3 text-xs text-brand-100 sm:w-56"
-                    />
-                  </div>
-
-                  <button
-                    onClick={() => setShowFavorites(!showFavorites)}
-                    className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
-                      showFavorites
-                        ? "border-amber-500/40 bg-amber-500/20 text-amber-400"
-                        : "border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
-                    }`}
-                  >
-                    <Star className={`h-3.5 w-3.5 ${showFavorites ? "fill-amber-400" : ""}`} />
-                    {showFavorites ? "Starred Only" : "All Copies"}
-                  </button>
+          {projectsLoading ? (
+            <div className="mt-5 overflow-hidden rounded-xl border border-border">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className={`flex items-center gap-3 px-4 py-3.5 ${i > 0 ? "border-t border-border" : ""}`}
+                >
+                  <div className="h-8 w-8 animate-pulse rounded-lg bg-surface-muted" />
+                  <div className="h-3 w-40 animate-pulse rounded bg-surface-muted" />
+                  <div className="ml-auto h-3 w-16 animate-pulse rounded bg-surface-muted" />
                 </div>
-              </div>
+              ))}
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="mt-5 flex flex-col items-center gap-2 rounded-xl border border-dashed border-border px-4 py-10 text-center">
+              <Folder className="h-5 w-5 text-text-muted" />
+              <span className="max-w-sm text-xs text-text-secondary">
+                No projects yet. Create one to organize campaigns and the copy you save to them.
+              </span>
+              <button
+                onClick={() => setShowProjectModal(true)}
+                className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-xs font-bold text-accent-foreground transition-colors hover:bg-accent-hover"
+              >
+                <FolderPlus className="h-3.5 w-3.5" />
+                Create Project
+              </button>
+            </div>
+          ) : (
+            <div className="mt-5 overflow-hidden rounded-xl border border-border bg-surface-elevated">
+              {projects.map((p, i) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => router.push(`/dashboard/projects/${p.id}`)}
+                  aria-label={`Open project ${p.name}`}
+                  className={`group flex w-full items-center justify-between gap-4 px-4 py-3.5 text-left transition-colors hover:bg-surface-muted ${
+                    i > 0 ? "border-t border-border" : ""
+                  }`}
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-text-muted transition-colors group-hover:text-accent-bright">
+                      <Folder className="h-4 w-4" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-semibold text-text-primary">
+                        {p.name}
+                      </span>
+                      <span className="block text-[11px] text-text-muted">
+                        {p.created_at
+                          ? `Created ${new Date(p.created_at).toLocaleDateString(undefined, {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}`
+                          : "Open project"}
+                      </span>
+                    </span>
+                  </div>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-text-muted transition-all group-hover:translate-x-0.5 group-hover:text-accent-bright" />
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* COPY LIBRARY */}
+        <section id="copy-library" className="mt-12 scroll-mt-24">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-xl font-bold tracking-tight text-text-primary">Copy Library</h2>
+              <p className="mt-1 text-sm text-text-secondary">
+                Every saved improvement — search, star, copy, or download.
+              </p>
             </div>
 
-            {/* History Cards */}
-            {filteredHistory.length > 0 ? (
-              <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
-                {filteredHistory.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex flex-col justify-between rounded-2xl border border-glass-border bg-glass-bg-deep p-5 transition-all hover:border-glass-border"
-                  >
-                    <div>
-                      <div className="mb-3 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="rounded-md border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-[11px] font-semibold text-accent-bright">
-                            {item.copy_type || "Copy"}
-                          </span>
-                          <span className="rounded bg-glass-bg-elevated px-2 py-0.5 text-[11px] text-brand-300">
-                            Tone: {item.tone || "Default"}
-                          </span>
-                        </div>
+            <div className="flex flex-wrap items-center gap-3">
+              {plan === "free" ? (
+                <button
+                  onClick={upgradeToPro}
+                  className="flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-xs font-bold text-accent-foreground shadow-accent-soft transition-colors hover:bg-accent-hover"
+                >
+                  Upgrade to Pro
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </button>
+              ) : (
+                <span className="flex items-center gap-1.5 rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-[11px] font-semibold text-success">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Pro Active
+                </span>
+              )}
 
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={() => toggleFavorite(item.id, item.favorite)}
-                            className={`rounded-lg border p-1.5 transition-colors ${
-                              item.favorite
-                                ? "border-amber-500/40 bg-amber-500/20 text-amber-300"
-                                : "border-glass-border bg-glass-bg-elevated text-brand-300 hover:text-text-primary"
-                            }`}
-                            title="Star favorite"
-                          >
-                            <Star className={`h-3.5 w-3.5 ${item.favorite ? "fill-amber-300" : ""}`} />
-                          </button>
-
-                          <button
-                            onClick={() => handleCopy(item.improved_text, item.id)}
-                            className="rounded-lg border border-glass-border bg-glass-bg-elevated p-1.5 text-brand-300 transition-colors hover:text-text-primary"
-                            title="Copy text"
-                          >
-                            {copiedId === item.id ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
-                          </button>
-
-                          <button
-                            onClick={() => handleDownload(item.improved_text, `${item.copy_type || "copy"}-improved.txt`)}
-                            className="rounded-lg border border-glass-border bg-glass-bg-elevated p-1.5 text-brand-300 transition-colors hover:text-text-primary"
-                            title="Download"
-                          >
-                            <Download className="h-3.5 w-3.5" />
-                          </button>
-
-                          <button
-                            onClick={() => deleteHistory(item.id)}
-                            className="rounded-lg border border-glass-border bg-glass-bg-elevated p-1.5 text-brand-300 transition-colors hover:bg-rose-950/60 hover:text-rose-300"
-                            title="Delete"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      </div>
-
-                      <p className="mb-3 whitespace-pre-wrap font-sans text-xs leading-relaxed text-brand-100 line-clamp-4">
-                        {item.improved_text}
-                      </p>
-                    </div>
-
-                    {item.original_text && (
-                      <div className="flex items-center justify-between border-t border-glass-border pt-2.5 text-[11px] text-brand-300">
-                        <span className="max-w-[240px] truncate">Original: &quot;{item.original_text}&quot;</span>
-                        <span className="shrink-0">{item.created_at ? new Date(item.created_at).toLocaleDateString() : ""}</span>
-                      </div>
-                    )}
-                  </div>
-                ))}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+                <input
+                  type="text"
+                  placeholder="Search history..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="cc-field rounded-lg py-2 pl-9 pr-3 text-xs text-text-primary placeholder:text-text-muted sm:w-56"
+                  aria-label="Search copy history"
+                />
               </div>
-            ) : (
-              <div className="mt-5 rounded-2xl border border-dashed border-glass-border py-12 text-center text-xs text-brand-300">
-                No saved copy history found. Run a copy improvement above to populate your library!
-              </div>
-            )}
+
+              <button
+                onClick={() => setShowFavorites(!showFavorites)}
+                aria-pressed={showFavorites}
+                className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold transition-colors ${
+                  showFavorites
+                    ? "border-warning/40 bg-warning/10 text-warning"
+                    : "border-border bg-surface text-text-muted hover:bg-surface-muted hover:text-text-primary"
+                }`}
+              >
+                <Star className={`h-3.5 w-3.5 ${showFavorites ? "fill-warning" : ""}`} />
+                {showFavorites ? "Starred Only" : "All Copies"}
+              </button>
+            </div>
           </div>
+
+          {/* History Cards */}
+          {historyLoading ? (
+            <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="rounded-xl border border-border bg-surface p-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-5 w-20 animate-pulse rounded-md bg-surface-muted" />
+                    <div className="h-3 w-16 animate-pulse rounded bg-surface-muted" />
+                  </div>
+                  <div className="mt-3 space-y-1.5">
+                    <div className="h-3 w-full animate-pulse rounded bg-surface-muted" />
+                    <div className="h-3 w-4/5 animate-pulse rounded bg-surface-muted" />
+                    <div className="h-3 w-3/5 animate-pulse rounded bg-surface-muted" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredHistory.length > 0 ? (
+            <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
+              {filteredHistory.map((item) => (
+                <LibraryCard
+                  key={item.id}
+                  copyType={item.copy_type || "Copy"}
+                  tone={item.tone || "Default"}
+                  improvedText={item.improved_text}
+                  originalText={item.original_text}
+                  favorite={item.favorite}
+                  copied={copiedId === item.id}
+                  createdAt={item.created_at}
+                  onCopy={() => handleCopy(item.improved_text, item.id)}
+                  onFavorite={() => toggleFavorite(item.id, item.favorite)}
+                  onDownload={() => handleDownload(item.improved_text, `${item.copy_type || "copy"}-improved.txt`)}
+                  onDelete={() => deleteHistory(item.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-6 flex flex-col items-center gap-2 rounded-xl border border-dashed border-border px-4 py-14 text-center">
+              <FileText className="h-5 w-5 text-text-muted" />
+              <span className="max-w-sm text-xs text-text-secondary">
+                No saved copy history found. Run a copy improvement above to start building your
+                library.
+              </span>
+            </div>
+          )}
         </section>
+
+        <MobileGetStarted
+          canUpgrade={plan === "free"}
+          onNewCopy={() =>
+            document.getElementById("generate")?.scrollIntoView({ behavior: "smooth", block: "start" })
+          }
+          onLibrary={() =>
+            document.getElementById("copy-library")?.scrollIntoView({ behavior: "smooth", block: "start" })
+          }
+          onUpgrade={upgradeToPro}
+        />
       </main>
 
       {/* NEW PROJECT MODAL */}
@@ -1527,7 +1517,7 @@ export default function DashboardPage() {
               </button>
               <button
                 onClick={createProject}
-                className="rounded-xl bg-gradient-to-r from-accent-deep to-accent-bright px-5 py-2 text-xs font-bold text-text-primary shadow-accent-soft transition-colors hover:opacity-90"
+                className="rounded-xl bg-accent px-5 py-2 text-xs font-bold text-accent-foreground shadow-accent-soft transition-colors hover:bg-accent-hover"
               >
                 Create Project
               </button>
@@ -1559,6 +1549,7 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={() => setShowProfileModal(false)}
+                aria-label="Close"
                 className="rounded-xl p-2 text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
@@ -1573,7 +1564,7 @@ export default function DashboardPage() {
                   onClick={() => setProfileTab("profile")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "profile"
-                      ? "bg-accent text-text-primary shadow-accent-soft"
+                      ? "bg-accent text-accent-foreground shadow-accent-soft"
                       : "border border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                   }`}
                 >
@@ -1585,7 +1576,7 @@ export default function DashboardPage() {
                   onClick={() => setProfileTab("brand_voice")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "brand_voice"
-                      ? "bg-accent text-text-primary shadow-accent-soft"
+                      ? "bg-accent text-accent-foreground shadow-accent-soft"
                       : "border border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                   }`}
                 >
@@ -1597,7 +1588,7 @@ export default function DashboardPage() {
                   onClick={() => setProfileTab("preferences")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "preferences"
-                      ? "bg-accent text-text-primary shadow-accent-soft"
+                      ? "bg-accent text-accent-foreground shadow-accent-soft"
                       : "border border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                   }`}
                 >
@@ -1609,7 +1600,7 @@ export default function DashboardPage() {
                   onClick={() => setProfileTab("security")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "security"
-                      ? "bg-accent text-text-primary shadow-accent-soft"
+                      ? "bg-accent text-accent-foreground shadow-accent-soft"
                       : "border border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                   }`}
                 >
@@ -1621,7 +1612,7 @@ export default function DashboardPage() {
                   onClick={() => setProfileTab("billing")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "billing"
-                      ? "bg-accent text-text-primary shadow-accent-soft"
+                      ? "bg-accent text-accent-foreground shadow-accent-soft"
                       : "border border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                   }`}
                 >
@@ -1633,7 +1624,7 @@ export default function DashboardPage() {
                   onClick={() => setProfileTab("support")}
                   className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     profileTab === "support"
-                      ? "bg-accent text-text-primary shadow-accent-soft"
+                      ? "bg-accent text-accent-foreground shadow-accent-soft"
                       : "border border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:text-text-primary"
                   }`}
                 >
@@ -1782,7 +1773,7 @@ export default function DashboardPage() {
                         onClick={() => applyTheme("light")}
                         className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-xs font-semibold transition-all ${
                           themeMode === "light"
-                            ? "border-amber-400 bg-amber-500 font-bold text-ink-950"
+                            ? "border-transparent bg-accent text-text-primary shadow-accent-soft"
                             : "border-glass-border-subtle bg-glass-bg-deep text-brand-300 hover:bg-glass-bg-hover hover:text-brand-100"
                         }`}
                       >
@@ -1864,7 +1855,7 @@ export default function DashboardPage() {
                         showToast(!twoFactorEnabled ? "2FA Enabled" : "2FA Disabled");
                       }}
                       className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${
-                        twoFactorEnabled ? "bg-emerald-500 text-ink-950" : "bg-glass-bg-elevated text-brand-200"
+                        twoFactorEnabled ? "bg-success text-ink-950" : "bg-glass-bg-elevated text-brand-200"
                       }`}
                     >
                       {twoFactorEnabled ? "Enabled" : "Enable"}
@@ -1876,9 +1867,9 @@ export default function DashboardPage() {
               {/* TAB 5: BILLING & SUBSCRIPTION */}
               {profileTab === "billing" && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-accent/10 to-accent/10 p-4">
+                  <div className="flex items-center justify-between rounded-2xl border border-accent/25 bg-gradient-to-r from-accent/10 via-accent/10 to-accent/10 p-4">
                     <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">Current Plan</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-accent-bright">Current Plan</span>
                       <h4 className="text-lg font-bold capitalize text-text-primary">{plan} Plan</h4>
                       <p className="mt-0.5 text-xs text-brand-200">
                         {plan === "pro" ? "100 AI Generations Daily" : "5 Free Generations Daily"}
@@ -1889,7 +1880,7 @@ export default function DashboardPage() {
                       <button
                         type="button"
                         onClick={upgradeToPro}
-                        className="rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2 text-xs font-bold text-ink-950 shadow-accent-soft"
+                        className="rounded-xl bg-accent px-4 py-2 text-xs font-bold text-accent-foreground shadow-accent-soft transition-colors hover:bg-accent-hover"
                       >
                         Upgrade to Pro
                       </button>
@@ -1901,8 +1892,8 @@ export default function DashboardPage() {
               {/* TAB 6: SUPPORT HUB */}
               {profileTab === "support" && (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 rounded-xl border border-emerald-800/60 bg-emerald-950/40 p-3 text-xs font-medium text-emerald-300">
-                    <Activity className="h-4 w-4 animate-pulse text-emerald-400" />
+                  <div className="flex items-center gap-2 rounded-xl border border-success/30 bg-success-surface p-3 text-xs font-medium text-success">
+                    <Activity className="h-4 w-4 animate-pulse text-success" />
                     CopyCoach AI Status: All Systems Operational (100% Uptime)
                   </div>
 
@@ -1946,7 +1937,7 @@ export default function DashboardPage() {
                     showToast("Profile Settings Saved Successfully!");
                     setShowProfileModal(false);
                   }}
-                  className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-accent-deep to-accent-bright px-6 py-2 text-xs font-bold text-text-primary shadow-accent-soft transition-colors hover:opacity-90"
+                  className="flex items-center gap-1.5 rounded-xl bg-accent px-6 py-2 text-xs font-bold text-accent-foreground shadow-accent-soft transition-colors hover:bg-accent-hover"
                 >
                   <Save className="h-3.5 w-3.5" />
                   Save Changes
@@ -1974,6 +1965,7 @@ export default function DashboardPage() {
               </h3>
               <button
                 onClick={() => setShowShortcutsModal(false)}
+                aria-label="Close"
                 className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
@@ -2037,6 +2029,7 @@ export default function DashboardPage() {
               </h3>
               <button
                 onClick={() => setShowSupportModal(false)}
+                aria-label="Close"
                 className="rounded-lg p-1 text-brand-300 transition-colors hover:bg-glass-bg-hover hover:text-text-primary"
               >
                 <X className="h-5 w-5" />
@@ -2089,7 +2082,7 @@ export default function DashboardPage() {
                   setSupportMessage("");
                   showToast("Support ticket submitted! We'll reply via email.");
                 }}
-                className="rounded-xl bg-gradient-to-r from-accent-deep to-accent-bright px-5 py-2 text-xs font-bold text-text-primary shadow-accent-soft transition-colors hover:opacity-90"
+                className="rounded-xl bg-accent px-5 py-2 text-xs font-bold text-accent-foreground shadow-accent-soft transition-colors hover:bg-accent-hover"
               >
                 Send Message
               </button>

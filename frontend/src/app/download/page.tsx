@@ -40,13 +40,13 @@ export default function DownloadLandingPage() {
 
       {/* HERO SECTION */}
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold uppercase tracking-wider mb-6">
-          <Smartphone className="w-4 h-4 text-cyan-400" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-bold uppercase tracking-wider mb-6">
+          <Smartphone className="w-4 h-4 text-accent" />
           <span>CopyCoach AI Mobile Application</span>
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-black text-text-primary tracking-tight max-w-3xl leading-tight mb-4">
-          Master Copywriting On The Go With <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400">CopyCoach AI Mobile</span>
+          Master Copywriting On The Go With <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-bright via-accent to-accent-deep">CopyCoach AI Mobile</span>
         </h1>
 
         <p className="text-sm sm:text-base text-text-muted max-w-2xl mb-10 leading-relaxed">
@@ -59,9 +59,9 @@ export default function DownloadLandingPage() {
           <button
             type="button"
             onClick={handleDownloadApk}
-            className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-cyan-500/60 hover:bg-surface-muted transition-all shadow-xl cursor-pointer text-left"
+            className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-accent/40 hover:bg-surface-muted transition-all shadow-xl cursor-pointer text-left"
           >
-            <div className="p-3 rounded-xl bg-surface border border-border text-cyan-400 group-hover:scale-105 transition-transform">
+            <div className="p-3 rounded-xl bg-surface border border-border text-accent group-hover:scale-105 transition-transform">
               <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
                 <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L18.81,13.12C19.46,12.47 19.46,11.53 18.81,10.88L16.81,8.88L14.75,10.94L16.81,15.12M4.6,2.7L12.97,11.07L15.1,8.94L5.65,2.15C5.32,1.91 4.9,2.12 4.6,2.7M4.6,21.3C4.9,21.88 5.32,22.09 5.65,21.85L15.1,15.06L12.97,12.93L4.6,21.3Z" />
               </svg>
@@ -70,10 +70,10 @@ export default function DownloadLandingPage() {
               <span className="text-[10px] uppercase font-bold text-text-muted block tracking-wider">
                 GET IT ON
               </span>
-              <span className="text-base font-bold text-text-primary group-hover:text-cyan-300 transition-colors">
+              <span className="text-base font-bold text-text-primary group-hover:text-accent transition-colors">
                 Google Play Store
               </span>
-              <span className="text-xs text-emerald-400 block mt-0.5 font-medium">
+              <span className="text-xs text-accent block mt-0.5 font-medium">
                 Download APK Version 1.0.0
               </span>
             </div>
@@ -84,7 +84,7 @@ export default function DownloadLandingPage() {
             href="https://apps.apple.com/app/copycoach-ai/id640000000"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-cyan-500/60 hover:bg-surface-muted transition-all shadow-xl cursor-pointer text-left"
+            className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-accent/40 hover:bg-surface-muted transition-all shadow-xl cursor-pointer text-left"
           >
             <div className="p-3 rounded-xl bg-surface border border-border text-text-primary group-hover:scale-105 transition-transform">
               <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
@@ -95,10 +95,10 @@ export default function DownloadLandingPage() {
               <span className="text-[10px] uppercase font-bold text-text-muted block tracking-wider">
                 Download on the
               </span>
-              <span className="text-base font-bold text-text-primary group-hover:text-cyan-300 transition-colors">
+              <span className="text-base font-bold text-text-primary group-hover:text-accent transition-colors">
                 Apple App Store
               </span>
-              <span className="text-xs text-cyan-400 block mt-0.5 font-medium">
+              <span className="text-xs text-accent block mt-0.5 font-medium">
                 iOS TestFlight & App Store
               </span>
             </div>
@@ -136,7 +136,7 @@ export default function DownloadLandingPage() {
         {/* FEATURES GRID */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-left">
           <div className="bg-surface-elevated border border-border rounded-2xl p-6">
-            <div className="p-3 rounded-xl bg-cyan-500/10 text-cyan-400 w-fit mb-4">
+            <div className="p-3 rounded-xl bg-accent/10 text-accent-bright w-fit mb-4">
               <Zap className="w-6 h-6" />
             </div>
             <h3 className="text-base font-bold text-text-primary mb-2">Instant AI Feedback</h3>
@@ -146,7 +146,7 @@ export default function DownloadLandingPage() {
           </div>
 
           <div className="bg-surface-elevated border border-border rounded-2xl p-6">
-            <div className="p-3 rounded-xl bg-purple-500/10 text-purple-400 w-fit mb-4">
+            <div className="p-3 rounded-xl bg-accent/10 text-accent-bright w-fit mb-4">
               <Layers className="w-6 h-6" />
             </div>
             <h3 className="text-base font-bold text-text-primary mb-2">Framework Drills</h3>
@@ -156,7 +156,7 @@ export default function DownloadLandingPage() {
           </div>
 
           <div className="bg-surface-elevated border border-border rounded-2xl p-6">
-            <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 w-fit mb-4">
+            <div className="p-3 rounded-xl bg-accent/10 text-accent-bright w-fit mb-4">
               <Shield className="w-6 h-6" />
             </div>
             <h3 className="text-base font-bold text-text-primary mb-2">Offline Sync</h3>
