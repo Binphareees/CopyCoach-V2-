@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { GradientButton } from "../ui/gradient-button";
 import Logo from "../ui/Logo";
+import LanguageSwitcher from "../ui/LanguageSwitcher";
 import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
 import { User, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -133,6 +134,7 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
+          <LanguageSwitcher compact direction="down" />
           {loading ? (
             <div className="h-9 w-20 bg-surface animate-pulse rounded-lg" />
           ) : user ? (

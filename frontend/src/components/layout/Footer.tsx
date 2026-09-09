@@ -1,5 +1,6 @@
 import Logo from "../ui/Logo";
 import { getServerT } from "@/i18n/server";
+import LanguageSwitcher from "../ui/LanguageSwitcher";
 
 export default async function Footer() {
   const { t } = await getServerT("landing");
@@ -76,6 +77,8 @@ export default async function Footer() {
       <div className="mx-auto mt-8 max-w-7xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted border-t border-glass-border-subtle pt-6">
 
         <span>{t("footerCopyright", { year: new Date().getFullYear() })}</span>
+
+        <LanguageSwitcher compact direction="up" />
 
         <div className="flex items-center gap-4 text-text-muted">
           <a href="#about-app" className="hover:text-text-primary transition">{t("footerAbout")}</a>
