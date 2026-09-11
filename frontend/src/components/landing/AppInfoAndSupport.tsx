@@ -5,7 +5,6 @@ import { Trans, useTranslation } from "react-i18next";
 import { GradientButton } from "../ui/gradient-button";
 import {
   Smartphone,
-  Download,
   HelpCircle,
   MessageSquare,
   CheckCircle2,
@@ -15,13 +14,10 @@ import {
   Send,
   ChevronDown,
   ChevronUp,
-  QrCode,
   FileText,
   Target,
   Users,
 } from "lucide-react";
-
-const apkFileName = "CopyCoach-AI-v1.0.apk";
 
 export default function AppInfoAndSupport() {
   const { t } = useTranslation("landing");
@@ -35,10 +31,6 @@ export default function AppInfoAndSupport() {
   const [supportSuccess, setSupportSuccess] = useState(false);
   const [aiAnswer, setAiAnswer] = useState<string | null>(null);
 
-  // APK Download State
-  const [downloadingApk, setDownloadingApk] = useState(false);
-  const [downloadSuccess, setDownloadSuccess] = useState(false);
-
   // Accordion FAQ State
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
 
@@ -49,15 +41,6 @@ export default function AppInfoAndSupport() {
     { value: "Feature Request", label: t("appCatFeature") },
     { value: "Bug Report", label: t("appCatBug") },
   ];
-
-  const handleDownloadApk = () => {
-    setDownloadingApk(true);
-    window.location.href = "/api/download/android-apk";
-    setTimeout(() => {
-      setDownloadingApk(false);
-      setDownloadSuccess(true);
-    }, 1200);
-  };
 
   const handleSupportSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -235,158 +218,34 @@ export default function AppInfoAndSupport() {
         </div>
 
         {/* ============================================================ */}
-        {/* SECTION 2: MOBILE APP DOWNLOAD (REAL GOOGLE PLAY & APPLE LOGOS) */}
+        {/* SECTION 2: MOBILE APP — COMING SOON WAITLIST */}
         {/* ============================================================ */}
         <div id="mobile-app" className="scroll-mt-28 rounded-3xl border border-border bg-surface p-8 sm:p-12">
-          <div className="max-w-3xl mx-auto text-center mb-10">
+          <div className="max-w-2xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-elevated border border-border text-text-secondary text-xs font-bold uppercase tracking-wider mb-4">
               <Smartphone className="w-4 h-4 text-accent" />
               <span>{t("appMobileBadge")}</span>
             </div>
 
             <h3 className="text-2xl sm:text-4xl font-bold text-text-primary tracking-tight">
-              {t("appMobileTitle")}
+              Mobile app coming soon — join the waitlist
             </h3>
 
-            <p className="mt-3 text-text-secondary text-sm leading-relaxed max-w-xl mx-auto">
-              {t("appMobileDesc")}
-            </p>
-          </div>
-
-          {/* STORE BADGES GRID */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto mb-10">
-
-            {/* GOOGLE PLAY STORE BADGE */}
-            <a
-              href="#download-apk"
-              onClick={(e) => {
-                e.preventDefault();
-                handleDownloadApk();
-              }}
-              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-border-strong transition-colors cursor-pointer text-start"
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-xl mx-auto"
             >
-              <div className="p-3 rounded-xl bg-surface border border-border shrink-0">
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
-                  <path d="M3.609 1.814L13.793 12 3.61 22.186C3.23 21.83 3 21.282 3 20.638V3.362c0-.644.23-1.192.609-1.548z" fill="#00D2FF"/>
-                  <path d="M17.207 8.586L13.793 12l3.414 3.414 3.896-2.227c1.171-.67 1.171-1.761 0-2.431l-3.896-2.17z" fill="#FFC700"/>
-                  <path d="M13.793 12L3.609 1.814c.338-.316.82-.44 1.285-.175l12.313 7.033-3.414 3.328z" fill="#00F076"/>
-                  <path d="M13.793 12l3.414 3.414-12.313 7.033c-.465.265-.947.141-1.285-.175L13.793 12z" fill="#FF3A44"/>
-                </svg>
-              </div>
-
-              <div>
-                <span className="text-[10px] uppercase font-extrabold text-text-muted block tracking-widest">
-                  {t("appGetItOn")}
-                </span>
-                <span className="text-base font-black text-text-primary">
-                  {t("appGooglePlay")}
-                </span>
-                <span className="text-[11px] text-success block mt-0.5 font-medium flex items-center gap-1">
-                  <Download className="w-3 h-3" /> {t("appApkIncluded")}
-                </span>
-              </div>
-            </a>
-
-            {/* APPLE APP STORE BADGE */}
-            <a
-              href="https://apps.apple.com/app/copycoach-ai/id640000000"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative flex items-center gap-4 p-5 rounded-2xl bg-surface-elevated border border-border hover:border-border-strong transition-colors cursor-pointer text-start"
-            >
-              <div className="p-3 rounded-xl bg-surface border border-border text-text-secondary shrink-0">
-                <svg className="w-8 h-8 fill-current" viewBox="0 0 24 24">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.28.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                </svg>
-              </div>
-
-              <div>
-                <span className="text-[10px] uppercase font-extrabold text-text-muted block tracking-widest">
-                  {t("appDownloadOnThe")}
-                </span>
-                <span className="text-base font-black text-text-primary">
-                  {t("appAppStore")}
-                </span>
-                <span className="text-[11px] text-text-muted block mt-0.5 font-medium">
-                  {t("appIosTestFlight")}
-                </span>
-              </div>
-            </a>
-          </div>
-
-          {/* DIRECT APK DOWNLOAD BOX & SCANNER */}
-          <div className="max-w-2xl mx-auto bg-surface-elevated p-5 rounded-2xl border border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-surface border border-border text-accent shrink-0">
-                <Download className="w-5 h-5" />
-              </div>
-              <div className="text-start">
-                <h4 className="text-xs font-bold text-text-primary">{t("appApkFileTitle", { version: "v1.0.0" })}</h4>
-                <p className="text-[11px] text-text-muted">
-                  <span className="font-mono">{apkFileName}</span> • {t("appCleanVerified")}
-                </p>
-              </div>
-            </div>
-
-            <GradientButton
-              onClick={handleDownloadApk}
-              disabled={downloadingApk}
-              className="w-full sm:w-auto"
-            >
-              {downloadingApk ? (
-                <span>{t("appDownloadingApk")}</span>
-              ) : downloadSuccess ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 text-white" />
-                  <span>{t("appApkDownloaded")}</span>
-                </>
-              ) : (
-                <>
-                  <Download className="w-4 h-4 text-white" />
-                  <span>{t("appDownloadApk")}</span>
-                </>
-              )}
-            </GradientButton>
-          </div>
-
-          {/* QR CODE INSTANT MOBILE INSTALL */}
-          <div className="max-w-2xl mx-auto mt-6 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4 bg-surface-elevated p-3.5 rounded-2xl border border-border w-full sm:w-auto">
-              <div className="bg-white p-2 rounded-xl shrink-0">
-                <svg className="w-14 h-14" viewBox="0 0 100 100" fill="none">
-                  <rect width="100" height="100" fill="white" />
-                  <rect x="10" y="10" width="30" height="30" fill="black" />
-                  <rect x="15" y="15" width="20" height="20" fill="white" />
-                  <rect x="20" y="20" width="10" height="10" fill="black" />
-
-                  <rect x="60" y="10" width="30" height="30" fill="black" />
-                  <rect x="65" y="15" width="20" height="20" fill="white" />
-                  <rect x="70" y="20" width="10" height="10" fill="black" />
-
-                  <rect x="10" y="60" width="30" height="30" fill="black" />
-                  <rect x="15" y="65" width="20" height="20" fill="white" />
-                  <rect x="20" y="70" width="10" height="10" fill="black" />
-
-                  <rect x="50" y="50" width="10" height="10" fill="black" />
-                  <rect x="70" y="50" width="10" height="10" fill="black" />
-                  <rect x="50" y="70" width="20" height="20" fill="black" />
-                  <rect x="80" y="80" width="10" height="10" fill="black" />
-                </svg>
-              </div>
-
-              <div className="text-start text-xs text-text-secondary">
-                <p className="font-bold text-text-primary flex items-center gap-1">
-                  <QrCode className="w-3.5 h-3.5 text-accent" /> {t("appInstantScan")}
-                </p>
-                <p className="text-[11px] text-text-muted mt-0.5">{t("appScanCamera")}</p>
-                <p className="text-[11px] text-text-muted font-medium mt-0.5">{t("appInstallPwa")}</p>
-              </div>
-            </div>
-
-            <div className="text-xs text-text-muted flex items-center gap-2">
-              <Shield className="w-4 h-4 text-success" />
-              <span>{t("appSafeVerified")}</span>
-            </div>
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="you@company.com"
+                className="w-full sm:flex-1 px-5 py-4 rounded-2xl bg-surface-elevated border border-border text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent transition-colors"
+              />
+              <GradientButton type="submit" className="w-full sm:w-auto">
+                Join the waitlist
+              </GradientButton>
+            </form>
           </div>
         </div>
 
