@@ -2,7 +2,9 @@
 -- CopyCoach AI — Row Level Security (RLS) policies
 -- ----------------------------------------------------------------------------
 -- HOW TO APPLY: open your Supabase project dashboard → SQL Editor → paste this
--- file → Run. It is idempotent (rerunnable).
+-- file → Run. It is idempotent (rerunnable) and never fails if a table is
+-- missing: each table section is guarded by an existence check, and it
+-- bootstraps the `feedback` table if it does not exist yet.
 --
 -- WHY: The dashboard reads/writes Supabase directly through the client using
 -- the public anon key + the user's session. RLS is the ONLY boundary that
@@ -15,19 +17,28 @@
 -- profiles: users can read/update ONLY their own profile.
 -- Inserts are done via the service role at signup/profile-sync.
 -- ────────────────────────────────────────────────────────────────────────────
-alter table public.profiles enable row level security;
+do $$
+begin
+  if exists (select 1 from pg_tables where schemaname = 'public' and tablename = 'profiles') then
+    alter table public.profiles enable row level security;
 
-drop policy if exists "profiles select own" on public.profiles;
-create policy "profiles select own"
-  on public.profiles
-  for select
-  using (auth.uid() = id);
+    drop policy if exists "profiles select own" on public.profiles;
+    create policy "profiles select own"
+      on public.profiles
+      for select
+      using (auth.uid() = id);
 
-drop policy if exists "profiles update own" on public.profiles;
-create policy "profiles update own"
-  on public.profiles
-  for update
-  using (auth.uid() = id);
+    drop policy if exists "profiles update own" on public.profiles;
+    create policy "profiles update own"
+      on public.profiles
+      for update
+      using (auth.uid() = id);
+
+    raise notice 'profiles: RLS enabled';
+  else
+    raise notice 'profiles: table missing, skipped';
+  end if;
+end $$;
 
 -- ────────────────────────────────────────────────────────────────────────────
 -- user_usage: clients may SELECT their own row and INSERT their own row (the
@@ -35,50 +46,105 @@ create policy "profiles update own"
 -- credit enforcement is server-side (service role), so counters cannot be
 -- tampered with from the browser.
 -- ────────────────────────────────────────────────────────────────────────────
-alter table public.user_usage enable row level security;
+do $$
+begin
+  if exists (select 1 from pg_tables where schemaname = 'public' and tablename = 'user_usage') then
+    alter table public.user_usage enable row level security;
 
-drop policy if exists "user_usage select own" on public.user_usage;
-create policy "user_usage select own"
-  on public.user_usage
-  for select
-  using (auth.uid() = user_id);
+    drop policy if exists "user_usage select own" on public.user_usage;
+    create policy "user_usage select own"
+      on public.user_usage
+      for select
+      using (auth.uid() = user_id);
 
-drop policy if exists "user_usage insert own" on public.user_usage;
-create policy "user_usage insert own"
-  on public.user_usage
-  for insert
-  with check (auth.uid() = user_id);
+    drop policy if exists "user_usage insert own" on public.user_usage;
+    create policy "user_usage insert own"
+      on public.user_usage
+      for insert
+      with check (auth.uid() = user_id);
+
+    raise notice 'user_usage: RLS enabled';
+  else
+    raise notice 'user_usage: table missing, skipped';
+  end if;
+end $$;
 
 -- ────────────────────────────────────────────────────────────────────────────
 -- projects: full CRUD restricted to the owner (user_id = auth.uid()).
 -- ────────────────────────────────────────────────────────────────────────────
-alter table public.projects enable row level security;
+do $$
+begin
+  if exists (select 1 from pg_tables where schemaname = 'public' and tablename = 'projects') then
+    alter table public.projects enable row level security;
 
-drop policy if exists "projects owner all" on public.projects;
-create policy "projects owner all"
-  on public.projects
-  for all
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+    drop policy if exists "projects owner all" on public.projects;
+    create policy "projects owner all"
+      on public.projects
+      for all
+      using (auth.uid() = user_id)
+      with check (auth.uid() = user_id);
+
+    raise notice 'projects: RLS enabled';
+  else
+    raise notice 'projects: table missing, skipped';
+  end if;
+end $$;
 
 -- ────────────────────────────────────────────────────────────────────────────
 -- history: full CRUD restricted to the owner (user_id = auth.uid()).
 -- ────────────────────────────────────────────────────────────────────────────
-alter table public.history enable row level security;
+do $$
+begin
+  if exists (select 1 from pg_tables where schemaname = 'public' and tablename = 'history') then
+    alter table public.history enable row level security;
 
-drop policy if exists "history owner all" on public.history;
-create policy "history owner all"
-  on public.history
-  for all
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+    drop policy if exists "history owner all" on public.history;
+    create policy "history owner all"
+      on public.history
+      for all
+      using (auth.uid() = user_id)
+      with check (auth.uid() = user_id);
+
+    raise notice 'history: RLS enabled';
+  else
+    raise notice 'history: table missing, skipped';
+  end if;
+end $$;
 
 -- ────────────────────────────────────────────────────────────────────────────
 -- feedback: accessible ONLY through the service role (anonymous submissions
 -- POST via the server, admins GET/PATCH via the server). No RLS policies are
 -- created, so anon/authenticated keys are denied every operation.
+--
+-- NOTE: This also bootstraps the table if it does not exist yet. If your DB
+-- was missing it, feedback/bug-report submissions were silently falling back
+-- to a per-instance in-memory store — creating it makes them persist.
 -- ────────────────────────────────────────────────────────────────────────────
-alter table public.feedback enable row level security;
+create table if not exists public.feedback (
+  id text primary key,
+  user_id text not null,
+  drill_id text,
+  category text,
+  comment text,
+  rating text,
+  user_copy_input text,
+  ai_output_string text,
+  user_tier text,
+  priority text,
+  status text default 'open',
+  created_at timestamptz default now()
+);
+
+do $$
+begin
+  if exists (select 1 from pg_tables where schemaname = 'public' and tablename = 'feedback') then
+    alter table public.feedback enable row level security;
+
+    raise notice 'feedback: RLS enabled (no client policies — service role only)';
+  else
+    raise notice 'feedback: table missing, skipped';
+  end if;
+end $$;
 
 -- ────────────────────────────────────────────────────────────────────────────
 -- Storage: avatars bucket.
@@ -121,3 +187,8 @@ create policy "avatars owner delete"
     and auth.role() = 'authenticated'
     and (storage.foldername(name))[1] = auth.uid()::text
   );
+
+do $$
+begin
+  raise notice 'storage: avatars policies applied';
+end $$;
