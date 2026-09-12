@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { CleanMinimalSignUp } from "@/components/ui/clean-minimal-sign-up";
 import { getIsSupabaseConfigured, getActiveSupabaseUrl, ensureSupabaseConfig } from "@/lib/supabase";
+import { persistSessionToCookies } from "@/lib/persist-session";
 
 const TIMEOUT_ERROR = "Connection timed out.";
 
@@ -143,6 +144,7 @@ export default function SignupPage() {
 
       if (signInData?.session) {
         showSuccess(t("signupSuccess"));
+        await persistSessionToCookies(signInData.session);
         window.location.href = "/dashboard";
       } else {
         showSuccess(t("accountCreatedLogin"));

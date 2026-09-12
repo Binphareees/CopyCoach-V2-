@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ensureSupabaseConfig } from "@/lib/supabase";
+import { persistSessionToCookies } from "@/lib/persist-session";
 import { useRouter } from "next/navigation";
 import Logo from "@/components/ui/Logo";
 
@@ -70,6 +71,10 @@ export default function CallbackPage() {
         } catch (e) {
           console.warn("Profile sync warning:", e);
         }
+
+        // Mirror the session into the server-side HttpOnly cookie bridge
+        // (non-fatal; the localStorage session remains authoritative for now).
+        await persistSessionToCookies(session);
 
         if (isSubscribed) {
           setStatus(t("callbackSuccess"));

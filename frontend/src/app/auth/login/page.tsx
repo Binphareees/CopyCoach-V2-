@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { CleanMinimalSignIn } from "@/components/ui/clean-minimal-sign-in";
 import { getIsSupabaseConfigured, getActiveSupabaseUrl, ensureSupabaseConfig } from "@/lib/supabase";
+import { persistSessionToCookies } from "@/lib/persist-session";
 
 const TIMEOUT_ERROR = "Connection timed out.";
 
@@ -78,7 +79,7 @@ export default function LoginPage() {
       });
 
       const res = await Promise.race([authPromise, timeoutPromise]);
-      const { error } = res;
+      const { data: { session }, error } = res;
 
       setLoading(false);
 
@@ -92,6 +93,7 @@ export default function LoginPage() {
           const retry = await activeClient.auth.signInWithPassword({ email, password });
           if (retry.data?.session) {
             showSuccess(t("loginSuccess"));
+            await persistSessionToCookies(retry.data?.session);
             window.location.href = "/dashboard";
             return;
           }
@@ -103,6 +105,7 @@ export default function LoginPage() {
       }
 
       showSuccess(t("loginSuccess"));
+      await persistSessionToCookies(session);
       window.location.href = "/dashboard";
     } catch (err: unknown) {
       setLoading(false);
