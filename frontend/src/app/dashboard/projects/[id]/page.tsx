@@ -86,9 +86,10 @@ export default function ProjectPage() {
       .from("projects")
       .select("*")
       .eq("id", projectId)
-      .single();
+      .eq("user_id", user.id)
+      .maybeSingle();
 
-    if (projectError) {
+    if (projectError || !projectData) {
       console.error("Failed to load project:", projectError);
       setLoading(false);
       return;
@@ -101,6 +102,7 @@ export default function ProjectPage() {
       .from("history")
       .select("*")
       .eq("project_id", projectId)
+      .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
     if (historyError) {
@@ -126,10 +128,16 @@ export default function ProjectPage() {
   async function renameProject() {
     if (!editName.trim() || !project) return;
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+
     const { error } = await supabase
       .from("projects")
       .update({ name: editName.trim() })
-      .eq("id", projectId);
+      .eq("id", projectId)
+      .eq("user_id", user.id);
 
     if (error) {
       console.error("Rename project error:", error);
@@ -141,7 +149,12 @@ export default function ProjectPage() {
   }
 
   async function deleteProject() {
-    const { error } = await supabase.from("projects").delete().eq("id", projectId);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { error } = await supabase.from("projects").delete().eq("id", projectId).eq("user_id", user.id);
 
     if (error) {
       console.error("Delete project error:", error);
@@ -161,10 +174,16 @@ export default function ProjectPage() {
   }
 
   async function toggleFavorite(id: string, currentFavorite: boolean) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+
     const { error } = await supabase
       .from("history")
       .update({ favorite: !currentFavorite })
-      .eq("id", id);
+      .eq("id", id)
+      .eq("user_id", user.id);
 
     if (error) {
       console.error("Toggle favorite error:", error);
@@ -177,7 +196,12 @@ export default function ProjectPage() {
   }
 
   async function deleteCopy(id: string) {
-    const { error } = await supabase.from("history").delete().eq("id", id);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { error } = await supabase.from("history").delete().eq("id", id).eq("user_id", user.id);
 
     if (error) {
       console.error("Delete copy error:", error);

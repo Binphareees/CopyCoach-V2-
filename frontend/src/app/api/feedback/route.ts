@@ -77,8 +77,21 @@ export async function POST(req: NextRequest) {
     const user = await getServerUser(req);
     const userId = user?.id || "anonymous";
 
+    // Client-supplied tier is spoofable; derive it server-side whenever the
+    // user is authenticated. Anonymous reporters keep their submitted tier.
+    let effectiveTier = safeTier;
+    if (user) {
+      const { data: usage } = await supabaseAdmin
+        .from("user_usage")
+        .select("plan")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (usage?.plan === "pro") effectiveTier = "pro";
+      else if (usage?.plan === "free") effectiveTier = "spark";
+    }
+
     const isHighPriority =
-      (safeTier === "pro" || safeTier === "studio") &&
+      (effectiveTier === "pro" || effectiveTier === "studio") &&
       (category === "Bug" || category === "Complaint" || rating === "down");
 
     const feedbackEntry = {
@@ -90,7 +103,7 @@ export async function POST(req: NextRequest) {
       rating: rating || null,
       user_copy_input: userCopyInput ? String(userCopyInput).slice(0, MAX_FIELD_LENGTH) : null,
       ai_output_string: aiOutputString ? String(aiOutputString).slice(0, MAX_FIELD_LENGTH) : null,
-      user_tier: safeTier,
+      user_tier: effectiveTier,
       priority: isHighPriority ? "HIGH" : "NORMAL",
       status: "open",
       created_at: new Date().toISOString(),

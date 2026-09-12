@@ -13,6 +13,7 @@
   "uploading": "جارٍ الرفع...",
   "userAvatarAlt": "صورة المستخدم الرمزية",
   "imgTooLarge": "يجب أن تكون الصورة أصغر من 2 ميغابايت",
+  "imgUnsupportedType": "صيغة الصورة غير مدعومة. استخدم PNG أو JPG أو WEBP أو GIF.",
   "profilePicUpdated": "تم تحديث صورة الملف الشخصي بنجاح!",
   "failedUploadAvatar": "فشل في رفع الصورة الرمزية",
   "profilePicRemoved": "تمت إزالة صورة الملف الشخصي",

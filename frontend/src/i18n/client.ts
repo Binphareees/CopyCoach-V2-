@@ -8,6 +8,11 @@ import { loadLocaleBundle } from "./translate";
 
 const NAMESPACES = Object.keys(en) as Namespace[];
 
+// Only ever a locale preference (never sensitive), but send it Secure when the
+// page is served over HTTPS so it cannot be read/transmitted over HTTP.
+const localeCookieSecure =
+  typeof window !== "undefined" && window.location.protocol === "https:";
+
 i18n.use(initReactI18next).use(LanguageDetector).init({
   resources: { en },
   fallbackLng: DEFAULT_LOCALE,
@@ -24,7 +29,7 @@ detection: {
       lookupLocalStorage: LOCALE_KEY,
       lookupCookie: LOCALE_KEY,
       cookieMinutes: 525600,
-      cookieOptions: { sameSite: "lax", path: "/" },
+      cookieOptions: { sameSite: "lax", path: "/", secure: localeCookieSecure },
       caches: ["localStorage", "cookie"],
     },
   missingKeyHandler: (lngs, ns, key) => {

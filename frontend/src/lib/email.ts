@@ -93,6 +93,17 @@ interface EmailNotificationOptions {
   type: "BUG_REPORT" | "SUPPORT_QUESTION" | "FEEDBACK";
 }
 
+// User-supplied content is interpolated into the email HTML below. Escape it
+// so a crafted comment/question cannot inject markup into the developer email.
+function escapeHtml(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function buildDeveloperEmailHtml(options: EmailNotificationOptions): string {
   const {
     category,
@@ -107,22 +118,30 @@ function buildDeveloperEmailHtml(options: EmailNotificationOptions): string {
     type,
   } = options;
 
+  const safeCategory = escapeHtml(category);
+  const safeUserId = escapeHtml(userId);
+  const safeComment = escapeHtml(comment);
+  const safeQuestion = escapeHtml(question);
+  const safeAnswer = escapeHtml(answer);
+  const safeUserCopyInput = escapeHtml(userCopyInput);
+  const safeAiOutputString = escapeHtml(aiOutputString);
+
   return `
     <div style="font-family: Arial, sans-serif; background-color: #0f172a; color: #f8fafc; padding: 24px; border-radius: 12px; max-width: 600px; margin: 0 auto;">
       <div style="border-bottom: 2px solid #06b6d4; padding-bottom: 12px; margin-bottom: 16px;">
         <h2 style="color: #38bdf8; margin: 0;">CopyCoach AI Developer Alert</h2>
-        <p style="color: #94a3b8; font-size: 14px; margin-top: 4px;">Priority: <strong style="color: ${priority === "HIGH" ? "#f59e0b" : "#38bdf8"};">${priority}</strong> | Tier: <strong>${userTier.toUpperCase()}</strong></p>
+        <p style="color: #94a3b8; font-size: 14px; margin-top: 4px;">Priority: <strong style="color: ${priority === "HIGH" ? "#f59e0b" : "#38bdf8"};">${escapeHtml(priority)}</strong> | Tier: <strong>${escapeHtml(userTier).toUpperCase()}</strong></p>
       </div>
       <div style="background-color: #1e293b; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <p style="margin: 0 0 8px 0; font-size: 14px; color: #cbd5e1;"><strong>Type:</strong> ${type}</p>
-        <p style="margin: 0 0 8px 0; font-size: 14px; color: #cbd5e1;"><strong>Category:</strong> ${category}</p>
-        <p style="margin: 0; font-size: 14px; color: #cbd5e1;"><strong>User ID / Email:</strong> ${userId}</p>
+        <p style="margin: 0 0 8px 0; font-size: 14px; color: #cbd5e1;"><strong>Type:</strong> ${escapeHtml(type)}</p>
+        <p style="margin: 0 0 8px 0; font-size: 14px; color: #cbd5e1;"><strong>Category:</strong> ${safeCategory}</p>
+        <p style="margin: 0; font-size: 14px; color: #cbd5e1;"><strong>User ID / Email:</strong> ${safeUserId}</p>
       </div>
-      ${question ? `<div style="margin-bottom: 16px;"><h4 style="color: #38bdf8; margin: 0 0 6px 0;">User Question Asked:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 14px; white-space: pre-wrap; margin: 0;">${question}</p></div>` : ""}
-      ${answer ? `<div style="margin-bottom: 16px;"><h4 style="color: #a855f7; margin: 0 0 6px 0;">AI Generated Response:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 13px; color: #e2e8f0; white-space: pre-wrap; margin: 0;">${answer}</p></div>` : ""}
-      ${comment ? `<div style="margin-bottom: 16px;"><h4 style="color: #f43f5e; margin: 0 0 6px 0;">Report / Feedback Comment:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 14px; white-space: pre-wrap; margin: 0;">${comment}</p></div>` : ""}
-      ${userCopyInput ? `<div style="margin-bottom: 16px;"><h4 style="color: #94a3b8; margin: 0 0 6px 0;">Original User Draft Copy:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 12px; font-family: monospace; white-space: pre-wrap; margin: 0;">${userCopyInput}</p></div>` : ""}
-      ${aiOutputString ? `<div style="margin-bottom: 16px;"><h4 style="color: #94a3b8; margin: 0 0 6px 0;">AI Critique Output:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 12px; font-family: monospace; white-space: pre-wrap; margin: 0;">${aiOutputString}</p></div>` : ""}
+      ${question ? `<div style="margin-bottom: 16px;"><h4 style="color: #38bdf8; margin: 0 0 6px 0;">User Question Asked:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 14px; white-space: pre-wrap; margin: 0;">${safeQuestion}</p></div>` : ""}
+      ${answer ? `<div style="margin-bottom: 16px;"><h4 style="color: #a855f7; margin: 0 0 6px 0;">AI Generated Response:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 13px; color: #e2e8f0; white-space: pre-wrap; margin: 0;">${safeAnswer}</p></div>` : ""}
+      ${comment ? `<div style="margin-bottom: 16px;"><h4 style="color: #f43f5e; margin: 0 0 6px 0;">Report / Feedback Comment:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 14px; white-space: pre-wrap; margin: 0;">${safeComment}</p></div>` : ""}
+      ${userCopyInput ? `<div style="margin-bottom: 16px;"><h4 style="color: #94a3b8; margin: 0 0 6px 0;">Original User Draft Copy:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 12px; font-family: monospace; white-space: pre-wrap; margin: 0;">${safeUserCopyInput}</p></div>` : ""}
+      ${aiOutputString ? `<div style="margin-bottom: 16px;"><h4 style="color: #94a3b8; margin: 0 0 6px 0;">AI Critique Output:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 12px; font-family: monospace; white-space: pre-wrap; margin: 0;">${safeAiOutputString}</p></div>` : ""}
       <div style="border-top: 1px solid #334155; padding-top: 12px; font-size: 12px; color: #64748b; text-align: center;">
         Automated Developer Dispatch for CopyCoach AI • Sent to ${DEVELOPER_EMAIL}
       </div>

@@ -186,6 +186,12 @@ Original Copy / Product Description: ${text}
       raw = completion.choices[0]?.message?.content || "";
     }
 
+    // A real provider produced output (Gemini/Groq). The mock fallback below
+    // only runs when NO provider is configured, so the counter must track
+    // actual generations only — otherwise a failed HWE pass would let a user
+    // generate unlimited copy without consuming credits.
+    const generatedByProvider = Boolean(raw);
+
     if (!raw) {
       // Graceful fallback when no provider is configured or an upstream call fails
       raw = JSON.stringify({
@@ -269,8 +275,9 @@ Original Copy / Product Description: ${text}
       }),
     };
 
-    // Only consume credit if both passes succeeded (localized generations also consume a credit)
-    if (humanWriting || localized) {
+    // Only consume a credit when a real provider generation was served. The
+    // pure mock fallback (no provider configured) stays free.
+    if (generatedByProvider) {
       try {
         await consumeCredit(user.id);
       } catch (e) {
@@ -290,14 +297,14 @@ Original Copy / Product Description: ${text}
 
     return NextResponse.json({
       result: finalResult,
-      creditsRemaining: humanWriting || localized
+      creditsRemaining: generatedByProvider
         ? Math.max(0, check.remaining - 1)
         : check.remaining,
     });
   } catch (error) {
     console.error("IMPROVE API ERROR:", error);
     return NextResponse.json(
-      { error: String(error) },
+      { error: "Something went wrong while improving your copy. Please try again." },
       { status: 500 }
     );
   }

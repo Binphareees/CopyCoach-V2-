@@ -13,6 +13,7 @@
   "uploading": "Subiendo...",
   "userAvatarAlt": "Avatar de usuario",
   "imgTooLarge": "La imagen debe ser menor a 2 MB",
+  "imgUnsupportedType": "Formato de imagen no compatible. Usa PNG, JPG, WEBP o GIF.",
   "profilePicUpdated": "¡Foto de perfil actualizada exitosamente!",
   "failedUploadAvatar": "Error al subir el avatar",
   "profilePicRemoved": "Foto de perfil eliminada",

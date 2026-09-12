@@ -13,6 +13,7 @@
   "uploading": "Chargement...",
   "userAvatarAlt": "Avatar de l'utilisateur",
   "imgTooLarge": "L'image doit faire moins de 2 Mo",
+  "imgUnsupportedType": "Format d'image non pris en charge. Utilisez PNG, JPG, WEBP ou GIF.",
   "profilePicUpdated": "Photo de profil mise à jour avec succès !",
   "failedUploadAvatar": "Échec du chargement de l'avatar",
   "profilePicRemoved": "Photo de profil supprimée",

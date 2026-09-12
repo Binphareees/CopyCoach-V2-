@@ -49,12 +49,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Create user with admin privileges and auto-confirm email
+    // 1. Create user with admin privileges and auto-confirm email.
+    // Email confirmation currently auto-confirms to preserve the existing
+    // onboarding flow. Set AUTO_CONFIRM_EMAILS=false in the production env to
+    // require email verification (Supabase confirmation templates must then be
+    // configured in the Supabase dashboard).
     const { data: userData, error: createError } =
       await supabaseAdmin.auth.admin.createUser({
         email,
         password,
-        email_confirm: true,
+        email_confirm: process.env.AUTO_CONFIRM_EMAILS !== "false",
         user_metadata: {
           full_name: name || "",
         },
@@ -117,8 +121,16 @@ export async function POST(request: NextRequest) {
       user: userData.user,
     });
   } catch (err: unknown) {
-    const message =
-      err instanceof Error ? err.message : "An unexpected error occurred.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    if (err instanceof SyntaxError) {
+      return NextResponse.json(
+        { error: "Invalid JSON payload." },
+        { status: 400 }
+      );
+    }
+    console.error("Signup error:", err);
+    return NextResponse.json(
+      { error: "An unexpected error occurred. Please try again." },
+      { status: 500 }
+    );
   }
 }

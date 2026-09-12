@@ -2,11 +2,22 @@ import { NextResponse } from "next/server";
 import { activateSubscription } from "@/lib/subscription";
 import { getServerUser } from "@/lib/auth-server";
 import { trackServerEvent } from "@/lib/analytics";
+import { getRateLimiter } from "@/lib/rate-limit";
+
+const paystackVerifyLimiter = getRateLimiter(20, 60);
 
 export async function GET(req: Request) {
   const user = await getServerUser(req);
   if (!user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  const rate = await paystackVerifyLimiter(user.id);
+  if (!rate.success) {
+    return NextResponse.json(
+      { error: "Too many verification requests. Please wait a moment and try again." },
+      { status: 429 }
+    );
   }
 
   const { searchParams } = new URL(req.url);

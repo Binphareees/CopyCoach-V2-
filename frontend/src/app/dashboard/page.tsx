@@ -472,9 +472,16 @@ export default function DashboardPage() {
   // 4. Load Copy History
   const loadHistory = useCallback(async () => {
     setHistoryLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setHistoryLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase
       .from("history")
       .select("*")
+      .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
     if (!error && data) {
@@ -594,10 +601,14 @@ export default function DashboardPage() {
 
   // Favorite toggle
   async function toggleFavorite(id: string, current: boolean) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
     const { error } = await supabase
       .from("history")
       .update({ favorite: !current })
-      .eq("id", id);
+      .eq("id", id)
+      .eq("user_id", user.id);
 
     if (!error) {
       loadHistory();
@@ -607,7 +618,10 @@ export default function DashboardPage() {
 
   // Delete history item
   async function deleteHistory(id: string) {
-    const { error } = await supabase.from("history").delete().eq("id", id);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { error } = await supabase.from("history").delete().eq("id", id).eq("user_id", user.id);
     if (!error) {
       loadHistory();
       showToast(t("toastItemDeleted"));

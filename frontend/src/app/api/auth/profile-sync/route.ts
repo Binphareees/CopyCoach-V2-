@@ -64,7 +64,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Sync failed";
+    console.error("Profile sync error:", err);
+    const message =
+      err instanceof Error && err.name === "AbortError" ? "Sync timed out" : "Sync failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

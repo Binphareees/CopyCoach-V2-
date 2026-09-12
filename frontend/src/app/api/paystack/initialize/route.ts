@@ -1,14 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerUser } from "@/lib/auth-server";
 import { trackServerEvent } from "@/lib/analytics";
+import { getRateLimiter } from "@/lib/rate-limit";
 
 const PRO_PRICE_KOBO = 5000 * 100; // ₦5,000 in kobo
+
+const paystackInitializeLimiter = getRateLimiter(10, 60);
 
 export async function POST(req: NextRequest) {
   try {
     const user = await getServerUser(req);
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const rate = await paystackInitializeLimiter(user.id);
+    if (!rate.success) {
+      return NextResponse.json(
+        { error: "Too many payment initialization attempts. Please wait a moment and try again." },
+        { status: 429 }
+      );
     }
 
     if (!process.env.PAYSTACK_SECRET_KEY) {

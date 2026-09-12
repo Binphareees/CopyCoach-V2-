@@ -12,7 +12,7 @@ function Fallback({ error }: { error: unknown }) {
       <p className="max-w-sm text-sm text-brand-100/60">
         An unexpected error occurred. Please refresh the page to continue.
       </p>
-      {message && (
+      {process.env.NODE_ENV !== "production" && message && (
         <p className="max-w-sm text-xs text-rose-400/80">{message}</p>
       )}
       <button

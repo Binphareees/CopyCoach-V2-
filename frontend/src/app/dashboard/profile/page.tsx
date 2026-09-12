@@ -210,6 +210,28 @@ export default function ProfilePage() {
         return;
       }
 
+      const ALLOWED_AVATAR_TYPES = new Set([
+        "image/png",
+        "image/jpeg",
+        "image/gif",
+        "image/webp",
+      ]);
+      const ALLOWED_AVATAR_EXTENSIONS = new Set([
+        "png",
+        "jpg",
+        "jpeg",
+        "gif",
+        "webp",
+      ]);
+      const avatarExtension = (file.name.split(".").pop() || "").toLowerCase();
+      if (
+        !ALLOWED_AVATAR_TYPES.has(file.type) ||
+        !ALLOWED_AVATAR_EXTENSIONS.has(avatarExtension)
+      ) {
+        showNotification(t("imgUnsupportedType"), "error");
+        return;
+      }
+
       setUploading(true);
       const {
         data: { user },
@@ -217,8 +239,7 @@ export default function ProfilePage() {
 
       if (!user) return;
 
-      const extension = file.name.split(".").pop();
-      const filePath = `${user.id}/avatar.${extension}`;
+      const filePath = `${user.id}/avatar.${avatarExtension}`;
 
       const { error: uploadError } = await supabase.storage
         .from("avatars")

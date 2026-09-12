@@ -13,6 +13,7 @@
   "uploading": "Uploading...",
   "userAvatarAlt": "User Avatar",
   "imgTooLarge": "Image must be smaller than 2MB",
+  "imgUnsupportedType": "Unsupported image format. Please use PNG, JPG, WEBP, or GIF.",
   "profilePicUpdated": "Profile picture updated successfully!",
   "failedUploadAvatar": "Failed to upload avatar",
   "profilePicRemoved": "Profile picture removed",

@@ -37,7 +37,9 @@ export default function ErrorBoundary({
         </div>
         <h2 className="text-xl font-semibold mb-2">{t("errorOccurred")}</h2>
         <p className="text-text-muted text-sm mb-6">
-          {error.message || t("errorRenderFailed")}
+          {process.env.NODE_ENV !== "production" && error.message
+            ? error.message
+            : t("errorRenderFailed")}
         </p>
         <button
           onClick={() => reset()}
