@@ -147,6 +147,42 @@ begin
 end $$;
 
 -- ────────────────────────────────────────────────────────────────────────────
+-- Cleanup: remove legacy dashboard-generated policies.
+-- These were created when RLS was enabled from the Supabase Table/Storage UI
+-- and duplicate (or conflict with) the explicitly named policies above. In
+-- particular, "Users can update their own usage" let any logged-in user reset
+-- their own credits / self-grant Pro from the browser — that defeats the
+-- server-side spend caps in /api/improve, so it MUST be removed.
+-- ────────────────────────────────────────────────────────────────────────────
+drop policy if exists "Users can update their own usage" on public.user_usage; -- security fix
+drop policy if exists "Users can view their own usage" on public.user_usage;
+drop policy if exists "Users can insert their own usage" on public.user_usage;
+
+drop policy if exists "Users can delete their own history" on public.history;
+drop policy if exists "Users can insert their own history" on public.history;
+drop policy if exists "Users can update their own history" on public.history;
+drop policy if exists "Users can view their own history" on public.history;
+
+drop policy if exists "Users can delete own projects" on public.projects;
+drop policy if exists "Users can insert own projects" on public.projects;
+drop policy if exists "Users can update own projects" on public.projects;
+drop policy if exists "Users can view own projects" on public.projects;
+
+drop policy if exists "Users can insert their own profile" on public.profiles;
+drop policy if exists "Users can update own profile" on public.profiles;
+drop policy if exists "Allow users to update their own profile" on public.profiles;
+drop policy if exists "users to update their own profile" on public.profiles;
+
+drop policy if exists "Give anon users access to JPG images in folder 1oj01fe_0" on storage.objects;
+drop policy if exists "Users can upload avatars" on storage.objects;
+drop policy if exists "Anyone can view avatars" on storage.objects;
+
+do $$
+begin
+  raise notice 'cleanup: legacy dashboard policies removed';
+end $$;
+
+-- ────────────────────────────────────────────────────────────────────────────
 -- Storage: avatars bucket.
 -- Avatars are public-read (they are shown on the dashboard), but uploads,
 -- updates, and deletes are restricted to the authenticated owner's own folder
