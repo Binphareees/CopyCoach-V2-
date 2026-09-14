@@ -1095,10 +1095,11 @@ export default function DashboardPage() {
                   subtitle={t("copyLanguageSubtitle")}
                 />
                 <div className="mt-4">
+                  <div className="relative">
                   <select
                     value={copyLanguage}
                     onChange={(e) => persistCopyLanguage(e.target.value)}
-                    className="cc-field w-full cursor-pointer rounded-xl px-3.5 py-2.5 text-sm font-medium"
+                    className="cc-field w-full cursor-pointer appearance-none rounded-xl px-3.5 py-2.5 pe-9 text-sm font-medium"
                   >
                     {[
                       { value: "English", label: t("copyLanguageEnglish") },
@@ -1111,6 +1112,8 @@ export default function DashboardPage() {
                       </option>
                     ))}
                   </select>
+                  <ChevronDown className="pointer-events-none absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+                </div>
                   <p className="mt-2 text-[11px] text-text-muted">{t("copyLanguageHelper")}</p>
                 </div>
               </section>
