@@ -13,6 +13,12 @@ export const localeConfig = {
   ar: { code: "ar", label: "Arabic", nativeName: "العربية", dir: "rtl", intl: "ar-SA" },
   fr: { code: "fr", label: "French", nativeName: "Français", dir: "ltr", intl: "fr-FR" },
   es: { code: "es", label: "Spanish", nativeName: "Español", dir: "ltr", intl: "es-ES" },
+  ha: { code: "ha", label: "Hausa", nativeName: "Hausa", dir: "ltr", intl: "ha-NG" },
+  ig: { code: "ig", label: "Igbo", nativeName: "Igbo", dir: "ltr", intl: "ig-NG" },
+  yo: { code: "yo", label: "Yoruba", nativeName: "Yorùbá", dir: "ltr", intl: "yo-NG" },
+  de: { code: "de", label: "German", nativeName: "Deutsch", dir: "ltr", intl: "de-DE" },
+  pt: { code: "pt", label: "Portuguese", nativeName: "Português", dir: "ltr", intl: "pt-PT" },
+  sw: { code: "sw", label: "Swahili", nativeName: "Kiswahili", dir: "ltr", intl: "sw-KE" },
 } as const satisfies Record<string, LocaleInfo>;
 
 export type LocaleCode = keyof typeof localeConfig;

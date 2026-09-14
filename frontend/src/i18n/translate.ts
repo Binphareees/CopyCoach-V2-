@@ -9,6 +9,12 @@ const loaders: Record<LocaleCode, () => Promise<Bundle>> = {
   ar: () => import("./dictionaries/ar").then((m) => m.default),
   fr: () => import("./dictionaries/fr").then((m) => m.default),
   es: () => import("./dictionaries/es").then((m) => m.default),
+  ha: () => import("./dictionaries/ha").then((m) => m.default),
+  ig: () => import("./dictionaries/ig").then((m) => m.default),
+  yo: () => import("./dictionaries/yo").then((m) => m.default),
+  de: () => import("./dictionaries/de").then((m) => m.default),
+  pt: () => import("./dictionaries/pt").then((m) => m.default),
+  sw: () => import("./dictionaries/sw").then((m) => m.default),
 };
 
 export async function loadLocaleBundle(lng: LocaleCode): Promise<Bundle> {
