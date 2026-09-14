@@ -43,7 +43,7 @@ export default function LibraryCard({
       <div className="flex flex-col gap-3 p-4 pb-3">
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="inline-flex items-center gap-1 rounded-md border border-border bg-surface-muted px-2 py-0.5 text-[11px] font-medium text-text-secondary">
+            <span className="inline-flex items-center gap-1 rounded-md border border-accent/30 bg-accent/10 px-2 py-0.5 text-[11px] font-medium text-accent-bright">
               <FileText className="h-3 w-3" />
               {copyType}
             </span>
@@ -84,7 +84,7 @@ export default function LibraryCard({
               "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors",
               copied
                 ? "border-success/30 bg-success/10 text-success"
-                : "border-border bg-surface-muted text-text-secondary hover:bg-surface-overlay hover:text-text-primary"
+                : "border-accent/35 bg-accent/5 text-accent-bright hover:border-accent/60 hover:bg-accent/10"
             )}
             title={copied ? t("copiedToClipboard") : t("copyText")}
             aria-label={copied ? t("copyTextAriaCopied") : t("copyText")}
