@@ -37,6 +37,20 @@ export default function ProductDetails({
   return (
     <div className="space-y-6">
       <div>
+        <label htmlFor="product-name" className={labelClass}>
+          {t("productBrandName")}
+        </label>
+        <input
+          id="product-name"
+          type="text"
+          value={productName}
+          onChange={(e) => onProductNameChange(e.target.value)}
+          placeholder={t("productBrandName")}
+          className={fieldClass}
+        />
+      </div>
+
+      <div>
         <div className="mb-2 flex items-baseline justify-between gap-3">
           <label
             htmlFor="product-description"
@@ -55,20 +69,6 @@ export default function ProductDetails({
           onChange={(e) => onDescriptionChange(e.target.value)}
           placeholder={t("pasteCopyPlaceholder")}
           className="cc-field min-h-[180px] rounded-2xl border-border p-5 text-[15px] leading-relaxed placeholder:text-text-muted"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="product-name" className={labelClass}>
-          {t("productBrandName")}
-        </label>
-        <input
-          id="product-name"
-          type="text"
-          value={productName}
-          onChange={(e) => onProductNameChange(e.target.value)}
-          placeholder={t("productBrandName")}
-          className={fieldClass}
         />
       </div>
 
