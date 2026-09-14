@@ -119,6 +119,32 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
 
       <div className="mx-3 border-t border-border-subtle" />
 
+      {/* Sidebar promo card — 2:3 portrait asset, above the nav */}
+      <button
+        type="button"
+        onClick={() => openAccountModal("billing")}
+        className="group relative mx-auto my-4 block w-[220px] overflow-hidden rounded-xl border border-border text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        aria-label={t("promoUpgradeAria", { defaultValue: "Upgrade to Pro" })}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/sidebar-promo.jpeg"
+          alt=""
+          className="aspect-[2/3] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+        />
+        <span className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent p-3">
+          <span className="flex items-center gap-1 text-xs font-bold text-[#21f1a8]">
+            <Zap className="h-3.5 w-3.5" />
+            Pro
+          </span>
+          <span className="mt-0.5 text-[11px] font-medium leading-snug text-white/90">
+            {t("promoCardBody", { defaultValue: "100 monthly generations & premium models" })}
+          </span>
+        </span>
+      </button>
+
+      <div className="mx-3 border-t border-border-subtle" />
+
       <nav className="flex-1 overflow-y-auto px-3 py-2">
         <DashboardNavGroup label={t("workspaceGroup")}>
           <DashboardNavLink
@@ -226,30 +252,7 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
           onClick={handleSignOut}
         />
 
-        {/* Sidebar promo card — 2:3 portrait asset */}
-        <button
-          type="button"
-          onClick={() => openAccountModal("billing")}
-          className="group relative mx-auto mt-4 block w-[176px] overflow-hidden rounded-xl border border-border text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          aria-label={t("promoUpgradeAria", { defaultValue: "Upgrade to Pro" })}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/sidebar-promo.jpeg"
-            alt=""
-            className="aspect-[2/3] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-          />
-          <span className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent p-3">
-            <span className="flex items-center gap-1 text-xs font-bold text-[#21f1a8]">
-              <Zap className="h-3.5 w-3.5" />
-              Pro
-            </span>
-            <span className="mt-0.5 text-[11px] font-medium leading-snug text-white/90">
-              {t("promoCardBody", { defaultValue: "100 monthly generations & premium models" })}
-            </span>
-          </span>
-        </button>
-      </nav>
+        </nav>
 
       <div className="shrink-0 border-t border-border-subtle px-3 pb-3 pt-3">
         <div className="mb-2">
