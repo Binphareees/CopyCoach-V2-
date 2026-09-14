@@ -19,7 +19,7 @@ const buttonStyles = (
   size: ButtonProps["size"] = "md"
 ) =>
   clsx(
-    "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium",
+    "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium",
     "transition-colors duration-200 ease-out",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background",
     "disabled:pointer-events-none disabled:opacity-45",
@@ -27,7 +27,7 @@ const buttonStyles = (
       "bg-accent text-accent-foreground hover:bg-accent-hover":
         variant === "primary",
 
-      "border border-border bg-surface-elevated text-text-primary hover:bg-surface-overlay":
+      "border border-accent/35 bg-accent/5 text-text-primary hover:bg-accent/10":
         variant === "secondary",
 
       "border border-border bg-transparent text-text-primary hover:bg-surface":

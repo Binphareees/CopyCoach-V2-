@@ -37,10 +37,10 @@ export function DashboardNavLink({
       onClick={onNavigate}
       aria-current={isActive ? "page" : undefined}
       className={clsx(
-        "group flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-colors",
+        "group flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] font-medium transition-colors",
         isActive
           ? "bg-accent/12 text-accent-bright"
-          : "text-text-secondary hover:bg-surface hover:text-text-primary"
+          : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"
       )}
     >
       <span
@@ -80,10 +80,10 @@ export function DashboardNavButton({
       onClick={onClick}
       title={title}
       className={clsx(
-        "group flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-colors",
+        "group flex w-full items-center gap-2 rounded-lg px-2 py-2 text-[13px] font-medium transition-colors",
         variant === "danger"
           ? "text-danger hover:bg-danger/15"
-          : "text-text-secondary hover:bg-surface hover:text-text-primary"
+          : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"
       )}
     >
       <span
@@ -108,7 +108,7 @@ interface DashboardNavGroupProps {
 export function DashboardNavGroup({ label, children }: DashboardNavGroupProps) {
   return (
     <div className="mb-1.5">
-      <span className="block px-2.5 pb-1.5 pt-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+      <span className="block px-2 pb-1.5 pt-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
         {label}
       </span>
       <div className="space-y-0.5">{children}</div>

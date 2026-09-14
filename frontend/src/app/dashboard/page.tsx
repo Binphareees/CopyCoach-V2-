@@ -50,6 +50,7 @@ import {
   Moon,
   Keyboard,
   HelpCircle,
+  History,
   CreditCard,
   UserCheck,
   ShieldCheck,
@@ -853,31 +854,84 @@ export default function DashboardPage() {
 
       {/* Main Content Area */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* WELCOME & ANALYTICS BANNER */}
-        <div className="mb-8 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
-          <div>
-            <p className="text-[13px] font-semibold text-brand-200">
-              {t("welcomeBack", { name: fullName.split(" ")[0] || "Creator" })}
-            </p>
-            <h1 className="mt-1.5 text-[26px] font-extrabold leading-tight tracking-tight text-text-primary sm:text-[2.1rem]">
-              <Trans
-                ns="dashboard"
-                i18nKey="headline"
-                components={{ gradient: <span className="text-gradient" /> }}
-              />
-            </h1>
-            <p className="mt-2 max-w-xl text-sm leading-relaxed text-brand-200">
-              {t("subheadline")}
-            </p>
+        {/* HERO BANNER */}
+        <section className="mb-8 overflow-hidden rounded-[22px] border border-border bg-background-deep">
+          <div className="relative">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-28 -start-28 h-80 w-80 rounded-full bg-accent/10 blur-3xl"
+            />
+            <div className="relative z-10 flex flex-col gap-5 px-6 py-6 sm:px-8 sm:py-7 lg:px-10 lg:py-8">
+              <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-start">
+                <div className="min-w-0">
+                  <p className="text-[13px] font-semibold text-brand-200">
+                    {t("welcomeBack", { name: fullName.split(" ")[0] || "Creator" })}
+                  </p>
+                  <h1 className="mt-1.5 text-[26px] font-extrabold leading-tight tracking-tight text-text-primary sm:text-[2.1rem]">
+                    <Trans
+                      ns="dashboard"
+                      i18nKey="headline"
+                      components={{ gradient: <span className="text-gradient" /> }}
+                    />
+                  </h1>
+                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-brand-200">
+                    {t("subheadline")}
+                  </p>
+                </div>
+                <span className="flex shrink-0 items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-[11px] font-bold text-accent-bright shadow-accent-soft">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+                  </span>
+                  {t("aiActive")}
+                </span>
+              </div>
+
+              {/* Quick actions */}
+              <div className="flex flex-wrap items-center gap-3">
+                <Button
+                  onClick={() =>
+                    document.getElementById("generate")?.scrollIntoView({ behavior: "smooth", block: "start" })
+                  }
+                  className="gap-2 rounded-lg px-5 py-2.5 text-sm font-bold"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  {t("improveYourCopy")}
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    document.getElementById("copy-library")?.scrollIntoView({ behavior: "smooth", block: "start" })
+                  }
+                  className="gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold"
+                >
+                  <History className="h-4 w-4" />
+                  {t("copyLibrary")}
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowProjectModal(true)}
+                  className="gap-2 rounded-lg px-4 py-2.5 text-sm"
+                >
+                  <FolderPlus className="h-4 w-4 text-accent-bright" />
+                  {t("createProject")}
+                </Button>
+              </div>
+            </div>
+
+            {/* 8:3 hero visual */}
+            <div className="relative z-10 px-6 pb-6 sm:px-8 sm:pb-7 lg:px-10 lg:pb-8">
+              <div className="overflow-hidden rounded-2xl border border-border shadow-soft">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/hero-dashboard.jpeg"
+                  alt={t("heroVisualAlt", { defaultValue: "CopyCoach AI workspace preview" })}
+                  className="h-auto w-full object-cover"
+                />
+              </div>
+            </div>
           </div>
-          <span className="flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-[11px] font-bold text-accent-bright shadow-accent-soft">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-bright opacity-60" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-bright" />
-            </span>
-            {t("aiActive")}
-          </span>
-        </div>
+        </section>
 
         {/* STAT CARDS */}
         <div className="mb-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">

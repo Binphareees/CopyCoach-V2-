@@ -14,40 +14,48 @@
      Surfaces are calm charcoal layers. Elevation only for floats.
      ============================================================ */
 
-  /* Background — near-black charcoal, one whisper of brand atmosphere */
-  --background: #060709;
+  /* Background — premium dark canvas, one whisper of Tiffany atmosphere */
+  --background: #171717;
+  --background-deep: #101010;
   --background-gradient:
-    radial-gradient(56rem 42rem at 18% -10%, rgba(61, 123, 253, 0.045), transparent 55%),
-    radial-gradient(48rem 40rem at 104% 6%, rgba(140, 116, 255, 0.028), transparent 50%);
+    radial-gradient(56rem 42rem at 18% -10%, rgba(33, 241, 168, 0.05), transparent 55%),
+    radial-gradient(48rem 40rem at 104% 6%, rgba(33, 241, 168, 0.028), transparent 50%);
 
-  /* Surface Layers — charcoal raised above background */
-  --surface: rgba(255, 255, 255, 0.03);
-  --surface-elevated: rgba(255, 255, 255, 0.05);
-  --surface-overlay: rgba(255, 255, 255, 0.065);
+  /* Surface Layers — solid charcoal raised above background */
+  --surface: #1d1d1d;
+  --surface-elevated: #222222;
+  --surface-overlay: rgba(255, 255, 255, 0.06);
   --surface-muted: rgba(255, 255, 255, 0.08);
+  --surface-hover: #272727;
 
   /* Input Fields */
-  --input-background: rgba(255, 255, 255, 0.035);
+  --input-background: #222222;
   --input-border: rgba(255, 255, 255, 0.12);
-  --input-focus: #3d7bfd;
+  --input-focus: #21f1a8;
 
   /* Borders — present but quiet */
-  --border: rgba(255, 255, 255, 0.09);
+  --border: rgba(255, 255, 255, 0.1);
   --border-subtle: rgba(255, 255, 255, 0.055);
-  --border-strong: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.16);
 
   /* Text — editorial hierarchy */
-  --text-primary: #f0f2f7;
-  --text-secondary: #a4adba;
-  --text-muted: #6a7490;
-  --text-disabled: #404855;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.45);
+  --text-disabled: rgba(255, 255, 255, 0.28);
 
-  /* Accent — single CopyCoach indigo: action, active, focus, key AI feedback */
-  --accent: #3d7bfd;
-  --accent-hover: #5c93ff;
-  --accent-deep: #2563eb;
-  --accent-foreground: #ffffff;
-  --accent-glow: rgba(61, 123, 253, 0.22);
+  /* Accent — single CopyCoach tiffany: action, active, focus, key AI feedback */
+  --accent: #21f1a8;
+  --accent-hover: #57f5c0;
+  --accent-deep: #0ccf90;
+  --accent-foreground: #0b120f;
+  --accent-glow: rgba(33, 241, 168, 0.18);
+
+  /* Primary — spec-named aliases of the accent family (see @theme note) */
+  --primary: #21f1a8;
+  --primary-hover: #57f5c0;
+  --primary-muted: rgba(33, 241, 168, 0.12);
+  --primary-border: rgba(33, 241, 168, 0.35);
 
   /* Semantic Colors — true states only */
   --success: #34d399;
@@ -60,41 +68,41 @@
   --info-surface: rgba(76, 141, 255, 0.1);
 
   /* Floating Navigation */
-  --navbar-bg: rgba(8, 10, 15, 0.82);
+  --navbar-bg: rgba(23, 23, 23, 0.82);
   --navbar-border: rgba(255, 255, 255, 0.08);
 
   /* Card (legacy) */
-  --card: rgba(255, 255, 255, 0.035);
+  --card: #1d1d1d;
   --card-border: rgba(255, 255, 255, 0.09);
 
   /* Sidebar (legacy token; shell adopts the Layer system in Phase D) */
-  --sidebar: rgba(255, 255, 255, 0.03);
+  --sidebar: #171717;
   --sidebar-border: rgba(255, 255, 255, 0.07);
 
   /* Modal */
-  --modal-backdrop: rgba(3, 4, 8, 0.72);
-  --modal-surface: rgba(12, 14, 20, 0.9);
+  --modal-backdrop: rgba(0, 0, 0, 0.72);
+  --modal-surface: rgba(26, 26, 26, 0.94);
 
   /* Glass surfaces (selective: dropdowns, popovers, modals, floating nav) */
-  --glass-bg: rgba(255, 255, 255, 0.035);
-  --glass-bg-elevated: rgba(255, 255, 255, 0.055);
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-bg-elevated: rgba(255, 255, 255, 0.06);
   --glass-bg-deep: rgba(255, 255, 255, 0.02);
   --glass-bg-hover: rgba(255, 255, 255, 0.09);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-border-subtle: rgba(255, 255, 255, 0.08);
-  --glass-input-bg: rgba(255, 255, 255, 0.04);
+  --glass-input-bg: #222222;
   --glass-input-border: rgba(255, 255, 255, 0.14);
-  --glass-strong: rgba(12, 14, 20, 0.92);
+  --glass-strong: rgba(24, 24, 24, 0.9);
 
   /* Blur levels */
   --glass-blur: 12px;
   --glass-blur-lg: 24px;
 
   /* Gradient Button (compatibility — single accent family) */
-  --button-start: #3d7bfd;
-  --button-end: #2b4fd8;
-  --button-hover-start: #4f8cff;
-  --button-hover-end: #3358e0;
+  --button-start: #21f1a8;
+  --button-end: #0ccf90;
+  --button-hover-start: #57f5c0;
+  --button-hover-end: #21f1a8;
 
   /* Elevation — default content has none; floats only */
   --elevation-1: 0 1px 2px rgba(0, 0, 0, 0.24), 0 2px 8px -2px rgba(0, 0, 0, 0.28);
@@ -108,7 +116,7 @@
   --shadow-popover: var(--elevation-4);
   --shadow-accent-glow: 0 16px 48px -16px var(--accent-glow);
   --shadow-accent-soft: 0 8px 24px -12px var(--accent-glow);
-  --card-glow: rgba(61, 123, 253, 0.05);
+  --card-glow: rgba(33, 241, 168, 0.06);
 
   /* Radius — one scale; pills reserved for status / tags / selected states */
   --radius-sm: 0.375rem;
@@ -159,18 +167,20 @@
   color-scheme: light;
   background: #f4f5f8;
   --background: #f4f5f8;
+  --background-deep: #eef0f2;
   --background-gradient:
-    radial-gradient(56rem 42rem at 18% -10%, rgba(76, 141, 255, 0.06), transparent 55%),
-    radial-gradient(48rem 40rem at 104% 6%, rgba(124, 98, 255, 0.04), transparent 50%);
+    radial-gradient(56rem 42rem at 18% -10%, rgba(10, 158, 115, 0.06), transparent 55%),
+    radial-gradient(48rem 40rem at 104% 6%, rgba(33, 241, 168, 0.05), transparent 50%);
 
   --surface: rgba(255, 255, 255, 0.62);
   --surface-elevated: rgba(255, 255, 255, 0.78);
   --surface-overlay: rgba(255, 255, 255, 0.9);
   --surface-muted: rgba(226, 232, 240, 0.7);
+  --surface-hover: rgba(255, 255, 255, 0.92);
 
   --input-background: rgba(255, 255, 255, 0.85);
   --input-border: rgba(15, 23, 42, 0.14);
-  --input-focus: #2563eb;
+  --input-focus: #0a9e73;
 
   --border: rgba(15, 23, 42, 0.1);
   --border-subtle: rgba(15, 23, 42, 0.06);
@@ -181,11 +191,15 @@
   --text-muted: #707b93;
   --text-disabled: #c0c8d8;
 
-  --accent: #2563eb;
-  --accent-hover: #3d7bfd;
-  --accent-deep: #1e40af;
+  --accent: #0a9e73;
+  --accent-hover: #0dbd8a;
+  --accent-deep: #057a57;
   --accent-foreground: #ffffff;
-  --accent-glow: rgba(37, 99, 235, 0.16);
+  --accent-glow: rgba(10, 158, 115, 0.16);
+  --primary: #0a9e73;
+  --primary-hover: #0dbd8a;
+  --primary-muted: rgba(10, 158, 115, 0.12);
+  --primary-border: rgba(10, 158, 115, 0.35);
 
   --success: #16a34a;
   --success-surface: rgba(22, 163, 74, 0.1);
@@ -221,10 +235,10 @@
   --glass-blur: 12px;
   --glass-blur-lg: 24px;
 
-  --button-start: #2563eb;
-  --button-end: #1d4ed8;
-  --button-hover-start: #3d7bfd;
-  --button-hover-end: #2563eb;
+  --button-start: #0a9e73;
+  --button-end: #057a57;
+  --button-hover-start: #0dbd8a;
+  --button-hover-end: #0a9e73;
 
   --elevation-1: 0 1px 2px rgba(15, 23, 42, 0.08), 0 2px 8px -2px rgba(15, 23, 42, 0.08);
   --elevation-2: 0 6px 18px -10px rgba(15, 23, 42, 0.16);
@@ -237,7 +251,7 @@
   --shadow-popover: var(--elevation-4);
   --shadow-accent-glow: 0 16px 48px -16px var(--accent-glow);
   --shadow-accent-soft: 0 8px 24px -12px var(--accent-glow);
-  --card-glow: rgba(37, 99, 235, 0.05);
+  --card-glow: rgba(10, 158, 115, 0.05);
 }
 
 /* ---------- Tailwind Theme Integration ---------- */
@@ -252,6 +266,8 @@
   --color-surface-elevated: var(--surface-elevated);
   --color-surface-overlay: var(--surface-overlay);
   --color-surface-muted: var(--surface-muted);
+  --color-surface-hover: var(--surface-hover);
+  --color-background-deep: var(--background-deep);
 
   /* Borders */
   --color-border: var(--border);
@@ -592,7 +608,7 @@ button:disabled {
 
 /* Text gradient */
 .text-gradient {
-  background: linear-gradient(120deg, #dfe8ff, #9db8ff 50%, #b8a7ff);
+  background: linear-gradient(120deg, #ffffff 0%, #c9faef 35%, #21f1a8 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -600,7 +616,7 @@ button:disabled {
 }
 
 :root.light .text-gradient {
-  background-image: linear-gradient(120deg, #2563eb, #4f46e5 50%, #7c3aed);
+  background-image: linear-gradient(120deg, #057a57, #0a9e73 50%, #0dbd8a);
 }
 
 /* Metric value */
