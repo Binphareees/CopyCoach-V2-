@@ -258,7 +258,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--text-primary);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-geist-sans), var(--font-noto-sans);
   --font-mono: var(--font-geist-mono);
 
   /* Surface */
@@ -379,7 +379,7 @@ html[lang="ar"] input,
 html[lang="ar"] textarea,
 html[lang="ar"] select,
 html[lang="ar"] button {
-  font-family: var(--font-noto-arabic), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-noto-arabic), var(--font-geist-sans), var(--font-noto-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Reduce letter-spacing on Arabic text (Latin features look wrong on RTL script) */
@@ -388,7 +388,7 @@ html[lang="ar"] * {
 }
 
 body {
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: var(--font-geist-sans), var(--font-noto-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
   line-height: var(--type-lh-body);
   background-color: var(--background);
   background-image: var(--background-gradient);

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Sans_Arabic } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans, Noto_Sans_Arabic } from "next/font/google";
 import "./globals.css";
 import AnalyticsProvider from "@/components/providers/AnalyticsProvider";
 import SentryErrorBoundary from "@/components/providers/SentryErrorBoundary";
@@ -15,6 +15,14 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const notoSans = Noto_Sans({
+  variable: "--font-noto-sans",
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+  preload: false,
 });
 
 const notoArabic = Noto_Sans_Arabic({
@@ -45,7 +53,7 @@ export default async function RootLayout({
     <html
       lang={lng}
       dir={dir}
-      className={`${geistSans.variable} ${geistMono.variable} ${notoArabic.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} ${notoSans.variable} ${notoArabic.variable} h-full antialiased dark`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
