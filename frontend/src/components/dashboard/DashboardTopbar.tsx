@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowLeft, Menu, PanelLeftClose } from "lucide-react";
+import { ArrowLeft, ChevronLeft, Menu } from "lucide-react";
 import { useDashboardShell } from "@/components/dashboard/DashboardShell";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
@@ -35,7 +35,7 @@ export default function DashboardTopbar({ title, back, right }: DashboardTopbarP
           title={t("openNavMenu")}
           className="shrink-0 text-text-secondary transition-colors hover:text-text-primary"
         >
-          {collapsed ? <Menu className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+          {collapsed ? <Menu className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5 rtl:rotate-180" />}
         </button>
 
         {back && (
