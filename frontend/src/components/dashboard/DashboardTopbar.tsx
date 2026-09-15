@@ -32,7 +32,8 @@ export default function DashboardTopbar({ title, back, right }: DashboardTopbarP
           type="button"
           onClick={handleMenuClick}
           aria-label={t("openNavMenu")}
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-text-secondary transition-colors hover:bg-surface hover:text-text-primary"
+          title={t("openNavMenu")}
+          className="shrink-0 text-text-secondary transition-colors hover:text-text-primary"
         >
           {collapsed ? <Menu className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
         </button>
