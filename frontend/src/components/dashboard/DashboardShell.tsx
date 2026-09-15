@@ -6,11 +6,17 @@ import DashboardSidebar from "./DashboardSidebar";
 interface DashboardShellContextValue {
   open: boolean;
   setOpen: (open: boolean) => void;
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+  toggleCollapsed: () => void;
 }
 
 const DashboardShellContext = createContext<DashboardShellContextValue>({
   open: false,
   setOpen: () => {},
+  collapsed: false,
+  setCollapsed: () => {},
+  toggleCollapsed: () => {},
 });
 
 export function useDashboardShell() {
@@ -19,6 +25,7 @@ export function useDashboardShell() {
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -30,9 +37,10 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   }, [open]);
 
   const close = useCallback(() => setOpen(false), []);
+  const toggleCollapsed = useCallback(() => setCollapsed((c) => !c), []);
 
   return (
-    <DashboardShellContext.Provider value={{ open, setOpen }}>
+    <DashboardShellContext.Provider value={{ open, setOpen, collapsed, setCollapsed, toggleCollapsed }}>
       <div className="min-h-screen">
         <DashboardSidebar />
         {open && (
@@ -42,7 +50,13 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             onClick={close}
           />
         )}
-        <div className="flex min-h-screen flex-col lg:pl-[264px]">{children}</div>
+        <div
+          className={`flex min-h-screen flex-col transition-[padding] duration-300 ease-in-out ${
+            collapsed ? "" : "lg:pl-[264px]"
+          }`}
+        >
+          {children}
+        </div>
       </div>
     </DashboardShellContext.Provider>
   );

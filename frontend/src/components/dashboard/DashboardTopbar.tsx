@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowLeft, Menu } from "lucide-react";
+import { ArrowLeft, Menu, PanelLeftOpen } from "lucide-react";
 import { useDashboardShell } from "@/components/dashboard/DashboardShell";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
@@ -14,19 +14,27 @@ interface DashboardTopbarProps {
 }
 
 export default function DashboardTopbar({ title, back, right }: DashboardTopbarProps) {
-  const { setOpen } = useDashboardShell();
+  const { setOpen, collapsed, toggleCollapsed } = useDashboardShell();
   const { t } = useTranslation("dashboard");
+
+  const handleMenuClick = () => {
+    if (window.matchMedia("(min-width: 1024px)").matches) {
+      toggleCollapsed();
+    } else {
+      setOpen(true);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-30 border-b border-border-subtle bg-navbar-bg backdrop-blur-md">
       <div className="flex h-16 items-center gap-2 px-4 sm:px-6 lg:px-8">
         <button
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={handleMenuClick}
           aria-label={t("openNavMenu")}
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-text-secondary transition-colors hover:bg-surface hover:text-text-primary lg:hidden"
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-text-secondary transition-colors hover:bg-surface hover:text-text-primary"
         >
-          <Menu className="h-5 w-5" />
+          {collapsed ? <PanelLeftOpen className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
         {back && (
@@ -43,7 +51,7 @@ export default function DashboardTopbar({ title, back, right }: DashboardTopbarP
           {title}
         </p>
 
-        <div className="flex shrink-0 items-center gap-2 lg:hidden">
+        <div className="flex shrink-0 items-center gap-2">
           <LanguageSwitcher compact direction="down" />
         </div>
 
