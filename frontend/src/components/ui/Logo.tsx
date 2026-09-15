@@ -45,7 +45,7 @@ export default function Logo({
     return (
       <div className={`relative flex items-center justify-center shrink-0 ${iconSizes[size]} ${className}`}>
         <img
-          src="/branding/copycoach-logo.png"
+          src="/branding/copycoach-logo-tight.png"
           alt="CopyCoach AI"
           className="w-full h-full object-contain"
         />
@@ -54,7 +54,7 @@ export default function Logo({
   }
 
   // Standard full logo — new logo, transparent background
-  const logoSrc = "/branding/copycoach-logo.png";
+  const logoSrc = "/branding/copycoach-logo-tight.png";
 
   return (
     <div className={`inline-flex items-center gap-3 select-none ${className}`}>
