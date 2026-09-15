@@ -225,7 +225,7 @@ export default function DashboardPage() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
   // Appearance & Theme State (single source of truth: global ThemeProvider)
-  const { themeMode, setThemeMode } = useTheme();
+  const { themeMode, setThemeMode, isDarkMode } = useTheme();
 
   const applyTheme = (mode: "dark" | "light" | "system") => {
     setThemeMode(mode);
@@ -924,7 +924,7 @@ export default function DashboardPage() {
               <div className="overflow-hidden rounded-2xl border border-border shadow-soft">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/hero-dashboard.jpeg"
+                  src={isDarkMode ? "/images/hero-dashboard.jpeg" : "/images/hero-dashboard-light.jpeg"}
                   alt={t("heroVisualAlt", { defaultValue: "CopyCoach AI workspace preview" })}
                   className="h-auto w-full object-cover"
                 />

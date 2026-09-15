@@ -41,7 +41,7 @@ interface SidebarInnerProps {
 
 function SidebarInner({ onNavigate }: SidebarInnerProps) {
   const router = useRouter();
-  const { themeMode, setThemeMode } = useTheme();
+  const { themeMode, setThemeMode, isDarkMode } = useTheme();
   const { t } = useTranslation("dashboard");
 
   const [credits, setCredits] = useState<number | null>(null);
@@ -128,16 +128,20 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/images/sidebar-promo.jpeg"
+          src={isDarkMode ? "/images/sidebar-promo.jpeg" : "/images/sidebar-promo-light.jpeg"}
           alt=""
           className="aspect-[2/3] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         />
-        <span className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent p-3">
-          <span className="flex items-center gap-1 text-xs font-bold text-[#21f1a8]">
+        <span
+          className={`pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t p-3 ${
+            isDarkMode ? "from-black/80 via-black/20 to-transparent" : "from-white/90 via-white/40 to-transparent"
+          }`}
+        >
+          <span className="flex items-center gap-1 text-xs font-bold text-accent">
             <Zap className="h-3.5 w-3.5" />
             Pro
           </span>
-          <span className="mt-0.5 text-[11px] font-medium leading-snug text-white/90">
+          <span className="mt-0.5 text-[11px] font-medium leading-snug text-text-primary/90">
             {t("promoCardBody", { defaultValue: "100 monthly generations & premium models" })}
           </span>
         </span>
