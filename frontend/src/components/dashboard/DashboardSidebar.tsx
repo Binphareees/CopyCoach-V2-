@@ -19,7 +19,6 @@ import {
   HelpCircle,
   LogOut,
   Zap,
-  PanelLeftClose,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useTheme } from "@/components/providers/ThemeProvider";
@@ -43,7 +42,6 @@ interface SidebarInnerProps {
 function SidebarInner({ onNavigate }: SidebarInnerProps) {
   const router = useRouter();
   const { themeMode, setThemeMode } = useTheme();
-  const { toggleCollapsed } = useDashboardShell();
   const { t } = useTranslation("dashboard");
 
   const [credits, setCredits] = useState<number | null>(null);
@@ -107,29 +105,17 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
 
   return (
     <>
-      <div className="flex items-center gap-1 px-3 pt-5 pb-4">
-        <Link
-          href="/dashboard"
-          onClick={onNavigate}
-          className="flex min-w-0 flex-1 items-center gap-2.5 transition-opacity hover:opacity-90"
-        >
-          <Logo theme="dark" size="sm" variant="app-icon" />
-          <div className="min-w-0 leading-tight">
-            <span className="block truncate text-sm font-bold text-text-primary">CopyCoach AI</span>
-            <span className="block text-[11px] text-text-muted">{t("writingWorkspace")}</span>
-          </div>
-        </Link>
-
-        <button
-          type="button"
-          onClick={toggleCollapsed}
-          aria-label={t("openNavMenu")}
-          title={t("openNavMenu")}
-          className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface-hover hover:text-text-primary lg:inline-flex"
-        >
-          <PanelLeftClose className="h-4 w-4" />
-        </button>
-      </div>
+      <Link
+        href="/dashboard"
+        onClick={onNavigate}
+        className="flex items-center gap-2.5 px-3 pt-5 pb-4 transition-opacity hover:opacity-90"
+      >
+        <Logo theme="dark" size="sm" variant="app-icon" />
+        <div className="min-w-0 leading-tight">
+          <span className="block truncate text-sm font-bold text-text-primary">CopyCoach AI</span>
+          <span className="block text-[11px] text-text-muted">{t("writingWorkspace")}</span>
+        </div>
+      </Link>
 
       <div className="mx-3 border-t border-border-subtle" />
 
