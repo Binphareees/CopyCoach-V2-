@@ -120,17 +120,12 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
       <div className="mx-3 border-t border-border-subtle" />
 
       {/* Sidebar promo card — 2:3 portrait asset, above the nav */}
-      <button
-        type="button"
-        onClick={() => openAccountModal("billing")}
-        className="group relative mx-auto my-4 block w-[220px] overflow-hidden rounded-xl border border-border text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-        aria-label={t("promoUpgradeAria", { defaultValue: "Upgrade to Pro" })}
-      >
+      <div className="relative mx-auto my-4 block w-[220px] overflow-hidden rounded-xl border border-border">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={isDarkMode ? "/images/sidebar-promo.jpeg" : "/images/sidebar-promo-light.jpeg"}
           alt=""
-          className="aspect-[2/3] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          className="aspect-[2/3] w-full object-cover"
         />
         <span
           className={`pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t p-3 ${
@@ -145,7 +140,7 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
             {t("promoCardBody", { defaultValue: "100 monthly generations & premium models" })}
           </span>
         </span>
-      </button>
+      </div>
 
       <div className="mx-3 border-t border-border-subtle" />
 
