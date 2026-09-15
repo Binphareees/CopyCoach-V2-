@@ -36,13 +36,27 @@ const notoArabic = Noto_Sans_Arabic({
 export const metadata: Metadata = {
   title: "CopyCoach AI - Copywriting Coach & Generator",
   description: "AI-powered copywriting assistant and coaching application",
+  applicationName: "CopyCoach AI",
   icons: {
     icon: [
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon.svg", sizes: "any" },
+      { url: "/favicon.svg", sizes: "any", type: "image/svg+xml" },
     ],
     apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "CopyCoach AI - Copywriting Coach & Generator",
+    description: "AI-powered copywriting assistant and coaching application",
+    siteName: "CopyCoach AI",
+    type: "website",
+    images: [{ url: "/branding/og.png", width: 1200, height: 630, alt: "CopyCoach AI" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CopyCoach AI - Copywriting Coach & Generator",
+    description: "AI-powered copywriting assistant and coaching application",
+    images: ["/branding/og.png"],
   },
 };
 

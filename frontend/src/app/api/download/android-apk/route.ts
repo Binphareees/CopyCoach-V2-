@@ -8,8 +8,8 @@ export async function GET() {
       short_name: "CopyCoach AI",
       start_url: "/dashboard",
       display: "standalone",
-      background_color: "#0f172a",
-      theme_color: "#06b6d4",
+      background_color: "#171717",
+      theme_color: "#21f1a8",
       orientation: "portrait",
       icons: [
         {

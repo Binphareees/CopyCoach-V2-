@@ -114,7 +114,7 @@ export default function Navbar() {
             theme="dark"
             size="md"
             showTagline={true}
-            className="[&_img]:!w-20 [&_img]:!h-auto sm:[&_img]:!w-[140px] lg:[&_img]:!w-[200px] lg:[&_img]:!h-[120px]"
+            className="[&_img]:!w-24 [&_img]:!h-auto sm:[&_img]:!w-[160px] lg:[&_img]:!w-[240px]"
           />
         </Link>
 

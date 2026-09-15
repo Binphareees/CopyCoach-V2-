@@ -127,17 +127,17 @@ function buildDeveloperEmailHtml(options: EmailNotificationOptions): string {
   const safeAiOutputString = escapeHtml(aiOutputString);
 
   return `
-    <div style="font-family: Arial, sans-serif; background-color: #0f172a; color: #f8fafc; padding: 24px; border-radius: 12px; max-width: 600px; margin: 0 auto;">
-      <div style="border-bottom: 2px solid #06b6d4; padding-bottom: 12px; margin-bottom: 16px;">
-        <h2 style="color: #38bdf8; margin: 0;">CopyCoach AI Developer Alert</h2>
-        <p style="color: #94a3b8; font-size: 14px; margin-top: 4px;">Priority: <strong style="color: ${priority === "HIGH" ? "#f59e0b" : "#38bdf8"};">${escapeHtml(priority)}</strong> | Tier: <strong>${escapeHtml(userTier).toUpperCase()}</strong></p>
+    <div style="font-family: Arial, sans-serif; background-color: #171717; color: #f8fafc; padding: 24px; border-radius: 12px; max-width: 600px; margin: 0 auto;">
+      <div style="border-bottom: 2px solid #21f1a8; padding-bottom: 12px; margin-bottom: 16px;">
+        <h2 style="color: #21f1a8; margin: 0;">CopyCoach AI Developer Alert</h2>
+        <p style="color: #94a3b8; font-size: 14px; margin-top: 4px;">Priority: <strong style="color: ${priority === "HIGH" ? "#f59e0b" : "#21f1a8"};">${escapeHtml(priority)}</strong> | Tier: <strong>${escapeHtml(userTier).toUpperCase()}</strong></p>
       </div>
       <div style="background-color: #1e293b; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <p style="margin: 0 0 8px 0; font-size: 14px; color: #cbd5e1;"><strong>Type:</strong> ${escapeHtml(type)}</p>
         <p style="margin: 0 0 8px 0; font-size: 14px; color: #cbd5e1;"><strong>Category:</strong> ${safeCategory}</p>
         <p style="margin: 0; font-size: 14px; color: #cbd5e1;"><strong>User ID / Email:</strong> ${safeUserId}</p>
       </div>
-      ${question ? `<div style="margin-bottom: 16px;"><h4 style="color: #38bdf8; margin: 0 0 6px 0;">User Question Asked:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 14px; white-space: pre-wrap; margin: 0;">${safeQuestion}</p></div>` : ""}
+      ${question ? `<div style="margin-bottom: 16px;"><h4 style="color: #21f1a8; margin: 0 0 6px 0;">User Question Asked:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 14px; white-space: pre-wrap; margin: 0;">${safeQuestion}</p></div>` : ""}
       ${answer ? `<div style="margin-bottom: 16px;"><h4 style="color: #a855f7; margin: 0 0 6px 0;">AI Generated Response:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 13px; color: #e2e8f0; white-space: pre-wrap; margin: 0;">${safeAnswer}</p></div>` : ""}
       ${comment ? `<div style="margin-bottom: 16px;"><h4 style="color: #f43f5e; margin: 0 0 6px 0;">Report / Feedback Comment:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 14px; white-space: pre-wrap; margin: 0;">${safeComment}</p></div>` : ""}
       ${userCopyInput ? `<div style="margin-bottom: 16px;"><h4 style="color: #94a3b8; margin: 0 0 6px 0;">Original User Draft Copy:</h4><p style="background-color: #020617; padding: 12px; border-radius: 6px; font-size: 12px; font-family: monospace; white-space: pre-wrap; margin: 0;">${safeUserCopyInput}</p></div>` : ""}
