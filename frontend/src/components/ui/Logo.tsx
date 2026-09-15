@@ -40,12 +40,12 @@ export default function Logo({
     xl: 204,
   };
 
-  // App icon variant — extracted PNG from reference image, transparent background
+  // App icon variant — new logo, transparent background
   if (variant === "app-icon" || iconOnly) {
     return (
       <div className={`relative flex items-center justify-center shrink-0 ${iconSizes[size]} ${className}`}>
         <img
-          src="/images/logo-icon.png"
+          src="/branding/copycoach-logo.png"
           alt="CopyCoach AI"
           className="w-full h-full object-contain"
         />
@@ -53,8 +53,8 @@ export default function Logo({
     );
   }
 
-  // Standard full logo — extracted PNG from reference image, transparent background
-  const logoSrc = "/images/logo-full.png";
+  // Standard full logo — new logo, transparent background
+  const logoSrc = "/branding/copycoach-logo.png";
 
   return (
     <div className={`inline-flex items-center gap-3 select-none ${className}`}>
