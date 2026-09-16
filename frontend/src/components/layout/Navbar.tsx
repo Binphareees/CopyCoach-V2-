@@ -112,8 +112,7 @@ export default function Navbar() {
         <Link href="/" className="flex items-center gap-2 group transition-transform hover:scale-[1.02]">
           <Logo
             theme="dark"
-            size="sm"
-            className="w-28 sm:w-32 md:w-36"
+            size="md"
           />
         </Link>
 

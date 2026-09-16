@@ -17,10 +17,10 @@ export const Logo: React.FC<LogoProps> = ({
   showTagline = false,
 }) => {
   const sizeClasses = {
-    sm: 'h-6',
-    md: 'h-9',
-    lg: 'h-12',
-    xl: 'h-16',
+    sm: 'h-12 md:h-14',
+    md: 'h-20 md:h-24',
+    lg: 'h-28 md:h-32',
+    xl: 'h-40 md:h-48',
   };
 
   // Theme fills for dark charcoal / white adaptation
