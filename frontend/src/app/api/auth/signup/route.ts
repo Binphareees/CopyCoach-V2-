@@ -142,6 +142,7 @@ export async function POST(request: NextRequest) {
         if (!linkError && confirmUrl) {
           const mailResult = await sendEmail({
             to: email,
+            from: "CopyCoach AI <no-reply@copycoachai.online>",
             subject: "Confirm your email address",
             html: `<div style="font-family: Arial, Helvetica, sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; color: #171717;">
   <h2 style="margin: 0 0 16px; color: #171717;">Confirm your CopyCoach AI email</h2>
