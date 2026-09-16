@@ -34,6 +34,7 @@ const notoArabic = Noto_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://copycoachai.online"),
   title: "CopyCoach AI - Copywriting Coach & Generator",
   description: "AI-powered copywriting assistant and coaching application",
   applicationName: "CopyCoach AI",
