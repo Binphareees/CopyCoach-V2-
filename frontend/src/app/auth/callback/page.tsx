@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import type { EmailOtpType } from "@supabase/supabase-js";
 import { ensureSupabaseConfig } from "@/lib/supabase";
 import { persistSessionToCookies } from "@/lib/persist-session";
 import { useRouter } from "next/navigation";
@@ -28,6 +29,25 @@ export default function CallbackPage() {
           const { error } = await activeClient.auth.exchangeCodeForSession(code);
           if (error) {
             console.error("Code exchange error:", error.message);
+          }
+        }
+
+        // Email confirmation / magic link: verify the one-time token hash.
+        const tokenHash = urlParams.get("token_hash");
+        const otpType = urlParams.get("type");
+        if (tokenHash && otpType) {
+          setStatus(t("callbackExchanging"));
+          const { error } = await activeClient.auth.verifyOtp({
+            type: otpType as EmailOtpType,
+            token_hash: tokenHash,
+          });
+          if (error) {
+            console.error("Token verification error:", error.message);
+          } else {
+            const clean = new URL(window.location.href);
+            clean.searchParams.delete("token_hash");
+            clean.searchParams.delete("type");
+            window.history.replaceState({}, "", clean.toString());
           }
         }
 

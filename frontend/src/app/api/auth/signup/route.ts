@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import { getClientIdentifier } from "@/lib/auth-server";
 import { getRateLimiter } from "@/lib/rate-limit";
 import { trackServerEvent } from "@/lib/analytics";
+import { sendEmail } from "@/lib/email";
 
 const signupLimiter = getRateLimiter(5, 3600);
 
@@ -49,16 +50,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Create user with admin privileges and auto-confirm email.
-    // Email confirmation currently auto-confirms to preserve the existing
-    // onboarding flow. Set AUTO_CONFIRM_EMAILS=false in the production env to
-    // require email verification (Supabase confirmation templates must then be
-    // configured in the Supabase dashboard).
+    // 1. Create user. When email verification is required
+    //    (AUTO_CONFIRM_EMAILS=false), the account starts unconfirmed and the
+    //    confirmation email is dispatched below; otherwise the account is
+    //    auto-confirmed to preserve the existing onboarding flow.
+    const requireVerification = process.env.AUTO_CONFIRM_EMAILS === "false";
     const { data: userData, error: createError } =
       await supabaseAdmin.auth.admin.createUser({
         email,
         password,
-        email_confirm: process.env.AUTO_CONFIRM_EMAILS !== "false",
+        email_confirm: !requireVerification,
         user_metadata: {
           full_name: name || "",
         },
@@ -114,6 +115,60 @@ export async function POST(request: NextRequest) {
       }
 
       await trackServerEvent(user.id, "signup_completed", { channel: "email" });
+
+      // 4. Send the confirmation email when email verification is required.
+      //    GoTrue does not auto-send confirmation mail for admin-created users,
+      //    so the confirmation link is generated here and delivered through the
+      //    app's email provider.
+      if (requireVerification) {
+        const siteOrigin =
+          process.env.NEXT_PUBLIC_APP_URL || "https://copycoachai.online";
+        const { data: linkData, error: linkError } =
+          await supabaseAdmin.auth.admin.generateLink({
+            type: "signup",
+            email,
+            password,
+            options: { redirectTo: `${siteOrigin}/auth/callback` },
+          });
+        const hashedToken = linkData?.properties?.hashed_token;
+        // The GoTrue action_link redirects with an implicit `#access_token`,
+        // which the PKCE Supabase client rejects. Instead send users to our
+        // callback with the token_hash so the client can call verifyOtp.
+        const confirmUrl = hashedToken
+          ? `${siteOrigin}/auth/callback?token_hash=${encodeURIComponent(
+              hashedToken
+            )}&type=signup`
+          : null;
+        if (!linkError && confirmUrl) {
+          const mailResult = await sendEmail({
+            to: email,
+            subject: "Confirm your email address",
+            html: `<div style="font-family: Arial, Helvetica, sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; color: #171717;">
+  <h2 style="margin: 0 0 16px; color: #171717;">Confirm your CopyCoach AI email</h2>
+  <p style="margin: 0 0 16px; color: #404040; line-height: 1.6;">
+    Welcome! Please confirm your email address to finish setting up your account.
+  </p>
+  <p style="margin: 0 0 24px;">
+    <a href="${confirmUrl}" style="display: inline-block; background: #21f1a8; color: #0a0a0a; text-decoration: none; font-weight: 600; padding: 12px 20px; border-radius: 8px;">
+      Confirm email address
+    </a>
+  </p>
+  <p style="margin: 0; color: #737373; font-size: 13px; line-height: 1.5;">
+    If the button above doesn't work, copy and paste this link into your browser:<br />
+    <a href="${confirmUrl}" style="color: #166534;">${confirmUrl}</a>
+  </p>
+</div>`,
+          });
+          if (!mailResult.sent) {
+            console.error("Confirm email dispatch failed:", mailResult.error);
+          }
+        } else {
+          console.error(
+            "Confirmation link generation failed:",
+            linkError?.message
+          );
+        }
+      }
     }
 
     return NextResponse.json({
