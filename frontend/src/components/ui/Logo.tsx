@@ -25,16 +25,16 @@ export default function Logo({
   // App icon / Editorial Mark variant only
   if (variant === "app-icon" || iconOnly) {
     const iconSizes = {
-      sm: "w-8 h-8",
-      md: "w-10 h-10",
-      lg: "w-14 h-14",
-      xl: "w-20 h-20",
+      sm: "w-7 h-7",
+      md: "w-9 h-9",
+      lg: "w-12 h-12",
+      xl: "w-16 h-16",
     };
 
     return (
       <div className={`relative flex items-center justify-center shrink-0 ${iconSizes[size]} ${className}`}>
         <svg
-          viewBox="0 0 240 180"
+          viewBox="10 10 215 170"
           className="w-full h-full object-contain overflow-visible"
           aria-label="CopyCoach AI Mark"
         >
@@ -72,16 +72,16 @@ export default function Logo({
 
   // Standard full logo — Editorial Mark + COPYCOACH AI Wordmark
   const logoWidths = {
-    sm: "w-36",
-    md: "w-48",
-    lg: "w-60",
-    xl: "w-80",
+    sm: "w-28",
+    md: "w-36",
+    lg: "w-44",
+    xl: "w-56",
   };
 
   return (
     <div className={`inline-flex items-center select-none ${logoWidths[size]} ${className}`}>
       <svg
-        viewBox="0 0 350 210"
+        viewBox="10 10 330 188"
         className="w-full h-auto object-contain transition-transform duration-200 hover:scale-[1.02]"
         aria-label="CopyCoach AI"
       >
@@ -130,4 +130,5 @@ export default function Logo({
     </div>
   );
 }
+
 

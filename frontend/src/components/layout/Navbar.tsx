@@ -109,12 +109,11 @@ export default function Navbar() {
     <nav className="glass-nav fixed top-0 z-50 w-full">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 md:px-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group transition-transform hover:scale-105">
+        <Link href="/" className="flex items-center gap-2 group transition-transform hover:scale-[1.02]">
           <Logo
             theme="dark"
-            size="md"
-            showTagline={true}
-            className="[&_img]:!w-24 [&_img]:!h-auto sm:[&_img]:!w-[160px] lg:[&_img]:!w-[240px]"
+            size="sm"
+            className="w-28 sm:w-32 md:w-36"
           />
         </Link>
 
