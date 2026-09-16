@@ -11,18 +11,16 @@ interface LogoProps {
   variant?: "standard" | "app-icon";
 }
 
-const WORDMARK_ASPECT = 245 / 64;
+const LOGO_SRC = "/branding/copycoach-logo.jpg";
+const WORDMARK_ASPECT = 1376 / 768;
 
 export default function Logo({
   className = "",
   iconOnly = false,
   size = "md",
-  theme = "auto",
   variant = "standard",
 }: LogoProps) {
-  const dark = theme !== "light";
-
-  // App icon variant — SVG mark, transparent background
+  // App icon variant — exact reference logo, preserved at its native aspect ratio
   if (variant === "app-icon" || iconOnly) {
     const iconSizes = {
       sm: "w-10 h-10",
@@ -33,7 +31,7 @@ export default function Logo({
     return (
       <div className={`relative flex items-center justify-center shrink-0 ${iconSizes[size]} ${className}`}>
         <img
-          src={dark ? "/branding/logo-mark.svg" : "/branding/logo-mark-light.svg"}
+          src={LOGO_SRC}
           alt="CopyCoach AI"
           className="w-full h-full object-contain"
         />
@@ -41,7 +39,7 @@ export default function Logo({
     );
   }
 
-  // Standard full logo — SVG wordmark lockup, keeps intrinsic aspect ratio
+  // Standard full logo — exact reference logo, keeps its native aspect ratio
   const logoWidths = {
     sm: 148,
     md: 200,
@@ -54,7 +52,7 @@ export default function Logo({
     <div className={`inline-flex items-center gap-3 select-none ${className}`}>
       <div className="relative flex items-center justify-center shrink-0">
         <img
-          src={dark ? "/branding/logo.svg" : "/branding/logo-light.svg"}
+          src={LOGO_SRC}
           alt="CopyCoach AI - Elevate Your Copywriting with AI"
           width={w}
           height={Math.round(w / WORDMARK_ASPECT)}
