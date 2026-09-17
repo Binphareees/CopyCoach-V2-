@@ -462,9 +462,12 @@ export default function ProfilePage() {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-accent-deep to-accent text-text-primary font-bold text-3xl">
-                    {name ? name.charAt(0).toUpperCase() : email ? email.charAt(0).toUpperCase() : "U"}
-                  </div>
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src="/branding/default-avatar.svg"
+                    alt={name || t("userAvatarAlt")}
+                    className="h-full w-full object-cover"
+                  />
                 )}
                 {uploading && (
                   <div className="absolute inset-0 bg-surface/80 flex items-center justify-center text-xs text-accent-bright font-medium">

@@ -162,7 +162,12 @@ export default function Navbar() {
                       /* eslint-disable-next-line @next/next/no-img-element */
                       <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                     ) : (
-                      displayName.charAt(0).toUpperCase()
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src="/branding/default-avatar.svg"
+                        alt={displayName}
+                        className="h-full w-full object-cover"
+                      />
                     )}
                   </div>
                   <span className="hidden lg:inline-block text-xs font-semibold max-w-[120px] truncate">

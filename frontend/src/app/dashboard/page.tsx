@@ -772,7 +772,12 @@ export default function DashboardPage() {
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={avatar} alt={fullName} className="h-full w-full object-cover" />
                 ) : (
-                  fullName ? fullName.charAt(0).toUpperCase() : "U"
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src="/branding/default-avatar.svg"
+                    alt={fullName || t("copycoachUser")}
+                    className="h-full w-full object-cover"
+                  />
                 )}
               </div>
               <div className="hidden pe-1 text-start sm:block">
@@ -801,7 +806,12 @@ export default function DashboardPage() {
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={avatar} alt={fullName} className="h-full w-full rounded-lg object-cover" />
                         ) : (
-                          fullName ? fullName.charAt(0).toUpperCase() : "U"
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img
+                            src="/branding/default-avatar.svg"
+                            alt={fullName || t("copycoachUser")}
+                            className="h-full w-full rounded-lg object-cover"
+                          />
                         )}
                       </div>
                       <div className="overflow-hidden">
