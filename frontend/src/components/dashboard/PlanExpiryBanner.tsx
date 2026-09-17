@@ -5,17 +5,43 @@ import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { formatDate } from "@/i18n/format";
 import { useTranslation } from "react-i18next";
-import { AlertTriangle, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, X } from "lucide-react";
 
 const WARNING_DAYS = 7;
+const DISMISS_KEY = "copycoach_plan_banner_dismissed";
 
 interface PlanExpiryBannerProps {
   onResubscribe?: () => void;
 }
 
+function readDismissed(userId: string): { token: string } | null {
+  try {
+    const raw = window.localStorage.getItem(DISMISS_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const entry = parsed[userId];
+    return typeof entry === "string" ? { token: entry } : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeDismissed(userId: string, token: string) {
+  try {
+    const raw = window.localStorage.getItem(DISMISS_KEY);
+    const parsed = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+    parsed[userId] = token;
+    window.localStorage.setItem(DISMISS_KEY, JSON.stringify(parsed));
+  } catch {
+    // ignore storage failures
+  }
+}
+
 export default function PlanExpiryBanner({ onResubscribe }: PlanExpiryBannerProps) {
   const { t } = useTranslation("common");
   const { locale } = useLanguage();
+  const [userId, setUserId] = useState<string | null>(null);
+  const [bannerToken, setBannerToken] = useState<string | null>(null);
   const [state, setState] = useState<
     | { kind: "expiring"; expiresAt: string; daysLeft: number }
     | { kind: "expired" }
@@ -46,6 +72,11 @@ export default function PlanExpiryBanner({ onResubscribe }: PlanExpiryBannerProp
         subscription_status === "expired" ||
         (plan === "pro" && !!expiresAt && expiresAt.getTime() <= Date.now());
 
+      let next:
+        | { kind: "expiring"; expiresAt: string; daysLeft: number }
+        | { kind: "expired" }
+        | null = null;
+
       if (!alreadyExpired && (plan === "pro" || subscription_status === "active")) {
         if (expiresAt && expiresAt.getTime() > Date.now()) {
           const daysLeft = Math.max(
@@ -53,25 +84,39 @@ export default function PlanExpiryBanner({ onResubscribe }: PlanExpiryBannerProp
             Math.ceil((expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
           );
           if (daysLeft <= WARNING_DAYS) {
-            setState({ kind: "expiring", expiresAt: expiresAt.toISOString(), daysLeft });
-            return;
+            next = { kind: "expiring", expiresAt: expiresAt.toISOString(), daysLeft };
           }
         }
       }
 
-      if (alreadyExpired) {
-        setState({ kind: "expired" });
-        return;
+      if (!next && alreadyExpired) {
+        next = { kind: "expired" };
       }
 
-      setState(null);
+      if (next) {
+        const token =
+          next.kind === "expired" ? "expired" : `expiring:${next.expiresAt}`;
+        const dismissed = readDismissed(user.id);
+        if (dismissed?.token === token) return;
+        setUserId(user.id);
+        setBannerToken(token);
+        setState(next);
+      } else {
+        setState(null);
+      }
     })();
     return () => {
       cancelled = true;
     };
   }, []);
 
-  if (!state) return null;
+  if (!state || !bannerToken) return null;
+
+  const dismiss = () => {
+    if (userId && bannerToken) writeDismissed(userId, bannerToken);
+    setState(null);
+    setBannerToken(null);
+  };
 
   if (state.kind === "expired") {
     return (
@@ -86,6 +131,13 @@ export default function PlanExpiryBanner({ onResubscribe }: PlanExpiryBannerProp
             {t("resubscribe")}
           </button>
         )}
+        <button
+          onClick={dismiss}
+          aria-label={t("close")}
+          className="p-1 rounded-md text-current opacity-70 hover:opacity-100 hover:bg-danger/20 transition-opacity cursor-pointer"
+        >
+          <X className="h-4 w-4" />
+        </button>
       </div>
     );
   }
@@ -111,6 +163,13 @@ export default function PlanExpiryBanner({ onResubscribe }: PlanExpiryBannerProp
           {t("renewNow")}
         </button>
       )}
+      <button
+        onClick={dismiss}
+        aria-label={t("close")}
+        className="p-1 rounded-md text-current opacity-70 hover:opacity-100 hover:bg-warning/20 transition-opacity cursor-pointer"
+      >
+        <X className="h-4 w-4" />
+      </button>
     </div>
   );
 }
