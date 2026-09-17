@@ -18,7 +18,7 @@ import DrillCritiqueFeedback from "@/components/ui/DrillCritiqueFeedback";
 import FeedbackModal from "@/components/ui/FeedbackModal";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
-import DefaultAvatar from "@/components/ui/DefaultAvatar";
+import UserAvatar from "@/components/ui/UserAvatar";
 import CategorySelector from "@/components/dashboard/CategorySelector";
 import ProductDetails from "@/components/dashboard/ProductDetails";
 import ToneSelector from "@/components/dashboard/ToneSelector";
@@ -769,12 +769,7 @@ export default function DashboardPage() {
               className="flex items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-surface-muted"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-glass-border bg-glass-bg-elevated text-sm font-bold text-accent-bright">
-                {avatar ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={avatar} alt={fullName} className="h-full w-full object-cover" />
-                ) : (
-                  <DefaultAvatar className="h-full w-full" />
-                )}
+                <UserAvatar src={avatar} alt={fullName} />
               </div>
               <div className="hidden pe-1 text-start sm:block">
                 <p className="text-xs font-semibold leading-tight text-text-primary">{fullName || t("copycoachUser")}</p>
@@ -798,12 +793,7 @@ export default function DashboardPage() {
                   <div className="mb-2 glass-panel-deep px-3 py-2.5">
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-glass-border bg-glass-bg-elevated text-xs font-bold text-accent-bright">
-                        {avatar ? (
-                          /* eslint-disable-next-line @next/next/no-img-element */
-                          <img src={avatar} alt={fullName} className="h-full w-full rounded-lg object-cover" />
-                        ) : (
-                          <DefaultAvatar className="h-full w-full rounded-lg" />
-                        )}
+                        <UserAvatar src={avatar} alt={fullName} className="rounded-lg" />
                       </div>
                       <div className="overflow-hidden">
                         <p className="truncate text-xs font-bold text-text-primary">{fullName || t("copycoachUser")}</p>

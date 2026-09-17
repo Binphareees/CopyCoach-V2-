@@ -12,7 +12,7 @@ const cspHeader = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'" + (isDev ? " 'unsafe-eval'" : ""),
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://*.supabase.co",
+  "img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com",
   "font-src 'self' data:",
   "connect-src 'self' https://*.supabase.co https://us.i.posthog.com https://eu.i.posthog.com https://app.posthog.com https://*.sentry.io",
   "frame-src 'self'",

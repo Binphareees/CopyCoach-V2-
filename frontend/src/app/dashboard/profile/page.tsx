@@ -8,7 +8,7 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 import { formatDate } from "@/i18n/format";
 import { useTranslation } from "react-i18next";
 import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
-import DefaultAvatar from "@/components/ui/DefaultAvatar";
+import UserAvatar from "@/components/ui/UserAvatar";
 import {
   User,
   Sparkles,
@@ -455,16 +455,7 @@ export default function ProfilePage() {
             {/* Avatar with Camera Overlay */}
             <div className="relative group shrink-0">
               <div className="h-28 w-28 rounded-2xl overflow-hidden bg-surface border-2 border-accent/25 shadow-xl relative">
-                {avatar ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src={avatar}
-                    alt={name || t("userAvatarAlt")}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <DefaultAvatar className="h-full w-full" />
-                )}
+                <UserAvatar src={avatar} alt={name || t("userAvatarAlt")} />
                 {uploading && (
                   <div className="absolute inset-0 bg-surface/80 flex items-center justify-center text-xs text-accent-bright font-medium">
                     {t("uploading")}
