@@ -51,6 +51,42 @@ export default function ForgotPasswordPage() {
     showError(t("forgotPasswordSending"));
 
     try {
+      // Prefer the app's own route, which generates the recovery token with
+      // the admin API and delivers the email through Resend (the Supabase
+      // SMTP path can fail for some providers). Falls back to a direct
+      // GoTrue request if the route is unreachable.
+      let handled = false;
+      let apiSuccess = false;
+      try {
+        const apiRes = await fetch("/api/auth/forgot-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        const apiData = await apiRes.json();
+        if (apiRes.ok && apiData.success) {
+          handled = true;
+          apiSuccess = true;
+        } else if (apiRes.status === 429) {
+          handled = true;
+          showError(t("forgotPasswordRateLimit"));
+        } else if (!apiRes.ok && apiData.error) {
+          handled = true;
+          showError(apiData.error);
+        }
+      } catch (e) {
+        console.warn("Forgot-password API route unreachable, falling back to direct auth:", e);
+      }
+
+      if (handled) {
+        setLoading(false);
+        if (apiSuccess) {
+          setSent(true);
+          showSuccess(t("forgotPasswordSent"));
+        }
+        return;
+      }
+
       const activeClient = await ensureSupabaseConfig();
 
       if (!getIsSupabaseConfigured()) {
