@@ -65,7 +65,7 @@ export default function ForgotPasswordPage() {
           : "http://localhost:3000/auth/callback";
 
       const maxAttempts = 3;
-      let lastError: { message: string } | null = null;
+      let lastError: { message: string; code?: string } | null = null;
       for (let attempt = 0; attempt < maxAttempts; attempt++) {
         const { error } = await activeClient.auth.resetPasswordForEmail(email, {
           redirectTo: redirectUrl,
@@ -85,10 +85,16 @@ export default function ForgotPasswordPage() {
       setLoading(false);
 
       if (lastError) {
-        if (lastError.message.includes("rate limit") || lastError.message.includes("rate_limit")) {
+        const msg = lastError.message || "";
+        if (msg.includes("rate limit") || msg.includes("rate_limit")) {
           showError(t("forgotPasswordRateLimit"));
+        } else if (
+          lastError.code === "unexpected_failure" ||
+          msg.includes("Error sending recovery email")
+        ) {
+          showError(t("forgotPasswordSendFailed"));
         } else {
-          showError(lastError.message);
+          showError(msg);
         }
         return;
       }
