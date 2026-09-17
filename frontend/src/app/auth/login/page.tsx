@@ -245,6 +245,7 @@ export default function LoginPage() {
         onSignIn={handleLogin}
         onGoogleSignIn={signInWithGoogle}
         onGitHubSignIn={signInWithGitHub}
+        onForgotPassword={() => router.push("/auth/forgot-password")}
         onSignUp={() => router.push("/auth/signup")}
         loading={loading}
         error={message}

@@ -33,21 +33,38 @@ export default function CallbackPage() {
         }
 
         // Email confirmation / magic link: verify the one-time token hash.
+        // Password-recovery links arrive with type=recovery; after verifying we
+        // forward the user to the reset-password page (the OTP session stays active).
         const tokenHash = urlParams.get("token_hash");
         const otpType = urlParams.get("type");
         if (tokenHash && otpType) {
           setStatus(t("callbackExchanging"));
-          const { error } = await activeClient.auth.verifyOtp({
-            type: otpType as EmailOtpType,
-            token_hash: tokenHash,
-          });
-          if (error) {
-            console.error("Token verification error:", error.message);
+          if (otpType === "recovery") {
+            const { error, data } = await activeClient.auth.verifyOtp({
+              type: "recovery",
+              token_hash: tokenHash,
+            });
+            if (error) {
+              console.error("Token verification error:", error.message);
+            } else if (data.session) {
+              await persistSessionToCookies(data.session);
+              if (isSubscribed) setStatus(t("callbackSuccess"));
+              window.location.href = "/auth/reset-password";
+              return;
+            }
           } else {
-            const clean = new URL(window.location.href);
-            clean.searchParams.delete("token_hash");
-            clean.searchParams.delete("type");
-            window.history.replaceState({}, "", clean.toString());
+            const { error } = await activeClient.auth.verifyOtp({
+              type: otpType as EmailOtpType,
+              token_hash: tokenHash,
+            });
+            if (error) {
+              console.error("Token verification error:", error.message);
+            } else {
+              const clean = new URL(window.location.href);
+              clean.searchParams.delete("token_hash");
+              clean.searchParams.delete("type");
+              window.history.replaceState({}, "", clean.toString());
+            }
           }
         }
 

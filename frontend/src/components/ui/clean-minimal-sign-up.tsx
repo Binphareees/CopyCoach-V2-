@@ -11,6 +11,7 @@ interface CleanMinimalSignUpProps {
   onGoogleSignIn?: () => void;
   onGitHubSignIn?: () => void;
   onSignIn?: () => void;
+  onForgotPassword?: () => void;
   loading?: boolean;
   error?: string;
   tone?: "success" | "error";
@@ -25,6 +26,7 @@ const CleanMinimalSignUp = ({
   onGoogleSignIn,
   onGitHubSignIn,
   onSignIn,
+  onForgotPassword,
   loading = false,
   error = "",
   tone,
@@ -200,6 +202,18 @@ const CleanMinimalSignUp = ({
             {t("signIn")}
           </button>
         </p>
+
+        {onForgotPassword && (
+          <p className="mt-2 text-center text-sm">
+            <button
+              type="button"
+              onClick={onForgotPassword}
+              className="rounded font-medium text-text-secondary underline-offset-4 transition-colors hover:text-accent-bright hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              {t("forgotPassword")}
+            </button>
+          </p>
+        )}
 
         <p className="mt-4 text-center text-[11px] leading-relaxed text-text-muted">
           {t("termsAgreement")}
