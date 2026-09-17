@@ -20,7 +20,7 @@ import {
   LogOut,
   Zap,
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { supabase, getAccessToken } from "@/lib/supabase";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useDashboardShell } from "@/components/dashboard/DashboardShell";
 import { useTranslation } from "react-i18next";
@@ -46,6 +46,26 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
 
   const [credits, setCredits] = useState<number | null>(null);
   const [plan, setPlan] = useState("free");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const token = await getAccessToken();
+        const res = await fetch("/api/auth/me", {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        const data = await res.json();
+        if (!cancelled) setIsAdmin(Boolean(data.isAdmin));
+      } catch (err) {
+        console.error("Admin status check failed:", err);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -181,17 +201,19 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
             badge={<span className="text-[10px] text-text-muted">{t("navEdit")}</span>}
             onNavigate={onNavigate}
           />
-          <DashboardNavLink
-            href="/dashboard/admin/feedback"
-            label={t("adminFeedbackTriage")}
-            icon={<ShieldAlert className={NAV_ICON_CLASSES} />}
-            badge={
-              <span className="rounded bg-accent/15 px-1 py-0.5 text-[10px] font-medium text-accent-bright">
-                {t("admin")}
-              </span>
-            }
-            onNavigate={onNavigate}
-          />
+          {isAdmin && (
+            <DashboardNavLink
+              href="/dashboard/admin/feedback"
+              label={t("adminFeedbackTriage")}
+              icon={<ShieldAlert className={NAV_ICON_CLASSES} />}
+              badge={
+                <span className="rounded bg-accent/15 px-1 py-0.5 text-[10px] font-medium text-accent-bright">
+                  {t("admin")}
+                </span>
+              }
+              onNavigate={onNavigate}
+            />
+          )}
           <DashboardNavButton
             label={t("brandVoice")}
             icon={<Sliders className={NAV_ICON_CLASSES} />}
