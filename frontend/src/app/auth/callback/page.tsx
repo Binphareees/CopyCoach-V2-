@@ -34,37 +34,46 @@ export default function CallbackPage() {
 
         // Email confirmation / magic link: verify the one-time token hash.
         // Password-recovery links arrive with type=recovery; after verifying we
-        // forward the user to the reset-password page (the OTP session stays active).
+        // always forward to the reset-password page. The recovery session (from
+        // verifyOtp) persists in the browser, so the redirect URL is kept clean
+        // to avoid the reset page re-verifying an already-consumed token.
         const tokenHash = urlParams.get("token_hash");
         const otpType = urlParams.get("type");
+        if (otpType === "recovery") {
+          try {
+            const { error } = await activeClient.auth.verifyOtp({
+              type: "recovery",
+              token_hash: tokenHash ?? "",
+            });
+            if (error) {
+              console.error("Recovery token verification error:", error.message);
+            } else {
+              const { data: sessData } = await activeClient.auth.getSession();
+              if (sessData.session) {
+                await persistSessionToCookies(sessData.session);
+              }
+            }
+          } catch (err) {
+            console.error("Recovery token verification exception:", err);
+          }
+          if (isSubscribed) setStatus(t("callbackSuccess"));
+          window.location.href = "/auth/reset-password";
+          return;
+        }
+
         if (tokenHash && otpType) {
           setStatus(t("callbackExchanging"));
-          if (otpType === "recovery") {
-            const { error, data } = await activeClient.auth.verifyOtp({
-              type: "recovery",
-              token_hash: tokenHash,
-            });
-            if (error) {
-              console.error("Token verification error:", error.message);
-            } else if (data.session) {
-              await persistSessionToCookies(data.session);
-              if (isSubscribed) setStatus(t("callbackSuccess"));
-              window.location.href = "/auth/reset-password";
-              return;
-            }
+          const { error } = await activeClient.auth.verifyOtp({
+            type: otpType as EmailOtpType,
+            token_hash: tokenHash,
+          });
+          if (error) {
+            console.error("Token verification error:", error.message);
           } else {
-            const { error } = await activeClient.auth.verifyOtp({
-              type: otpType as EmailOtpType,
-              token_hash: tokenHash,
-            });
-            if (error) {
-              console.error("Token verification error:", error.message);
-            } else {
-              const clean = new URL(window.location.href);
-              clean.searchParams.delete("token_hash");
-              clean.searchParams.delete("type");
-              window.history.replaceState({}, "", clean.toString());
-            }
+            const clean = new URL(window.location.href);
+            clean.searchParams.delete("token_hash");
+            clean.searchParams.delete("type");
+            window.history.replaceState({}, "", clean.toString());
           }
         }
 

@@ -50,7 +50,6 @@
   "openMenu": "فتح القائمة",
   "dismiss": "تجاهل",
   "dismissGettingStarted": "تجاهل شاشة البدء",
-
   "helpSupportShort": "المساعدة والدعم",
   "closeEsc": "إغلاق (Esc)",
   "supportFeedbackTitle": "دعم وملاحظات CopyCoach AI",
@@ -84,7 +83,6 @@
   "justNow": "الآن",
   "seedQ1": "كيف أبدأ أول تدريب على كتابة النصوص التسويقية؟",
   "seedA1": "ببساطة انتقل إلى لوحة التحكم، الصق نصك المسودة أو اختر نوع النص (مثل بريد إلكتروني للبيع أو عنوان صفحة هبوط)، واختر النبرة المرغوبة، ثم انقر على 'تحسين وتقييم النص'. ستحصل على تقييم فوري بالذكاء الاصطناعي، وتحليل للأطر، وملاحظات سطر بسطر!",
-
   "downloadApp": "تحميل التطبيق",
   "mobileApplication": "تطبيق الهاتف",
   "downloadMobileTitle": "تحميل تطبيق CopyCoach AI للهاتف",
@@ -108,7 +106,6 @@
   "installStep3": "3. اضغط \"إضافة إلى الشاشة الرئيسية\" لتثبيت التطبيق بالكامل",
   "verifiedCleanApk": "APK موثوق ونظيف",
   "fullDownloadPage": "صفحة التحميل الكاملة",
-
   "feedbackReceived": "تم استلام الملاحظات! شكرًا لتدريبك CopyCoach AI.",
   "wasCritiqueHelpful": "هل كانت ملاحظات الذكاء الاصطناعي هذه مفيدة؟",
   "helpfulCritique": "ملاحظات مفيدة",
@@ -126,14 +123,12 @@
   "additionalDetails": "تفاصيل إضافية (اختياري)...",
   "sending": "جارٍ الإرسال...",
   "submit": "إرسال",
-
   "tryAgain": "حاول مرة أخرى",
   "errorOccurred": "حدث خطأ",
   "errorRenderFailed": "حدث خطأ أثناء عرض هذا القسم.",
   "globalErrorTitle": "حدث خطأ",
   "globalErrorDesc": "حدث خطأ غير متوقع في التطبيق. يمكنك محاولة تحديث العرض أو إعادة تعيينه.",
   "goToHome": "الانتقال إلى الصفحة الرئيسية",
-
   "confirmingPayment": "جارٍ تأكيد الدفع",
   "verifyingTransaction": "جارٍ التحقق من معاملتك عبر Paystack...",
   "proActivatedBadge": "تم تفعيل CopyCoach Pro",
@@ -148,5 +143,10 @@
   "returnToDashboard": "العودة إلى لوحة التحكم",
   "contactSupportLink": "تحتاج مساعدة؟ اتصل بدعم العملاء",
   "downloadApk": "تحميل APK",
-  "lastUpdatedLabel": "آخر تحديث:"
+  "lastUpdatedLabel": "آخر تحديث:",
+  "planExpiredMessage": "انتهت صلاحية خطتك الاحترافية. اشترك مرة أخرى للاستمرار في الاستمتاع بالمزايا الاحترافية غير المحدودة.",
+  "planExpiringSoon": "ستنتهي صلاحية خطتك الاحترافية خلال {{days}} يوم في {{date}}. جدّد الآن لتجنب الانقطاع.",
+  "planExpiresTodayMessage": "تنتهي صلاحية خطتك الاحترافية اليوم. جدّد الآن لتجنب الانقطاع.",
+  "resubscribe": "إعادة الاشتراك",
+  "renewNow": "جدّد الآن"
 }

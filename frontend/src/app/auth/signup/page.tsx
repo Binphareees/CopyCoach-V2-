@@ -31,11 +31,18 @@ export default function SignupPage() {
     setMessage(msg);
   };
 
+  // GoTrue's password-strength error is verbose; shorten it to the app message.
+  const readableAuthError = (msg: string) =>
+    msg && /password/i.test(msg) && /(character|digit|number|uppercase|lowercase)/i.test(msg)
+      ? t("signupPasswordRules")
+      : msg;
+
   // Real-time Password Rules Validation
   const hasMinLength = (pwd: string) => pwd.length >= 6;
   const hasUppercase = (pwd: string) => /[A-Z]/.test(pwd);
   const hasSpecialChar = (pwd: string) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd);
-  const isPasswordValid = (pwd: string) => hasMinLength(pwd) && hasUppercase(pwd) && hasSpecialChar(pwd);
+  const hasNumber = (pwd: string) => /[0-9]/.test(pwd);
+  const isPasswordValid = (pwd: string) => hasMinLength(pwd) && hasUppercase(pwd) && hasSpecialChar(pwd) && hasNumber(pwd);
 
   useEffect(() => {
     ensureSupabaseConfig().then(() => {
@@ -95,7 +102,7 @@ export default function SignupPage() {
           showError(apiData.error || t("userAlreadyExists"));
           apiSuccess = true;
         } else if (!apiRes.ok && apiData.error) {
-          showError(apiData.error);
+          showError(readableAuthError(apiData.error));
           setLoading(false);
           return;
         }
@@ -120,7 +127,7 @@ export default function SignupPage() {
 
         const res = await Promise.race([authPromise, timeoutPromise]);
         if (res.error) {
-          showError(res.error.message);
+          showError(readableAuthError(res.error.message));
           setLoading(false);
           return;
         }

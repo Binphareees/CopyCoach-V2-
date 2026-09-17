@@ -8,6 +8,7 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 import { formatDate } from "@/i18n/format";
 import { useTranslation } from "react-i18next";
 import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
+import PlanExpiryBanner from "@/components/dashboard/PlanExpiryBanner";
 import UserAvatar from "@/components/ui/UserAvatar";
 import {
   User,
@@ -430,6 +431,10 @@ export default function ProfilePage() {
 
       {/* Main Container */}
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8">
+        {/* Pro Plan Expiry Banner */}
+        <div className="mb-4">
+          <PlanExpiryBanner />
+        </div>
         {/* Floating Toast Notification */}
         {message && (
           <div

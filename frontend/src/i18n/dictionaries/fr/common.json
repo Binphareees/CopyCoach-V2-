@@ -50,7 +50,6 @@
   "openMenu": "Ouvrir le menu",
   "dismiss": "Ignorer",
   "dismissGettingStarted": "Ignorer le démarrage",
-
   "helpSupportShort": "Assistance et support",
   "closeEsc": "Fermer (Échap)",
   "supportFeedbackTitle": "Assistance et retour CopyCoach AI",
@@ -84,7 +83,6 @@
   "justNow": "À l'instant",
   "seedQ1": "Comment démarrer mon premier exercice de rédaction ?",
   "seedA1": "Il vous suffit d'accéder à votre tableau de bord, de coller votre brouillon ou de sélectionner un type de contenu (ex. E-mail de vente, Titre de page d'atterrissage), de choisir le ton souhaité, puis de cliquer sur « Améliorer et évaluer le contenu ». Vous obtiendrez instantanément une note IA, une analyse des frameworks et un retour ligne par ligne !",
-
   "downloadApp": "Télécharger l'application",
   "mobileApplication": "Application mobile",
   "downloadMobileTitle": "Télécharger CopyCoach AI Mobile",
@@ -108,7 +106,6 @@
   "installStep3": "3. Appuyez sur « Ajouter à l'écran d'accueil » pour installer l'application complète",
   "verifiedCleanApk": "APK vérifié et propre",
   "fullDownloadPage": "Page de téléchargement complète",
-
   "feedbackReceived": "Retour reçu ! Merci d'avoir contribué à l'apprentissage de CopyCoach AI.",
   "wasCritiqueHelpful": "Cette critique IA vous a-t-elle été utile ?",
   "helpfulCritique": "Critique utile",
@@ -126,14 +123,12 @@
   "additionalDetails": "Détails supplémentaires (facultatif)...",
   "sending": "Envoi...",
   "submit": "Envoyer",
-
   "tryAgain": "Réessayer",
   "errorOccurred": "Une erreur s'est produite",
   "errorRenderFailed": "Une erreur s'est produite lors du rendu de cette section.",
   "globalErrorTitle": "Une erreur s'est produite",
   "globalErrorDesc": "Une erreur d'application inattendue s'est produite. Vous pouvez essayer d'actualiser ou de réinitialiser l'affichage.",
   "goToHome": "Aller à l'accueil",
-
   "confirmingPayment": "Confirmation du paiement",
   "verifyingTransaction": "Vérification de votre transaction avec Paystack...",
   "proActivatedBadge": "CopyCoach Pro activé",
@@ -148,5 +143,10 @@
   "returnToDashboard": "Retour au tableau de bord",
   "contactSupportLink": "Besoin d'aide ? Contactez le support client",
   "downloadApk": "Télécharger l'APK",
-  "lastUpdatedLabel": "Dernière mise à jour :"
+  "lastUpdatedLabel": "Dernière mise à jour :",
+  "planExpiredMessage": "Votre plan Pro a expiré. Réabonnez-vous pour continuer à profiter des fonctionnalités Pro illimitées.",
+  "planExpiringSoon": "Votre plan Pro expire dans {{days}} jour, le {{date}}. Renouvelez maintenant pour éviter toute interruption.",
+  "planExpiresTodayMessage": "Votre plan Pro expire aujourd'hui. Renouvelez maintenant pour éviter toute interruption.",
+  "resubscribe": "Se réabonner",
+  "renewNow": "Renouveler"
 }

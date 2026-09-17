@@ -25,7 +25,8 @@ export default function ResetPasswordPage() {
   const hasMinLength = (pwd: string) => pwd.length >= 6;
   const hasUppercase = (pwd: string) => /[A-Z]/.test(pwd);
   const hasSpecialChar = (pwd: string) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd);
-  const isPasswordValid = (pwd: string) => hasMinLength(pwd) && hasUppercase(pwd) && hasSpecialChar(pwd);
+  const hasNumber = (pwd: string) => /[0-9]/.test(pwd);
+  const isPasswordValid = (pwd: string) => hasMinLength(pwd) && hasUppercase(pwd) && hasSpecialChar(pwd) && hasNumber(pwd);
 
   const showError = (msg: string) => {
     setMessageTone("error");
@@ -121,7 +122,12 @@ export default function ResetPasswordPage() {
       const { error } = await activeClient.auth.updateUser({ password });
       if (error) {
         setLoading(false);
-        showError(error.message);
+        const msg = error.message || "";
+        if (/password/i.test(msg) && /(character|digit|number|uppercase|lowercase)/i.test(msg)) {
+          showError(t("signupPasswordRules"));
+        } else {
+          showError(msg);
+        }
         return;
       }
 
@@ -224,6 +230,10 @@ export default function ResetPasswordPage() {
                       <li className={`flex items-center gap-1.5 ${hasSpecialChar(password) ? "text-success" : "text-text-muted"}`}>
                         <span className={`h-1.5 w-1.5 rounded-full ${hasSpecialChar(password) ? "bg-success" : "bg-border"}`} />
                         {t("passwordSpecial")}
+                      </li>
+                      <li className={`flex items-center gap-1.5 ${hasNumber(password) ? "text-success" : "text-text-muted"}`}>
+                        <span className={`h-1.5 w-1.5 rounded-full ${hasNumber(password) ? "bg-success" : "bg-border"}`} />
+                        {t("passwordNumber")}
                       </li>
                     </ul>
                   )}

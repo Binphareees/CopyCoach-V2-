@@ -24,6 +24,7 @@ import ProductDetails from "@/components/dashboard/ProductDetails";
 import ToneSelector from "@/components/dashboard/ToneSelector";
 import GenerateButton from "@/components/dashboard/GenerateButton";
 import ProTipCard from "@/components/dashboard/ProTipCard";
+import PlanExpiryBanner from "@/components/dashboard/PlanExpiryBanner";
 import SectionHeading from "@/components/dashboard/SectionHeading";
 import DashboardStatCard from "@/components/dashboard/DashboardStatCard";
 import ScoreRing from "@/components/dashboard/ScoreRing";
@@ -845,6 +846,10 @@ export default function DashboardPage() {
 
       {/* Main Content Area */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Pro Plan Expiry Banner */}
+        <div className="mb-4">
+          <PlanExpiryBanner onResubscribe={upgradeToPro} />
+        </div>
         {/* HERO BANNER */}
         <section className="mb-8 overflow-hidden rounded-[22px] border border-border bg-background-deep">
           <div className="relative">

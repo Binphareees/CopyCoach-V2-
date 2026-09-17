@@ -50,7 +50,6 @@
   "openMenu": "Open menu",
   "dismiss": "Dismiss",
   "dismissGettingStarted": "Dismiss getting started",
-
   "helpSupportShort": "Help & Support",
   "closeEsc": "Close (Esc)",
   "supportFeedbackTitle": "CopyCoach AI Support & Feedback",
@@ -84,7 +83,6 @@
   "justNow": "Just now",
   "seedQ1": "How do I start my first copywriting drill?",
   "seedA1": "Simply navigate to your Dashboard, paste your draft copy or select a copy type (e.g. Sales Email, Landing Page Headline), choose a desired tone, and click 'Improve & Evaluate Copy'. You'll get instant AI scoring, framework analysis, and line-by-line feedback!",
-
   "downloadApp": "Download App",
   "mobileApplication": "Mobile Application",
   "downloadMobileTitle": "Download CopyCoach AI Mobile",
@@ -108,7 +106,6 @@
   "installStep3": "3. Tap \"Add to Home Screen\" to install full app",
   "verifiedCleanApk": "Verified Clean APK",
   "fullDownloadPage": "Full Download Landing Page",
-
   "feedbackReceived": "Feedback received! Thank you for training CopyCoach AI.",
   "wasCritiqueHelpful": "Was this AI critique helpful?",
   "helpfulCritique": "Helpful critique",
@@ -126,14 +123,12 @@
   "additionalDetails": "Additional details (optional)...",
   "sending": "Sending...",
   "submit": "Submit",
-
   "tryAgain": "Try Again",
   "errorOccurred": "An error occurred",
   "errorRenderFailed": "Something went wrong while rendering this section.",
   "globalErrorTitle": "Something went wrong",
   "globalErrorDesc": "An unexpected application error occurred. You can attempt to refresh or reset the view.",
   "goToHome": "Go to Home",
-
   "confirmingPayment": "Confirming Payment",
   "verifyingTransaction": "Verifying your transaction with Paystack...",
   "proActivatedBadge": "CopyCoach Pro Activated",
@@ -148,5 +143,10 @@
   "returnToDashboard": "Return to Dashboard",
   "contactSupportLink": "Need help? Contact Customer Support",
   "downloadApk": "Download APK",
-  "lastUpdatedLabel": "Last updated:"
+  "lastUpdatedLabel": "Last updated:",
+  "planExpiredMessage": "Your Pro plan has expired. Resubscribe to keep enjoying unlimited Pro features.",
+  "planExpiringSoon": "Your Pro plan expires in {{days}} day on {{date}}. Renew now to avoid interruption.",
+  "planExpiresTodayMessage": "Your Pro plan expires today. Renew now to avoid interruption.",
+  "resubscribe": "Resubscribe",
+  "renewNow": "Renew now"
 }

@@ -39,6 +39,7 @@ const CleanMinimalSignUp = ({
   const hasMinLength = password.length >= 6;
   const hasUppercase = /[A-Z]/.test(password);
   const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -142,6 +143,10 @@ const CleanMinimalSignUp = ({
                   <li className={`flex items-center gap-1.5 ${hasSpecialChar ? "text-success" : "text-text-muted"}`}>
                     {hasSpecialChar ? <Check className="h-3 w-3" /> : <span className="h-1 w-1 rounded-full bg-border" />}
                     {t("passwordSpecial")}
+                  </li>
+                  <li className={`flex items-center gap-1.5 ${hasNumber ? "text-success" : "text-text-muted"}`}>
+                    {hasNumber ? <Check className="h-3 w-3" /> : <span className="h-1 w-1 rounded-full bg-border" />}
+                    {t("passwordNumber")}
                   </li>
                 </ul>
               )}
