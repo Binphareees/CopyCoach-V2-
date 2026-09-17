@@ -25,7 +25,7 @@ const feedbackAdminLimiter = getRateLimiter(60, 60);
 
 const MAX_FIELD_LENGTH = 3000;
 const VALID_TIERS = new Set(["spark", "apprentice", "pro", "studio"]);
-const VALID_RATINGS = new Set(["up", "down", null]);
+const VALID_RATINGS = new Set(["up", "down", null, undefined]);
 
 // POST: Submit feedback & dispatch email to developer
 export async function POST(req: NextRequest) {

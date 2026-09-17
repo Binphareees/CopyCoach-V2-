@@ -1,0 +1,27 @@
+'use client';
+import React from 'react';
+
+interface DefaultAvatarProps {
+  className?: string;
+}
+
+export const DefaultAvatar: React.FC<DefaultAvatarProps> = ({ className = '' }) => (
+  <svg
+    viewBox="0 0 200 200"
+    className={className}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="Default profile avatar"
+  >
+    <rect width="200" height="200" rx="44" fill="#141416" />
+    <circle cx="100" cy="92" r="34" fill="none" stroke="#21f1a8" strokeWidth="14" opacity="0.95" />
+    <path
+      d="M100 142c-36 0-58 22-62 48-2 14 9 22 24 22h76c15 0 26-8 24-22-4-26-26-48-62-48z"
+      fill="#21f1a8"
+      opacity="0.95"
+    />
+  </svg>
+);
+
+export default DefaultAvatar;

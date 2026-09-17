@@ -18,6 +18,7 @@ import DrillCritiqueFeedback from "@/components/ui/DrillCritiqueFeedback";
 import FeedbackModal from "@/components/ui/FeedbackModal";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
+import DefaultAvatar from "@/components/ui/DefaultAvatar";
 import CategorySelector from "@/components/dashboard/CategorySelector";
 import ProductDetails from "@/components/dashboard/ProductDetails";
 import ToneSelector from "@/components/dashboard/ToneSelector";
@@ -772,12 +773,7 @@ export default function DashboardPage() {
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={avatar} alt={fullName} className="h-full w-full object-cover" />
                 ) : (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src="/branding/default-avatar.svg"
-                    alt={fullName || t("copycoachUser")}
-                    className="h-full w-full object-cover"
-                  />
+                  <DefaultAvatar className="h-full w-full" />
                 )}
               </div>
               <div className="hidden pe-1 text-start sm:block">
@@ -806,12 +802,7 @@ export default function DashboardPage() {
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={avatar} alt={fullName} className="h-full w-full rounded-lg object-cover" />
                         ) : (
-                          /* eslint-disable-next-line @next/next/no-img-element */
-                          <img
-                            src="/branding/default-avatar.svg"
-                            alt={fullName || t("copycoachUser")}
-                            className="h-full w-full rounded-lg object-cover"
-                          />
+                          <DefaultAvatar className="h-full w-full rounded-lg" />
                         )}
                       </div>
                       <div className="overflow-hidden">

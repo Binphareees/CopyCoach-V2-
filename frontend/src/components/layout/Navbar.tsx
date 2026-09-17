@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { GradientButton } from "../ui/gradient-button";
 import Logo from "../ui/Logo";
+import DefaultAvatar from "../ui/DefaultAvatar";
 import LanguageSwitcher from "../ui/LanguageSwitcher";
 import { supabase, ensureSupabaseConfig } from "@/lib/supabase";
 import { User, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
@@ -162,12 +163,7 @@ export default function Navbar() {
                       /* eslint-disable-next-line @next/next/no-img-element */
                       <img src={avatarUrl} alt={displayName} className="h-full w-full object-cover" />
                     ) : (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
-                        src="/branding/default-avatar.svg"
-                        alt={displayName}
-                        className="h-full w-full object-cover"
-                      />
+                      <DefaultAvatar className="h-full w-full" />
                     )}
                   </div>
                   <span className="hidden lg:inline-block text-xs font-semibold max-w-[120px] truncate">

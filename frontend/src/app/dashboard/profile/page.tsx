@@ -8,6 +8,7 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 import { formatDate } from "@/i18n/format";
 import { useTranslation } from "react-i18next";
 import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
+import DefaultAvatar from "@/components/ui/DefaultAvatar";
 import {
   User,
   Sparkles,
@@ -462,12 +463,7 @@ export default function ProfilePage() {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src="/branding/default-avatar.svg"
-                    alt={name || t("userAvatarAlt")}
-                    className="h-full w-full object-cover"
-                  />
+                  <DefaultAvatar className="h-full w-full" />
                 )}
                 {uploading && (
                   <div className="absolute inset-0 bg-surface/80 flex items-center justify-center text-xs text-accent-bright font-medium">
