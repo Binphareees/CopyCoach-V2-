@@ -139,32 +139,31 @@ function SidebarInner({ onNavigate }: SidebarInnerProps) {
 
       <div className="mx-3 border-t border-border-subtle" />
 
-      {/* Sidebar promo card — 2:3 portrait asset, above the nav */}
-      <div className="relative mx-auto my-4 block w-[220px] overflow-hidden rounded-xl border border-border">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={isDarkMode ? "/images/sidebar-promo.jpeg" : "/images/sidebar-promo-light.jpeg"}
-          alt=""
-          className="aspect-[2/3] w-full object-cover"
-        />
-        <span
-          className={`pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t p-3 ${
-            isDarkMode ? "from-black/80 via-black/20 to-transparent" : "from-white/90 via-white/40 to-transparent"
-          }`}
-        >
-          <span className="flex items-center gap-1 text-xs font-bold text-accent">
-            <Zap className="h-3.5 w-3.5" />
-            Pro
-          </span>
-          <span className="mt-0.5 text-[11px] font-medium leading-snug text-text-primary/90">
-            {t("promoCardBody", { defaultValue: "100 monthly generations & premium models" })}
-          </span>
-        </span>
-      </div>
-
-      <div className="mx-3 border-t border-border-subtle" />
-
       <nav className="flex-1 overflow-y-auto px-3 py-2">
+        {/* Sidebar promo card — 2:3 portrait asset, above the nav and scrolls with it */}
+        <div className="relative mx-auto my-4 block w-[220px] overflow-hidden rounded-xl border border-border">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={isDarkMode ? "/images/sidebar-promo.jpeg" : "/images/sidebar-promo-light.jpeg"}
+            alt=""
+            className="aspect-[2/3] w-full object-cover"
+          />
+          <span
+            className={`pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t p-3 ${
+              isDarkMode ? "from-black/80 via-black/20 to-transparent" : "from-white/90 via-white/40 to-transparent"
+            }`}
+          >
+            <span className="flex items-center gap-1 text-xs font-bold text-accent">
+              <Zap className="h-3.5 w-3.5" />
+              Pro
+            </span>
+            <span className="mt-0.5 text-[11px] font-medium leading-snug text-text-primary/90">
+              {t("promoCardBody", { defaultValue: "100 monthly generations & premium models" })}
+            </span>
+          </span>
+        </div>
+
+        <div className="mx-1 border-t border-border-subtle" />
         <DashboardNavGroup label={t("workspaceGroup")}>
           <DashboardNavLink
             href="/dashboard"
