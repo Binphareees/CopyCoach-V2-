@@ -19,6 +19,8 @@ import {
   Users,
 } from "lucide-react";
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function AppInfoAndSupport() {
   const { t } = useTranslation("landing");
 
@@ -26,6 +28,7 @@ export default function AppInfoAndSupport() {
   const [supportCategory, setSupportCategory] = useState("Copywriting Advice");
   const [supportSubject, setSupportSubject] = useState("");
   const [supportEmail, setSupportEmail] = useState("");
+  const [supportEmailError, setSupportEmailError] = useState("");
   const [supportMessage, setSupportMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [supportSuccess, setSupportSuccess] = useState(false);
@@ -44,6 +47,16 @@ export default function AppInfoAndSupport() {
 
   const handleSupportSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const email = supportEmail.trim();
+    if (!email) {
+      setSupportEmailError(t("appFormEmailRequired"));
+      return;
+    }
+    if (!EMAIL_RE.test(email)) {
+      setSupportEmailError(t("appFormEmailInvalid"));
+      return;
+    }
+    setSupportEmailError("");
     if (!supportMessage.trim()) return;
 
     setIsSubmitting(true);
@@ -55,7 +68,7 @@ export default function AppInfoAndSupport() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: `[${supportCategory}] ${supportSubject ? supportSubject + ": " : ""}${supportMessage}`,
-          userEmail: supportEmail || "Guest User",
+          userEmail: email,
           userTier: "Spark",
         }),
       });
@@ -316,7 +329,7 @@ export default function AppInfoAndSupport() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSupportSubmit} className="space-y-4">
+                <form onSubmit={handleSupportSubmit} noValidate className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
@@ -341,11 +354,21 @@ export default function AppInfoAndSupport() {
                       </label>
                       <input
                         type="email"
+                        required
                         placeholder={t("appEmailPlaceholder")}
                         value={supportEmail}
-                        onChange={(e) => setSupportEmail(e.target.value)}
-                        className="cc-field text-xs rounded-xl px-3.5 py-2.5"
+                        onChange={(e) => {
+                          setSupportEmail(e.target.value);
+                          if (supportEmailError) setSupportEmailError("");
+                        }}
+                        aria-invalid={Boolean(supportEmailError)}
+                        className={`cc-field text-xs rounded-xl px-3.5 py-2.5 ${supportEmailError ? "border-danger/60" : ""}`}
                       />
+                      {supportEmailError && (
+                        <p className="mt-1.5 text-[11px] font-medium text-danger" role="alert">
+                          {supportEmailError}
+                        </p>
+                      )}
                     </div>
                   </div>
 

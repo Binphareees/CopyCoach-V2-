@@ -23,6 +23,7 @@ Be helpful, concise, friendly, and structured. If the question sounds like a bug
 const supportLimiter = getRateLimiter(12, 60);
 
 const VALID_TIERS = new Set(["spark", "apprentice", "pro", "studio"]);
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { question, userId = "User", userTier = "Spark" } = await req.json();
+    const { question, userEmail, userTier = "Spark" } = await req.json();
 
     if (!question || typeof question !== "string" || !question.trim()) {
       return NextResponse.json({ error: "Question is required." }, { status: 400 });
@@ -47,12 +48,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Identity is display-only; verified identity is preferred when available.
-    let displayUserId = userId;
+    // Require a reachable email so we can respond to a ticket. Fall back to the
+    // verified session's email when the caller doesn't send one (dashboard AI chat).
     const user = await getServerUser(req);
-    if (user) {
-      displayUserId = user.email || user.id;
+    let email = typeof userEmail === "string" ? userEmail.trim() : "";
+    if (!email && user?.email) email = user.email;
+    if (!email || !EMAIL_RE.test(email)) {
+      return NextResponse.json(
+        { error: "A valid email is required so we can respond to your ticket." },
+        { status: 400 }
+      );
     }
+    const displayUserId = email;
     const tierLabel = VALID_TIERS.has(String(userTier).toLowerCase())
       ? String(userTier).toLowerCase()
       : "spark";
