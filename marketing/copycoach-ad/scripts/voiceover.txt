@@ -1,0 +1,54 @@
+CopyCoach AI — Promotional Ad Voiceover
+Target: ~70–80s read at a calm, confident, founder-style pace.
+Language: English. Skip the [parenthetical] notes when recording.
+
+---
+
+DRAFT (spoken aloud), timed against the scenes:
+
+[0:00 – cold open]
+"You know the feeling. A great product. And copy that just… doesn't convert."
+
+[0:06]
+"Meet CopyCoach — your personal AI copywriting coach. Not a rewriter. A coach."
+
+[0:13]
+"Drop in the copy you have. Add your product, your audience, your call to action."
+
+[0:19]
+"Choose your format — ads, email, landing pages. Pick a tone. Pick a language."
+
+[0:25]
+"Then hit Improve. Watch CopyCoach work through proven frameworks, step by step."
+
+[0:32]
+"You get a real conversion score. A sharper rewrite. And the why behind it — so you learn as you improve."
+
+[0:40]
+"Writing quality, scored in seconds. AI pattern risk, flagged. Every result saved to your library."
+
+[0:47]
+"Star the lines that work. Search everything. Reuse what converts."
+
+[0:53]
+"Organize it all into projects — every campaign, every client, in one place."
+
+[0:58]
+"The free plan gives you five credits a day. Pro gives you a hundred a month."
+
+[1:04]
+"More natural. More human. More you."
+
+[1:08]
+"CopyCoach AI. Write better. Understand why. Improve."
+
+[1:13 – end card holds]
+(Try CopyCoach AI — link on screen.)
+
+---
+
+FACT CHECK (must not change these in the recording):
+- Free plan = 5 credits / day. Pro = 100 credits / month.
+- Pro upgrade is a paid subscription (Payment via Paystack). Do NOT say "free during launch/trial".
+- Do NOT say "100% human-written"; allowed phrasing is "More natural. More human."
+- End-card URL (production): https://copy-coach-v2-frontend.vercel.app

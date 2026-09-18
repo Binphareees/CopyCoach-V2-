@@ -1,0 +1,19 @@
+[
+  { "file": "01-home-hero.png",              "dur": 4.5, "mode": "zoom",    "caption": "" },
+  { "file": "03-home-mobile-app.png",           "dur": 3.5, "mode": "pan-up",  "caption": "Great product. Flat copy." },
+  { "file": "04-login.png",                  "dur": 3.5, "mode": "zoom",    "caption": "Meet CopyCoach — your AI copywriting coach." },
+  { "file": "10-dashboard-top.png",          "dur": 4.5, "mode": "zoom",    "caption": "Free: five credits a day. Pro: a hundred monthly." },
+  { "file": "13b-category-copy.png",         "dur": 3.5, "mode": "pan-down", "caption": "Paste your copy. Add your context." },
+  { "file": "16d-tone-language.png",         "dur": 3.5, "mode": "zoom",    "caption": "Your audience and call to action." },
+  { "file": "14-tone-language.png",          "dur": 3.5, "mode": "pan-up",  "caption": "Your tone. Your language." },
+  { "file": "21-processing-centered-2.png",  "dur": 5.5, "mode": "zoom",    "caption": "Improve — and the frameworks get to work." },
+  { "file": "30-review-score.png",           "dur": 6.0, "mode": "zoom",    "caption": "Conversion Score: 85. Conversion ready." },
+  { "file": "31b-improved-copy.png",         "dur": 6.5, "mode": "pan-down", "caption": "A sharper rewrite — copy it, export it." },
+  { "file": "32-review-why-works.png",       "dur": 5.0, "mode": "zoom",    "caption": "Why it works — so you learn as you go." },
+  { "file": "33b-writing-quality.png",       "dur": 4.0, "mode": "zoom",    "caption": "Writing quality, scored in seconds." },
+  { "file": "40-library.png",                "dur": 4.5, "mode": "zoom",    "caption": "Saved to your library, automatically." },
+  { "file": "41-library-starred.png",        "dur": 3.5, "mode": "zoom",    "caption": "Star what works. Reuse it." },
+  { "file": "53b-projects-with-project.png", "dur": 4.5, "mode": "pan-up",  "caption": "Projects — every campaign in one place." },
+  { "file": "54-project-detail.png",         "dur": 3.5, "mode": "zoom",    "caption": "" },
+  { "file": "endcard.png",                   "dur": 8.0, "mode": "none",    "caption": "" }
+]
