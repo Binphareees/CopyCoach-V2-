@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getServerT } from "@/i18n/server";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - CopyCoach AI",
+  title: "CopyCoach AI",
   description: "CopyCoach AI Privacy Policy",
 };
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getServerT } from "@/i18n/server";
 
 export const metadata: Metadata = {
-  title: "User Data Deletion - CopyCoach AI",
+  title: "CopyCoach AI",
   description: "CopyCoach AI User Data Deletion Instructions",
 };
 
